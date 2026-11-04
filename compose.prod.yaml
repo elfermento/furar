@@ -1,0 +1,119 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Produción nun concello (docs/instalacion.md, ADR-0015). Úsase sobre compose.yaml:
+#   docker compose -f compose.yaml -f compose.prod.yaml up -d --wait
+# Non compila nada: imaxes publicadas pola CI no rexistro da forxa ($FURAR_REGISTRY, sen valor por defecto), fixadas por versión e digest.
+# Esixe os segredos en .env (sen eles, `config` falla: D39). Realm sen usuarios.
+# Arrinca postgres, migrate (sae ao rematar), keycloak, api e web sen --profile; Mailpit non.
+# Volume propio (pgdata-prod, SEC-09): unha base creada antes co perfil full (realm de demo,
+# usuarios con contrasinal público, cliente furar-e2e) nunca se reutiliza en produción.
+# Administración de Keycloak: pechada en Caddy por defecto; só por túnel SSH a 127.0.0.1:8082.
+
+services:
+  postgres:
+    profiles: !reset []
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en .env}
+      FURAR_DB_OWNER_PASSWORD: ${FURAR_DB_OWNER_PASSWORD:?Define FURAR_DB_OWNER_PASSWORD en .env}
+      FURAR_DB_PASSWORD: ${FURAR_DB_PASSWORD:?Define FURAR_DB_PASSWORD en .env}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?Define KC_DB_PASSWORD en .env}
+    volumes: !override
+      - pgdata-prod:/var/lib/postgresql
+      - ./deploy/postgres/init:/docker-entrypoint-initdb.d:ro
+
+  keycloak:
+    profiles: !reset []
+    image: ${FURAR_REGISTRY:?Define FURAR_REGISTRY en .env (furar-<versión>.env da release)}/furar-keycloak:${FURAR_VERSION:?Define FURAR_VERSION en .env}@sha256:${FURAR_KEYCLOAK_DIGEST:?Define FURAR_KEYCLOAK_DIGEST en .env}
+    build: !reset null
+    pull_policy: missing
+    environment:
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?Define KC_DB_PASSWORD en .env}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:?Define KC_BOOTSTRAP_ADMIN_USERNAME en .env}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:?Define KC_BOOTSTRAP_ADMIN_PASSWORD en .env}
+      KC_HOSTNAME: ${FURAR_PUBLIC_URL:?Define FURAR_PUBLIC_URL en .env}/auth
+      # Consola de administración nun URL só local (SEC-01, AP-04): ssh -L 8082:127.0.0.1:8082 servidor
+      KC_HOSTNAME_ADMIN: http://localhost:${FURAR_KC_ADMIN_PORT:-8082}/auth
+      FURAR_PUBLIC_URL: ${FURAR_PUBLIC_URL:?Define FURAR_PUBLIC_URL en .env}
+      FURAR_SMTP_HOST: ${FURAR_SMTP_HOST:?Define FURAR_SMTP_HOST en .env}
+      FURAR_SMTP_PORT: ${FURAR_SMTP_PORT:-587}
+      FURAR_SMTP_FROM: ${FURAR_SMTP_FROM:?Define FURAR_SMTP_FROM en .env}
+      FURAR_SMTP_STARTTLS: ${FURAR_SMTP_STARTTLS:-true}
+      FURAR_SMTP_SSL: ${FURAR_SMTP_SSL:-false}
+      FURAR_SMTP_AUTH: ${FURAR_SMTP_AUTH:-true}
+      FURAR_SMTP_USER: ${FURAR_SMTP_USER:-}
+      FURAR_SMTP_PASSWORD: ${FURAR_SMTP_PASSWORD:-}
+      # Verifica a proba da invitación do persoal; o mesmo valor ca na API (ADR-0027).
+      FURAR_INVITATION_PROOF_SECRET: ${FURAR_INVITATION_PROOF_SECRET:?Define FURAR_INVITATION_PROOF_SECRET en .env (ADR-0027)}
+    volumes: !override
+      # Só o realm de produción: sen usuarios de demo nin cliente furar-e2e.
+      - ./deploy/keycloak/import:/opt/keycloak/data/import:ro
+    ports:
+      - "127.0.0.1:${FURAR_KC_ADMIN_PORT:-8082}:8082"
+
+  # Mesma imaxe ca a API, co argumento migrate: o único proceso co contrasinal do dono (SEC2-03).
+  migrate:
+    profiles: !reset []
+    image: ${FURAR_REGISTRY:?Define FURAR_REGISTRY en .env (furar-<versión>.env da release)}/furar-api:${FURAR_VERSION:?Define FURAR_VERSION en .env}@sha256:${FURAR_API_DIGEST:?Define FURAR_API_DIGEST en .env}
+    pull_policy: missing
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      FURAR_DB_OWNER_PASSWORD: ${FURAR_DB_OWNER_PASSWORD:?Define FURAR_DB_OWNER_PASSWORD en .env}
+
+  api:
+    profiles: !reset []
+    image: ${FURAR_REGISTRY:?Define FURAR_REGISTRY en .env (furar-<versión>.env da release)}/furar-api:${FURAR_VERSION:?Define FURAR_VERSION en .env}@sha256:${FURAR_API_DIGEST:?Define FURAR_API_DIGEST en .env}
+    build: !reset null
+    pull_policy: missing
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      FURAR_DB_PASSWORD: ${FURAR_DB_PASSWORD:?Define FURAR_DB_PASSWORD en .env}
+      FURAR_PUBLIC_URL: ${FURAR_PUBLIC_URL:?Define FURAR_PUBLIC_URL en .env}
+      # Correos das reservas (ADR-0025, punto 15): o mesmo SMTP ca Keycloak, con STARTTLS (ou
+      # SSL/TLS, FURAR_SMTP_SSL) e autenticación (application-prod.yaml) segundo o .env.
+      SPRING_MAIL_HOST: ${FURAR_SMTP_HOST:?Define FURAR_SMTP_HOST en .env}
+      SPRING_MAIL_PORT: ${FURAR_SMTP_PORT:-587}
+      SPRING_MAIL_USERNAME: ${FURAR_SMTP_USER:-}
+      SPRING_MAIL_PASSWORD: ${FURAR_SMTP_PASSWORD:-}
+      FURAR_SMTP_FROM: ${FURAR_SMTP_FROM:?Define FURAR_SMTP_FROM en .env}
+      FURAR_SMTP_STARTTLS: ${FURAR_SMTP_STARTTLS:-true}
+      FURAR_SMTP_SSL: ${FURAR_SMTP_SSL:-false}
+      FURAR_SMTP_AUTH: ${FURAR_SMTP_AUTH:-true}
+      # Asina a proba da invitación do persoal; o mesmo valor ca en Keycloak (ADR-0027).
+      FURAR_INVITATION_PROOF_SECRET: ${FURAR_INVITATION_PROOF_SECRET:?Define FURAR_INVITATION_PROOF_SECRET en .env (ADR-0027)}
+      # Primeira administración da plataforma (ADR-0028): só conta mentres non hai ningunha.
+      FURAR_ADMIN_EMAIL: ${FURAR_ADMIN_EMAIL:-}
+    depends_on: !override
+      migrate:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+
+  web:
+    profiles: !reset []
+    image: ${FURAR_REGISTRY:?Define FURAR_REGISTRY en .env (furar-<versión>.env da release)}/furar-web:${FURAR_VERSION:?Define FURAR_VERSION en .env}@sha256:${FURAR_WEB_DIGEST:?Define FURAR_WEB_DIGEST en .env}
+    build: !reset null
+    pull_policy: missing
+    environment:
+      # Co URL público (https://…) Caddy pide e renova o certificado (Let's Encrypt).
+      FURAR_SITE_ADDRESS: ${FURAR_PUBLIC_URL:?Define FURAR_PUBLIC_URL en .env}
+      # Quen pode abrir /auth/admin e o realm master por Internet. Obrigatorio: 127.0.0.1/32
+      # = pechado (recomendado; administración por túnel SSH). Non poñas 172.16.0.0/12: por IPv6
+      # Docker entrega as conexións coa IP da ponte (docs/instalacion.md §4).
+      FURAR_ADMIN_IPS: ${FURAR_ADMIN_IPS:?Define FURAR_ADMIN_IPS en .env (127.0.0.1/32 = pechado)}
+      # Mapa: o de compose.yaml (Mapa base do IGN, público e sen clave); nada que configurar.
+      # FURAR_MAP=off ou outro servidor de teselas: docs/instalacion.md §13.
+    ports: !override
+      - "${FURAR_HTTP_PORT:-80}:8080"
+      - "${FURAR_HTTPS_PORT:-443}:8443"
+      - "${FURAR_HTTPS_PORT:-443}:8443/udp"
+    # /data é o volume dos certificados, non tmpfs (compose.yaml, SEC3-04).
+    tmpfs: !override [/tmp, /config]
+    volumes:
+      - caddydata:/data
+
+volumes:
+  pgdata-prod:
+  caddydata:

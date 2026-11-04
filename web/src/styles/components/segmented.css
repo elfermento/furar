@@ -1,0 +1,165 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Grupo de botóns con aria-pressed ([furarSegmented], docs/deseno.md P1-11) ou, en modo radio
+ * (D1-05c), radiogroup con aria-checked: pintan igual.
+ * Sobre surface: pista afundida no tinte e a opción activa en cápsula clara con sombra e bordo
+ * --f-line (o estado non depende só da sombra: 3:1 contra o tinte, 1.4.11).
+ * Sobre o primary (cabeceira): carril con contorno e a opción activa rechea de on-primary.
+ */
+@layer components {
+  /*
+   * Ancho xusto ás opcións (tamén dentro dunha grella ou dun flex en columna). Con moitas opcións
+   * ou a 320 px, baixa de liña: nunca un carril que se despraza (1.4.10).
+   */
+  .f-segmented {
+    position: relative;
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-self: start;
+    align-self: start;
+    width: fit-content;
+    max-width: 100%;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border: var(--f-border) solid transparent;
+    border-radius: var(--radius-pill);
+    background: var(--f-tint);
+  }
+  .f-segmented > button {
+    position: relative;
+    z-index: 1;
+    min-width: var(--f-touch);
+    min-height: 2.25rem;
+    padding: 0.25rem 1rem;
+    border: var(--f-border) solid transparent;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--f-ink-soft);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      color var(--f-dur-fast) var(--ease-smooth),
+      background-color var(--f-dur-fast) var(--ease-smooth),
+      box-shadow var(--f-dur-fast) var(--ease-smooth);
+  }
+  /* A área de toque segue sendo de 44 px aínda que a pastilla vista sexa menor. */
+  .f-segmented > button::after {
+    content: '';
+    position: absolute;
+    inset: -0.25rem 0;
+  }
+  .f-segmented > button:is([aria-pressed='true'], [aria-checked='true']) {
+    border-color: var(--f-line);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+    color: var(--f-ink);
+  }
+
+  /*
+   * Fondo que se despraza ata a opción activa (a directiva escribe --f-seg-*): mentres está, a
+   * opción activa non pinta o seu (o fondo xa vai debaixo dela, co mesmo bordo e sombra).
+   */
+  .f-segmented::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--f-seg-w, 0);
+    height: var(--f-seg-h, 0);
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+    opacity: 0;
+    transform: translate(var(--f-seg-x, 0), var(--f-seg-y, 0));
+    pointer-events: none;
+  }
+  .f-segmented[data-thumb]::before {
+    opacity: 1;
+    transition:
+      transform var(--f-dur-med) var(--ease-smooth),
+      width var(--f-dur-med) var(--ease-smooth),
+      height var(--f-dur-med) var(--ease-smooth);
+  }
+  .f-segmented[data-thumb] > button:is([aria-pressed='true'], [aria-checked='true']) {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .f-segmented[data-thumb]::before {
+      transition: none;
+    }
+  }
+  @media (hover: hover) {
+    .f-segmented > button:is([aria-pressed='false'], [aria-checked='false']):enabled:hover {
+      border-color: var(--f-divider);
+    }
+  }
+  /* Opción non dispoñible: texto suave e bordo descontinuo, sen baixar a opacidade. */
+  .f-segmented > button:disabled {
+    border-color: var(--f-line);
+    border-style: dashed;
+    color: var(--f-ink-soft);
+    cursor: not-allowed;
+  }
+
+  .f-segmented[data-surface='primary'] {
+    border-color: var(--f-on-primary);
+    background: transparent;
+  }
+  .f-segmented[data-surface='primary'] > button {
+    color: var(--f-on-primary);
+  }
+  .f-segmented[data-surface='primary'] > button:is([aria-pressed='true'], [aria-checked='true']) {
+    border-color: var(--f-on-primary);
+    background: var(--f-on-primary);
+    color: var(--f-primary);
+    box-shadow: none;
+  }
+  .f-segmented[data-surface='primary']::before {
+    border-color: var(--f-on-primary);
+    background: var(--f-on-primary);
+    box-shadow: none;
+  }
+  .f-segmented[data-surface='primary'][data-thumb] > button:is([aria-pressed='true'], [aria-checked='true']) {
+    border-color: transparent;
+    background: transparent;
+  }
+  @media (hover: hover) {
+    .f-segmented[data-surface='primary'] > button:is([aria-pressed='false'], [aria-checked='false']):hover {
+      border-color: transparent;
+      background: var(--f-primary-hover);
+    }
+  }
+
+  /* Máis contraste: a pista leva contorno (o tinte desaparece). */
+  @media (prefers-contrast: more) {
+    .f-segmented {
+      border-color: var(--f-line);
+    }
+  }
+
+  /*
+   * Cores forzadas: a activa rechea de Highlight. O selector inclúe [data-surface] para gañarlle
+   * á variante da cabeceira (mesma especificidade, vai despois).
+   */
+  @media (forced-colors: active) {
+    .f-segmented {
+      border-color: CanvasText;
+    }
+    .f-segmented::before {
+      display: none;
+    }
+    .f-segmented[data-surface] > button:is([aria-pressed='true'], [aria-checked='true']),
+    .f-segmented[data-surface][data-thumb] > button:is([aria-pressed='true'], [aria-checked='true']) {
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+  }
+}

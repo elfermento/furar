@@ -1,0 +1,100 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.publicList.';
+<div class="f-plist">
+  <h1 class="f-plist__title">{{ t + 'title' | transloco }}</h1>
+  <furar-facility-search [facilities]="facilities()" [criteria]="criteria()" (searched)="search($event)" />
+
+  @switch (state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="card" [rows]="4" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [heading]="t + 'error.title' | transloco"
+        [description]="t + 'error.text' | transloco"
+      >
+        <button type="button" furarButton (click)="retry()">{{ t + 'error.retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @default {
+      @if (facilities().length) {
+        @if (chips().length || coveredChip()) {
+          <furar-filter-bar class="f-plist__filters" [label]="t + 'filters' | transloco">
+            @for (chip of chips(); track chip.key) {
+              <button
+                type="button"
+                furarFilterChip
+                [attr.data-sport]="chip.key"
+                [pressed]="filters().sports.includes(chip.key)"
+                (pressedChange)="toggleSport(chip.key, $event)"
+              >
+                {{ chip.name }}
+              </button>
+            }
+            @if (coveredChip()) {
+              <button
+                type="button"
+                furarFilterChip
+                data-covered
+                [pressed]="filters().covered"
+                (pressedChange)="toggleCovered($event)"
+              >
+                {{ t + 'covered' | transloco }}
+              </button>
+            }
+          </furar-filter-bar>
+        }
+        <div class="f-plist__bar">
+          <p class="f-plist__count" role="status">
+            {{ t + (shown().length === 1 ? 'countOne' : 'countOther') | transloco: { count: shown().length } }}
+          </p>
+          @if (mapEnabled()) {
+            <div furarSegmented role="group" [attr.aria-label]="t + 'view.label' | transloco">
+              <button type="button" data-view="list" [attr.aria-pressed]="view() === 'list'" (click)="setView('list')">
+                <furar-icon name="grid" />
+                {{ t + 'view.list' | transloco }}
+              </button>
+              <button type="button" data-view="map" [attr.aria-pressed]="view() === 'map'" (click)="setView('map')">
+                <furar-icon name="location" />
+                {{ t + 'view.map' | transloco }}
+              </button>
+            </div>
+          }
+        </div>
+        @if (!shown().length) {
+          <furar-status-state [heading]="t + 'none.title' | transloco">
+            <button type="button" furarButton="secondary" (click)="clearFilters()">
+              {{ t + 'none.clear' | transloco }}
+            </button>
+          </furar-status-state>
+        } @else if (view() === 'list') {
+          <ul class="f-plist__grid" role="list">
+            @for (facility of shown(); track facility.id) {
+              <li class="f-plist__item">
+                <furar-public-list-card
+                  [slug]="slug()"
+                  [facility]="facility"
+                  [slots]="slotsOf(facility.id)"
+                  [date]="filters().date"
+                  [day]="day()"
+                  [lang]="language.lang()"
+                />
+              </li>
+            }
+          </ul>
+        } @else {
+          <section class="f-plist__map" [attr.aria-label]="t + 'map' | transloco">
+            <p class="cdk-visually-hidden">{{ t + 'mapAlternative' | transloco }}</p>
+            <furar-map [markers]="markers()" [zoom]="16" (markerSelected)="openFacility($event)" />
+          </section>
+        }
+      } @else {
+        <furar-status-state [heading]="t + 'empty.title' | transloco" [description]="t + 'empty.text' | transloco" />
+      }
+    }
+  }
+</div>

@@ -1,0 +1,304 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Furar con Docker Compose (ADR-0015).
+#   dev : postgres + keycloak + mailpit publicados en 127.0.0.1; API (8081) e web
+#         (ng serve, 4200) corren no host con recarga. FURAR_PUBLIC_URL = http://localhost:4200
+#   full: todo en contedores, con Caddy en http://localhost:8080 como única entrada.
+# Constrúe as imaxes en serie e arrinca sen --build (non cabe en 4 GB):
+#   for s in api web keycloak; do docker compose --profile full build $s; done
+#   docker compose --profile full up -d --wait
+# Os valores por defecto son de demo. Produción: compose.prod.yaml (esixe os segredos).
+# postgres e keycloak teñen unha variante -dev (portos e URL distintos); comparten volume.
+
+name: furar
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Contedores sen capacidades nin escalada (SEC3-04). Postgres arrinca como root para
+# preparar o directorio e baixa a postgres (su-exec): precisa estas cinco e nada máis.
+x-hardening: &hardening
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+
+x-postgres: &postgres
+  <<: *hardening
+  cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, SETGID, SETUID]
+  image: postgres:18.6-alpine@sha256:83148c0bc09eac4d598b70a61e1404d0212b76c95c504bfd6c81a4c59ec91792
+  restart: unless-stopped
+  environment:
+    POSTGRES_DB: furar
+    # Superusuario: só para init, copias e restauracións. A API usa furar_app (05-furar.sh).
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres-demo}
+    FURAR_DB_OWNER_PASSWORD: ${FURAR_DB_OWNER_PASSWORD:-furar-owner-demo}
+    FURAR_DB_PASSWORD: ${FURAR_DB_PASSWORD:-furar-app-demo}
+    KC_DB_PASSWORD: ${KC_DB_PASSWORD:-keycloak-demo}
+    POSTGRES_INITDB_ARGS: --encoding=UTF8
+    TZ: UTC
+  volumes:
+    # PostgreSQL 18 garda os datos en /var/lib/postgresql/18/docker.
+    - pgdata:/var/lib/postgresql
+    - ./deploy/postgres/init:/docker-entrypoint-initdb.d:ro
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+    interval: 5s
+    timeout: 5s
+    retries: 20
+    start_period: 20s
+  mem_limit: 512m
+  shm_size: 128m
+  logging: *logging
+
+x-keycloak-env: &keycloak-env
+  KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+  KC_DB_USERNAME: keycloak
+  KC_DB_PASSWORD: ${KC_DB_PASSWORD:-keycloak-demo}
+  KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:-admin}
+  KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:-admin-demo}
+  KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+  # Placeholders do realm (deploy/keycloak/import*/furar-realm.json).
+  FURAR_SMTP_HOST: ${FURAR_SMTP_HOST:-mailpit}
+  FURAR_SMTP_PORT: ${FURAR_SMTP_PORT:-1025}
+  FURAR_SMTP_FROM: ${FURAR_SMTP_FROM:-furar@localhost}
+  # Segredo da proba da invitación (ADR-0027): o mesmo ca o da API (o por defecto da API en dev).
+  FURAR_INVITATION_PROOF_SECRET: ${FURAR_INVITATION_PROOF_SECRET:-furar-demo-invitation-proof-secret-not-for-production}
+
+x-keycloak: &keycloak
+  <<: *hardening
+  # Sen read_only: Keycloak escribe en /opt/keycloak/data (caché e ficheiros temporais).
+  image: furar-keycloak:local
+  build:
+    # Contexto na raíz: copia LICENSE (LIC-9; ver .dockerignore).
+    context: .
+    dockerfile: deploy/keycloak/Dockerfile
+    args: &furar-build-args
+      FURAR_REVISION: ${FURAR_REVISION:-unknown}
+      FURAR_VERSION: ${FURAR_VERSION:-dev}
+      FURAR_SOURCE: ${FURAR_SOURCE_URL:-https://github.com/elfermento/furar}
+  restart: unless-stopped
+  volumes:
+    # Realm de demo = realm de produción + usuarios e cliente furar-e2e (scripts/realm-demo.sh).
+    - ./deploy/keycloak/import-demo:/opt/keycloak/data/import:ro
+  # Código HTTP de /health/ready, non o texto "UP" (ver deploy/keycloak/Dockerfile).
+  healthcheck:
+    test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /auth/health/ready HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n' >&3 && grep -q '^HTTP/[0-9.]* 200 ' <&3"]
+    interval: 10s
+    timeout: 5s
+    retries: 12
+    start_period: 90s
+  mem_limit: 1024m
+  logging: *logging
+
+services:
+  # --- full -------------------------------------------------------------------
+  postgres:
+    <<: *postgres
+    profiles: [full]
+
+  keycloak:
+    <<: *keycloak
+    profiles: [full]
+    environment:
+      <<: *keycloak-env
+      KC_HOSTNAME: ${FURAR_PUBLIC_URL:-http://localhost:8080}/auth
+      FURAR_PUBLIC_URL: ${FURAR_PUBLIC_URL:-http://localhost:8080}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Migracións (SEC2-03): a imaxe da API co argumento `migrate` aplica Flyway como furar_owner e
+  # sae. A API depende de que remate ben e non recibe nunca o contrasinal do dono do esquema.
+  migrate:
+    <<: *hardening
+    image: furar-api:local
+    read_only: true
+    tmpfs: [/tmp]
+    pull_policy: never
+    profiles: [full]
+    command: ["migrate"]
+    restart: "no"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${FURAR_API_PROFILES:-demo}
+      FURAR_DB_URL: jdbc:postgresql://postgres:5432/furar
+      FURAR_DB_USER: furar_app
+      FURAR_DB_OWNER_USER: furar_owner
+      FURAR_DB_OWNER_PASSWORD: ${FURAR_DB_OWNER_PASSWORD:-furar-owner-demo}
+      TZ: UTC
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Proceso curto: sen o HEALTHCHECK da imaxe, que é o da API.
+    healthcheck:
+      disable: true
+    mem_limit: 384m
+    logging: *logging
+
+  api:
+    <<: *hardening
+    image: furar-api:local
+    # Raíz só lectura; Tomcat e a JVM escriben en /tmp.
+    read_only: true
+    tmpfs: [/tmp]
+    build:
+      # Contexto na raíz: copia LICENSE (LIC-9; ver .dockerignore).
+      context: .
+      dockerfile: api/Dockerfile
+      args: *furar-build-args
+    profiles: [full]
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: ${FURAR_API_PROFILES:-demo}
+      FURAR_DB_URL: jdbc:postgresql://postgres:5432/furar
+      # Sen superusuario nin dono (SEC-02, SEC2-03): a API só fai DML e non migra (servizo migrate).
+      FURAR_DB_USER: furar_app
+      FURAR_DB_PASSWORD: ${FURAR_DB_PASSWORD:-furar-app-demo}
+      SPRING_FLYWAY_ENABLED: "false"
+      FURAR_PUBLIC_URL: ${FURAR_PUBLIC_URL:-http://localhost:8080}
+      FURAR_JWK_SET_URI: http://keycloak:8082/auth/realms/furar/protocol/openid-connect/certs
+      FURAR_API_PORT: "8081"
+      FURAR_ACTUATOR_PORT: "9081"
+      SPRING_MAIL_HOST: ${FURAR_SMTP_HOST:-mailpit}
+      SPRING_MAIL_PORT: ${FURAR_SMTP_PORT:-1025}
+      # Remitente dos correos das reservas (o nome visible é o do concello).
+      FURAR_SMTP_FROM: ${FURAR_SMTP_FROM:-furar@localhost}
+      # Busca de enderezos (ADR-0023): cartociudad (www.cartociudad.es, polo servidor) ou fixed
+      # (Narón e Ferrol gardados, sen rede; tests e e2e). Non depende do perfil demo.
+      FURAR_GEOCODER: ${FURAR_GEOCODER:-cartociudad}
+      # Proxy saínte opcional (http://host:porto) para CartoCiudad. Baleiro = saída directa.
+      FURAR_HTTP_PROXY: ${FURAR_HTTP_PROXY:-}
+      # Mapa (ADR-0023, revisión do 2026-11-03): a web le de aquí se hai mapa e o recoñecemento
+      # que vai á vista. Por defecto, o Mapa base do IGN (CC BY 4.0); FURAR_MAP=off quítao.
+      FURAR_MAP: ${FURAR_MAP:-on}
+      FURAR_MAP_ATTRIBUTION: ${FURAR_MAP_ATTRIBUTION:-CC BY 4.0 scne.es}
+      FURAR_MAP_ATTRIBUTION_URL: ${FURAR_MAP_ATTRIBUTION_URL:-https://www.scne.es}
+      # Rexistro de actividade (ADR-0020): visible na xestión e conservación, con bloqueo entre os dous.
+      FURAR_AUDIT_VISIBLE: ${FURAR_AUDIT_VISIBLE:-P1Y}
+      FURAR_AUDIT_RETENTION: ${FURAR_AUDIT_RETENTION:-P3Y}
+      # O mesmo segredo ca Keycloak: asina a proba da invitación (ADR-0027).
+      FURAR_INVITATION_PROOF_SECRET: ${FURAR_INVITATION_PROOF_SECRET:-furar-demo-invitation-proof-secret-not-for-production}
+      # Primeira administración da plataforma (ADR-0028); na demo xa a hai (admin-plataforma).
+      FURAR_ADMIN_EMAIL: ${FURAR_ADMIN_EMAIL:-}
+      # Idiomas que todo concello ofrece (ADR-0003). Sen definir, gl; definido e baleiro, ningún.
+      # Vale tamén en produción (compose.prod.yaml engade ao mesmo environment).
+      FURAR_REQUIRED_LANGUAGES: ${FURAR_REQUIRED_LANGUAGES-gl}
+      TZ: UTC
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9081/actuator/health/readiness"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+    mem_limit: 1024m
+    logging: *logging
+
+  web:
+    <<: *hardening
+    image: furar-web:local
+    # Caddy escribe autosave en /config e o estado en /data (produción: volume caddydata).
+    read_only: true
+    tmpfs: [/tmp, /config, /data]
+    build:
+      # Contexto na raíz: precisa api/openapi.json e deploy/caddy/ (ver .dockerignore).
+      context: .
+      dockerfile: web/Dockerfile
+      # Etiqueta OCI org.opencontainers.image.revision (publicar-imaxes.sh exporta o commit).
+      args: *furar-build-args
+    profiles: [full]
+    restart: unless-stopped
+    environment:
+      FURAR_SITE_ADDRESS: ${FURAR_SITE_ADDRESS:-:8080}
+      # Local: só redes privadas e loopback. Produción: compose.prod.yaml esíxeo (SEC-01).
+      FURAR_ADMIN_IPS: ${FURAR_ADMIN_IPS:-127.0.0.0/8 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 ::1/128 fc00::/7}
+      FURAR_SOURCE_URL: ${FURAR_SOURCE_URL:-https://github.com/elfermento/furar}
+      # Teselas do mapa por Caddy en /tiles (ADR-0023, revisión do 2026-11-03): o mesmo FURAR_MAP
+      # ca a API (off = sen mapa), esquema e host do servidor e plantilla con {z}, {x} e {y}. Por
+      # defecto, en local, na demo e en produción, o Mapa base do IGN (plantilla baleira = a súa).
+      FURAR_MAP: ${FURAR_MAP:-on}
+      FURAR_MAP_TILES_UPSTREAM: ${FURAR_MAP_TILES_UPSTREAM:-https://www.ign.es}
+      FURAR_MAP_TILES_TEMPLATE: ${FURAR_MAP_TILES_TEMPLATE:-}
+      # O mesmo proxy saínte ca a API: Caddy úsao para as teselas (e para Let's Encrypt).
+      HTTPS_PROXY: ${FURAR_HTTP_PROXY:-}
+    # Só neste equipo (SEC3-01): usuarios e contrasinais de demo son públicos. Abrilo á rede local
+    # é unha decisión explícita: FURAR_HTTP_BIND=0.0.0.0 e FURAR_ADMIN_IPS=127.0.0.1/32 (.env.example).
+    ports:
+      - "${FURAR_HTTP_BIND:-127.0.0.1}:${FURAR_HTTP_PORT:-8080}:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    mem_limit: 128m
+    logging: *logging
+
+  # --- dev --------------------------------------------------------------------
+  postgres-dev:
+    <<: *postgres
+    profiles: [dev]
+    networks:
+      default:
+        aliases: [postgres]
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  keycloak-dev:
+    <<: *keycloak
+    profiles: [dev]
+    environment:
+      <<: *keycloak-env
+      KC_HOSTNAME: http://localhost:4200/auth
+      KC_HOSTNAME_ADMIN: http://localhost:8082/auth
+      FURAR_PUBLIC_URL: http://localhost:4200
+    networks:
+      default:
+        aliases: [keycloak]
+    ports:
+      - "127.0.0.1:8082:8082"
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+
+  # --- dev e full -------------------------------------------------------------
+  mailpit:
+    <<: *hardening
+    read_only: true
+    tmpfs: [/tmp]
+    image: axllent/mailpit:v1.31.6@sha256:23fe39e81bde596a918000b3135c0f85dc8bb4c9ea6be274b051143f3e300387
+    profiles: [dev, full]
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      MP_MAX_MESSAGES: 500
+      MP_SMTP_AUTH_ACCEPT_ANY: "true"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "true"
+    ports:
+      - "127.0.0.1:8025:8025"
+      - "127.0.0.1:1025:1025"
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 5s
+    mem_limit: 128m
+    logging: *logging
+
+volumes:
+  pgdata:

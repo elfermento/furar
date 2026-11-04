@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+dist/
+coverage/
+.angular/
+node_modules/
+src/app/api/
+playwright-report/
+test-results/
+test-results-json/
+bom.json
+package-lock.json
+*.md

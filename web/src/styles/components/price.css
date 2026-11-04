@@ -1,0 +1,26 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Prezo dunha fila ou tarxeta (furar-price, maqueta 54): importe en negriña aliñado ao final e a
+ * que se refire debaixo, en ton suave. Nunha liña flexible vai ao final (`margin-inline-start`).
+ */
+@layer components {
+  .f-price {
+    display: grid;
+    margin-inline-start: auto;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    text-align: end;
+    white-space: nowrap;
+  }
+  .f-price small {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 400;
+  }
+  .f-price[data-muted] {
+    color: var(--f-ink-soft);
+    font-weight: 400;
+  }
+}

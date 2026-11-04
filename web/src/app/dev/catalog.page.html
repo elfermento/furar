@@ -1,0 +1,185 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<furar-page-header [heading]="'catalog.title' | transloco" [intro]="'catalog.intro' | transloco">
+  <div pageActions role="group" furarSegmented [attr.aria-label]="'catalog.theme' | transloco">
+    @for (name of themes; track name) {
+      <button type="button" [attr.aria-pressed]="name === current()" (click)="use(name)">
+        {{ 'catalog.themes.' + name | transloco }}
+      </button>
+    }
+  </div>
+</furar-page-header>
+
+<div class="gap-group grid">
+  <furar-card [heading]="'catalog.buttons' | transloco">
+    <div class="gap-item flex flex-wrap items-center">
+      <button type="button" furarButton="primary">{{ 'catalog.sample.primary' | transloco }}</button>
+      <button type="button" furarButton>{{ 'catalog.sample.secondary' | transloco }}</button>
+      <button type="button" furarButton="danger">{{ 'catalog.sample.danger' | transloco }}</button>
+      <button type="button" furarButton="quiet">{{ 'catalog.sample.quiet' | transloco }}</button>
+      <button type="button" furarButton size="sm">{{ 'catalog.sample.small' | transloco }}</button>
+      <button type="button" furarButton="primary" size="lg">
+        <furar-icon name="plus" />
+        {{ 'catalog.sample.large' | transloco }}
+      </button>
+      <button type="button" furarButton="primary" busy disabled>{{ 'common.saving' | transloco }}</button>
+      <button type="button" furarButton disabled>{{ 'catalog.sample.disabled' | transloco }}</button>
+    </div>
+  </furar-card>
+
+  <furar-card [heading]="'catalog.fields' | transloco">
+    <furar-required-note />
+    <div class="f-field-row grid-cols-1 sm:grid-cols-2">
+      <furar-field
+        fieldId="catalog-name"
+        [label]="'catalog.sample.name' | transloco"
+        [help]="'catalog.sample.nameHelp' | transloco"
+        [required]="true"
+      >
+        <input id="catalog-name" furarInput aria-required="true" aria-describedby="catalog-name-help" />
+      </furar-field>
+      <furar-field fieldId="catalog-error" [label]="'catalog.sample.name' | transloco" [error]="requiredError">
+        <input id="catalog-error" furarInput aria-invalid="true" aria-describedby="catalog-error-error" />
+      </furar-field>
+      <furar-field fieldId="catalog-notes" [label]="'catalog.sample.notes' | transloco">
+        <textarea id="catalog-notes" furarInput></textarea>
+      </furar-field>
+    </div>
+  </furar-card>
+
+  <furar-catalog-select />
+
+  <fieldset furarFieldset>
+    <legend>{{ 'catalog.group' | transloco }}</legend>
+    <div class="gap-unit flex flex-col">
+      <label class="inline-flex min-h-11 items-center gap-unit">
+        <input type="radio" class="size-6" name="catalog-radio" checked />
+        {{ 'catalog.sample.optionA' | transloco }}
+      </label>
+      <label class="inline-flex min-h-11 items-center gap-unit">
+        <input type="radio" class="size-6" name="catalog-radio" />
+        {{ 'catalog.sample.optionB' | transloco }}
+      </label>
+      <label class="inline-flex min-h-11 items-center gap-unit">
+        <input type="checkbox" class="size-6" checked />
+        {{ 'catalog.sample.choice' | transloco }}
+      </label>
+    </div>
+  </fieldset>
+
+  <furar-card [heading]="'catalog.timePicker' | transloco" id="selector-hora">
+    <p class="f-help" id="catalog-time-help">{{ 'catalog.sample.timeHelp' | transloco }}</p>
+    <div class="gap-unit flex flex-wrap items-center" [formGroup]="hours">
+      <span aria-hidden="true">{{ 'catalog.sample.timeFromVisible' | transloco }}</span>
+      <furar-time-picker
+        formControlName="from"
+        describedBy="catalog-time-help"
+        [label]="'catalog.sample.timeFrom' | transloco"
+        [max]="hours.controls.to.value - 15"
+      />
+      <span aria-hidden="true">{{ 'catalog.sample.timeToVisible' | transloco }}</span>
+      <furar-time-picker
+        formControlName="to"
+        allowEndOfDay
+        describedBy="catalog-time-help"
+        [label]="'catalog.sample.timeTo' | transloco"
+        [min]="hours.controls.from.value + 15"
+      />
+      <furar-time-picker formControlName="closed" [label]="'catalog.sample.timeDisabled' | transloco" />
+    </div>
+  </furar-card>
+
+  <furar-catalog-overlays />
+
+  <furar-catalog-edit />
+
+  <furar-card [heading]="'catalog.callouts' | transloco">
+    <div class="gap-item grid">
+      @for (tone of tones; track tone) {
+        <furar-callout [tone]="tone" [heading]="'catalog.sample.calloutTitle' | transloco">
+          <p>{{ 'catalog.sample.calloutText' | transloco }}</p>
+        </furar-callout>
+      }
+    </div>
+  </furar-card>
+
+  <furar-card [heading]="'catalog.context' | transloco" id="avisos-contexto">
+    <div class="gap-form grid">
+      <furar-callout tone="danger" [heading]="'catalog.ctx.errorTitle' | transloco">
+        <p>{{ 'catalog.ctx.errorText' | transloco }}</p>
+      </furar-callout>
+      <furar-field fieldId="ctx-label" [label]="'catalog.ctx.label' | transloco" [required]="true">
+        <input id="ctx-label" furarInput [value]="'catalog.ctx.sample' | transloco" />
+      </furar-field>
+      <furar-field fieldId="ctx-code" [label]="'catalog.ctx.code' | transloco" [error]="requiredError">
+        <input id="ctx-code" furarInput aria-invalid="true" aria-describedby="ctx-code-error" />
+      </furar-field>
+      <div>
+        <!-- O que sae ben vai en toast (docs/deseno.md §8, «Toast de feito»); erros e avisos, fixos na páxina. -->
+        <button type="button" furarButton="primary" data-catalog-toast (click)="toasts.show('catalog.ctx.okTitle')">
+          {{ 'catalog.ctx.save' | transloco }}
+        </button>
+      </div>
+    </div>
+  </furar-card>
+
+  <furar-card [heading]="'catalog.rows' | transloco">
+    <ul furarRowList [attr.aria-label]="'catalog.rows' | transloco">
+      <li><furar-row [label]="'catalog.sample.rowLink' | transloco" link="/" /></li>
+      <li>
+        <furar-row icon="info" [label]="'catalog.sample.rowActions' | transloco">
+          {{ 'catalog.sample.rowDetail' | transloco }}
+          <furar-tag>{{ 'catalog.sample.tag' | transloco }}</furar-tag>
+          <span rowValue class="font-bold">{{ 'catalog.sample.rowValue' | transloco }}</span>
+          <button rowActions type="button" furarButton size="sm">{{ 'catalog.sample.secondary' | transloco }}</button>
+        </furar-row>
+      </li>
+    </ul>
+  </furar-card>
+
+  <furar-card [heading]="'catalog.states' | transloco">
+    <div class="grid sm:grid-cols-3">
+      <furar-status-state [description]="'catalog.sample.empty' | transloco">
+        <button type="button" furarButton size="sm">{{ 'catalog.sample.primary' | transloco }}</button>
+      </furar-status-state>
+      <furar-status-state mode="loading" />
+      <furar-status-state
+        mode="error"
+        [headingLevel]="3"
+        [heading]="'catalog.sample.errorTitle' | transloco"
+        [description]="'catalog.sample.errorText' | transloco"
+      />
+    </div>
+  </furar-card>
+
+  <furar-catalog-dates />
+  <furar-catalog-search />
+  <furar-catalog-map />
+  <furar-catalog-charts />
+  <furar-catalog-indicators />
+
+  <furar-catalog-choices />
+  <furar-catalog-booking />
+  <furar-catalog-media />
+  <furar-catalog-editing />
+
+  <furar-card [heading]="'catalog.tags' | transloco">
+    @for (look of tagLooks; track look) {
+      <div class="gap-unit mb-item flex flex-wrap last:mb-0" [attr.data-look-row]="look">
+        @for (tone of tagTones; track tone) {
+          <furar-tag [tone]="tone" [look]="look">{{ 'catalog.sample.tag' | transloco }}</furar-tag>
+        }
+      </div>
+    }
+    <div class="gap-unit flex flex-wrap" data-look-row="soft">
+      <furar-tag look="soft">{{ 'catalog.sample.tag' | transloco }}</furar-tag>
+      <furar-tag look="soft">{{ 'catalog.sample.softTag' | transloco }}</furar-tag>
+    </div>
+  </furar-card>
+
+  <furar-card tone="tint" [heading]="'catalog.card' | transloco">
+    <p>{{ 'catalog.sample.cardText' | transloco }}</p>
+  </furar-card>
+</div>

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Rexeita o commit antes de crealo se a mensaxe non cumpre D46 (Conventional Commits + DCO).
+# Actívase unha vez por clon: git config core.hooksPath .githooks
+exec "$(git rev-parse --show-toplevel)/scripts/probar-commits.sh" --mensaxe "$1"

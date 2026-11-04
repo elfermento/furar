@@ -1,0 +1,51 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Aceptar unha invitación ao persoal (D4-15): a card de cada estado e as accións, que no móbil
+ * ocupan o ancho. Nos estados de erro, a explicación vai enriba do botón. Sen scroll horizontal
+ * a 320 px. Folla `xestion.css`: a ruta leva `managementStylesResolver`.
+ */
+@layer components {
+  .f-invitation {
+    display: grid;
+    gap: var(--spacing-group);
+    max-inline-size: 48rem;
+    margin-inline: auto;
+  }
+  .f-invitation > .f-page-header {
+    margin-bottom: 0;
+  }
+  .f-invitation .f-status__action > .f-invitation__note {
+    margin: 0 0 var(--spacing-item);
+  }
+
+  .f-invitation__body {
+    display: grid;
+    gap: var(--spacing-item);
+  }
+  .f-invitation__body > * {
+    margin: 0;
+  }
+  .f-invitation__note {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-invitation__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-item);
+  }
+  /* «Outra conta»: os dous botóns, centrados baixo o título. */
+  .f-status__action > .f-invitation__actions {
+    justify-content: center;
+  }
+  @media (max-width: 39.99rem) {
+    .f-invitation__actions > .f-button {
+      flex: 1 1 100%;
+    }
+  }
+  .f-invitation p {
+    overflow-wrap: anywhere;
+  }
+}

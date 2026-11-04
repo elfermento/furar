@@ -1,0 +1,171 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.public.';
+<div class="f-public">
+  <a [routerLink]="['/', slug(), 'instalacions']" furarButton="quiet" size="sm" class="justify-self-start">
+    <furar-icon name="chevron-left" />
+    {{ t + 'back' | transloco }}
+  </a>
+
+  @switch (store.state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="card" [rows]="2" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [headingLevel]="1"
+        [heading]="(notFound() ? t + 'notFound.title' : t + 'loadError.title') | transloco"
+        [description]="(notFound() ? t + 'notFound.text' : t + 'loadError.text') | transloco"
+      >
+        @if (!notFound()) {
+          <button type="button" furarButton (click)="load()">{{ t + 'loadError.retry' | transloco }}</button>
+        }
+      </furar-status-state>
+    }
+    @case ('ready') {
+      @if (store.facility(); as f) {
+        <div class="f-public__title">
+          <h1>{{ f.name }}</h1>
+          @if (f.temporarilyClosed) {
+            <furar-tag tone="muted">{{ 'home.facilities.closed' | transloco }}</furar-tag>
+          }
+        </div>
+        <div class="f-public__cols">
+          <div class="f-public__main">
+            @if (cover(); as image) {
+              <img
+                class="f-public__image"
+                [src]="image.large"
+                [srcset]="image.thumb + ' 480w, ' + image.large + ' ' + image.width + 'w'"
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                [width]="image.width"
+                [height]="image.height"
+                [alt]="alt(image)"
+              />
+            }
+            @if (description(); as text) {
+              <section class="f-public__section" aria-labelledby="public-description">
+                <h2 id="public-description">{{ t + 'description' | transloco }}</h2>
+                <p class="whitespace-pre-line text-ink-soft">{{ text }}</p>
+              </section>
+            }
+            @if (f.uses.length) {
+              <section class="f-public__section" aria-labelledby="public-uses">
+                <h2 id="public-uses">{{ t + 'uses' | transloco }}</h2>
+                <ul class="f-public__uses" data-public-uses>
+                  @for (use of f.uses; track use.id) {
+                    <li>
+                      <div class="min-w-0">
+                        <h3>{{ use.name }}</h3>
+                        <p class="text-ink-soft">{{ useDetail(use) }}</p>
+                      </div>
+                      @if (price(use); as amount) {
+                        <span class="f-public__price" data-use-price>
+                          {{ amount }}
+                          @if (use.price.per === 'PERSON') {
+                            <small>{{ t + 'price.perPerson' | transloco }}</small>
+                          }
+                        </span>
+                      } @else if (use.price.kind === 'FREE') {
+                        <furar-tag tone="info" data-use-price>{{ t + 'price.FREE' | transloco }}</furar-tag>
+                      }
+                    </li>
+                  }
+                </ul>
+              </section>
+            }
+            @if (before().length || houseRules()) {
+              <section class="f-public__section" aria-labelledby="public-before" data-public-before>
+                <h2 id="public-before">{{ t + 'before.title' | transloco }}</h2>
+                @if (before().length) {
+                  <ul class="f-public__before">
+                    @for (item of before(); track item.key) {
+                      <li [attr.data-before]="item.key">
+                        <furar-icon [name]="item.icon" [size]="24" />
+                        <span>
+                          <b class="block">{{ t + 'before.' + item.key | transloco }}</b>
+                          @for (line of item.lines; track $index) {
+                            <span class="block text-ink-soft">{{ line }}</span>
+                          }
+                        </span>
+                      </li>
+                    }
+                  </ul>
+                }
+                @if (houseRules(); as rules) {
+                  <div class="f-public__note" data-house-rules>
+                    <h3>{{ t + 'before.houseRules' | transloco }}</h3>
+                    <p class="whitespace-pre-line">{{ rules }}</p>
+                  </div>
+                }
+              </section>
+            }
+            @if (f.amenities.length) {
+              <section class="f-public__section" aria-labelledby="public-amenities">
+                <h2 id="public-amenities">{{ 'facility.amenities.title' | transloco }}</h2>
+                <ul class="f-public__amenities">
+                  @for (item of f.amenities; track item) {
+                    <li>
+                      <furar-icon [name]="iconOf(item)" [size]="24" />
+                      {{ 'facility.amenities.item.' + item | transloco }}
+                    </li>
+                  }
+                </ul>
+              </section>
+            }
+            <!-- Sen mapa no despregue, o enderezo xa está na tarxeta: «Como chegar» non se repite. -->
+            @if (mapEnabled()) {
+              <section class="f-public__section" aria-labelledby="public-map">
+                <h2 id="public-map">{{ t + 'howToGet' | transloco }}</h2>
+                <furar-map [point]="point()" [label]="t + 'pin' | transloco: { name: f.name }" />
+              </section>
+            }
+          </div>
+          <aside class="f-public__side" [attr.aria-label]="t + 'card' | transloco">
+            <furar-public-facility-card [facility]="f">
+              @if (f.bookable) {
+                <a
+                  furarButton="primary"
+                  block
+                  class="f-public-card__reserve"
+                  data-public-reserve
+                  [routerLink]="['/', slug(), 'instalacions', f.id, 'reservar']"
+                >
+                  {{ t + 'reserve' | transloco }}
+                  <furar-icon name="arrow-right" />
+                </a>
+              }
+            </furar-public-facility-card>
+            @if (closures().length) {
+              <section class="f-public-card" aria-labelledby="public-closures" data-public-closures>
+                <div class="f-public-card__item">
+                  <furar-icon name="event-busy" [size]="24" />
+                  <div class="min-w-0 flex-1">
+                    <h2 id="public-closures" class="f-public-card__title">{{ t + 'closures' | transloco }}</h2>
+                    <ul class="f-public-closures">
+                      @for (line of closures(); track line.key) {
+                        <li>
+                          <b>{{ line.dates }}</b
+                          >&ngsp;
+                          <span>
+                            <span class="block">{{ line.what }}</span>
+                            @if (line.why) {
+                              &ngsp;<span class="block text-ink-soft">{{ line.why }}</span>
+                            }
+                          </span>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                </div>
+              </section>
+            }
+          </aside>
+        </div>
+      }
+    }
+  }
+</div>

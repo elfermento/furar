@@ -1,0 +1,470 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+ * SPDX-License-Identifier: EUPL-1.2
+ *
+ * Estilo de Furar sobre keycloak.v2 (PatternFly 5): o da web e o das maquetas do acceso
+ * (tipografía, cores, tarxeta, campos e botóns). As cores son os tokens da web
+ * (web/src/styles/tokens.css), con contraste AA (4,5:1 texto, 3:1 bordos e controis).
+ * A letra é a da web (Atkinson Hyperlegible Next, OFL-1.1, resources/fonts).
+ */
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/atkinson-hyperlegible-next-latin-400-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(../fonts/atkinson-hyperlegible-next-latin-700-normal.woff2) format('woff2');
+}
+
+:root {
+  --f-page: #f5f8fa;
+  --f-surface: #ffffff;
+  --f-tint: #e7eff4;
+  --f-ink: #1a1a1a;
+  --f-ink-soft: #5a5a5a;
+  --f-divider: #dadada;
+  --f-line: #818181;
+  --f-primary: #0b5c8e;
+  --f-primary-hover: #094e79;
+  --f-on-primary: #ffffff;
+  --f-danger: #c6362c;
+  --f-success: #2a7b3e;
+  --f-shadow-color: rgb(0 0 0 / 0.12);
+  --f-font: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  --f-radius-control: 0.75rem;
+  --f-radius-card: 1.25rem;
+  --f-touch: 2.75rem;
+
+  --pf-v5-global--FontFamily--text: var(--f-font);
+  --pf-v5-global--FontFamily--heading: var(--f-font);
+  --pf-v5-global--FontFamily--redhat-updated--sans-serif: var(--f-font);
+  --pf-v5-global--FontFamily--redhat-updated--heading--sans-serif: var(--f-font);
+  --pf-v5-global--FontFamily--sans-serif: var(--f-font);
+  --pf-v5-global--FontFamily--heading--sans-serif: var(--f-font);
+  --pf-v5-global--primary-color--100: var(--f-primary);
+  --pf-v5-global--primary-color--200: var(--f-primary-hover);
+  --pf-v5-global--link--Color: var(--f-primary);
+  --pf-v5-global--link--Color--hover: var(--f-primary-hover);
+  --pf-v5-global--Color--100: var(--f-ink);
+  --pf-v5-global--Color--200: var(--f-ink-soft);
+  --pf-v5-global--BackgroundColor--100: var(--f-surface);
+  --pf-v5-global--danger-color--100: var(--f-danger);
+}
+
+/*
+ * Escuro (template.ftl pon data-theme="dark" antes de pintar só se a web gardou o esquema escuro dun
+ * concello): deriveTokens(tema escuro de referencia) da web (core/theme/theme-tokens.ts; o dos tests
+ * e do catálogo: fondo #0d1117 case negro, texto #f0f6fc case branco, primary #4493f8), cos mesmos
+ * contrastes comprobados. A sombra é negra e máis forte: sobre fondo escuro a clara non se ve.
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --f-page: #0d1117;
+  --f-surface: #171b20;
+  --f-tint: #1a222d;
+  --f-ink: #f0f6fc;
+  --f-ink-soft: #999ea4;
+  --f-divider: #3a3e43;
+  --f-line: #8e9399;
+  --f-primary: #4493f8;
+  --f-primary-hover: #60a3f9;
+  --f-on-primary: #0a0a0a;
+  --f-danger: #e3857d;
+  --f-success: #3db65c;
+  --f-shadow-color: rgb(0 0 0 / 0.4);
+}
+
+html.login-pf,
+.login-pf body,
+body#keycloak-bg {
+  background: var(--f-page) !important;
+  color: var(--f-ink);
+  font-family: var(--f-font);
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+
+/* Columna centrada: marca enriba e tarxeta. A 320 px, 1 rem de marxe e sen scroll horizontal. */
+.pf-v5-c-login {
+  display: block;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+.pf-v5-c-login__container {
+  display: block !important;
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: 0 !important;
+}
+.pf-v5-c-login__header {
+  padding: 0 0 1.25rem !important;
+  margin: 0 !important;
+}
+
+/* Marca: o cadrado e o nome do despregue co servizo (template.ftl). */
+#kc-header-wrapper.furar-brand {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.1;
+  color: var(--f-ink) !important;
+}
+.furar-brand__mark {
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  background: var(--f-primary);
+}
+.furar-brand__text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  min-width: 0;
+}
+.furar-brand__name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.furar-brand__service {
+  color: var(--f-ink-soft);
+  font-size: 0.875rem;
+}
+
+/* Tarxeta. */
+.pf-v5-c-login__main {
+  margin: 0 !important;
+  padding: 1.5rem 1.25rem !important;
+  background: var(--f-surface) !important;
+  border: 1px solid var(--f-divider);
+  border-radius: var(--f-radius-card);
+  box-shadow: 0 1px 2px var(--f-shadow-color), 0 8px 24px rgb(0 0 0 / 0.06);
+}
+@media (min-width: 30rem) {
+  .pf-v5-c-login__main {
+    padding: 2rem !important;
+  }
+}
+.pf-v5-c-login__main-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  justify-items: center;
+  gap: 0.75rem;
+  padding: 0 0 1.25rem !important;
+  border-top: 0 !important;
+}
+.pf-v5-c-login__main-header .pf-v5-c-title,
+#kc-page-title {
+  margin: 0;
+  font-family: var(--f-font);
+  font-size: 1.5rem !important;
+  line-height: 1.25 !important;
+  font-weight: 700 !important;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.pf-v5-c-login__main-header-utilities {
+  grid-row: 1;
+  justify-self: end;
+}
+.pf-v5-c-login__main-body,
+.pf-v5-c-login__main-footer {
+  padding: 0 !important;
+}
+.pf-v5-c-login__main-footer-band {
+  margin: 1.25rem 0 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  text-align: center;
+  background: none !important;
+}
+
+/* Formularios. */
+.pf-v5-c-form {
+  --pf-v5-c-form--GridGap: 1.25rem;
+  font-family: var(--f-font);
+}
+.pf-v5-c-form__label,
+.pf-v5-c-form__label-text {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--f-ink);
+}
+.pf-v5-c-form__label-required {
+  color: var(--f-danger);
+}
+.pf-v5-c-helper-text__item-text {
+  font-size: 0.875rem;
+  color: var(--f-ink-soft);
+}
+.pf-v5-c-helper-text__item-text.pf-m-error,
+.pf-m-error .pf-v5-c-helper-text__item-text {
+  color: var(--f-danger);
+  font-weight: 700;
+}
+/*
+ * Axuda entre o rótulo e o campo (docs/deseno.md P1-3, desde o 2026-11-04): a do contrasinal
+ * («Mínimo 12 caracteres») chega dentro da macro base, despois do campo; aquí sóbese á vista,
+ * xusto baixo o rótulo. O erro segue debaixo do campo.
+ */
+.pf-v5-c-form__group:has([id^='furar-password-help-']) > * {
+  order: 3;
+}
+.pf-v5-c-form__group:has([id^='furar-password-help-']) > :first-child {
+  order: 1;
+}
+.pf-v5-c-form__group:has([id^='furar-password-help-']) > :has([id^='furar-password-help-']) {
+  order: 2;
+}
+.pf-v5-c-form-control {
+  --pf-v5-c-form-control--BorderRadius: var(--f-radius-control);
+  min-height: var(--f-touch);
+  border-radius: var(--f-radius-control);
+  background: var(--f-surface);
+  font-family: var(--f-font);
+  font-size: 1rem;
+}
+.pf-v5-c-form-control::before {
+  border: 1px solid var(--f-line) !important;
+  border-radius: var(--f-radius-control) !important;
+}
+.pf-v5-c-form-control::after {
+  border: 0 !important;
+}
+.pf-v5-c-form-control:focus-within::before {
+  border: 2px solid var(--f-primary) !important;
+}
+/* O foco, no campo enteiro e coas súas esquinas (o input non pinta o seu). */
+.pf-v5-c-form-control:has(> input:focus-visible),
+.pf-v5-c-form-control:has(> select:focus-visible) {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+.pf-v5-c-form-control > input:focus-visible,
+.pf-v5-c-form-control > select:focus-visible {
+  outline: none;
+}
+.pf-v5-c-form-control.pf-m-error::before {
+  border: 2px solid var(--f-danger) !important;
+}
+.pf-v5-c-form-control.pf-m-readonly {
+  background: var(--f-tint);
+}
+.pf-v5-c-form-control > input,
+.pf-v5-c-form-control > select {
+  min-height: var(--f-touch);
+  padding-inline: 0.875rem;
+  font: inherit;
+  color: var(--f-ink);
+}
+/* Selector de idioma: sitio para a frecha e o fondo do campo (en escuro, PatternFly pon un gris). */
+.pf-v5-c-form-control > select {
+  padding-inline-end: 2.25rem;
+  background-color: transparent;
+}
+/* Contrasinal co botón de ver: un só campo co bordo e o foco por fóra; o botón vai dentro. */
+.pf-v5-c-input-group {
+  min-width: 0;
+  border: 1px solid var(--f-line);
+  border-radius: var(--f-radius-control);
+  background: var(--f-surface);
+}
+.pf-v5-c-input-group:focus-within {
+  border: 2px solid var(--f-primary);
+  margin: -1px;
+}
+.pf-v5-c-input-group:has(input:focus-visible) {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+.pf-v5-c-input-group:has(.pf-m-error) {
+  border: 2px solid var(--f-danger);
+  margin: -1px;
+}
+.pf-v5-c-input-group .pf-v5-c-form-control,
+.pf-v5-c-input-group .pf-v5-c-form-control:has(> input:focus-visible) {
+  outline: none;
+  background: transparent;
+}
+.pf-v5-c-input-group .pf-v5-c-form-control::before,
+.pf-v5-c-input-group .pf-v5-c-form-control:focus-within::before,
+.pf-v5-c-input-group .pf-v5-c-form-control.pf-m-error::before,
+.pf-v5-c-input-group .pf-v5-c-button.pf-m-control::after {
+  border: 0 !important;
+}
+.pf-v5-c-input-group .pf-v5-c-button.pf-m-control {
+  min-width: var(--f-touch);
+  min-height: var(--f-touch);
+  border-radius: 0 var(--f-radius-control) var(--f-radius-control) 0;
+  background: transparent;
+  --pf-v5-c-button--m-control--BackgroundColor: transparent;
+  --pf-v5-c-button--m-control--Color: var(--f-ink-soft);
+}
+.pf-v5-c-input-group .pf-v5-c-button.pf-m-control:focus-visible {
+  outline-offset: -3px;
+}
+
+/* Botóns en pílula, coma na web (shared/ui/button). */
+.pf-v5-c-button {
+  --pf-v5-c-button--BorderRadius: 999px;
+  --pf-v5-c-button--FontWeight: 700;
+  font-family: var(--f-font);
+}
+.pf-v5-c-button.pf-m-primary,
+.pf-v5-c-button.pf-m-secondary,
+.pf-v5-c-button.pf-m-tertiary {
+  min-height: var(--f-touch);
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding-inline: 1.25rem;
+}
+.pf-v5-c-button.pf-m-primary {
+  --pf-v5-c-button--m-primary--BackgroundColor: var(--f-primary);
+  --pf-v5-c-button--m-primary--hover--BackgroundColor: var(--f-primary-hover);
+  --pf-v5-c-button--m-primary--focus--BackgroundColor: var(--f-primary-hover);
+  --pf-v5-c-button--m-primary--active--BackgroundColor: var(--f-primary-hover);
+  --pf-v5-c-button--m-primary--Color: var(--f-on-primary);
+  --pf-v5-c-button--m-primary--hover--Color: var(--f-on-primary);
+}
+.pf-v5-c-button.pf-m-secondary,
+.pf-v5-c-button.pf-m-tertiary {
+  --pf-v5-c-button--m-secondary--BackgroundColor: var(--f-surface);
+  --pf-v5-c-button--m-secondary--Color: var(--f-primary);
+  --pf-v5-c-button--m-secondary--hover--Color: var(--f-primary-hover);
+  --pf-v5-c-button--m-secondary--after--BorderColor: var(--f-primary);
+  --pf-v5-c-button--m-secondary--hover--after--BorderColor: var(--f-primary-hover);
+  --pf-v5-c-button--m-tertiary--BackgroundColor: var(--f-surface);
+  --pf-v5-c-button--m-tertiary--Color: var(--f-primary);
+  --pf-v5-c-button--m-tertiary--hover--Color: var(--f-primary-hover);
+  --pf-v5-c-button--m-tertiary--after--BorderColor: var(--f-primary);
+  --pf-v5-c-button--m-tertiary--hover--after--BorderColor: var(--f-primary-hover);
+}
+.pf-v5-c-button.pf-m-primary::after,
+.pf-v5-c-button.pf-m-secondary::after,
+.pf-v5-c-button.pf-m-tertiary::after {
+  border-radius: 999px;
+}
+#kc-social-providers .pf-v5-c-button.pf-m-tertiary {
+  /* A 320 px o nome do provedor coa icona non cabe nunha liña: parte, sen scroll (WCAG 1.4.10). */
+  white-space: normal;
+  --pf-v5-c-button--m-tertiary--after--BorderColor: var(--f-primary);
+  --pf-v5-c-button--m-tertiary--hover--after--BorderColor: var(--f-primary-hover);
+}
+/*
+ * Icona do provedor xenérico (Cl@ve simulada): o SVG da base trae o recheo negro fixo e en escuro
+ * desaparece. Pintámola coa cor do texto do botón (o primary, ≥ 3:1 sobre a superficie) cunha
+ * máscara do mesmo SVG; o padding deixa a imaxe orixinal sen sitio.
+ */
+#kc-social-providers img[src$='/social/default.svg'] {
+  box-sizing: border-box;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding-inline-start: 1.25rem;
+  background: currentColor;
+  -webkit-mask: url(../img/social/default.svg) center / contain no-repeat;
+  mask: url(../img/social/default.svg) center / contain no-repeat;
+}
+input.pf-v5-c-button[type='submit'] {
+  width: 100%;
+}
+
+.pf-v5-c-alert {
+  border-radius: var(--f-radius-control);
+}
+
+/* Ligazóns: subliñadas dentro do texto (WCAG 1.4.1; axe link-in-text-block). */
+a {
+  color: var(--f-primary);
+}
+a:hover {
+  color: var(--f-primary-hover);
+}
+#kc-registration a,
+#kc-form-options a,
+#kc-info a,
+.furar-privacy-notice a,
+.furar-switch a,
+.pf-v5-c-login__main-body p a,
+.kc-login-tooltip a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* «Xa tes conta? Entrar» (rexistro) e «Aínda non tes conta? Rexistrarse» (acceso), ao centro. */
+.furar-switch,
+#kc-registration {
+  margin: 0;
+  text-align: center;
+  font-size: 0.9375rem;
+}
+
+/* «Verificación do correo»: a pregunta e, debaixo, o botón «Reenviar o correo», ao centro. */
+.furar-verify-resend {
+  text-align: center;
+}
+.furar-verify-resend p {
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+}
+.furar-verify-resend .pf-v5-c-button:focus-visible {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+
+/* Protección de datos no rexistro: unha frase (RGPD art. 13, ADR-0017). */
+.furar-privacy-notice {
+  font-size: 0.875rem;
+  color: var(--f-ink-soft);
+}
+.furar-privacy-notice p {
+  margin: 0;
+}
+
+/*
+ * Pista de «Volver empezar» (o botón xunto ao usuario xa escrito). Na base abre á dereita do
+ * botón e, aínda escondida, ensancha a páxina: a 320 px había scroll horizontal (WCAG 1.4.10;
+ * atopouno o e2e do persoal, D4-17). Abre enriba, aliñada co botón, e vese tamén co foco do
+ * teclado, non só co rato (1.4.13).
+ */
+.kc-login-tooltip .kc-tooltip-text {
+  top: auto;
+  bottom: calc(100% + 6px);
+  left: auto;
+  right: 0;
+}
+.kc-login-tooltip .kc-tooltip-text::after {
+  display: none;
+}
+.kc-login-tooltip:focus-visible .kc-tooltip-text {
+  visibility: visible;
+  opacity: 0.9;
+}
+
+/* Só para lectores de pantalla. */
+.furar-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,430 @@
+{
+  "webClient": {
+    "description": "Demo: admite a web en ng serve (4200) e en compose full (8080)",
+    "rootUrl": "",
+    "baseUrl": "/",
+    "redirectUris": [
+      "http://localhost:4200/",
+      "http://localhost:8080/"
+    ],
+    "attributes": {
+      "pkce.code.challenge.method": "S256",
+      "post.logout.redirect.uris": "http://localhost:4200/##http://localhost:8080/"
+    }
+  },
+  "clients": [
+    {
+      "clientId": "furar-e2e",
+      "name": "Furar (probas automáticas, só demo)",
+      "description": "Só en dev/full: permite pedir tokens con usuario e contrasinal para D33 e o e2e. Nunca en produción.",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "protocolMappers": [
+        {
+          "name": "audience-furar-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.client.audience": "furar-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "019a0b6e-0000-7000-8000-000000000900",
+      "username": "admin-plataforma",
+      "enabled": true,
+      "email": "admin-plataforma@example.org",
+      "emailVerified": true,
+      "firstName": "Administración",
+      "lastName": "Plataforma",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-000000000902",
+      "username": "xestor-naron",
+      "enabled": true,
+      "email": "xestor-naron@example.org",
+      "emailVerified": true,
+      "firstName": "Xestora",
+      "lastName": "Narón",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-000000000901",
+      "username": "vecino-naron",
+      "enabled": true,
+      "email": "vecino-naron@example.org",
+      "emailVerified": true,
+      "firstName": "Veciño",
+      "lastName": "Narón",
+      "attributes": {
+        "locale": [
+          "es"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-000000000903",
+      "username": "xestor-ferrol",
+      "enabled": true,
+      "email": "xestor-ferrol@example.org",
+      "emailVerified": true,
+      "firstName": "Xestor",
+      "lastName": "Ferrol",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-000000000904",
+      "username": "recepcion-naron",
+      "enabled": true,
+      "email": "recepcion-naron@example.org",
+      "emailVerified": true,
+      "firstName": "Recepción",
+      "lastName": "Narón",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-000000000905",
+      "username": "ex-recepcion-naron",
+      "enabled": true,
+      "email": "ex-recepcion-naron@example.org",
+      "emailVerified": true,
+      "firstName": "Exrecepción",
+      "lastName": "Narón",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-000000000907",
+      "username": "xestor-verin",
+      "enabled": true,
+      "email": "xestor-verin@example.org",
+      "emailVerified": true,
+      "firstName": "Xestor",
+      "lastName": "Verín",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-000000000908",
+      "username": "xestor-vilardevos",
+      "enabled": true,
+      "email": "xestor-vilardevos@example.org",
+      "emailVerified": true,
+      "firstName": "Xestor",
+      "lastName": "Vilardevós",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-000000000909",
+      "username": "xestor-rios",
+      "enabled": true,
+      "email": "xestor-rios@example.org",
+      "emailVerified": true,
+      "firstName": "Xestor",
+      "lastName": "Riós",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-00000000090a",
+      "username": "xestor-castrelo-do-val",
+      "enabled": true,
+      "email": "xestor-castrelo-do-val@example.org",
+      "emailVerified": true,
+      "firstName": "Xestor",
+      "lastName": "Castrelo do Val",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-00000000090b",
+      "username": "xestor-cualedro",
+      "enabled": true,
+      "email": "xestor-cualedro@example.org",
+      "emailVerified": true,
+      "firstName": "Xestor",
+      "lastName": "Cualedro",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-00000000090c",
+      "username": "xestor-laza",
+      "enabled": true,
+      "email": "xestor-laza@example.org",
+      "emailVerified": true,
+      "firstName": "Xestor",
+      "lastName": "Laza",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-00000000090d",
+      "username": "xestor-monterrei",
+      "enabled": true,
+      "email": "xestor-monterrei@example.org",
+      "emailVerified": true,
+      "firstName": "Xestor",
+      "lastName": "Monterrei",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    },
+    {
+      "id": "019a0b6e-0000-7000-8000-00000000090e",
+      "username": "xestor-oimbra",
+      "enabled": true,
+      "email": "xestor-oimbra@example.org",
+      "emailVerified": true,
+      "firstName": "Xestor",
+      "lastName": "Oímbra",
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Furar-demo-2026",
+          "temporary": false
+        }
+      ],
+      "groups": []
+    }
+  ],
+  "identityProviders": [
+    {
+      "alias": "clave-simulada",
+      "displayName": "Cl@ve (simulada, só demo)",
+      "providerId": "saml",
+      "enabled": true,
+      "trustEmail": true,
+      "storeToken": false,
+      "addReadTokenRoleOnCreate": false,
+      "linkOnly": false,
+      "hideOnLogin": false,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "entityId": "${FURAR_PUBLIC_URL}/auth/realms/furar",
+        "idpEntityId": "${FURAR_PUBLIC_URL}/auth/realms/clave-simulada",
+        "singleSignOnServiceUrl": "${FURAR_PUBLIC_URL}/auth/realms/clave-simulada/protocol/saml",
+        "singleLogoutServiceUrl": "${FURAR_PUBLIC_URL}/auth/realms/clave-simulada/protocol/saml",
+        "useMetadataDescriptorUrl": "true",
+        "metadataDescriptorUrl": "http://localhost:8082/auth/realms/clave-simulada/protocol/saml/descriptor",
+        "nameIDPolicyFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+        "principalType": "SUBJECT",
+        "postBindingAuthnRequest": "true",
+        "postBindingResponse": "true",
+        "postBindingLogout": "true",
+        "wantAuthnRequestsSigned": "false",
+        "wantAssertionsSigned": "true",
+        "wantAssertionsEncrypted": "false",
+        "validateSignature": "true",
+        "signatureAlgorithm": "RSA_SHA256",
+        "allowCreate": "true",
+        "forceAuthn": "false",
+        "syncMode": "FORCE",
+        "guiOrder": "1"
+      }
+    }
+  ],
+  "identityProviderMappers": [
+    {
+      "name": "email",
+      "identityProviderAlias": "clave-simulada",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "config": {
+        "syncMode": "INHERIT",
+        "attribute.name": "email",
+        "user.attribute": "email"
+      }
+    },
+    {
+      "name": "firstName",
+      "identityProviderAlias": "clave-simulada",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "config": {
+        "syncMode": "INHERIT",
+        "attribute.name": "firstName",
+        "user.attribute": "firstName"
+      }
+    },
+    {
+      "name": "lastName",
+      "identityProviderAlias": "clave-simulada",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "config": {
+        "syncMode": "INHERIT",
+        "attribute.name": "lastName",
+        "user.attribute": "lastName"
+      }
+    },
+    {
+      "name": "username opaco",
+      "identityProviderAlias": "clave-simulada",
+      "identityProviderMapper": "saml-username-idp-mapper",
+      "config": {
+        "syncMode": "INHERIT",
+        "template": "${ALIAS}.${NAMEID}"
+      }
+    }
+  ]
+}

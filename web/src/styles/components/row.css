@@ -1,0 +1,122 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/* Lista de filas (ul[furarRowList] + furar-row, docs/deseno.md P1-7), coa ligazón estirada. */
+@layer components {
+  .f-row-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+  }
+  /* Divisores con sangría (P1-7): empezan e acaban co aire da fila, non no bordo da card. */
+  .f-row-list > li + li {
+    position: relative;
+  }
+  .f-row-list > li + li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    inset-inline: var(--spacing-item);
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  /* A fila non ten radio propio: só a primeira e a última seguen as esquinas da card. */
+  .f-row-list > li:first-child > furar-row > .f-row {
+    border-start-start-radius: calc(var(--radius-card) - var(--f-border));
+    border-start-end-radius: calc(var(--radius-card) - var(--f-border));
+  }
+  .f-row-list > li:last-child > furar-row > .f-row {
+    border-end-start-radius: calc(var(--radius-card) - var(--f-border));
+    border-end-end-radius: calc(var(--radius-card) - var(--f-border));
+  }
+  .f-row {
+    display: flex;
+    position: relative;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem var(--spacing-item);
+    min-height: var(--f-row-h);
+    padding: 0.75rem var(--spacing-item);
+  }
+  .f-row__main {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 14rem;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .f-row__label {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .f-row__detail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem var(--spacing-unit);
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-row__detail:empty,
+  .f-row__value:empty,
+  .f-row__actions:empty {
+    display: none;
+  }
+  .f-row__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-unit);
+  }
+  .f-row__icon,
+  .f-row__chevron {
+    flex: none;
+    color: var(--f-ink-soft);
+  }
+
+  /*
+   * Fila con ligazón en móbil (maqueta 01-listado, 390 px): a frecha queda arriba á dereita, ao
+   * lado do rótulo, e o valor (chip de estado…) baixa a unha liña propia debaixo do detalle.
+   */
+  @media (max-width: 40rem) {
+    .f-row:has(> .f-row__chevron) {
+      row-gap: var(--spacing-unit);
+    }
+    .f-row:has(> .f-row__chevron) > .f-row__main {
+      flex: 1 1 0;
+    }
+    .f-row:has(> .f-row__chevron) > .f-row__value {
+      order: 1;
+      flex-basis: 100%;
+    }
+  }
+
+  /* Ligazón estirada: toda a fila é clicable e o foco pinta a fila enteira. */
+  .f-row__link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .f-row__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .f-row__link:focus-visible {
+    outline: none;
+  }
+  .f-row__link:focus-visible::after {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: -3px;
+  }
+  @media (hover: hover) {
+    .f-row:has(.f-row__link:hover) {
+      background: var(--f-tint);
+    }
+    .f-row__link:hover {
+      text-decoration-line: underline;
+    }
+  }
+}

@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Escaneo semanal de vulnerabilidades (SEC-06, ADR-0016): as CVE aparecen despois de
+# publicar. Repite D05 + D49 (SBOM de Maven e npm) sobre main e escanea coa mesma política
+# (HIGH e CRITICAL corrixibles, .trivyignore.yaml) as imaxes da última release publicada.
+# Se falla, GitHub avisa a quen mantén o repositorio.
+name: Escaneo semanal
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependencias:
+    name: Dependencias (SBOM)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0 # D46 le o historial
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+          cache-dependency-path: api/pom.xml
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: web/.nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      # Inclúe D05 (SBOM) e D49 (Trivy sobre os SBOM): os mesmos comandos que a CI e o local.
+      - run: scripts/verificar.sh --parte compliance
+
+  imaxes:
+    name: Imaxes da última release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: scripts/escanear-release.sh

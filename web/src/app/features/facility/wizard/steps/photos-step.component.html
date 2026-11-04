@@ -1,0 +1,126 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.wizard.photos.';
+@let p = 'facility.photos.';
+<section class="gap-item grid" aria-labelledby="wizard-photos-upload">
+  <h3 id="wizard-photos-upload" class="sr-only">{{ p + 'library.upload' | transloco }}</h3>
+  <furar-file-drop
+    [title]="t + 'drop' | transloco"
+    [button]="p + 'library.upload' | transloco"
+    [help]="help()"
+    [accept]="accept"
+    [disabled]="left() <= 0"
+    (files)="upload($event)"
+  />
+  <ul class="grid" aria-live="polite">
+    @if (uploading()) {
+      <li>{{ p + 'library.uploading' | transloco: { name: uploading() } }}</li>
+    }
+    @for (note of notes(); track $index) {
+      <li class="f-field-error">{{ note }}</li>
+    }
+  </ul>
+
+  @if (images().length) {
+    <div class="gap-unit grid" data-photos>
+      <p class="font-bold">
+        {{
+          images().length === 1 ? (p + 'countOne' | transloco) : (p + 'count' | transloco: { count: images().length })
+        }}
+      </p>
+      <furar-carousel
+        reorderable
+        [label]="p + 'strip' | transloco"
+        [items]="images()"
+        [key]="key"
+        [hint]="p + 'hint' | transloco"
+        [previousLabel]="p + 'previousPage' | transloco"
+        [nextLabel]="p + 'nextPage' | transloco"
+        (reordered)="reordered($event)"
+      >
+        <ng-template furarCarouselItem let-image let-i="index" let-hint="hintId">
+          <div class="f-photos__tile">
+            <button
+              type="button"
+              class="f-photos__thumb"
+              [attr.aria-pressed]="selected() === i"
+              [attr.aria-label]="thumbLabel(i)"
+              [attr.aria-describedby]="hint"
+              [attr.data-key]="image.key"
+              (click)="selected.set(i)"
+            >
+              <img [src]="image.thumb" alt="" draggable="false" />
+            </button>
+            @if (i === 0) {
+              <span class="f-photos__badge f-photos__badge--sm" aria-hidden="true">{{ p + 'cover' | transloco }}</span>
+            }
+          </div>
+        </ng-template>
+      </furar-carousel>
+      @if (current(); as image) {
+        @let alt = altFor(image);
+        <div class="f-wizard-photo-card" data-photo-card>
+          <furar-bilingual-field
+            fieldId="wizard-photo-alt"
+            required
+            multiline
+            [rows]="2"
+            [maxlength]="altMax"
+            [submitted]="tried()"
+            [label]="p + 'description' | transloco"
+            [help]="p + 'descriptionShared' | transloco"
+            [gl]="alt.gl"
+            [es]="alt.es"
+            [(lang)]="altLang"
+          />
+          <furar-delete-button
+            data-photo-remove
+            [label]="p + 'removeLabel' | transloco"
+            [text]="p + 'remove' | transloco"
+            (pressed)="remove(image)"
+          />
+        </div>
+      }
+    </div>
+  }
+  <p class="sr-only" role="status">{{ announcement() }}</p>
+</section>
+
+@if (!images().length) {
+  <section class="f-wizard-drawings" aria-labelledby="wizard-drawings" data-drawings>
+    <h3 id="wizard-drawings" class="font-bold">{{ t + 'drawingTitle' | transloco }}</h3>
+    <p class="f-help" id="wizard-drawings-help">{{ t + 'drawingHelp' | transloco }}</p>
+    <div
+      class="f-wizard-drawings__grid"
+      role="radiogroup"
+      aria-labelledby="wizard-drawings"
+      aria-describedby="wizard-drawings-help"
+    >
+      @for (drawing of shownDrawings(); track drawing.code) {
+        @let suggested = drawing.code === suggestedCode();
+        <label class="f-wizard-drawing" [attr.data-drawing]="drawing.code">
+          <input
+            type="radio"
+            name="wizard-drawing"
+            class="sr-only"
+            [checked]="drawing.code === store.shownDrawing()"
+            [attr.aria-label]="suggested ? (t + 'suggestedLabel' | transloco: { name: name(drawing) }) : name(drawing)"
+            (change)="store.chooseDrawing(drawing.code)"
+          />
+          <img [src]="drawing.thumb" alt="" loading="lazy" />
+          @if (suggested) {
+            <span class="f-wizard-drawing__tag" aria-hidden="true">{{ t + 'suggested' | transloco }}</span>
+          }
+          <span class="f-wizard-drawing__name" aria-hidden="true">{{ name(drawing) }}</span>
+        </label>
+      }
+    </div>
+    @if (!all() && drawings().length > shownDrawings().length) {
+      <button type="button" furarButton="quiet" size="sm" class="justify-self-start" (click)="all.set(true)">
+        {{ t + 'allDrawings' | transloco: { count: drawings().length } }}
+      </button>
+    }
+  </section>
+}

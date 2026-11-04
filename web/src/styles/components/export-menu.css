@@ -1,0 +1,34 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Exportar (furar-export-menu, D3-07): o botón co chevron e o menú pequeno de [furarMenu] (menu.css)
+ * con cada formato en negra e a súa axuda curta debaixo.
+ */
+@layer components {
+  .f-export-menu {
+    display: inline-flex;
+  }
+  .f-export-menu__trigger .f-icon {
+    inline-size: 1rem;
+    block-size: 1rem;
+    transition: transform var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-export-menu__trigger[aria-expanded='true'] .f-icon {
+    transform: rotate(180deg);
+  }
+  .f-export-menu__item.f-menu__item {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    padding-block: 0.5rem;
+  }
+  .f-export-menu__format {
+    font-weight: 700;
+  }
+  .f-export-menu__hint {
+    color: var(--f-ink-soft);
+    font-size: 0.8125rem;
+  }
+}

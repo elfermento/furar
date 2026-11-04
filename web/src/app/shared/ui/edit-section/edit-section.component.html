@@ -1,0 +1,40 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<section class="f-edit-section__box" [attr.aria-labelledby]="headingId">
+  <div class="f-edit-section__head">
+    @if (headingLevel() === 3) {
+      <h3 #title class="f-edit-section__title" tabindex="-1" [id]="headingId">{{ heading() }}</h3>
+    } @else {
+      <h2 #title class="f-edit-section__title" tabindex="-1" [id]="headingId">{{ heading() }}</h2>
+    }
+    <ng-content select="[sectionActions]" />
+  </div>
+  <form class="f-edit-section__form" novalidate (submit)="onSubmit($event)">
+    <ng-content />
+    <div class="f-edit-section__end">
+      <furar-problem-alert [problem]="problem()" />
+      <div class="f-edit-section__footer" [hidden]="session || (!dirty() && !saving())">
+        <p class="f-edit-section__unsaved">
+          <span class="f-edit-section__dot" aria-hidden="true"></span>
+          {{ 'ui.editSection.unsaved' | transloco }}
+        </p>
+        <div class="f-edit-section__actions">
+          <button type="button" furarButton size="sm" data-section-cancel (click)="cancel()">
+            {{ 'ui.editSection.cancel' | transloco }}
+          </button>
+          <button type="submit" furarButton="primary" size="sm" data-section-save [busy]="saving()">
+            {{ (saving() ? 'ui.editSection.saving' : 'ui.editSection.save') | transloco }}
+          </button>
+        </div>
+      </div>
+      <p class="f-edit-section__saved" role="status">
+        @if (savedNotice() && !session) {
+          <furar-icon name="check" />
+          {{ 'ui.editSection.saved' | transloco }}
+        }
+      </p>
+    </div>
+  </form>
+</section>

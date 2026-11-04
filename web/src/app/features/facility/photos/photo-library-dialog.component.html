@@ -1,0 +1,102 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.photos.library.';
+<furar-dialog size="lg" [heading]="t + 'title' | transloco" [back]="t + 'back' | transloco">
+  <furar-tabs [label]="t + 'tabs' | transloco" [(selected)]="tab">
+    <button type="button" furarTab="municipality" data-tab="municipality">{{ t + 'municipality' | transloco }}</button>
+    <button type="button" furarTab="drawings" data-tab="drawings">{{ t + 'drawings' | transloco }}</button>
+    @if (tab() === 'municipality') {
+      <div class="f-library__drop" (dragover)="dragOver($event)" (drop)="drop($event)">
+        <input
+          id="photo-library-file"
+          type="file"
+          class="sr-only"
+          accept="image/jpeg,image/png"
+          multiple
+          aria-describedby="photo-library-file-help"
+          (change)="pickFiles($event)"
+        />
+        <label for="photo-library-file" class="f-library__upload">{{ t + 'upload' | transloco }}</label>
+        <span id="photo-library-file-help">{{ t + 'uploadHelp' | transloco: { max: maxSize } }}</span>
+      </div>
+      <ul class="f-library__notes" aria-live="polite">
+        @if (uploadingName()) {
+          <li>{{ t + 'uploading' | transloco: { name: uploadingName() } }}</li>
+        }
+        @for (note of notes(); track note.id) {
+          <li [class.f-field-error]="note.error" [attr.data-error]="note.error ? '' : null">{{ note.text }}</li>
+        }
+      </ul>
+    }
+    @switch (state()) {
+      @case ('loading') {
+        <furar-status-state mode="skeleton" shape="card" [rows]="2" [description]="t + 'loading' | transloco" />
+      }
+      @case ('error') {
+        <furar-status-state mode="error" [heading]="t + 'error' | transloco">
+          <button type="button" furarButton (click)="load()">{{ t + 'retry' | transloco }}</button>
+        </furar-status-state>
+      }
+      @default {
+        @let picks = tab() === 'municipality' ? municipalityPicks() : drawingPicks();
+        @if (picks.length) {
+          <ul
+            class="f-library__grid"
+            [attr.aria-label]="(tab() === 'municipality' ? t + 'municipality' : t + 'drawings') | transloco"
+          >
+            @for (pick of picks; track pick.image.key) {
+              @let taken = inList(pick.image);
+              <li>
+                <button
+                  type="button"
+                  class="f-library__pick"
+                  [attr.data-key]="pick.image.key"
+                  [attr.aria-pressed]="chosenKeys().has(pick.image.key)"
+                  [attr.aria-disabled]="taken ? 'true' : null"
+                  [attr.aria-label]="taken ? pick.label + '. ' + (t + 'inList' | transloco) : pick.label"
+                  (click)="toggle(pick.image)"
+                >
+                  <img [src]="pick.image.thumb" alt="" loading="lazy" />
+                  <span class="f-library__check" aria-hidden="true">
+                    @if (chosenKeys().has(pick.image.key) || taken) {
+                      <furar-icon name="check" />
+                    }
+                  </span>
+                  <span class="f-library__caption" aria-hidden="true">{{ pick.caption }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        } @else {
+          <furar-status-state data-empty [description]="t + 'empty' | transloco" />
+        }
+      }
+    }
+  </furar-tabs>
+  <span dialogStatus data-selected>
+    @if (tooMany()) {
+      <span class="text-danger font-bold">{{ t + 'full' | transloco: { max: 12, left: data.left } }}</span>
+    } @else if (chosen().length) {
+      {{
+        chosen().length === 1
+          ? (t + 'selectedOne' | transloco)
+          : (t + 'selected' | transloco: { count: chosen().length })
+      }}
+    }
+  </span>
+  <ng-container dialogActions>
+    <button type="button" furarButton data-cancel (click)="cancel()">{{ t + 'cancel' | transloco }}</button>
+    <button
+      type="button"
+      furarButton="primary"
+      data-add-selected
+      [disabled]="!chosen().length || tooMany() || uploading() > 0"
+      (click)="add()"
+    >
+      <furar-icon name="plus" />
+      {{ t + 'addSelected' | transloco: { count: chosen().length } }}
+    </button>
+  </ng-container>
+</furar-dialog>

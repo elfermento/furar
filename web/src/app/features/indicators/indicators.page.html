@@ -1,0 +1,36 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<div class="f-indicators" [attr.aria-busy]="store.state() === 'loading' || null">
+  <h1 class="f-indicators__title">{{ 'indicators.title' | transloco }}</h1>
+  <p class="f-print-header">{{ printHeader() }}</p>
+  <furar-indicator-filters
+    [label]="'indicators.filters.label' | transloco"
+    [filters]="filters()"
+    [options]="store.options()"
+    [texts]="filterTexts()"
+    [today]="today"
+    (changed)="change($event)"
+    [pdf]="printPanel"
+    [csv]="exportPanelCsv"
+  />
+  <p class="sr-only" role="status" data-indicators-status>{{ announcement() }}</p>
+  <furar-problem-alert [problem]="store.problem()" />
+  @if (store.panel()) {
+    <furar-indicator-kpis [kpis]="kpis()" (open)="openKpi($event)" />
+    @if (empty()) {
+      <furar-status-state
+        class="f-indicators__empty"
+        data-indicators-empty
+        mode="empty"
+        [heading]="emptyText()"
+        [description]="'indicators.emptyHint' | transloco"
+      />
+    } @else {
+      <furar-indicator-charts [charts]="charts()" [pdf]="printChart" [csv]="exportChartCsv" />
+    }
+  } @else if (store.state() !== 'error') {
+    <furar-status-state mode="skeleton" shape="card" [rows]="5" />
+  }
+</div>

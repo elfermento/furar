@@ -1,0 +1,178 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Pestanas (furar-tabs, D1-05c; furar-tab-nav, as que son páxinas). Sempre nunha soa fila: se non
+ * caben, desprázanse dentro da súa franxa (`furarTabStrip`), nunca a páxina (1.4.10), cun fundido
+ * no bordo que ten máis pestanas e a activa á vista. Dous aspectos:
+ * - `pill` (por defecto): cápsulas na mesma liña que as accións; a escollida vai rechea de primary
+ *   e en negra. Texto secundario (`small`) e etiquetas («Agora») dentro.
+ * - `line`: o das seccións (Concello e as súas páxinas legais), sen título enriba: texto en negra
+ *   suave e a activa en tinta cun subliñado de 3 px en primary (o estado non depende só da cor:
+ *   tamén leva a liña). `data-size="sm"` para as que van dentro doutra sección.
+ */
+@layer components {
+  .f-tabs {
+    display: block;
+    min-width: 0;
+  }
+  .f-tabs__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    min-width: 0;
+    margin-bottom: var(--spacing-item);
+  }
+  .f-tabs__list {
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--spacing-unit);
+    min-width: 0;
+    max-width: 100%;
+    /* Espazo para o anel do foco, que o desprazamento recortaría. */
+    padding: 2px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .f-tabs__list::-webkit-scrollbar {
+    display: none;
+  }
+  .f-tabs__list[data-fade='r'] {
+    mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+  }
+  .f-tabs__list[data-fade='l'] {
+    mask-image: linear-gradient(to left, #000 calc(100% - 2.5rem), transparent);
+  }
+  .f-tabs__list[data-fade='l r'] {
+    mask-image: linear-gradient(to right, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
+  }
+  .f-tabs__tab {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: var(--spacing-unit);
+    min-height: var(--f-touch);
+    padding: 0.25rem 1rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font: inherit;
+    text-align: start;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--f-dur-fast) var(--ease-smooth),
+      border-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-tabs__tab small {
+    color: var(--f-ink-soft);
+    font-size: 0.8125rem;
+  }
+  .f-tabs__tab[aria-selected='true'] {
+    border-color: var(--f-primary);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-weight: 700;
+  }
+  .f-tabs__tab[aria-selected='true'] small {
+    color: inherit;
+    font-weight: 400;
+  }
+  @media (hover: hover) {
+    .f-tabs__tab[aria-selected='false']:hover {
+      border-color: var(--f-line);
+    }
+  }
+
+  /* Liña: a franxa leva a liña de abaixo como sombra interior (o desprazamento recortaría un borde
+     que sobresae) e a pestana activa pinta enriba o seu subliñado. */
+  .f-tabs[data-look='line'] {
+    margin-bottom: 1.75rem;
+  }
+  .f-tabs[data-look='line'][data-size='sm'] {
+    margin-bottom: 1.25rem;
+  }
+  .f-tabs[data-look='line'] > .f-tabs__bar {
+    margin-bottom: 0;
+  }
+  .f-tabs[data-look='line'] .f-tabs__list {
+    flex: 1 1 auto;
+    gap: 4px;
+    padding: 0;
+    box-shadow: inset 0 -1px 0 var(--f-divider);
+  }
+  .f-tabs[data-look='line'][data-size='sm'] .f-tabs__list {
+    flex: 0 1 auto;
+  }
+  .f-tabs[data-look='line'] .f-tabs__tab {
+    gap: 6px;
+    height: 44px;
+    min-height: 0;
+    padding: 0 14px;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    background: none;
+    color: var(--f-ink-soft);
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .f-tabs[data-look='line'][data-size='sm'] .f-tabs__tab {
+    height: 40px;
+    padding: 0 12px;
+    font-size: 15px;
+  }
+  .f-tabs[data-look='line'] .f-tabs__tab:focus-visible {
+    outline-offset: -3px;
+  }
+  .f-tabs[data-look='line'] .f-tabs__tab:hover,
+  .f-tabs[data-look='line'] .f-tabs__tab[aria-selected='true'],
+  .f-tabs[data-look='line'] .f-tabs__tab[aria-current='page'] {
+    color: var(--f-ink);
+  }
+  .f-tabs[data-look='line'] .f-tabs__tab[aria-selected='true'],
+  .f-tabs[data-look='line'] .f-tabs__tab[aria-current='page'] {
+    border-bottom-color: var(--f-primary);
+    background: none;
+  }
+
+  /* Marcas dentro dunha pestana: cambios sen gardar (punto) e aviso (triángulo). */
+  .f-tabs__dirty {
+    display: inline-block;
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .f-tabs__warn {
+    flex: none;
+    color: var(--f-warn);
+  }
+
+  @media (forced-colors: active) {
+    .f-tabs__tab {
+      border-color: CanvasText;
+    }
+    .f-tabs__tab[aria-selected='true'] {
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+    .f-tabs[data-look='line'] .f-tabs__tab[aria-selected='true'],
+    .f-tabs[data-look='line'] .f-tabs__tab[aria-current='page'] {
+      border-bottom-color: Highlight;
+      background: none;
+      color: LinkText;
+    }
+    .f-tabs__dirty {
+      background: CanvasText;
+    }
+  }
+}

@@ -1,0 +1,84 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.schedule.day.';
+@if (!editing()) {
+  <button
+    type="button"
+    class="gap-x-item gap-y-unit flex min-h-15 w-full cursor-pointer flex-wrap items-center px-item py-unit text-start hover:bg-tint"
+    [class.text-ink-soft]="!value().open"
+    [attr.data-day-edit]="index()"
+    (click)="opened.emit()"
+  >
+    <span class="gap-unit flex w-36 items-center" [class.font-bold]="value().open">
+      {{ name() }}
+    </span>
+    <span class="tabular-nums">{{ hours() || (t + 'closed' | transloco) }}</span>
+    @if (problem()) {
+      <furar-icon name="error" class="text-danger" />
+    }
+    <span class="sr-only">, {{ 'ui.editSection.edit' | transloco }}</span>
+  </button>
+} @else {
+  <fieldset
+    class="gap-unit grid border-s-4 border-primary bg-tint px-item py-unit"
+    [attr.data-day-row]="index()"
+    [formGroup]="day()"
+    [attr.aria-describedby]="problem() ? errorId() : null"
+  >
+    <legend class="sr-only">{{ name() }}</legend>
+    <div class="gap-x-item gap-y-unit flex min-h-11 flex-wrap items-center">
+      <furar-switch formControlName="open" hideLabel [label]="t + 'open' | transloco: { day: name() }" />
+      <span class="gap-unit flex w-36 items-center font-bold" aria-hidden="true">
+        {{ name() }}
+      </span>
+      @if (value().open) {
+        <div class="gap-x-item gap-y-unit flex flex-wrap items-center" formArrayName="intervals">
+          @for (interval of day().controls.intervals.controls; track interval; let j = $index) {
+            <span class="inline-flex items-center gap-1" data-interval [formGroupName]="j">
+              <furar-time-picker
+                formControlName="startMinute"
+                [label]="t + 'from' | transloco: { day: name(), n: j + 1 }"
+                [max]="1425"
+                [invalid]="problem()?.index === j"
+                [describedBy]="problem()?.index === j ? errorId() : null"
+              />
+              <span aria-hidden="true">–</span>
+              <furar-time-picker
+                formControlName="endMinute"
+                allowEndOfDay
+                [min]="15"
+                [label]="t + 'to' | transloco: { day: name(), n: j + 1 }"
+                [invalid]="problem()?.index === j"
+                [describedBy]="problem()?.index === j ? errorId() : null"
+              />
+              <furar-delete-button
+                [label]="t + 'remove' | transloco: { day: name(), n: j + 1 }"
+                (pressed)="remove(j)"
+              />
+            </span>
+          }
+          @if (value().intervals.length < max) {
+            <button
+              type="button"
+              furarButton="quiet"
+              size="sm"
+              data-interval-add
+              [attr.aria-label]="t + 'addLabel' | transloco: { day: name() }"
+              (click)="add()"
+            >
+              <furar-icon name="plus" />
+              {{ t + 'add' | transloco }}
+            </button>
+          }
+        </div>
+      } @else {
+        <span class="text-ink-soft">{{ t + 'closed' | transloco }}</span>
+      }
+    </div>
+    @if (problem(); as p) {
+      <p class="f-field-error" [id]="errorId()">{{ p.error.key | transloco: p.error.params }}</p>
+    }
+  </fieldset>
+}

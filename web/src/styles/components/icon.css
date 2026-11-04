@@ -1,0 +1,22 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/* Icona (furar-icon, docs/deseno.md P1-10): Material Symbols de liña, con recheo en currentColor. */
+@layer components {
+  .f-icon {
+    display: inline-flex;
+    flex: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    vertical-align: middle;
+  }
+  .f-icon[data-size='24'] {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .f-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+}

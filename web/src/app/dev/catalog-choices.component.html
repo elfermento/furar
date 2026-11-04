@@ -1,0 +1,57 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<furar-card [heading]="'catalog.choices' | transloco" id="segmentado-pestanas">
+  <div class="gap-form grid" [formGroup]="use">
+    <div class="gap-unit grid justify-items-start">
+      <p class="f-label" id="catalog-mode-label">{{ 'catalog.choice.mode' | transloco }}</p>
+      <div furarSegmented mode="radio" formControlName="mode" aria-labelledby="catalog-mode-label">
+        @for (mode of modes; track mode) {
+          <button type="button" [furarSegmentedOption]="mode">{{ 'catalog.choice.modes.' + mode | transloco }}</button>
+        }
+      </div>
+      <p class="f-help" role="status">
+        {{
+          'catalog.choice.value' | transloco: { value: ('catalog.choice.modes.' + use.controls.mode.value | transloco) }
+        }}
+      </p>
+    </div>
+    <div class="gap-unit grid justify-items-start">
+      <p class="f-label" id="catalog-duration-label">{{ 'catalog.choice.duration' | transloco }}</p>
+      <div furarSegmented mode="radio" formControlName="duration" aria-labelledby="catalog-duration-label">
+        @for (minutes of durations; track minutes) {
+          <button type="button" [furarSegmentedOption]="minutes" [disabled]="minutes === 120">
+            {{ 'catalog.choice.minutes' | transloco: { minutes } }}
+          </button>
+        }
+      </div>
+    </div>
+    <div class="gap-unit grid justify-items-start">
+      <p class="f-label" id="catalog-locked-label">{{ 'catalog.choice.locked' | transloco }}</p>
+      <div furarSegmented mode="radio" formControlName="locked" aria-labelledby="catalog-locked-label">
+        @for (mode of modes; track mode) {
+          <button type="button" [furarSegmentedOption]="mode">{{ 'catalog.choice.modes.' + mode | transloco }}</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <h3 class="f-label mt-group">{{ 'catalog.choice.tabsTitle' | transloco }}</h3>
+  <furar-tabs [label]="'catalog.choice.seasons' | transloco" [(selected)]="season">
+    @for (name of seasons; track name) {
+      <button type="button" [furarTab]="name">
+        {{ 'catalog.choice.season.' + name | transloco }}
+        <small>{{ 'catalog.choice.range.' + name | transloco }}</small>
+        @if (name === 'winter') {
+          <furar-tag tone="success">{{ 'catalog.choice.now' | transloco }}</furar-tag>
+        }
+      </button>
+    }
+    <button furarTabsActions type="button" furarButton="quiet">
+      <furar-icon name="plus" />
+      {{ 'catalog.choice.addSeason' | transloco }}
+    </button>
+    <p>{{ 'catalog.choice.panel' | transloco: { season: ('catalog.choice.season.' + season() | transloco) } }}</p>
+  </furar-tabs>
+</furar-card>

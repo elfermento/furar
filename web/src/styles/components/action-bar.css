@@ -1,0 +1,96 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Barra de accións fixa ao pé (furar-action-bar, docs/deseno.md P1-12): cristal (.f-glass, §6),
+ * radio e ancho da barra superior. A envoltura non colle clics; a barra si. O contido da páxina
+ * deixa sitio debaixo e o foco non queda tapado (scroll-padding-bottom). No móbil, enriba da
+ * barra inferior.
+ */
+@layer components {
+  .f-action-bar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: var(--f-z-sticky);
+    display: flex;
+    justify-content: center;
+    padding: 0 0.75rem calc(0.75rem + env(safe-area-inset-bottom));
+    pointer-events: none;
+  }
+  /* Compacta e centrada, co cristal e a sombra da barra superior: sen un oco baleiro no medio. */
+  .f-action-bar__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-unit) 2rem;
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-overlay);
+    pointer-events: auto;
+  }
+  .f-action-bar__status {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .f-action-bar__state {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    margin: 0;
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-action-bar__state furar-icon {
+    color: var(--f-primary-text);
+  }
+  .f-action-bar__state [data-dirty]::before {
+    content: '';
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-inline-end: 0.375rem;
+    border-radius: 50%;
+    background: var(--f-warn);
+    vertical-align: 0.0625rem;
+  }
+  @media (max-width: 639px) {
+    .f-action-bar__bar {
+      width: 100%;
+    }
+  }
+  .f-action-bar__status:empty {
+    display: none;
+  }
+  .f-action-bar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-unit);
+    margin-inline-start: auto;
+  }
+  @media (min-width: 640px) {
+    .f-action-bar {
+      padding: 0 1rem calc(1rem + env(safe-area-inset-bottom));
+    }
+  }
+  html:has(.f-action-bar) {
+    scroll-padding-bottom: 7rem;
+  }
+  .f-shell:has(.f-action-bar) .f-footer {
+    padding-bottom: 7rem;
+  }
+  @media (max-width: 899px) {
+    html:has(.f-bottomnav) .f-action-bar {
+      bottom: calc(4.25rem + env(safe-area-inset-bottom));
+    }
+    html:has(.f-bottomnav):has(.f-action-bar) {
+      scroll-padding-bottom: 11rem;
+    }
+    .f-shell:has(.f-bottomnav):has(.f-action-bar) .f-footer {
+      padding-bottom: 11rem;
+    }
+  }
+}

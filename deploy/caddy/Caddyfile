@@ -1,0 +1,234 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Única entrada de Furar (ADR-0015). Mesma orixe para web, /api e /auth (ADR-0007).
+# Variables:
+#   FURAR_ADMIN_IPS     rangos que poden abrir a administración de Keycloak por esta entrada
+#                       (/auth/admin e o realm master). Sen variable, pechada (só loopback);
+#                       compose.yaml (local) pon as redes privadas e loopback. Produción: compose.prod.yaml esíxeo; o recomendado é
+#                       127.0.0.1/32 (pechado) e administrar polo túnel SSH (docs/instalacion.md).
+#   FURAR_SOURCE_URL    código fonte que se comunica (EUPL art. 5): /codigo-fonte redirixe aquí.
+#                       Por defecto, o repo canónico; un concello con cambios propios pon o seu.
+#   FURAR_SITE_ADDRESS  ":8080" (local, por defecto) ou o URL público en produción
+#                       (p. ex. "https://reservas.concello.gal": HTTPS automático).
+#   FURAR_MAP           "off" quita o mapa: /tiles dá 404 e non se pide nada fóra (a web só
+#                       mostra o enderezo). Por defecto, mapa (ADR-0023, revisión do 2026-11-03).
+#   FURAR_MAP_TILES_UPSTREAM  servidor de teselas, só esquema e host. Por defecto, o do IGN
+#                       (https://www.ign.es), público e sen clave.
+#   FURAR_MAP_TILES_TEMPLATE  camiño e query da tesela nese servidor, con {z}, {x} e {y} e sen
+#                       espazos (p. ex. /{z}/{x}/{y}.png ou /wmts?…&TILEMATRIX={z}&TILECOL={x}&TILEROW={y}).
+#                       Baleiro: o Mapa base do IGN (WMTS, capa IGNBaseTodo, PNG en Web Mercator).
+#   HTTPS_PROXY         proxy saínte para as teselas (compose.yaml pono desde FURAR_HTTP_PROXY).
+# Portos internos: 8080 (HTTP) e 8443 (HTTPS); o contedor non é root.
+{
+	admin off
+	http_port 8080
+	https_port 8443
+	storage file_system /data/caddy
+}
+
+(problema404) {
+	header Content-Type "application/problem+json"
+	respond `{"type":"about:blank","title":"Not Found","status":404,"code":"common.not-found"}` 404
+}
+
+# Id de petición para correlacionar rexistros (a API devólveo en X-Request-Id).
+(api) {
+	reverse_proxy api:8081 {
+		header_up X-Request-Id {http.request.uuid}
+	}
+}
+
+(furar) {
+	encode zstd gzip
+
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+	}
+
+	handle /healthz {
+		respond "ok" 200
+	}
+
+	# Actuator non se publica nunca (vai no porto 9081 da API, só para o healthcheck).
+	handle /actuator* {
+		import problema404
+	}
+
+	# Teselas do mapa (ADR-0023): o navegador só fala con Furar; Caddy pide a tesela ao provedor sen
+	# ningún dato da persoa (nin IP, cookies, sesión, Referer, idioma, query nin navegador) e co
+	# User-Agent de Furar. Só z 0–19, GET e HEAD; o resto de /tiles, 404 ou 405. Con FURAR_MAP=off,
+	# todo /tiles dá 404 sen tocar o provedor.
+	handle /tiles/* {
+		@semMapa vars {env.FURAR_MAP} off OFF Off
+		@tesela path_regexp tesela ^/tiles/(1?[0-9])/([0-9]+)/([0-9]+)\.png$
+		@teselaLectura {
+			path_regexp tesela ^/tiles/(1?[0-9])/([0-9]+)/([0-9]+)\.png$
+			method GET HEAD
+		}
+		handle @semMapa {
+			import problema404
+		}
+		handle @teselaLectura {
+			# {z}, {x} e {y} da plantilla saen do camiño pedido (só díxitos).
+			map {path} {z} {x} {y} {
+				~^/tiles/([0-9]+)/([0-9]+)/([0-9]+)\.png$ ${1} ${2} ${3}
+			}
+			# Primeiro, fóra a query do navegador («?» sen nada detrás); despois, a plantilla: se trae
+			# query, é a súa; se non, queda baleira.
+			rewrite * {path}?
+			@plantillaIGN vars {env.FURAR_MAP_TILES_TEMPLATE} ""
+			handle @plantillaIGN {
+				rewrite * /wmts/ign-base?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=IGNBaseTodo&STYLE=default&TILEMATRIXSET=GoogleMapsCompatible&FORMAT=image/png&TILEMATRIX={z}&TILECOL={x}&TILEROW={y}
+			}
+			handle {
+				rewrite * {$FURAR_MAP_TILES_TEMPLATE:/}
+			}
+			reverse_proxy {$FURAR_MAP_TILES_UPSTREAM:https://www.ign.es} {
+				# Fóra todas as cabeceiras da petición (tamén X-Forwarded-*, Cookie, Authorization,
+				# Referer, Accept-Language e o User-Agent do navegador); só van estas.
+				header_up -*
+				header_up Host {upstream_hostport}
+				header_up User-Agent "Furar (+{$FURAR_SOURCE_URL:https://github.com/elfermento/furar})"
+				header_up Accept "image/png"
+				header_down -Set-Cookie
+				header_down -Content-Disposition
+				header_down Cache-Control "public, max-age=604800"
+				# A resposta dun terceiro sae da mesma orixe ca web e /api: aínda que fose HTML ou
+				# SVG, sen scripts nin recursos (a CSP da web só vai nos estáticos).
+				header_down Content-Security-Policy "default-src 'none'; sandbox"
+				header_down X-Content-Type-Options "nosniff"
+				transport http {
+					dial_timeout 3s
+					response_header_timeout 10s
+				}
+				# Só PNG: unha páxina de erro, de cota ou de bloqueo do provedor (text/html,
+				# image/svg+xml…) nunca chega ao navegador.
+				@png header Content-Type image/png
+				handle_response @png {
+					copy_response
+				}
+				handle_response {
+					respond 502
+				}
+			}
+		}
+		handle @tesela {
+			header Allow "GET, HEAD"
+			respond 405
+		}
+		handle {
+			import problema404
+		}
+	}
+
+	handle /api/* {
+		handle /api/actuator* {
+			import problema404
+		}
+		# Subida dunha foto á biblioteca do concello: Spring acepta 8 MB por ficheiro (max-file-size)
+		# e 9 MB por petición; Caddy corta antes cos mesmos 9 MB. Só POST á ruta exacta: o resto de
+		# …/photos é JSON ou bytes que se descargan.
+		@subidaFoto {
+			path_regexp ^/api/v1/municipalities/[^/]+/photos$
+			method POST
+		}
+		handle @subidaFoto {
+			request_body {
+				max_size 9MB
+			}
+			import api
+		}
+		# Corpo máximo antes de chegar á API (SEC-05): o permiso compróbase despois de
+		# deserializar, así que un corpo grande nunca debe chegar a Spring. Pasado → 413.
+		# Excepción: a importación dun concello (ADR-0018) recibe o ficheiro furar-export enteiro.
+		# Só a pode usar a plataforma e Spring Security rexeita sen token antes de ler o corpo
+		# (SEC3-03).
+		handle /api/v1/municipality-imports {
+			request_body {
+				max_size 50MB
+			}
+			import api
+		}
+		handle {
+			request_body {
+				max_size 256KB
+			}
+			import api
+		}
+	}
+
+	# Ligazón «Código fonte» do pé da web (EUPL-1.2 art. 5, tamén en uso por rede).
+	redir /codigo-fonte {$FURAR_SOURCE_URL:https://github.com/elfermento/furar} 302
+
+	redir /auth /auth/ 308
+	handle /auth/* {
+		# Administración de Keycloak (consola, API admin e realm master, onde inicia sesión o
+		# administrador e está admin-cli): só desde FURAR_ADMIN_IPS (SEC-01). Se a variable non
+		# chega, pechada (só loopback); o perfil local de compose.yaml abre as redes privadas.
+		@kcadmin {
+			path /auth/admin /auth/admin/* /auth/realms/master /auth/realms/master/*
+			not remote_ip {$FURAR_ADMIN_IPS:127.0.0.1/32 ::1/128}
+		}
+		respond @kcadmin 403
+		# Keycloak manda a súa propia CSP: aquí non se engade a da web.
+		reverse_proxy keycloak:8082
+	}
+
+	handle {
+		root * /srv
+		# CSP xerada no build da web desde index.html (deploy/caddy/csp.sh).
+		import /etc/caddy/csp*.caddy
+		header X-Frame-Options "DENY"
+
+		@shell not path_regexp \.[A-Za-z0-9]+$
+		header @shell Cache-Control "no-cache"
+		header /index.html Cache-Control "no-cache"
+		# Follas sen hash no nome (cárganse por ruta, inject: false): cada versión trae as súas.
+		@unhashed path /xestion.css /reservas.css /indicadores.css /leaflet.css
+		header @unhashed Cache-Control "no-cache"
+		# Só se existe: un 404 dun chunk non se garda un ano.
+		@hashed {
+			path_regexp hashed [-.][0-9A-Za-z_-]{8,}\.(js|css|woff2)$
+			file
+		}
+		header @hashed Cache-Control "public, max-age=31536000, immutable"
+
+		# Rutas da web (/naron/instalacions…) → index.html. Un recurso que non existe (p. ex. o
+		# chunk dunha versión anterior tras un despregue) dá 404 e non index.html: o navegador
+		# non executa HTML como JS e a web recarga unha vez (core/pwa/reload-once.ts).
+		@spa {
+			not path_regexp \.(js|css|woff2|png|svg|webp)$
+			not file
+		}
+		rewrite @spa /index.html
+		@missing {
+			path_regexp \.(js|css|woff2|png|svg|webp)$
+			not file
+		}
+		respond @missing 404
+		file_server
+	}
+}
+
+{$FURAR_SITE_ADDRESS::8080} {
+	import furar
+}
+
+# «Host: 127.0.0.1» en HTTP: existe para o healthcheck do contedor (wget a 127.0.0.1:8080/healthz)
+# cando FURAR_SITE_ADDRESS é un URL HTTPS. Só se serve a loopback e a FURAR_ADMIN_IPS (local: redes
+# privadas, para abrir http://127.0.0.1:8080); desde fóra córtase a conexión, sen web nin /api
+# en claro (SEC2-02).
+http://127.0.0.1:8080 {
+	@fora not remote_ip 127.0.0.0/8 ::1/128 {$FURAR_ADMIN_IPS:127.0.0.1/32 ::1/128}
+	handle @fora {
+		abort
+	}
+	handle {
+		import furar
+	}
+}

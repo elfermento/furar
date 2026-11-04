@@ -1,0 +1,126 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<section #section class="f-steps" aria-labelledby="home-steps-title">
+  <div class="f-steps__pin">
+    <h2 id="home-steps-title" class="f-steps__title">
+      {{ 'home.steps.titleStart' | transloco }} <em>{{ 'home.steps.titleEnd' | transloco }}</em>
+    </h2>
+    <ol class="f-steps__deck">
+      <li class="f-step" data-step="1">
+        <div class="f-step__text">
+          <span class="f-step__n" aria-hidden="true">1</span>
+          <h3>{{ 'home.steps.search.title' | transloco }}</h3>
+          <p>{{ 'home.steps.search.line' | transloco }}</p>
+        </div>
+        <div class="f-shot" aria-hidden="true">
+          <div class="f-shot__chrome">
+            <i></i><i></i><i></i><span>{{ address() }}</span>
+          </div>
+          <div class="f-shot__page">
+            <p class="f-shot__title">
+              @if (municipality(); as name) {
+                {{ 'home.title.line1' | transloco }} {{ 'home.title.line2' | transloco }}<br /><em>{{ name }}</em>
+              } @else {
+                {{ 'home.title.line1' | transloco }}<br /><em>{{ 'home.showcase.place' | transloco }}</em>
+              }
+            </p>
+            <div class="f-shot__search">
+              <furar-icon name="search" />
+              <span class="f-shot__hint">{{ 'home.search.what' | transloco }}</span>
+              <span class="f-shot__go"></span>
+            </div>
+            <div class="f-shot__grid">
+              @for (facility of shown(); track facility.id) {
+                <div class="f-shot__mini">
+                  <img [src]="facility.cover.thumb" alt="" />
+                  <b>{{ facility.name }}</b>
+                  @if (facility.sports[0]; as first) {
+                    <span class="f-shot__tag">{{ lang() === 'es' ? first.label.es : first.label.gl }}</span>
+                  }
+                </div>
+              } @empty {
+                <div class="f-shot__mini"><span class="f-shot__square"></span></div>
+                <div class="f-shot__mini"><span class="f-shot__square"></span></div>
+                <div class="f-shot__mini"><span class="f-shot__square"></span></div>
+              }
+            </div>
+          </div>
+        </div>
+      </li>
+      <li class="f-step" data-step="2">
+        <div class="f-step__text">
+          <span class="f-step__n" aria-hidden="true">2</span>
+          <h3>{{ 'home.steps.book.title' | transloco }}</h3>
+          <p>{{ 'home.steps.book.line' | transloco }}</p>
+        </div>
+        <div class="f-shot" aria-hidden="true">
+          <div class="f-shot__chrome">
+            <i></i><i></i><i></i><span>{{ address() }}</span>
+          </div>
+          <div class="f-shot__page">
+            <div class="f-shot__card">
+              @if (sample(); as facility) {
+                <img class="f-shot__thumb" [src]="facility.cover.thumb" alt="" />
+                <div>
+                  <b>{{ facility.name }}</b>
+                  @if (sport()) {
+                    <div class="f-shot__muted">{{ sport() }}</div>
+                  }
+                </div>
+              } @else {
+                <span class="f-shot__square" data-large></span>
+              }
+            </div>
+            <div class="f-shot__fields">
+              <span
+                ><small>{{ 'home.steps.shot.date' | transloco }}</small
+                >{{ 'home.search.today' | transloco }}</span
+              >
+              <span
+                ><small>{{ 'home.steps.shot.time' | transloco }}</small
+                >19:00</span
+              >
+            </div>
+            <div class="f-shot__slots"><span>18:00</span><span data-on>19:00</span><span>20:30</span></div>
+            <b>{{ 'home.steps.shot.signIn' | transloco }}</b>
+            <div class="f-shot__row">
+              <span class="f-shot__button">{{ 'home.steps.shot.clave' | transloco }}</span>
+              <span class="f-shot__button">{{ 'home.steps.shot.chave' | transloco }}</span>
+              <span class="f-shot__button">{{ 'home.steps.shot.email' | transloco }}</span>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li class="f-step" data-step="3">
+        <div class="f-step__text">
+          <span class="f-step__n" aria-hidden="true">3</span>
+          <h3>{{ 'home.steps.play.title' | transloco }}</h3>
+          <p>{{ 'home.steps.play.line' | transloco }}</p>
+        </div>
+        <div class="f-shot" aria-hidden="true">
+          <div class="f-shot__chrome">
+            <i></i><i></i><i></i><span>{{ address() }}</span>
+          </div>
+          <div class="f-shot__page">
+            <span class="f-shot__ok"><furar-icon name="success" />{{ 'home.steps.shot.confirmed' | transloco }}</span>
+            <div class="f-shot__ticket">
+              <svg class="f-shot__qr" [attr.viewBox]="qr.viewBox" shape-rendering="crispEdges" focusable="false">
+                <path [attr.d]="qr.path" />
+              </svg>
+              <div>
+                <b class="f-shot__code">{{ qr.code }}</b>
+                <div>{{ 'home.steps.shot.when' | transloco }}</div>
+                @if (sample(); as facility) {
+                  <div class="f-shot__muted">{{ facility.name }}</div>
+                }
+              </div>
+            </div>
+            <span class="f-shot__button" data-primary>{{ 'home.steps.shot.calendar' | transloco }}</span>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>

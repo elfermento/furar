@@ -1,0 +1,135 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: CC0-1.0
+#
+# Licenzas dos ficheiros que non admiten cabeceira SPDX (ADR-0002).
+# Se varias anotacións coinciden, gaña a última. Cabeceira no ficheiro > anotación.
+version = 1
+
+# Código e configuración sen comentarios (JSON, .nvmrc, listas de texto planas).
+# Sen comodíns para binarios (png, ico, webp, woff2): unha fonte ou un icono adoita ser de
+# terceiros; cada un anótase aquí, co seu titular e licenza reais, ao incorporalo (LIC-5).
+[[annotations]]
+path = [
+  "**/*.json",
+  "**/.nvmrc",
+  "**/.mvn/jvm.config",
+  "**/.mvn/maven.config",
+  "scripts/allowed-licenses.txt",
+  "scripts/license-exceptions.txt",
+  "scripts/third-party-holders.txt",
+  # Anacos que novo-modulo.sh insire noutros ficheiros: unha cabeceira acabaría dentro deles.
+  "templates/module/fragments/**",
+]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Santiago Herrero Padín e colaboradores de Furar"
+SPDX-License-Identifier = "EUPL-1.2"
+
+# Ficheiros esperados dos tests do calendario (.ics): iCalendar non admite comentarios.
+[[annotations]]
+path = ["api/src/test/resources/booking/calendar/*.ics"]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Santiago Herrero Padín e colaboradores de Furar"
+SPDX-License-Identifier = "EUPL-1.2"
+
+# Textos da interface: citan «© IGN» (atribución de CartoCiudad que se mostra ao usuario), e
+# reuse tomaríao por titular do ficheiro. A anotación manda sobre o contido (D02).
+[[annotations]]
+path = ["web/src/i18n/gl.json", "web/src/i18n/es.json"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Santiago Herrero Padín e colaboradores de Furar"
+SPDX-License-Identifier = "EUPL-1.2"
+
+# Datos de exemplo (demo): CC0.
+[[annotations]]
+path = [
+  "api/src/main/resources/db/demo/**",
+  "deploy/keycloak/demo/**",
+  "deploy/keycloak/import-demo/**",
+]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Santiago Herrero Padín e colaboradores de Furar"
+SPDX-License-Identifier = "CC0-1.0"
+
+# Debuxos de Furar (catálogo da plataforma, táboa drawing): ilustracións debuxadas para Furar
+# (instalacións vistas desde arriba ou de fronte, sen persoas nin marcas), obra propia dedicada ao
+# dominio público. Ficheiro a ficheiro, sen comodíns (LIC-5).
+[[annotations]]
+path = [
+  "api/src/main/resources/drawings/activity_room.jpg",
+  "api/src/main/resources/drawings/athletics_track.jpg",
+  "api/src/main/resources/drawings/badminton_court.jpg",
+  "api/src/main/resources/drawings/basketball_court.jpg",
+  "api/src/main/resources/drawings/beach_volleyball.jpg",
+  "api/src/main/resources/drawings/climbing_wall.jpg",
+  "api/src/main/resources/drawings/combat_room.jpg",
+  "api/src/main/resources/drawings/field_hockey.jpg",
+  "api/src/main/resources/drawings/football_field.jpg",
+  "api/src/main/resources/drawings/fronton.jpg",
+  "api/src/main/resources/drawings/futsal_court.jpg",
+  "api/src/main/resources/drawings/generic.jpg",
+  "api/src/main/resources/drawings/gym.jpg",
+  "api/src/main/resources/drawings/jetty.jpg",
+  "api/src/main/resources/drawings/multipurpose_room.jpg",
+  "api/src/main/resources/drawings/outdoor_court.jpg",
+  "api/src/main/resources/drawings/padel_court.jpg",
+  "api/src/main/resources/drawings/pool.jpg",
+  "api/src/main/resources/drawings/roller_rink.jpg",
+  "api/src/main/resources/drawings/rugby_field.jpg",
+  "api/src/main/resources/drawings/sports_hall.jpg",
+  "api/src/main/resources/drawings/squash_court.jpg",
+  "api/src/main/resources/drawings/table_tennis.jpg",
+  "api/src/main/resources/drawings/tennis_court.jpg",
+  "api/src/main/resources/drawings/velodrome.jpg",
+  "api/src/main/resources/drawings/volleyball_court.jpg",
+  # Copias para as instalacións de exemplo da portada sen concello (web/public/examples).
+  "web/public/examples/athletics_track.jpg",
+  "web/public/examples/football_field.jpg",
+  "web/public/examples/padel_court.jpg",
+  "web/public/examples/sports_hall.jpg",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Santiago Herrero Padín e colaboradores de Furar"
+SPDX-License-Identifier = "CC0-1.0"
+
+# Táboa de datos da documentación sen sitio para comentarios (D53): mesma licenza ca docs/.
+[[annotations]]
+path = ["docs/verificacion/probas-das-filas.tsv"]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Santiago Herrero Padín e colaboradores de Furar"
+SPDX-License-Identifier = "CC0-1.0"
+
+# Maven Wrapper: ficheiros de terceiros sen modificar (Apache-2.0).
+[[annotations]]
+path = ["api/mvnw", "api/mvnw.cmd", "api/.mvn/wrapper/maven-wrapper.properties"]
+precedence = "override"
+SPDX-FileCopyrightText = "The Apache Software Foundation"
+SPDX-License-Identifier = "Apache-2.0"
+
+# Escudo xenérico da cabeceira dos correos (ADR-0025, punto 15): o símbolo «shield» de Material
+# Symbols (Apache-2.0) recortado nun cadrado branco, en PNG porque moitos clientes non mostran SVG.
+[[annotations]]
+path = ["api/src/main/resources/mail/shield.png"]
+precedence = "override"
+SPDX-FileCopyrightText = ["Google LLC", "2026 Santiago Herrero Padín e colaboradores de Furar"]
+SPDX-License-Identifier = "Apache-2.0"
+
+# Letra do tema de acceso de Keycloak: Atkinson Hyperlegible Next 5.3.0 (latin 400 e 700), os
+# mesmos woff2 que usa a web desde o seu paquete npm, sen cambios; OFL-1.1.
+[[annotations]]
+path = [
+  "deploy/keycloak/themes/furar/login/resources/fonts/atkinson-hyperlegible-next-latin-400-normal.woff2",
+  "deploy/keycloak/themes/furar/login/resources/fonts/atkinson-hyperlegible-next-latin-700-normal.woff2",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2020-2024 The Atkinson Hyperlegible Next Project Authors"
+SPDX-License-Identifier = "OFL-1.1"
+
+# Lista de contrasinais comúns do realm (passwordBlacklist): xerada para Furar a partir de patróns
+# (secuencias de teclado e de díxitos, repeticións, palabras habituais en galego, castelán e inglés
+# con números, anos e símbolos), só as de 12 caracteres ou máis. Keycloak le cada liña coma un
+# contrasinal, así que non leva cabeceira.
+[[annotations]]
+path = ["deploy/keycloak/password-blacklists/furar-contrasinais-comuns.txt"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Santiago Herrero Padín e colaboradores de Furar"
+SPDX-License-Identifier = "CC0-1.0"

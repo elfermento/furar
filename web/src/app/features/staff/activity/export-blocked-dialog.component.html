@@ -1,0 +1,120 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'activity.exportBlocked.';
+<furar-dialog size="md" [heading]="t + 'title' | transloco" [description]="t + 'intro' | transloco" [busy]="busy()">
+  <form
+    class="gap-form grid"
+    novalidate
+    [id]="formId"
+    [formGroup]="form"
+    [attr.inert]="busy() ? '' : null"
+    (ngSubmit)="submit()"
+  >
+    <furar-form-errors-summary [count]="errorCount()" />
+    <furar-required-note />
+
+    <div class="gap-unit grid" data-export-period>
+      <span class="f-label" id="export-blocked-period">{{ t + 'period' | transloco }}</span>
+      <span class="f-help" id="export-blocked-period-help">{{
+        t + 'periodHelp' | transloco: { first: firstText, last: lastText, max: maxDays }
+      }}</span>
+      <div class="f-field-row grid-cols-1 sm:grid-cols-2">
+        <div class="f-field">
+          <span class="f-label" aria-hidden="true">{{ t + 'from' | transloco }} <furar-required-mark /></span>
+          <furar-date-field
+            required
+            formControlName="from"
+            buttonId="export-blocked-from"
+            data-export-from
+            [label]="t + 'from' | transloco"
+            [min]="data.first"
+            [max]="data.last"
+            [today]="data.last"
+            [invalid]="!!fromError()"
+            [describedBy]="fromError() ? 'export-blocked-from-error' : 'export-blocked-period-help'"
+          />
+          @if (fromError(); as e) {
+            <span class="f-field-error" id="export-blocked-from-error">{{ e.key | transloco: e.params }}</span>
+          }
+        </div>
+        <div class="f-field">
+          <span class="f-label" aria-hidden="true">{{ t + 'to' | transloco }} <furar-required-mark /></span>
+          <furar-date-field
+            required
+            formControlName="to"
+            buttonId="export-blocked-to"
+            data-export-to
+            [label]="t + 'to' | transloco"
+            [min]="data.first"
+            [max]="data.last"
+            [today]="data.last"
+            [invalid]="!!toError()"
+            [describedBy]="toError() ? 'export-blocked-to-error' : 'export-blocked-period-help'"
+          />
+          @if (toError(); as e) {
+            <span class="f-field-error" id="export-blocked-to-error">{{ e.key | transloco: e.params }}</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <furar-field
+      fieldId="export-blocked-reason"
+      [label]="t + 'reason' | transloco"
+      [required]="true"
+      [error]="reasonError()"
+    >
+      <furar-select
+        required
+        formControlName="reason"
+        selectId="export-blocked-reason"
+        data-export-reason
+        [label]="t + 'reason' | transloco"
+        [placeholder]="t + 'reasonPlaceholder' | transloco"
+        [options]="reasons | furarOptions: t + 'reasons.' : lang()"
+        [invalid]="!!reasonError()"
+        [describedBy]="describedBy('export-blocked-reason', false, reasonError())"
+      />
+    </furar-field>
+
+    <furar-field
+      fieldId="export-blocked-reference"
+      [label]="t + 'reference' | transloco"
+      [help]="t + 'referenceHelp' | transloco"
+      [required]="true"
+      [error]="referenceError()"
+    >
+      <input
+        furarInput
+        type="text"
+        id="export-blocked-reference"
+        formControlName="reference"
+        autocomplete="off"
+        spellcheck="false"
+        aria-required="true"
+        data-export-reference
+        [attr.maxlength]="referenceMax"
+        [attr.aria-invalid]="referenceError() ? 'true' : null"
+        [attr.aria-describedby]="describedBy('export-blocked-reference', true, referenceError())"
+      />
+    </furar-field>
+
+    <div role="alert">
+      @if (alert(); as text) {
+        <furar-callout tone="danger" data-export-alert>
+          <p class="font-bold">{{ text }}</p>
+        </furar-callout>
+      }
+    </div>
+  </form>
+  <ng-container dialogActions>
+    <button type="button" furarButton="quiet" data-cancel (click)="ref.close()">
+      {{ 'common.cancel' | transloco }}
+    </button>
+    <button type="submit" furarButton="primary" data-export-send [attr.form]="formId" [busy]="busy()">
+      {{ (busy() ? t + 'sending' : t + 'send') | transloco }}
+    </button>
+  </ng-container>
+</furar-dialog>

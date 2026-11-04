@@ -1,0 +1,356 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Modal de fotos e biblioteca (features/facility/photos; maqueta aprobada «fotos a pantalla
+ * completa»): arriba, metade e metade, a imaxe grande e a tarxeta; debaixo, a todo o ancho, «N
+ * fotos», a tira (furar-carousel) e «Engadir» ao final, fóra da tira.
+ */
+@layer components {
+  .f-photos {
+    display: grid;
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr) auto auto auto;
+    gap: 1.25rem;
+  }
+  .f-photos__top {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+  .f-photos__big {
+    display: grid;
+    position: relative;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+    place-items: center;
+    border-radius: var(--radius-card);
+    background: var(--f-tint);
+  }
+  .f-photos__big img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .f-photos__badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.125rem 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-photos__badge--sm {
+    top: 0.375rem;
+    left: 0.375rem;
+    padding: 0 0.5rem;
+    font-size: 0.75rem;
+  }
+  .f-photos__card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-self: start;
+    /* Nunca pisa a tira: se non cabe (pantallas baixas, co erro á vista), desprázase. */
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 1.5rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+  }
+  .f-photos__field {
+    display: grid;
+    gap: 0.375rem;
+  }
+  .f-photos__label-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .f-photos__field textarea {
+    min-height: 6rem;
+    resize: vertical;
+  }
+  .f-photos__acts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+
+  .f-photos__strip {
+    display: grid;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.25rem;
+  }
+  .f-photos__row {
+    display: flex;
+    min-width: 0;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  .f-photos__row .f-carousel {
+    flex: 1;
+  }
+  .f-photos__tile {
+    position: relative;
+    width: 100%;
+  }
+  .f-photos__tile > .f-photos__badge,
+  .f-photos__tile > .f-photos__number {
+    pointer-events: none;
+  }
+  .f-photos__thumb {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--radius-field);
+    background: var(--f-tint);
+    cursor: inherit;
+  }
+  .f-photos__thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .f-photos__thumb[aria-pressed='true'] {
+    box-shadow:
+      0 0 0 3px var(--f-surface),
+      0 0 0 6px var(--f-primary);
+  }
+  .f-photos__number {
+    display: grid;
+    position: absolute;
+    right: 0.375rem;
+    bottom: 0.375rem;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--f-ink);
+    color: var(--f-surface);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .f-carousel[data-dragging] .f-carousel__item:has(.f-photos__thumb[aria-pressed]) {
+    opacity: 1;
+  }
+  .f-photos__add {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    width: 10rem;
+    aspect-ratio: 3 / 2;
+    margin: 0.5rem 0 0.75rem;
+    border: 2px dashed var(--f-line);
+    border-radius: var(--radius-field);
+    background: var(--f-surface);
+    color: var(--f-primary-text);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .f-photos__add:hover {
+      border-color: var(--f-primary);
+      background: var(--f-tint);
+    }
+  }
+  .f-photos__add-icon {
+    position: relative;
+  }
+  .f-photos__add-plus {
+    display: grid;
+    position: absolute;
+    right: -0.5rem;
+    bottom: -0.375rem;
+    place-items: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+  .f-photos__add-plus furar-icon,
+  .f-photos__add-plus svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  [dialogStatus][data-changes] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .f-photos__dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--f-warn);
+  }
+  [dialogStatus] b {
+    color: var(--f-ink);
+  }
+
+  @media (max-width: 56.24rem) {
+    .f-photos {
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+    .f-photos > * {
+      flex: none;
+    }
+    .f-photos__top {
+      grid-template-columns: 1fr;
+    }
+    .f-photos__big {
+      aspect-ratio: 3 / 2;
+    }
+    .f-photos__add {
+      width: 7.5rem;
+    }
+    .f-photos .f-carousel {
+      --f-carousel-item: 7.5rem;
+    }
+  }
+
+  /* Biblioteca */
+  .f-library__drop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    margin-block: 1rem 0.5rem;
+    padding: 1rem;
+    border: 2px dashed var(--f-line);
+    border-radius: var(--radius-card);
+    color: var(--f-ink-soft);
+    text-align: center;
+  }
+  .f-library__drop:focus-within {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: 2px;
+  }
+  .f-library__upload {
+    color: var(--f-primary-text);
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .f-library__notes {
+    margin: 0 0 0.75rem;
+    padding: 0;
+    font-size: var(--text-support);
+    list-style: none;
+  }
+  .f-library__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: 0.75rem;
+    margin: 0.5rem 0 0;
+    padding: 0.375rem;
+    list-style: none;
+  }
+  .f-library__pick {
+    display: block;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: var(--radius-field);
+    background: var(--f-tint);
+    cursor: pointer;
+  }
+  .f-library__pick img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .f-library__pick[aria-pressed='true'] {
+    box-shadow:
+      0 0 0 3px var(--f-surface),
+      0 0 0 6px var(--f-primary);
+  }
+  .f-library__pick[aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+  .f-library__pick[aria-disabled='true'] img {
+    opacity: 0.55;
+  }
+  .f-library__check {
+    display: grid;
+    position: absolute;
+    top: 0.375rem;
+    right: 0.375rem;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 2px solid var(--f-line);
+    border-radius: 50%;
+    background: var(--f-surface);
+    color: var(--f-on-primary);
+  }
+  .f-library__pick[aria-pressed='true'] .f-library__check {
+    border-color: var(--f-primary);
+    background: var(--f-primary);
+  }
+  .f-library__pick[aria-disabled='true'] .f-library__check {
+    border-color: var(--f-ink-soft);
+    background: var(--f-ink-soft);
+  }
+  .f-library__caption {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0.25rem 0.5rem;
+    overflow: hidden;
+    /* Fondo sólido (non degradado): o texto branco dá AA sobre calquera imaxe. */
+    background: rgb(0 0 0 / 0.75);
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (forced-colors: active) {
+    .f-photos__thumb[aria-pressed='true'],
+    .f-library__pick[aria-pressed='true'] {
+      outline: 3px solid Highlight;
+    }
+    .f-photos__add,
+    .f-library__drop {
+      border-color: CanvasText;
+    }
+  }
+}

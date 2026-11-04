@@ -1,0 +1,156 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.reserve.';
+<div class="f-reserve">
+  @if (store.selection().booking) {
+    @switch (confirmed.state()) {
+      @case ('ready') {
+        @if (confirmed.booking(); as booking) {
+          <furar-reserve-confirmed
+            [booking]="booking"
+            [facility]="store.facility()"
+            [email]="store.email() ?? null"
+            [paymentNote]="store.paymentNote()"
+            [fields]="store.fields.definitions()"
+            (calendar)="confirmed.downloadCalendar(slug())"
+          />
+        }
+      }
+      @case ('error') {
+        <furar-status-state
+          mode="error"
+          [headingLevel]="1"
+          [heading]="t + 'bookingError.title' | transloco"
+          [description]="t + 'bookingError.text' | transloco"
+        />
+      }
+      @default {
+        <furar-status-state mode="skeleton" shape="card" [rows]="3" [description]="t + 'loading' | transloco" />
+      }
+    }
+  } @else {
+    <div class="f-reserve__title">
+      <a
+        furarButton="secondary"
+        round
+        [routerLink]="['/', slug(), 'instalacions', id()]"
+        [attr.aria-label]="t + 'back' | transloco"
+        data-reserve-back
+      >
+        <furar-icon name="arrow-left" />
+      </a>
+      <h1>{{ (changing() ? t + 'change.title' : t + 'title') | transloco }}</h1>
+    </div>
+
+    @switch (store.state()) {
+      @case ('loading') {
+        <furar-status-state mode="skeleton" shape="card" [rows]="4" [description]="t + 'loading' | transloco" />
+      }
+      @case ('error') {
+        <furar-status-state
+          mode="error"
+          [heading]="(notFound() ? t + 'notFound.title' : t + 'loadError.title') | transloco"
+          [description]="(notFound() ? t + 'notFound.text' : t + 'loadError.text') | transloco"
+        >
+          @if (!notFound()) {
+            <button type="button" furarButton (click)="load()">{{ t + 'loadError.retry' | transloco }}</button>
+          }
+        </furar-status-state>
+      }
+      @case ('ready') {
+        @if (store.facility(); as f) {
+          <section class="f-card f-reserve__card" [attr.aria-label]="t + 'card' | transloco">
+            <div class="f-reserve__facility">
+              @if (thumb(); as image) {
+                <img [src]="image.thumb" [width]="image.width" [height]="image.height" alt="" />
+              }
+              <div>
+                <b>{{ f.name }}</b>
+                <span>{{ address() }}</span>
+              </div>
+            </div>
+
+            <div role="status" class="f-reserve__live" data-reserve-status>
+              @if (store.taken(); as taken) {
+                <furar-callout tone="warn" [heading]="t + 'taken.title' | transloco: { time: taken.time }">
+                  @if (taken.alternatives.length) {
+                    <p>{{ t + 'taken.choose' | transloco }}</p>
+                    <div class="f-reserve__alts">
+                      @for (time of taken.alternatives; track time) {
+                        <button type="button" class="f-reserve__alt" data-reserve-alt (click)="pickAlternative(time)">
+                          {{ time }}
+                        </button>
+                      }
+                    </div>
+                  } @else {
+                    <p>{{ t + 'taken.none' | transloco }}</p>
+                  }
+                </furar-callout>
+              }
+            </div>
+            @if (store.submitError(); as problem) {
+              <furar-callout tone="danger" live="alert" data-reserve-error>{{ problem.translated }}</furar-callout>
+            }
+            @if (confirmed.originalState() === 'error') {
+              <furar-callout tone="danger" data-reserve-change-error>{{
+                t + 'change.loadError' | transloco
+              }}</furar-callout>
+            }
+            @if (!f.bookable) {
+              <furar-callout tone="info">{{ t + 'notBookable' | transloco }}</furar-callout>
+            }
+            @if (workAccount()) {
+              <furar-callout tone="warn" id="reserve-work-account" data-reserve-work-account>{{
+                t + 'workAccount' | transloco
+              }}</furar-callout>
+            }
+
+            <furar-reserve-fields />
+
+            <!-- Campos propios da reserva (maqueta 57): no mesmo paso, antes de confirmar. -->
+            @if (store.fields.active().length && !changing()) {
+              <div class="f-reserve__fields" data-reserve-custom-fields>
+                <furar-custom-fields-form
+                  [definitions]="store.fields.active()"
+                  [form]="store.fields.form()"
+                  [lang]="lang()"
+                  idPrefix="reserve-cf"
+                  [showErrors]="store.fields.showErrors()"
+                />
+              </div>
+            }
+
+            @if (totalText(); as total) {
+              <div class="f-reserve__total">
+                <span>{{ t + 'total' | transloco }}</span>
+                <b data-reserve-total>{{ total }}</b>
+              </div>
+            }
+            <button
+              type="button"
+              furarButton="primary"
+              class="f-reserve__go"
+              data-reserve-go
+              [disabled]="!store.chosen() || !f.bookable || workAccount() || (changing() && !confirmed.original())"
+              [attr.aria-describedby]="workAccount() ? 'reserve-work-account' : null"
+              [busy]="store.submitting()"
+              (click)="submit()"
+            >
+              @if (store.authenticated()) {
+                {{ (changing() ? t + 'change.confirm' : t + 'confirm') | transloco }}
+              } @else {
+                {{ t + 'continue' | transloco }}
+                <furar-icon name="arrow-right" />
+              }
+            </button>
+            @if (fine()) {
+              <p class="f-reserve__fine" data-reserve-fine>{{ fine() }}</p>
+            }
+          </section>
+        }
+      }
+    }
+  }
+</div>

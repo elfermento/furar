@@ -1,0 +1,69 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/* Card e fieldset con aspecto de card (furar-card, [furarFieldset], docs/deseno.md P1-4). */
+@layer components {
+  .f-card,
+  .card,
+  .f-fieldset {
+    display: block;
+    min-width: 0;
+    padding: 1rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+  }
+  @media (min-width: 22.5rem) {
+    .f-card,
+    .card,
+    .f-fieldset {
+      padding: var(--spacing-card);
+    }
+  }
+  .f-card[data-tone='tint'] {
+    background: var(--f-tint);
+  }
+  .f-card__title {
+    margin-bottom: var(--spacing-item);
+    font-size: var(--text-head);
+    line-height: 1.25;
+  }
+
+  /* A lenda flota para quedar dentro da card como o seu título, non enriba do bordo. */
+  .f-fieldset > legend {
+    float: left;
+    width: 100%;
+    margin-bottom: var(--spacing-item);
+    padding: 0;
+    font-size: var(--text-head);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .f-fieldset > legend + * {
+    clear: both;
+  }
+  .f-fieldset::after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+
+  @media (prefers-contrast: more) {
+    .f-card,
+    .card,
+    .f-fieldset {
+      border-width: 2px;
+      box-shadow: none;
+    }
+  }
+}
+
+/* Grupo dentro dunha card (p. ex. grupos de campos personalizados): sen segunda sombra nin fondo. */
+@layer components {
+  .f-card :where(.f-fieldset, .f-card),
+  .f-fieldset :where(.f-fieldset, .f-card) {
+    background: transparent;
+    box-shadow: none;
+  }
+}

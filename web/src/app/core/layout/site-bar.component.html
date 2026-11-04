@@ -1,0 +1,90 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<header #bar class="f-topbar__bar f-glass" [attr.data-hidden]="scroll.hidden() || null">
+  <div class="f-topbar__row">
+    <a class="f-topbar__brand" [routerLink]="homeLink()">
+      <span class="f-topbar__shield" aria-hidden="true"><furar-icon name="shield" /></span>
+      <span class="f-topbar__names">
+        <span class="f-topbar__name">{{ municipality.name() ?? ('app.name' | transloco) }}</span
+        >{{ ' ' }}<span class="f-topbar__tagline">{{ 'site.tagline' | transloco }}</span>
+      </span>
+    </a>
+    @if (municipality.slug(); as slug) {
+      @if (canManage()) {
+        <nav class="f-topbar__nav" data-manage [attr.aria-label]="'app.manageNav' | transloco">
+          <ul>
+            @for (link of manageLinks(); track link.key) {
+              <li>
+                <a
+                  class="f-topbar__link"
+                  [routerLink]="link.path"
+                  routerLinkActive="f-topbar__link--active"
+                  ariaCurrentWhenActive="page"
+                  [routerLinkActiveOptions]="{ exact: link.exact }"
+                  >{{ link.key | transloco }}</a
+                >
+              </li>
+            }
+          </ul>
+        </nav>
+      } @else {
+        <nav class="f-topbar__nav" [attr.aria-label]="'site.mainNav' | transloco">
+          <ul>
+            <li>
+              <a
+                class="f-topbar__link"
+                [routerLink]="['/', slug, 'instalacions']"
+                routerLinkActive="f-topbar__link--active"
+                ariaCurrentWhenActive="page"
+                [routerLinkActiveOptions]="exact"
+                >{{ 'site.facilities' | transloco }}</a
+              >
+            </li>
+            @if (session.authenticated() && !workAccount()) {
+              <li>
+                <a
+                  class="f-topbar__link"
+                  data-my-bookings
+                  [routerLink]="['/', slug, 'reservas']"
+                  routerLinkActive="f-topbar__link--active"
+                  ariaCurrentWhenActive="page"
+                  [routerLinkActiveOptions]="exact"
+                  >{{ 'site.myBookings' | transloco }}</a
+                >
+              </li>
+            }
+          </ul>
+        </nav>
+      }
+    }
+    <div class="f-topbar__tools">
+      <furar-language-switcher />
+      @if (session.authenticated()) {
+        <!-- O menú (CDK Menu) cárgase á parte: quen non entra non o descarga. -->
+        @defer (on immediate) {
+          <furar-user-menu
+            [name]="session.name() ?? ''"
+            [roleName]="roleLabel()"
+            [context]="contextLabel()"
+            [email]="session.email() ?? ''"
+            [items]="menuItems()"
+            [switcher]="switcher()"
+            (selected)="onMenu($event)"
+            (switched)="onSwitch($event)"
+          />
+        } @placeholder {
+          <span class="f-usermenu__trigger" aria-hidden="true">
+            <span class="f-usermenu__avatar">{{ initials(session.name() ?? '') }}</span>
+          </span>
+        }
+      } @else {
+        <button type="button" furarButton="primary" size="sm" class="f-topbar__login" (click)="login()">
+          <furar-icon name="user" />
+          <span class="f-topbar__label">{{ 'session.login' | transloco }}</span>
+        </button>
+      }
+    </div>
+  </div>
+</header>

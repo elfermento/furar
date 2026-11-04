@@ -1,0 +1,437 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Calendario das reservas do concello (D2-16, maqueta 27): cabeceira (volver, título, vista e
+ * instalación), barra do período á dereita (frechas sen círculo e o texto que abre o calendario
+ * en capa), a grella (horas en filas de 3,25 rem baixo unha cabeceira de 4 rem: as mesmas medidas
+ * ca `bookings-calendar.ts`), o mes, a lista do día no móbil e a vista rápida. Coa reserva
+ * aberta, a grella aos 2/3 e a tarxeta ao 1/3 (a de «Reservas», `f-manage__detail`). Folla
+ * `reservas.css`: a ruta leva `bookingStylesResolver`.
+ */
+@layer components {
+  .f-bcal {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  /* Cabeceira: ← e título á esquerda; vista e instalación á dereita (baixan de liña se non caben). */
+  .f-bcal__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .f-bcal__top h1 {
+    margin: 0;
+    font-size: 2rem;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .f-bcal__sp {
+    flex: 1;
+  }
+  .f-bcal__fac {
+    display: inline-block;
+    max-width: 100%;
+  }
+  .f-bcal__fac .f-select__button {
+    min-height: var(--f-touch);
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+  }
+
+  /* Período: á dereita, frechas sen círculo e o texto sen cheurón; a capa colga da barra. */
+  .f-bcal__bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.25rem;
+  }
+  .f-bcal__arr {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: var(--f-touch);
+    height: var(--f-touch);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--f-primary-text);
+    cursor: pointer;
+  }
+  .f-bcal__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    min-height: var(--f-touch);
+    padding: 0 0.5rem;
+    border: 0;
+    border-radius: var(--radius-field);
+    background: none;
+    color: var(--f-ink);
+    font: inherit;
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-bcal__label > .f-icon {
+    color: var(--f-primary-text);
+  }
+  @media (hover: hover) {
+    .f-bcal__arr:hover,
+    .f-bcal__label:hover {
+      background: var(--f-tint);
+    }
+  }
+  .f-bcal__pop {
+    position: absolute;
+    z-index: var(--f-z-popover);
+    top: calc(100% + 0.5rem);
+    right: 0;
+    width: min(20rem, calc(100vw - 2rem));
+    padding: 1rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+  }
+  .f-bcal__pop .f-calendar__nav {
+    border-color: transparent;
+  }
+
+  /* Grella e tarxeta: unha columna; coa reserva aberta no escritorio, 2/3 e 1/3. */
+  .f-bcal__two {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (min-width: 64rem) {
+    .f-bcal__two[data-detail] {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .f-bcal__two[data-detail] > .f-manage__detail {
+      animation: f-manage-in 0.35s var(--ease-smooth);
+    }
+  }
+  .f-bcal__main {
+    min-width: 0;
+  }
+
+  .f-bcal__grid {
+    display: block;
+    overflow: auto;
+    padding: 0;
+  }
+  .f-bcal__table {
+    position: relative;
+    display: grid;
+    grid-template-rows: 4rem;
+    grid-auto-rows: 3.25rem;
+  }
+  .f-bcal__head {
+    position: sticky;
+    z-index: 2;
+    top: 0;
+    height: 4rem;
+    padding: 0.75rem;
+    overflow: hidden;
+    border-bottom: var(--f-border) solid var(--f-divider);
+    background: var(--f-surface);
+    font-weight: 700;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .f-bcal__head small {
+    display: block;
+    color: var(--f-ink-soft);
+    font-size: 0.8125rem;
+    font-weight: 400;
+  }
+  .f-bcal__head--today {
+    color: var(--f-primary-text);
+  }
+  .f-bcal__hour {
+    padding: 0.25rem 0.5rem 0 0;
+    color: var(--f-ink-soft);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+  .f-bcal__cell {
+    border-top: var(--f-border) solid color-mix(in srgb, var(--f-divider) 55%, transparent);
+    border-left: var(--f-border) solid color-mix(in srgb, var(--f-divider) 55%, transparent);
+  }
+  /* Hora pechada: raiada (maqueta 27). */
+  .f-bcal__cell--closed {
+    background: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--f-divider) 25%, transparent) 0 6px,
+      color-mix(in srgb, var(--f-divider) 60%, transparent) 6px 8px
+    );
+  }
+  .f-bcal__block {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 1.5rem;
+    padding: 0.25rem 0.5rem;
+    overflow: hidden;
+    border: 0;
+    border-left: 4px solid var(--f-primary);
+    border-radius: 0.625rem;
+    background: var(--f-tint);
+    color: var(--f-ink);
+    font: inherit;
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-bcal__block b,
+  .f-bcal__block span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .f-bcal__block span {
+    color: var(--f-ink-soft);
+  }
+  .f-bcal__block[aria-pressed='true'] {
+    box-shadow: 0 0 0 2px var(--f-primary);
+  }
+  @media (hover: hover) {
+    .f-bcal__block:hover {
+      box-shadow: 0 0 0 2px var(--f-primary);
+    }
+  }
+  .f-bcal__count {
+    position: absolute;
+    z-index: 1;
+    height: 2.5rem;
+    border: 0;
+    border-radius: 0.75rem;
+    background: var(--f-tint);
+    color: var(--f-primary-text);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .f-bcal__count:hover {
+      background: var(--f-primary);
+      color: var(--f-on-primary);
+    }
+  }
+
+  /* Mes: sete columnas; cada día, un botón co número e a conta. */
+  .f-bcal__month {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+  .f-bcal__dh {
+    color: var(--f-ink-soft);
+    font-size: 0.875rem;
+    text-align: center;
+  }
+  .f-bcal__mday {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    min-height: 5rem;
+    padding: 0.5rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-bcal__mday b {
+    font-size: 0.9375rem;
+  }
+  .f-bcal__mday--today {
+    box-shadow: inset 0 0 0 2px var(--f-primary);
+  }
+  @media (hover: hover) {
+    .f-bcal__mday:hover {
+      border-color: var(--f-primary);
+    }
+  }
+  .f-bcal__mcount {
+    color: var(--f-primary-text);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+  .f-bcal__mcount--free {
+    color: var(--f-ink-soft);
+    font-weight: 400;
+  }
+  .f-bcal__mnum {
+    display: none;
+  }
+  @media (max-width: 47.9375rem) {
+    .f-bcal__month {
+      gap: 0.25rem;
+      padding: 0.5rem;
+    }
+    .f-bcal__mday {
+      align-items: center;
+      min-height: 3.5rem;
+      padding: 0.375rem 0.125rem;
+    }
+    .f-bcal__mnum {
+      display: inline;
+    }
+    /* A conta en palabras só para lectores de pantalla: non cabe. */
+    .f-bcal__mtext {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  /* Día no móbil: lista por hora de inicio. */
+  .f-bcal__list {
+    display: grid;
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+  .f-bcal__list-group h2 {
+    margin: 0 0 0.25rem;
+    color: var(--f-ink-soft);
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Vista rápida: fixa xunto ao botón, horas en liñas finas sobre os nomes. */
+  .f-bcal__peek {
+    position: fixed;
+    z-index: var(--f-z-popover);
+    width: min(20rem, calc(100vw - 1rem));
+    /* Un día cheo non cabe nun móbil: desprázase dentro e «Ver o día» segue alcanzable. */
+    max-height: calc(100dvh - 1rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0.875rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+  }
+  .f-bcal__peek:focus-visible {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .f-bcal__peek {
+      animation: f-bcal-pop 0.18s var(--ease-smooth);
+    }
+  }
+  @keyframes f-bcal-pop {
+    from {
+      opacity: 0;
+      transform: translateY(-0.25rem) scale(0.98);
+    }
+  }
+  .f-bcal__peek-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+  }
+  .f-bcal__peek-time {
+    margin-top: 0.25rem;
+    padding: 0.625rem 0.5rem 0.25rem;
+    border-top: var(--f-border) solid var(--f-divider);
+    color: var(--f-ink-soft);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .f-bcal__peek-head + .f-bcal__peek-time {
+    margin-top: 0;
+    padding-top: 0.125rem;
+    border-top: 0;
+  }
+  .f-bcal__peek-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem;
+    border: 0;
+    border-radius: 0.75rem;
+    background: none;
+    color: var(--f-ink);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-bcal__peek-row b {
+    display: block;
+    font-size: 0.9375rem;
+  }
+  .f-bcal__peek-meta {
+    color: var(--f-ink-soft);
+    font-size: 0.8125rem;
+  }
+  @media (hover: hover) {
+    .f-bcal__peek-row:hover {
+      background: var(--f-page);
+    }
+  }
+  .f-bcal__peek-empty {
+    margin: 0.25rem 0.5rem;
+    color: var(--f-ink-soft);
+  }
+  .f-bcal__peek-day {
+    min-height: 2.5rem;
+    margin-top: 0.25rem;
+    padding: 0 0.5rem;
+    border: 0;
+    background: none;
+    color: var(--f-primary-text);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  @media (forced-colors: active) {
+    .f-bcal__block,
+    .f-bcal__count,
+    .f-bcal__mday {
+      border: var(--f-border) solid ButtonText;
+    }
+    .f-bcal__block[aria-pressed='true'],
+    .f-bcal__mday--today {
+      outline: var(--f-border-state) solid Highlight;
+    }
+    .f-bcal__peek,
+    .f-bcal__pop {
+      border: var(--f-border) solid CanvasText;
+    }
+  }
+}

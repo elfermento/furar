@@ -1,0 +1,6 @@
+The Apache Software Foundation | Maven Wrapper (api/mvnw, api/mvnw.cmd, api/.mvn/wrapper/), sen modificar; Apache-2.0, anotado en REUSE.toml
+Coraline Ada Ehmke | Contributor Covenant 2.1 (CC-BY-4.0), base adaptada ao galego de CODE_OF_CONDUCT.md
+Red Hat, Inc. and/or other contributors (Keycloak) | traducións ao galego dos textos de Keycloak (deploy/keycloak/themes/furar/*/messages/messages_gl.properties), obra derivada de messages_en (Apache-2.0); EUPL-1.2 AND Apache-2.0 (LIC-10)
+Google LLC | Material Symbols (web/src/app/shared/ui/icon/material-symbols.ts e lazy-symbols.ts), camiños SVG sen cambios de @material-symbols/svg-400; Apache-2.0 (P27 do plan do dominio 1)
+© IGN | atribución que esixe CartoCiudad (Instituto Geográfico Nacional) ao mostrar os seus enderezos: só o texto «Fonte: CartoCiudad, © IGN» de web/src/i18n/{gl,es}.json e as súas probas; non hai ficheiros de terceiros (especificación, bloque 1, «Enderezos»)
+The Atkinson Hyperlegible Next Project Authors | letra Atkinson Hyperlegible Next 5.3.0 (deploy/keycloak/themes/furar/login/resources/fonts/*.woff2, latin 400 e 700), sen cambios; OFL-1.1, anotada en REUSE.toml; na imaxe, /licenses/OFL-1.1.txt

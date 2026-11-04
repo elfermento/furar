@@ -1,0 +1,86 @@
+<!-- SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar -->
+<!-- SPDX-License-Identifier: EUPL-1.2 -->
+@let t = 'facility.affectedBookings.';
+<furar-dialog
+  size="lg"
+  [heading]="t + (bookings().length === 1 ? 'titleOne' : 'titleOther') | transloco: { count: bookings().length }"
+  [description]="summary()"
+  [busy]="busy()"
+>
+  @if (changed()) {
+    <furar-callout class="mb-item block" tone="warn">
+      <p>{{ t + 'changed' | transloco }}</p>
+    </furar-callout>
+  }
+  <div
+    class="gap-unit mb-item flex flex-wrap items-center justify-between border-y border-divider bg-page px-item py-unit"
+  >
+    <label class="gap-unit inline-flex min-h-11 cursor-pointer items-center font-bold">
+      <input
+        #selectAll
+        type="checkbox"
+        data-select-all
+        [checked]="allMarked()"
+        [indeterminate]="marked() > 0 && !allMarked()"
+        [disabled]="busy()"
+        (change)="markAll(selectAll.checked)"
+      />
+      {{ t + 'selectAll' | transloco }}
+    </label>
+    <div class="gap-unit flex flex-wrap" role="group" [attr.aria-label]="t + 'bulk' | transloco">
+      <button
+        type="button"
+        furarButton
+        size="sm"
+        data-bulk="CANCEL"
+        [disabled]="marked() === 0"
+        (click)="applyToMarked('CANCEL')"
+      >
+        {{ t + 'cancelMarked' | transloco }}
+      </button>
+      <button
+        type="button"
+        furarButton
+        size="sm"
+        data-bulk="KEEP"
+        [disabled]="marked() === 0"
+        (click)="applyToMarked('KEEP')"
+      >
+        {{ t + 'keepMarked' | transloco }}
+      </button>
+    </div>
+  </div>
+
+  <ul furarRowList [attr.aria-label]="t + 'list' | transloco" [attr.inert]="busy() ? '' : null">
+    @for (booking of bookings(); track booking.bookingId; let i = $index) {
+      <li>
+        <furar-affected-booking
+          [booking]="booking"
+          [form]="form.controls[i]"
+          [value]="values()[i]"
+          [submitted]="submitted()"
+        />
+      </li>
+    }
+  </ul>
+
+  <p class="text-support mt-item text-ink-soft" role="status">
+    {{ t + 'status' | transloco: counts() }}
+  </p>
+  <div role="alert">
+    @if (submitted() && incomplete() > 0) {
+      <furar-callout class="mt-item block" tone="danger">
+        <p>{{ t + (incomplete() === 1 ? 'incompleteOne' : 'incompleteOther') | transloco: { count: incomplete() } }}</p>
+      </furar-callout>
+    }
+  </div>
+
+  <ng-container dialogActions>
+    <button type="button" furarButton="quiet" data-back (click)="ref.close()">
+      {{ t + 'back' | transloco }}
+    </button>
+    <button type="button" furarButton="primary" data-confirm [busy]="busy()" (click)="confirm()">
+      {{ (busy() ? t + 'confirming' : t + 'confirm') | transloco }}
+    </button>
+  </ng-container>
+</furar-dialog>

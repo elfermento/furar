@@ -1,0 +1,81 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# CI para GitLab (A Eira de Mancomún ou calquera GitLab) — ADR-0016, LIC-1.
+# Os mesmos comandos ca GitHub e ca en local: scripts/verificar.sh --parte X
+# (docs/definicion-de-feito.md). Toda a lóxica vive en scripts/, non aquí.
+#
+# Runner: executor "shell" coa etiqueta `furar`, cos mesmos requisitos ca unha máquina de
+# desenvolvemento (README): Docker con Compose, Java 25, Node 24 (web/.nvmrc), jq, yq, curl,
+# age e zstd. Así non depende de imaxes nin servizos propios dunha forxa concreta.
+# Imaxes: só en main ou etiqueta vX.Y.Z, despois de que pase todo, ao rexistro do propio
+# proxecto ($CI_REGISTRY_IMAGE). Sen sinatura cosign aquí (na CI de GitHub, si): ADR-0016.
+
+stages: [verificar, imaxes]
+
+variables:
+  CI: "true"
+  FURAR_CI: "true"
+  GIT_DEPTH: "0" # D46 le o historial
+
+default:
+  tags: [furar]
+  interruptible: true
+
+.parte:
+  stage: verificar
+  timeout: 60m
+  artifacts:
+    when: always
+    expire_in: 14 days
+    paths: [.verificar/logs/]
+
+compliance:
+  extends: .parte
+  script: [scripts/verificar.sh --parte compliance]
+  artifacts:
+    when: always
+    expire_in: 30 days
+    paths: [.verificar/logs/, api/target/bom.json, web/bom.json]
+
+api:
+  extends: .parte
+  script: [scripts/verificar.sh --parte api]
+  artifacts:
+    when: always
+    expire_in: 14 days
+    paths: [.verificar/logs/, api/target/surefire-reports/, api/target/failsafe-reports/]
+
+web:
+  extends: .parte
+  script: [scripts/verificar.sh --parte web]
+
+e2e:
+  extends: .parte
+  needs: [api, web]
+  script:
+    - |
+      if [ -n "${CI_COMMIT_TAG:-}" ]; then v=$CI_COMMIT_TAG; else v="main-${CI_COMMIT_SHA:0:12}"; fi
+      export FURAR_VERSION=$v FURAR_REVISION=$CI_COMMIT_SHA
+      scripts/verificar.sh --parte e2e
+  artifacts:
+    when: always
+    expire_in: 14 days
+    paths: [.verificar/, web/playwright-report/]
+
+imaxes:
+  stage: imaxes
+  needs: [compliance, api, web, e2e]
+  interruptible: false
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    # Mesmo runner (shell): as imaxes furar-*:local son as que acaban de pasar e2e (OPS-5).
+    - printf '%s' "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+    - |
+      if [ -n "${CI_COMMIT_TAG:-}" ]; then v=$CI_COMMIT_TAG; else v="main-${CI_COMMIT_SHA:0:12}"; fi
+      FURAR_REGISTRY=$CI_REGISTRY_IMAGE scripts/publicar-imaxes.sh "$v" --publicar --sen-construir
+  artifacts:
+    expire_in: 90 days
+    paths: [.verificar/imaxes/]

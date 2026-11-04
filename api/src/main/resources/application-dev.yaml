@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Desenvolvemento: compose --profile dev (PostgreSQL, Keycloak, Mailpit) e API en local.
+# Os correos das reservas van a Mailpit (http://localhost:8025).
+spring:
+  mail:
+    host: ${SPRING_MAIL_HOST:localhost}
+    port: ${SPRING_MAIL_PORT:1025}
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+logging:
+  level:
+    gal.furar: DEBUG

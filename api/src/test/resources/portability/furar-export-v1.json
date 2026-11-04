@@ -1,0 +1,137 @@
+{
+  "format": "furar-export",
+  "version": 1,
+  "exportedAt": "2026-10-24T18:30:00Z",
+  "municipality": {
+    "id": "019a1700-0000-7000-8000-000000000001",
+    "slug": "v1-gardado",
+    "name": "Concello exportado en v1",
+    "languages": ["gl", "es"],
+    "defaultLanguage": "gl",
+    "theme": {
+      "primary": "#0b4f8a",
+      "onPrimary": "#ffffff",
+      "accent": "#b3541e",
+      "background": "#ffffff",
+      "text": "#1a1a1a"
+    },
+    "legal": {
+      "ineCode": "15054",
+      "dir3Code": "L01150548",
+      "legalEntityName": "Concello de Proba",
+      "eOfficeUrl": null,
+      "privacyUrl": null,
+      "dpoContact": null,
+      "accessibilityEmail": null,
+      "accessibilityComplaintUrl": null,
+      "accessibilityUnit": null
+    },
+    "customFields": {
+      "zone": "north",
+      "budget": 1250.5,
+      "contact_email": "deportes@example.gal",
+      "legacy_code": "L-1"
+    },
+    "createdAt": "2026-10-22T09:00:00Z",
+    "updatedAt": "2026-10-24T18:00:00Z"
+  },
+  "sections": {
+    "customfields": [
+      {
+        "id": "019a1700-0000-7000-8000-000000000011",
+        "target": "MUNICIPALITY",
+        "code": "zone",
+        "type": "SELECT",
+        "label": { "gl": "Zona", "es": "Zona" },
+        "help": null,
+        "required": true,
+        "rules": {
+          "minLength": null, "maxLength": null, "min": null, "max": null, "decimals": null,
+          "minDate": null, "maxDate": null, "minItems": null, "maxItems": null, "format": null
+        },
+        "options": [
+          { "code": "north", "label": { "gl": "Norte", "es": "Norte" }, "archived": false },
+          { "code": "south", "label": { "gl": "Sur", "es": "Sur" }, "archived": false }
+        ],
+        "position": 0,
+        "group": { "code": "general", "label": { "gl": "Xeral", "es": "General" } },
+        "visibility": "PUBLIC",
+        "appliesWhen": {},
+        "personalData": false,
+        "status": "ACTIVE",
+        "version": 3,
+        "createdAt": "2026-10-22T09:10:00Z",
+        "updatedAt": "2026-10-22T09:10:00Z"
+      },
+      {
+        "id": "019a1700-0000-7000-8000-000000000012",
+        "target": "MUNICIPALITY",
+        "code": "budget",
+        "type": "NUMBER",
+        "label": { "gl": "Orzamento", "es": "Presupuesto" },
+        "help": { "gl": "En euros", "es": "En euros" },
+        "required": false,
+        "rules": {
+          "minLength": null, "maxLength": null, "min": 0, "max": 100000, "decimals": 2,
+          "minDate": null, "maxDate": null, "minItems": null, "maxItems": null, "format": null
+        },
+        "options": [],
+        "position": 1,
+        "group": null,
+        "visibility": "STAFF",
+        "appliesWhen": { "zone": ["north"] },
+        "personalData": false,
+        "status": "ACTIVE",
+        "version": 0,
+        "createdAt": "2026-10-22T09:11:00Z",
+        "updatedAt": "2026-10-22T09:11:00Z"
+      },
+      {
+        "id": "019a1700-0000-7000-8000-000000000013",
+        "target": "MUNICIPALITY",
+        "code": "contact_email",
+        "type": "TEXT",
+        "label": { "gl": "Correo de contacto", "es": "Correo de contacto" },
+        "help": null,
+        "required": false,
+        "rules": {
+          "minLength": null, "maxLength": null, "min": null, "max": null, "decimals": null,
+          "minDate": null, "maxDate": null, "minItems": null, "maxItems": null, "format": "EMAIL"
+        },
+        "options": [],
+        "position": 2,
+        "group": null,
+        "visibility": "STAFF",
+        "appliesWhen": {},
+        "personalData": true,
+        "status": "ACTIVE",
+        "version": 1,
+        "createdAt": "2026-10-22T09:12:00Z",
+        "updatedAt": "2026-10-23T10:00:00Z"
+      },
+      {
+        "id": "019a1700-0000-7000-8000-000000000014",
+        "target": "MUNICIPALITY",
+        "code": "legacy_code",
+        "type": "TEXT",
+        "label": { "gl": "Código antigo", "es": "Código antiguo" },
+        "help": null,
+        "required": false,
+        "rules": {
+          "minLength": null, "maxLength": null, "min": null, "max": null, "decimals": null,
+          "minDate": null, "maxDate": null, "minItems": null, "maxItems": null, "format": null
+        },
+        "options": [],
+        "position": 3,
+        "group": null,
+        "visibility": "PUBLIC",
+        "appliesWhen": {},
+        "personalData": false,
+        "status": "ARCHIVED",
+        "version": 2,
+        "createdAt": "2026-10-22T09:13:00Z",
+        "updatedAt": "2026-10-24T17:00:00Z"
+      }
+    ]
+  }
+}

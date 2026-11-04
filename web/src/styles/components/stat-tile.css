@@ -1,0 +1,100 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Cifra dos indicadores (furar-stat-tile, D3-07): botón con aspecto de tarxeta; rótulo, valor
+ * grande con números tabulares, cambio co ton do estado (sobe verde, baixa vermello, igual gris;
+ * o texto e a frecha din o mesmo, 1.4.1), minigráfica e «Ver evolución» (sempre á vista: di que
+ * a tarxeta se preme). Grella: .f-stat-tiles.
+ */
+@layer components {
+  .f-stat-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--spacing-item);
+  }
+  .f-stat-tile {
+    display: flex;
+    min-inline-size: 0;
+  }
+  .f-stat-tile__button {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    inline-size: 100%;
+    min-inline-size: 0;
+    padding: var(--spacing-item) 1.25rem 0.75rem;
+    /* `line` e non `divider`: o bordo é o que di que a tarxeta é un botón (3:1, 1.4.11). */
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+    color: var(--f-ink);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition:
+      border-color var(--f-dur-fast) var(--ease-smooth),
+      box-shadow var(--f-dur-fast) var(--ease-smooth),
+      transform var(--f-dur-fast) var(--ease-smooth);
+  }
+  @media (hover: hover) {
+    .f-stat-tile__button:hover {
+      border-color: var(--f-primary);
+      box-shadow: var(--shadow-overlay);
+    }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .f-stat-tile__button:hover {
+      transform: translateY(-2px);
+    }
+  }
+  .f-stat-tile__label {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-stat-tile__value {
+    font-size: 2rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  .f-stat-tile__change {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-stat-tile__delta {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .f-stat-tile__delta[data-trend='up'] {
+    color: var(--f-success);
+  }
+  .f-stat-tile__delta[data-trend='down'] {
+    color: var(--f-danger);
+  }
+  .f-stat-tile__delta[data-trend='same'] {
+    color: var(--f-muted);
+  }
+  .f-stat-tile__spark {
+    display: block;
+    margin-block-start: 0.25rem;
+  }
+  .f-stat-tile__spark:empty {
+    display: none;
+  }
+  .f-stat-tile__more {
+    color: var(--f-primary-text);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+  @media (forced-colors: active) {
+    .f-stat-tile__button {
+      border-color: ButtonText;
+    }
+  }
+}

@@ -1,0 +1,361 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Menú ([furarMenu], D1-05a) e chip con menú (furar-chip-menu): panel en capa (CDK Menu) coa
+ * superficie, bordo divisor e sombra de capa; elementos de 44 px. A opción marcada leva ✓ e negra
+ * ademais do tinte (non só cor, 1.4.1).
+ */
+@layer components {
+  .f-menu {
+    display: flex;
+    flex-direction: column;
+    min-width: 15rem;
+    max-width: calc(100vw - 2 * var(--spacing-gutter));
+    padding: 0.375rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+  }
+  .f-menu:focus {
+    outline: none;
+  }
+
+  .f-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    width: 100%;
+    min-height: var(--f-touch);
+    padding: 0 0.75rem;
+    border: var(--f-border) solid transparent;
+    border-radius: var(--radius-field);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-menu__item:focus-visible {
+    outline-offset: calc(-1 * var(--f-focus-ring));
+  }
+  .f-menu__item[aria-checked='true'] {
+    background: var(--f-tint);
+    font-weight: 700;
+  }
+  .f-menu__item[aria-checked='true']::after {
+    content: '✓' / '';
+    margin-inline-start: auto;
+    color: var(--f-primary-text);
+  }
+  .f-menu__item[aria-disabled='true'] {
+    color: var(--f-ink-soft);
+    cursor: not-allowed;
+  }
+  /* Rótulo con pista debaixo (por que está desactivada, «Podes reenviar en 1:45»). */
+  .f-menu__item-text {
+    display: flex;
+    flex-direction: column;
+    padding-block: 0.375rem;
+  }
+  .f-menu__item-hint {
+    font-size: var(--text-support);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (hover: hover) {
+    .f-menu__item:not([aria-disabled='true']):hover {
+      background: var(--f-tint);
+    }
+  }
+
+  /* «Máis» (furar-more-menu): a lista enriba do botón, á dereita; a ligazón actual con ✓. */
+  .f-more-menu {
+    position: relative;
+    display: block;
+  }
+  .f-more-menu__panel {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 0.5rem);
+    margin: 0;
+    list-style: none;
+  }
+  /* «Concello ▾» da barra superior: a lista debaixo do botón, á esquerda; a frecha xira ao abrir. */
+  .f-more-menu[data-placement='below'] .f-more-menu__panel {
+    inline-size: max-content;
+    top: calc(100% + 0.25rem);
+    right: auto;
+    bottom: auto;
+    left: 0;
+  }
+  .f-more-menu__chevron {
+    transition: transform var(--f-dur-fast) var(--ease-smooth);
+  }
+  [aria-expanded='true'] > .f-more-menu__chevron {
+    transform: rotate(180deg);
+  }
+  .f-more-menu__panel [aria-current='page'] {
+    background: var(--f-tint);
+    font-weight: 700;
+  }
+  .f-more-menu__panel [aria-current='page']::after {
+    content: '✓' / '';
+    margin-inline-start: auto;
+    color: var(--f-primary-text);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .f-menu {
+      animation: f-menu-in var(--f-dur-fast) var(--ease-smooth);
+    }
+  }
+  @keyframes f-menu-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /*
+   * Chip con menú: o botón (transparente) dá os 44 px de toque e o aro de foco; o chip de cor é o
+   * furar-tag de dentro, coa súa regra solid/outline (tag-color.spec.ts).
+   */
+  .f-menu-trigger {
+    display: inline-flex;
+    max-width: 100%;
+  }
+  .f-menu-trigger__button {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    min-height: var(--f-touch);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+  }
+  .f-menu-trigger__button .f-tag {
+    padding-inline-end: 0.375rem;
+  }
+  .f-menu-trigger__button .f-icon {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-menu-trigger__button[aria-expanded='true'] .f-icon {
+    transform: rotate(180deg);
+  }
+  .f-menu-trigger__button:disabled,
+  .f-menu-trigger__button[aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+  .f-menu-trigger__button:disabled .f-tag,
+  .f-menu-trigger__button[aria-disabled='true']:not([aria-busy='true']) .f-tag {
+    border-style: dashed;
+  }
+  /* Aplicando o cambio (acción en curso): o mesmo aro dos botóns ocupados (button.css). */
+  .f-menu-trigger__button[aria-busy='true'] {
+    gap: var(--spacing-unit);
+    cursor: progress;
+  }
+  .f-menu-trigger__button[aria-busy='true']::after {
+    content: '';
+    width: 1em;
+    height: 1em;
+    flex: none;
+    border: 2px solid;
+    border-inline-end-color: transparent;
+    border-radius: 50%;
+    color: var(--f-ink-soft);
+    animation: f-spin 0.8s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .f-menu-trigger__button[aria-busy='true']::after {
+      border-style: dotted;
+      border-inline-end-color: currentColor;
+      animation: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .f-menu {
+      border-color: CanvasText;
+    }
+    .f-menu__item[aria-checked='true'] {
+      background: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+  }
+}
+
+/*
+ * Menú da persoa (furar-user-menu): pastilla co nome e o rol e o círculo das iniciais; panel con
+ * cabeceira e entradas con icona.
+ */
+@layer components {
+  .f-usermenu {
+    display: inline-flex;
+  }
+  .f-usermenu__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: var(--f-touch);
+    padding: 0.25rem;
+    padding-inline-start: 1rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font: inherit;
+    cursor: pointer;
+  }
+  .f-usermenu__trigger[aria-expanded='true'] {
+    border-color: var(--f-primary);
+  }
+  @media (hover: hover) {
+    .f-usermenu__trigger:hover {
+      border-color: var(--f-primary);
+    }
+  }
+  .f-usermenu__who {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    text-align: end;
+  }
+  .f-usermenu__name {
+    font-weight: 700;
+  }
+  .f-usermenu__who .f-usermenu__name {
+    font-size: 0.9375rem;
+  }
+  .f-usermenu__detail {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-usermenu__avatar {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-usermenu__avatar--lg {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1rem;
+  }
+  .f-usermenu__panel {
+    width: 18rem;
+    max-width: calc(100vw - 2 * var(--spacing-gutter));
+    padding: 0.5rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+  }
+  .f-usermenu__head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-bottom: var(--f-border) solid var(--f-divider);
+  }
+  .f-usermenu__lines {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    overflow-wrap: anywhere;
+  }
+  .f-usermenu__items.f-menu {
+    min-width: 0;
+    padding: 0.25rem 0 0;
+    border: 0;
+    box-shadow: none;
+  }
+  .f-usermenu__items .f-menu__item {
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+  /* A entrada principal (a da xestión, a primeira do menú; maqueta 56). */
+  .f-usermenu__items .f-usermenu__strong {
+    font-weight: 700;
+  }
+  /*
+   * Segundo nivel no mesmo panel (cambiar de concello, maqueta 41). Primeiro nivel: «Concello» co
+   * actual á dereita e ›, á mesma marxe ca as outras filas. Segundo: «‹ Concello» e as opcións,
+   * cunha columna para a ✓ diante (todas aliñadas entre si) e o rol á dereita.
+   */
+  .f-usermenu__value {
+    min-width: 0;
+    margin-inline-start: auto;
+    overflow: hidden;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 400;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .f-usermenu__option-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .f-usermenu__switch .f-usermenu__value + .f-icon {
+    margin-inline-start: -0.25rem;
+    color: var(--f-ink-soft);
+  }
+  .f-usermenu__back.f-menu__item {
+    margin-bottom: 0.25rem;
+    border-bottom-color: var(--f-divider);
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    font-weight: 700;
+  }
+  .f-usermenu__option::before {
+    content: '';
+    width: 1.25rem;
+    flex: none;
+    text-align: center;
+  }
+  .f-usermenu__option[aria-checked='true']::before {
+    content: '✓' / '';
+    color: var(--f-primary-text);
+  }
+  .f-usermenu__option[aria-checked='true']::after {
+    content: none;
+  }
+  .f-usermenu__sep {
+    margin: 0.25rem 0;
+    border: 0;
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  @media (max-width: 56.24rem) {
+    .f-usermenu__who {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .f-usermenu__trigger {
+      padding-inline-start: 0.25rem;
+    }
+  }
+  @media (forced-colors: active) {
+    .f-usermenu__avatar {
+      border: 1px solid CanvasText;
+    }
+  }
+}

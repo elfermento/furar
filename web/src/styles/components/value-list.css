@@ -1,0 +1,35 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Lista de rótulos e valores (furar-value-list): unha fila por dato, o rótulo en gris á esquerda e
+ * o valor en negra á dereita, con liñas enriba e embaixo. Se non caben, o valor baixa de liña
+ * (320 px). Folla `reservas.css`.
+ */
+@layer components {
+  .f-value-list {
+    display: block;
+  }
+  .f-value-list__list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding-block: 1.25rem;
+    border-block: var(--f-border) solid var(--f-divider);
+  }
+  .f-value-list__row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+  }
+  .f-value-list__row dt {
+    color: var(--f-ink-soft);
+  }
+  .f-value-list__row dd {
+    margin: 0 0 0 auto;
+    font-weight: 700;
+    text-align: end;
+    overflow-wrap: anywhere;
+  }
+}

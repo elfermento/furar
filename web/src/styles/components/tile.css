@@ -1,0 +1,71 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Tarxeta que se pulsa ([furarTile] sobre <button>): aspecto de card, texto á esquerda e contido
+ * en columna. Ao pasar, bordo primary; o foco, co aro común. Lista de tarxetas: .f-tile-grid.
+ */
+@layer components {
+  .f-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-unit);
+    width: 100%;
+    min-height: var(--f-row-h);
+    padding: var(--spacing-item) 1.125rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+    color: var(--f-ink);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition: border-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-tile[data-dashed] {
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    border-style: dashed;
+    border-color: var(--f-line);
+    box-shadow: none;
+    color: var(--f-primary-text);
+    font-weight: 700;
+  }
+  @media (hover: hover) {
+    .f-tile:hover {
+      border-color: var(--f-primary);
+    }
+  }
+  .f-tile:active {
+    transform: scale(0.98);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .f-tile:active {
+      transform: none;
+    }
+  }
+  .f-tile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--spacing-unit);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-tile-grid > li {
+    display: flex;
+  }
+  @media (prefers-contrast: more) {
+    .f-tile {
+      border-width: var(--f-border-state);
+    }
+  }
+  @media (forced-colors: active) {
+    .f-tile {
+      border-color: ButtonText;
+    }
+  }
+}

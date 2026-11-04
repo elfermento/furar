@@ -1,0 +1,84 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.mine.';
+<div class="f-mine">
+  <h1>{{ t + 'title' | transloco }}</h1>
+
+  <div role="status" class="f-mine__live" data-mine-status>
+    @if (stale()) {
+      <furar-callout tone="warn" data-mine-stale>
+        <p>{{ t + 'stale' | transloco }}</p>
+        <button type="button" furarButton size="sm" class="mt-unit" data-mine-reload (click)="reload()">
+          {{ t + 'reload' | transloco }}
+        </button>
+      </furar-callout>
+    }
+  </div>
+  @if (problem(); as p) {
+    <furar-callout tone="danger" live="alert" data-mine-error>{{ p.translated }}</furar-callout>
+  }
+
+  <furar-tabs [label]="t + 'tabs' | transloco" [(selected)]="scope">
+    <button type="button" furarTab="UPCOMING" data-mine-tab="upcoming">{{ t + 'upcoming' | transloco }}</button>
+    <button type="button" furarTab="HISTORY" data-mine-tab="history">{{ t + 'history' | transloco }}</button>
+
+    @let current = list();
+    @switch (current.state) {
+      @case ('ready') {
+        @if (current.items.length) {
+          <ul class="f-mine__list">
+            @for (booking of current.items; track booking.id) {
+              <li>
+                <furar-booking-card
+                  [booking]="booking"
+                  [slug]="slug()"
+                  [phone]="phone()"
+                  (cancelBooking)="cancel($event)"
+                  (showQr)="showQr($event)"
+                />
+              </li>
+            }
+          </ul>
+          @if (hasMore()) {
+            <button
+              type="button"
+              furarButton
+              class="f-mine__more"
+              data-mine-more
+              [busy]="current.loadingMore"
+              (click)="more()"
+            >
+              {{ t + 'more' | transloco }}
+            </button>
+          }
+        } @else if (scope() === 'UPCOMING') {
+          <furar-status-state
+            mode="empty"
+            [heading]="t + 'empty.upcoming.title' | transloco"
+            [description]="t + 'empty.upcoming.text' | transloco"
+          >
+            <a furarButton="primary" [routerLink]="['/', slug(), 'instalacions']" data-mine-browse>
+              {{ t + 'empty.upcoming.action' | transloco }}
+            </a>
+          </furar-status-state>
+        } @else {
+          <furar-status-state mode="empty" [heading]="t + 'empty.history' | transloco" />
+        }
+      }
+      @case ('error') {
+        <furar-status-state
+          mode="error"
+          [heading]="t + 'loadError.title' | transloco"
+          [description]="t + 'loadError.text' | transloco"
+        >
+          <button type="button" furarButton (click)="retry()">{{ t + 'loadError.retry' | transloco }}</button>
+        </furar-status-state>
+      }
+      @default {
+        <furar-status-state mode="skeleton" shape="card" [rows]="3" [description]="t + 'loading' | transloco" />
+      }
+    }
+  </furar-tabs>
+</div>

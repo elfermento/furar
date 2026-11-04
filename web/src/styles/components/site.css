@@ -1,0 +1,373 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Marco da web (docs/deseno.md §6 e §7): barra superior de cristal flotante, barra inferior no
+ * móbil e contido. O cristal só vai nestas pezas fixas; baixo máis contraste, transparencia
+ * reducida, cores forzadas ou sen `backdrop-filter`, fondo sólido.
+ */
+@layer components {
+  /* Columna da altura da pantalla: o contido medra e o pé queda abaixo se a páxina é curta. */
+  .f-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+  .f-shell > .f-main {
+    flex: 1 0 auto;
+  }
+  html {
+    /* O foco e as áncoras nunca quedan baixo as barras (alto real da superior, medido en JS). */
+    scroll-padding-top: calc(var(--f-topbar-h, 4.5rem) + 1rem);
+  }
+
+  /* Cristal: superficie translúcida (--f-glass, derivada con AA) e desenfoque do de debaixo. */
+  .f-glass {
+    border: var(--f-border) solid var(--f-divider);
+    background: var(--f-glass);
+    box-shadow: var(--shadow-float);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+  @supports not (backdrop-filter: blur(1px)) {
+    .f-glass {
+      background: var(--f-surface);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    .f-glass {
+      background: var(--f-surface);
+      backdrop-filter: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .f-glass {
+      border-color: CanvasText;
+      background: Canvas;
+      backdrop-filter: none;
+    }
+  }
+
+  /* Barra superior: pegada arriba, con aire arredor; a envoltura non colle clics. */
+  .f-topbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--f-z-sticky);
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem 0.75rem 0;
+    pointer-events: none;
+  }
+  /* Escondida: sobe o seu alto máis o aire de enriba (sen movemento reducido, de golpe). */
+  .f-topbar__bar[data-hidden] {
+    transform: translateY(calc(-100% - 1.25rem));
+  }
+  .f-topbar__bar {
+    width: 100%;
+    max-width: var(--container-bar);
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-overlay);
+    pointer-events: auto;
+    transition: transform var(--f-dur-med) var(--ease-smooth);
+  }
+  .f-topbar__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-unit) 2.5rem;
+    min-height: 3.5rem;
+  }
+  .f-topbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: var(--f-touch);
+    color: var(--f-ink);
+    text-decoration: none;
+  }
+  .f-topbar__shield {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-field);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+  .f-topbar__names {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+  .f-topbar__name {
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+  .f-topbar__tagline {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-topbar__nav,
+  .f-topbar__nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-topbar__nav {
+    display: none;
+  }
+  .f-topbar__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--f-touch);
+    color: var(--f-ink);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  /* Indicador da activa: liña de 2 px na marca (e aria-current; o estado non vai só na cor). */
+  .f-topbar__link::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0.375rem;
+    left: 0;
+    height: var(--f-border-state);
+    background: var(--f-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--f-dur-med) var(--ease-smooth);
+  }
+  .f-topbar__link--active,
+  .f-topbar__link[data-active] {
+    color: var(--f-primary-text);
+  }
+  .f-topbar__link--active::after,
+  .f-topbar__link[data-active]::after {
+    transform: scaleX(1);
+  }
+  @media (hover: hover) {
+    .f-topbar__link:hover::after {
+      transform: scaleX(1);
+    }
+  }
+  .f-topbar__tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-unit);
+    margin-left: auto;
+  }
+  .f-lang > button {
+    padding-inline: 0.75rem;
+  }
+
+  @media (min-width: 900px) {
+    .f-topbar__nav {
+      display: flex;
+    }
+  }
+  @media (min-width: 640px) {
+    .f-topbar {
+      padding: 1rem 1rem 0;
+    }
+  }
+  /* Móbil: sen subtítulo; «Entrar» e a conta só coa icona (o texto segue no nome accesible). */
+  @media (max-width: 639px) {
+    .f-topbar__bar {
+      padding-left: 0.75rem;
+    }
+    .f-topbar__row {
+      column-gap: var(--spacing-unit);
+    }
+    .f-topbar__tagline {
+      display: none;
+    }
+    .f-topbar__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .f-topbar__login {
+      width: var(--f-touch);
+      padding: 0;
+    }
+  }
+
+  /* Barra inferior (móbil): os mesmos destinos; no escritorio non existe. */
+  .f-bottomnav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: var(--f-z-sticky);
+    padding-bottom: env(safe-area-inset-bottom);
+    border-width: var(--f-border) 0 0;
+    border-radius: 0;
+  }
+  .f-bottomnav > ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-bottomnav > ul > li {
+    flex: 1;
+    min-width: 0;
+  }
+  .f-bottomnav > ul > li > a,
+  .f-bottomnav__more {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+    inline-size: 100%;
+    min-height: var(--f-touch);
+    padding: 0.625rem 0 0.75rem;
+    border: 0;
+    background: transparent;
+    color: var(--f-ink-soft);
+    font: inherit;
+    font-size: var(--text-support);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    cursor: pointer;
+  }
+  /* Catro sitios nun móbil estreito: a letra un chisco menor para que «Instalacións» caiba enteira. */
+  @media (max-width: 24rem) {
+    .f-bottomnav > ul > li > a,
+    .f-bottomnav__more {
+      padding-inline: 0.125rem;
+      font-size: 0.75rem;
+    }
+  }
+  .f-bottomnav .f-bottomnav__link--active,
+  .f-bottomnav__more[data-active] {
+    color: var(--f-primary-text);
+    text-decoration: underline;
+    text-decoration-thickness: var(--f-border-state);
+    text-underline-offset: 0.3em;
+  }
+  @media (min-width: 900px) {
+    .f-bottomnav {
+      display: none;
+    }
+  }
+  @media (max-width: 899px) {
+    html:has(.f-bottomnav) {
+      scroll-padding-bottom: 5.5rem;
+    }
+    .f-shell:has(.f-bottomnav) .f-footer {
+      padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+    }
+  }
+
+  /*
+   * Pé: tarxeta flotante coma a barra superior (mesmo ancho, radio, cristal, bordo e sombra), co
+   * mesmo aire aos lados e abaixo que ela enriba. Unha fila: «Furar · software libre» e as
+   * ligazóns en pastilla; no estreito, dúas liñas centradas.
+   */
+  .f-footer {
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-section) 0.75rem 0.75rem;
+  }
+  .f-footer__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-unit) var(--spacing-item);
+    width: 100%;
+    max-width: var(--container-bar);
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-footer__brand {
+    margin: 0;
+  }
+  .f-footer__brand-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+    color: inherit;
+    text-underline-offset: 0.2em;
+  }
+  .f-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* Pastilla de 32 px á vista, subliñada (non só cor); o toque, de 44 px (área ampliada). */
+  .f-footer__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-height: 2rem;
+    padding: 0.125rem 0.625rem;
+    border-radius: var(--radius-pill);
+    color: var(--f-primary-text);
+    transition: background-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-footer__link::before {
+    content: '';
+    position: absolute;
+    inset: calc((2rem - var(--f-touch)) / 2) 0;
+  }
+  @media (hover: hover) {
+    .f-footer__link:hover {
+      background: var(--f-tint);
+    }
+  }
+  @media (min-width: 640px) {
+    .f-footer {
+      padding: var(--spacing-section) 1rem 1rem;
+    }
+  }
+  @media (min-width: 900px) {
+    .f-footer__bar {
+      justify-content: space-between;
+    }
+  }
+
+  /*
+   * Contido: o mesmo contedor ca a barra superior e o pé, cos mesmos bordos (desde 640 px, as tres
+   * pezas deixan 1rem ao lado); na portada, ancho enteiro e cada sección pon o seu (.f-wrap).
+   */
+  .f-main {
+    display: block;
+    width: 100%;
+    max-width: calc(var(--container-bar) + 2 * var(--spacing-gutter));
+    margin-inline: auto;
+    padding: var(--spacing-section) var(--spacing-gutter);
+  }
+  .f-main[data-layout='bleed'] {
+    max-width: none;
+    padding: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .f-topbar__bar {
+      transition: none;
+    }
+  }
+}

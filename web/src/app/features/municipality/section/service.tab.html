@@ -1,0 +1,79 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<furar-problem-alert [problem]="saver.problem()" />
+@if (saver.problem()?.code === 'common.stale-version') {
+  <p class="mb-group">
+    <button type="button" furarButton (click)="reload()">{{ 'settings.reload' | transloco }}</button>
+  </p>
+}
+@if (tab.form(); as f) {
+  <form #formElement [formGroup]="f" novalidate (ngSubmit)="save()">
+    <furar-form-errors-summary [count]="saver.submitted() ? saver.errorCount() : 0" />
+    <furar-card class="mb-group" [heading]="'settings.sports.title' | transloco">
+      <div class="gap-form grid" formGroupName="contact">
+        @for (field of fields; track field.key) {
+          @let id = 'settings-sports-' + field.key;
+          @let error = fieldError(f.controls.contact.controls[field.key], saver.submitted());
+          <furar-field [fieldId]="id" [label]="'settings.sports.' + field.key | transloco" [error]="error">
+            <input
+              furarInput
+              [id]="id"
+              [type]="field.type"
+              [formControlName]="field.key"
+              [autocomplete]="field.autocomplete"
+              [attr.aria-invalid]="error ? 'true' : null"
+              [attr.aria-describedby]="describedBy(id, false, error)"
+            />
+          </furar-field>
+        }
+      </div>
+    </furar-card>
+
+    <furar-card class="mb-group" data-payment [heading]="'settings.payment.title' | transloco">
+      <div class="gap-form grid">
+        <div
+          furarSegmented
+          mode="radio"
+          class="f-payment__scope"
+          formControlName="scope"
+          [attr.aria-label]="'settings.payment.scopeLabel' | transloco"
+        >
+          @for (option of scopes; track option) {
+            <button type="button" [furarSegmentedOption]="option" [attr.data-scope]="option">
+              {{ 'settings.payment.scope.' + option | transloco }}
+            </button>
+          }
+        </div>
+        @if (f.controls.scope.value === 'ALL') {
+          @for (note of noteKeys; track note) {
+            @let fallback = defaults()[note];
+            <furar-bilingual-field
+              multiline
+              [rows]="2"
+              [fieldId]="'settings-note-' + note"
+              [label]="'settings.payment.' + note | transloco"
+              [help]="fallback ? ('settings.payment.default' | transloco: { text: fallback }) : ''"
+              [maxlength]="noteMax"
+              [submitted]="saver.submitted()"
+              [gl]="f.controls.notes.controls[note].controls.gl"
+              [es]="f.controls.notes.controls[note].controls.es"
+            />
+          }
+        } @else {
+          <p class="f-help" data-payment-by-facility>{{ 'settings.payment.byFacility' | transloco }}</p>
+        }
+      </div>
+    </furar-card>
+
+    <div class="f-save-actions">
+      <p class="f-save-status" role="status" data-save-status></p>
+      <button type="submit" furarButton="primary" block [busy]="saver.saving()">
+        {{ (saver.saving() ? 'common.saving' : 'common.save') | transloco }}
+      </button>
+    </div>
+  </form>
+} @else if (!saver.problem()) {
+  <furar-status-state mode="loading" />
+}

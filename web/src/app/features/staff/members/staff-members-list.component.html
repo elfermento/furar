@@ -1,0 +1,170 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'staff.members.';
+@if (desktop()) {
+  <table class="f-staff__table" data-staff-table>
+    <caption class="sr-only">
+      {{
+        caption()
+      }}
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">{{ t + 'col.user' | transloco }}</th>
+        <th scope="col">{{ t + 'col.role' | transloco }}</th>
+        <th scope="col">{{ t + 'col.state' | transloco }}</th>
+        <th scope="col">{{ t + 'col.lastAccess' | transloco }}</th>
+        <th scope="col">
+          <span class="sr-only">{{ t + 'col.actions' | transloco }}</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows(); track row.member.id) {
+        <tr [attr.data-member]="row.member.id" [attr.data-state]="row.state">
+          <th scope="row">
+            <div class="f-staff__who">
+              <ng-container [ngTemplateOutlet]="who" [ngTemplateOutletContext]="{ $implicit: row }" />
+            </div>
+          </th>
+          <td data-cell="role">{{ t + 'role.' + row.member.role | transloco }}</td>
+          <td data-cell="state">
+            <furar-tag [tone]="row.tone" [attr.data-chip]="row.state">{{
+              t + 'state.' + row.state | transloco
+            }}</furar-tag>
+          </td>
+          <td data-cell="access">
+            <ng-container [ngTemplateOutlet]="access" [ngTemplateOutletContext]="{ $implicit: row }" />
+          </td>
+          <td class="f-staff__actions">
+            <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: row }" />
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+} @else {
+  <ul class="f-staff__cards" data-staff-cards [attr.aria-label]="caption()">
+    @for (row of rows(); track row.member.id) {
+      <li class="f-staff__card" [attr.data-member]="row.member.id" [attr.data-state]="row.state">
+        <div class="f-staff__card-head">
+          <div class="f-staff__who">
+            <ng-container [ngTemplateOutlet]="who" [ngTemplateOutletContext]="{ $implicit: row }" />
+          </div>
+          <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: row }" />
+        </div>
+        <furar-tag [tone]="row.tone" [attr.data-chip]="row.state">{{ t + 'state.' + row.state | transloco }}</furar-tag>
+        <dl class="f-staff__facts">
+          <div>
+            <dt>{{ t + 'col.role' | transloco }}</dt>
+            <dd data-cell="role">{{ t + 'role.' + row.member.role | transloco }}</dd>
+          </div>
+          <div>
+            <dt>{{ t + 'col.lastAccess' | transloco }}</dt>
+            <dd data-cell="access">
+              <ng-container [ngTemplateOutlet]="access" [ngTemplateOutletContext]="{ $implicit: row }" />
+            </dd>
+          </div>
+        </dl>
+      </li>
+    }
+  </ul>
+}
+
+<!-- Usuario: o correo; a anonimizada, «Persoa anonimizada»; a bloqueada, «Persoa desactivada». -->
+<ng-template #who let-row>
+  @if (row.hidden) {
+    <span
+      class="f-staff__email f-staff__email--hidden"
+      data-email
+      [attr.data-anonymized]="row.hidden === 'anonymized' ? '' : null"
+      [attr.data-blocked-identity]="row.hidden === 'blocked' ? '' : null"
+      >{{ t + row.hidden | transloco }}</span
+    >
+  } @else {
+    <span class="f-staff__email" data-email>{{ row.member.email }}</span>
+  }
+</ng-template>
+
+<!-- Último acceso ou, mentres está pendente, como vai a invitación; «Reenviar» á vista se fai falta. -->
+<ng-template #access let-row>
+  <span class="f-staff__access" [class.f-staff__access--danger]="row.access.danger" [attr.data-access]="row.access.key">
+    @if (row.access.danger) {
+      <furar-icon name="warn" />
+    } @else if (row.access.key === 'sending') {
+      <furar-icon name="hourglass" />
+    }
+    <span>{{ t + 'access.' + row.access.key | transloco: { date: row.access.date } }}</span>
+  </span>
+  @if (row.resend) {
+    <button
+      type="button"
+      furarButton="quiet"
+      size="sm"
+      class="f-staff__resend"
+      data-resend
+      [busy]="busyId() === row.member.id"
+      [unavailable]="!!row.blocked"
+      [attr.aria-describedby]="row.blocked ? 'staff-resend-wait-' + row.member.id : null"
+      [attr.aria-label]="t + 'resendFor' | transloco: { name: row.label }"
+      (click)="resendInline(row)"
+    >
+      {{ t + 'action.resend' | transloco }}
+    </button>
+    @if (row.blocked) {
+      <span class="f-staff__wait" data-resend-wait [id]="'staff-resend-wait-' + row.member.id">{{
+        t + 'resendWait.' + row.blocked.key | transloco: row.blocked.params
+      }}</span>
+    }
+  }
+</ng-template>
+
+<!-- Accións da fila nun menú; o botón leva o nome da persoa. -->
+<ng-template #actions let-row>
+  @if (row.actions.length) {
+    <button
+      type="button"
+      furarButton
+      round
+      class="f-staff__more"
+      [furarMenuTrigger]="menu"
+      [attr.data-actions]="row.member.id"
+      [attr.aria-label]="t + 'actionsFor' | transloco: { name: row.label }"
+    >
+      <furar-icon name="more" />
+    </button>
+    <ng-template #menu>
+      <div furarMenu [attr.aria-label]="t + 'actionsFor' | transloco: { name: row.label }">
+        @for (action of row.actions; track action) {
+          @let blocked = action === 'resend' ? row.blocked : null;
+          <button
+            type="button"
+            furarMenuItem
+            [attr.data-action]="action"
+            [disabled]="!!blocked"
+            [attr.aria-describedby]="blocked ? 'staff-resend-wait-menu-' + row.member.id : null"
+            (triggered)="request(row.member, action)"
+          >
+            <furar-icon [name]="icon(action)" />
+            @if (blocked) {
+              <span class="f-menu__item-text">
+                <span>{{ t + 'action.' + action | transloco }}</span>
+                <span
+                  class="f-menu__item-hint"
+                  aria-hidden="true"
+                  data-resend-wait
+                  [id]="'staff-resend-wait-menu-' + row.member.id"
+                  >{{ t + 'resendWait.' + blocked.key | transloco: blocked.params }}</span
+                >
+              </span>
+            } @else {
+              {{ t + 'action.' + action | transloco }}
+            }
+          </button>
+        }
+      </div>
+    </ng-template>
+  }
+</ng-template>

@@ -1,0 +1,90 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.blocks.';
+<furar-dialog [heading]="heading()">
+  <form class="gap-form grid" novalidate data-block-form [id]="id" [formGroup]="form" (submit)="submit($event)">
+    <furar-required-note />
+    <div class="f-field-row grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto]">
+      <div class="f-field">
+        <span class="f-label" aria-hidden="true">{{ t + 'date' | transloco }} <furar-required-mark /></span>
+        <furar-date-field
+          required
+          formControlName="date"
+          [label]="t + 'date' | transloco"
+          [invalid]="!!errors().date"
+          [describedBy]="errors().date ? id + '-date-error' : null"
+        />
+        @if (errors().date; as e) {
+          <span class="f-field-error" [id]="id + '-date-error'">{{ e.key | transloco: e.params }}</span>
+        }
+      </div>
+
+      <div class="f-field">
+        <span class="f-label" aria-hidden="true">{{ t + 'hours' | transloco }} <furar-required-mark /></span>
+        <span class="f-help">{{ t + 'hoursHelp' | transloco }}</span>
+        <span class="inline-flex min-h-11 items-center gap-1">
+          <furar-time-picker
+            required
+            formControlName="startMinute"
+            [label]="t + 'from' | transloco"
+            [max]="lastStart"
+            [invalid]="!!errors().period"
+            [describedBy]="errors().period ? id + '-period-error' : null"
+          />
+          <span aria-hidden="true">–</span>
+          <furar-time-picker
+            required
+            formControlName="endMinute"
+            allowEndOfDay
+            [min]="15"
+            [label]="t + 'to' | transloco"
+            [invalid]="!!errors().period"
+            [describedBy]="errors().period ? id + '-period-error' : null"
+          />
+        </span>
+        @if (errors().period; as e) {
+          <span class="f-field-error" [id]="id + '-period-error'">{{ e.key | transloco: e.params }}</span>
+        }
+      </div>
+    </div>
+
+    <furar-field
+      [fieldId]="id + '-reason'"
+      [label]="t + 'reason' | transloco"
+      [help]="t + 'reasonHelp' | transloco"
+      [error]="errors().reason"
+    >
+      <input
+        furarInput
+        formControlName="reason"
+        autocomplete="off"
+        [id]="id + '-reason'"
+        [attr.maxlength]="reasonMax"
+        [attr.aria-invalid]="errors().reason ? 'true' : null"
+        [attr.aria-describedby]="describedBy(id + '-reason', true, errors().reason)"
+      />
+    </furar-field>
+
+    <furar-problem-alert [problem]="problem()" />
+  </form>
+  <ng-container dialogActions>
+    @if (data.block) {
+      <span class="me-auto">
+        <furar-delete-button
+          data-block-delete
+          [text]="t + 'delete.action' | transloco"
+          [label]="t + 'delete.label' | transloco: { when: when() }"
+          (pressed)="remove()"
+        />
+      </span>
+    }
+    <button type="button" furarButton="quiet" data-block-cancel (click)="ref.close()">
+      {{ t + 'cancel' | transloco }}
+    </button>
+    <button type="submit" furarButton="primary" data-block-apply [attr.form]="id">
+      {{ 'facility.detail.edit.apply' | transloco }}
+    </button>
+  </ng-container>
+</furar-dialog>

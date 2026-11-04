@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Ferramentas que verificar.sh usa desde contedores, fixadas por digest (ADR-0016).
+# A etiqueta é a que aparece nos comandos de docs/definicion-de-feito.md. Renovate actualiza ambas.
+fsfe/reuse:6.2.0 sha256:85462a75c0f8efda09ddd190b92816b70e7662577c8427429e11e1b9f25a992e
+zricethezav/gitleaks:v8.30.1 sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+aquasec/trivy:0.75.0 sha256:af6acf9a6b85dfe389a1941505c0ce9efef52a4719635e1a962f022a3d855daa
+mikefarah/yq:4.54.1 sha256:4b3d9475d65571d28cbb19544d3820ec2945e4c8b2f18279394282b8dc3a592e
+caddy:2.11.7-alpine sha256:24ec7b05bc532c7bb57f727030c5056e257ff7138b4b50460306819ff79362bd
+rhysd/actionlint:1.7.12 sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+registry:3.1.2 sha256:01cd312e67026f06f5d89c3e133a4a9adc7cb9eeb9b1194e0b2954dfd770efd2
+italia/publiccode-parser-go:v5.4.3 sha256:d5a73a8964356481d5bb20fde944ad02e68ecd871785bd6d07bd9e4c19a65505

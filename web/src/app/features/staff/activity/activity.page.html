@@ -1,0 +1,84 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'activity.';
+<div class="f-activity">
+  <furar-page-header
+    [heading]="(scope === 'platform' ? t + 'platformTitle' : t + 'title') | transloco"
+    [intro]="t + 'intro.' + scope | transloco"
+    [level]="inSection ? 2 : 1"
+    [quiet]="inSection"
+  >
+    @if (canExportBlocked()) {
+      <button pageActions type="button" furarButton data-export-blocked (click)="openExport()">
+        {{ t + 'exportBlocked.action' | transloco }}
+      </button>
+    }
+  </furar-page-header>
+
+  <p class="f-help f-activity__blocked" data-blocked-note>
+    {{ t + 'blockedNote.' + scope | transloco: { period: visibleText() } }}
+  </p>
+
+  <furar-activity-filters
+    [filters]="filters()"
+    [scope]="scope"
+    [periodText]="periodText()"
+    [areas]="areaOptions()"
+    [people]="peopleOptions()"
+    [today]="today"
+    [min]="firstVisible()"
+    [label]="t + 'filters.label' | transloco"
+    (changed)="onFilters($event)"
+  />
+
+  <div class="f-activity__messages">
+    <p role="status" class="sr-only" data-announcement>{{ announcement() }}</p>
+    <div role="alert">
+      @if (rangeError()) {
+        <furar-callout tone="danger" data-range-error>
+          <p class="font-bold">{{ rangeError() }}</p>
+        </furar-callout>
+      } @else if (moreError()) {
+        <furar-callout tone="danger" data-more-error>
+          <p class="font-bold">{{ t + 'loadError' | transloco }}</p>
+        </furar-callout>
+      }
+    </div>
+  </div>
+
+  @switch (store.state()) {
+    @case ('error') {
+      @if (!rangeError()) {
+        <furar-status-state mode="error" data-load-error [heading]="t + 'loadError' | transloco">
+          <button type="button" furarButton (click)="retry()">{{ t + 'retry' | transloco }}</button>
+        </furar-status-state>
+      }
+    }
+    @case ('ready') {
+      @if (rows().length) {
+        <div class="f-card f-activity__card">
+          <furar-activity-table [rows]="rows()" [scope]="scope" [caption]="t + 'caption' | transloco" />
+        </div>
+        @if (store.next()) {
+          <div class="f-activity__more">
+            <button type="button" furarButton data-more [busy]="store.loadingMore()" (click)="more()">
+              {{ (store.loadingMore() ? t + 'loadingMore' : t + 'more') | transloco }}
+            </button>
+          </div>
+        }
+      } @else {
+        <furar-status-state
+          mode="empty"
+          data-activity-empty
+          [heading]="t + 'empty.title' | transloco"
+          [description]="(filtered() ? t + 'empty.filtered' : t + 'empty.all') | transloco"
+        />
+      }
+    }
+    @default {
+      <furar-status-state mode="skeleton" shape="row" [rows]="5" [description]="t + 'loading' | transloco" />
+    }
+  }
+</div>

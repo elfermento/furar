@@ -1,0 +1,203 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Botón ([furarButton], docs/deseno.md P1-2). As clases de antes (btn, btn-primary, btn-secondary,
+ * btn-danger) pintan igual, para non reescribir todos os usos nin templates/module/web/.
+ * En @layer components: calquera utilidade de Tailwind de quen chama manda sobre estes estilos.
+ */
+@layer components {
+  .f-button,
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    /* Secundario (por defecto): surface, liña de 3:1, sombra leve e texto do primary. */
+    --f-button-bg: var(--f-surface);
+    --f-button-ink: var(--f-primary-text);
+    --f-button-border: var(--f-line);
+    --f-button-shadow: var(--shadow-raised);
+    --f-button-hover: var(--f-button-bg);
+    --f-button-hover-border: var(--f-primary);
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-unit);
+    min-width: var(--f-touch);
+    min-height: var(--f-control-h);
+    padding: 0.5rem 1.75rem;
+    border: var(--f-border) solid var(--f-button-border);
+    border-radius: var(--radius-pill);
+    background: var(--f-button-bg);
+    box-shadow: var(--f-button-shadow);
+    color: var(--f-button-ink);
+    font: inherit;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--f-dur-fast) var(--ease-smooth),
+      border-color var(--f-dur-fast) var(--ease-smooth),
+      transform var(--f-dur-fast) var(--ease-smooth);
+  }
+  .btn {
+    --f-button-bg: transparent;
+    --f-button-ink: currentColor;
+    --f-button-border: currentColor;
+    --f-button-shadow: none;
+    --f-button-hover: transparent;
+    --f-button-hover-border: currentColor;
+  }
+  .f-button[data-variant='primary'],
+  .btn-primary {
+    --f-button-bg: var(--f-primary);
+    --f-button-ink: var(--f-on-primary);
+    --f-button-border: var(--f-primary);
+    --f-button-hover: var(--f-primary-hover);
+    --f-button-hover-border: var(--f-primary-hover);
+  }
+  .f-button[data-variant='danger'],
+  .btn-danger {
+    --f-button-ink: var(--f-danger);
+    --f-button-border: var(--f-danger);
+    --f-button-hover-border: var(--f-danger);
+    --f-button-hover: var(--f-tint);
+  }
+  /* Borrar (furar-delete-button e [furarButton="danger"]): ao pasar, enche de danger. */
+  .f-button[data-variant='danger'] {
+    --f-button-hover: var(--f-danger-fill);
+    --f-button-hover-border: var(--f-danger-fill);
+    --f-button-hover-ink: var(--f-on-danger);
+  }
+  .f-button[data-variant='danger']:has(> furar-icon:first-child):not([data-round='true']) {
+    padding-inline: 1rem 1.25rem;
+  }
+  /* Só icona: redondo de 44 px (o nome vai en aria-label). */
+  .f-button[data-round='true'] {
+    width: var(--f-touch);
+    min-width: var(--f-touch);
+    height: var(--f-touch);
+    min-height: var(--f-touch);
+    padding: 0;
+  }
+  .f-button[data-variant='quiet'] {
+    --f-button-bg: transparent;
+    --f-button-border: transparent;
+    --f-button-shadow: none;
+    --f-button-hover-border: transparent;
+    padding-inline: 0.75rem;
+    text-decoration-line: underline;
+    text-underline-offset: 0.18em;
+  }
+  .f-button[data-size='sm'] {
+    min-height: var(--f-touch);
+    padding-inline: 1.5rem;
+  }
+  .f-button[data-size='lg'] {
+    min-height: 3.5rem;
+    padding-inline: 2rem;
+    font-size: 1.125rem;
+  }
+  @media (max-width: 39.99rem) {
+    .f-button[data-block='true'] {
+      width: 100%;
+    }
+  }
+
+  /* Sobre o primary (cabeceira): contorno e texto na tinta do primary. */
+  .on-primary .f-button:not([data-variant='primary'], [data-variant='danger']) {
+    --f-button-bg: transparent;
+    --f-button-ink: var(--f-on-primary);
+    --f-button-border: var(--f-on-primary);
+    --f-button-shadow: none;
+    --f-button-hover: var(--f-primary-hover);
+    --f-button-hover-border: var(--f-on-primary);
+  }
+  .on-primary .f-button[data-variant='quiet'] {
+    --f-button-border: transparent;
+    --f-button-hover-border: transparent;
+  }
+
+  /* Desactivado: bordo descontinuo e cursor, sen baixar a opacidade (o texto segue lexible). */
+  .f-button:disabled,
+  .f-button[aria-disabled='true']:not([aria-busy='true']),
+  .btn:disabled,
+  .btn-primary:disabled,
+  .btn-secondary:disabled,
+  .btn-danger:disabled {
+    --f-button-bg: var(--f-surface);
+    --f-button-ink: var(--f-ink-soft);
+    --f-button-border: var(--f-line);
+    --f-button-shadow: none;
+    --f-button-hover: var(--f-surface);
+    --f-button-hover-border: var(--f-line);
+    border-style: dashed;
+    cursor: not-allowed;
+  }
+
+  @media (hover: hover) {
+    .f-button:hover,
+    .btn:hover,
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-danger:hover {
+      border-color: var(--f-button-hover-border);
+      background: var(--f-button-hover);
+    }
+    .f-button[data-variant='danger']:not(:disabled):hover {
+      color: var(--f-button-hover-ink);
+    }
+    /* Discreto: sen recheo nin tinte co texto da mesma cor; o subliñado engrosa. */
+    .f-button[data-variant='quiet']:hover {
+      text-decoration-thickness: 2px;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .f-button:active:enabled:not([aria-disabled='true']),
+    .btn-primary:active:enabled,
+    .btn-secondary:active:enabled {
+      transform: scale(0.98);
+    }
+  }
+
+  /* Ocupado (acción en curso, docs/deseno.md §8): o rótulo en xerundio vén de quen chama; o aro
+     acompaña. O botón leva tamén aria-disabled, pero non se pinta como desactivado. */
+  .f-button[aria-busy='true'] {
+    cursor: progress;
+  }
+  .f-button[aria-busy='true']::before {
+    content: '';
+    width: 1em;
+    height: 1em;
+    flex: none;
+    border: 2px solid;
+    border-inline-end-color: transparent;
+    border-radius: 50%;
+    animation: f-spin 0.8s linear infinite;
+  }
+  /* Con movemento reducido non xira: o aro queda quedo e punteado (outra forma, non só a cor). */
+  @media (prefers-reduced-motion: reduce) {
+    .f-button[aria-busy='true']::before {
+      border-style: dotted;
+      border-inline-end-color: currentColor;
+      animation: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .f-button,
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger {
+      border-color: ButtonText;
+    }
+  }
+  @keyframes f-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

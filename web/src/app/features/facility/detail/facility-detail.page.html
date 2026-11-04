@@ -1,0 +1,143 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.detail.';
+<div class="gap-group grid">
+  <a routerLink=".." furarButton="quiet" size="sm" class="justify-self-start">
+    <furar-icon name="arrow-left" />
+    {{ t + 'back' | transloco }}
+  </a>
+
+  @switch (store.state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="card" [rows]="3" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [headingLevel]="1"
+        [heading]="(notFound() ? t + 'notFound.title' : t + 'loadError.title') | transloco"
+        [description]="(notFound() ? t + 'notFound.text' : t + 'loadError.text') | transloco"
+      >
+        @if (!notFound()) {
+          <button type="button" furarButton (click)="load()">
+            {{ t + 'loadError.retry' | transloco }}
+          </button>
+        }
+      </furar-status-state>
+    }
+    @case ('ready') {
+      @if (store.facility(); as facility) {
+        <div [id]="ids.photos">
+          <furar-facility-photos />
+        </div>
+        <furar-page-header class="mb-0" [heading]="facility.name" [intro]="address()" introIcon="location">
+          <furar-chip-menu
+            pageHeadingAside
+            [label]="t + 'status.label' | transloco"
+            [value]="facility.status"
+            [options]="statusOptions()"
+            [busy]="changingStatus()"
+            (selected)="changeStatus($event)"
+          />
+          @if (!session.editing()) {
+            <span pageHeadingAside class="gap-unit ms-auto flex flex-wrap">
+              <button type="button" furarButton="secondary" data-edit (click)="startEditing()">
+                <furar-icon name="pencil" />
+                {{ t + 'edit.start' | transloco }}
+              </button>
+              <furar-delete-button
+                data-delete
+                [text]="t + 'delete.action' | transloco"
+                [label]="t + 'delete.label' | transloco: { name: facility.name }"
+                (pressed)="remove()"
+              />
+            </span>
+          }
+        </furar-page-header>
+
+        <furar-problem-alert [problem]="statusProblem()" />
+
+        @if (store.stale()) {
+          <furar-callout tone="warn" [heading]="t + 'stale.title' | transloco">
+            <p>{{ t + 'stale.text' | transloco }}</p>
+            <button type="button" furarButton size="sm" class="mt-unit" [busy]="reloading()" (click)="reload()">
+              {{ (reloading() ? t + 'stale.reloading' : t + 'stale.reload') | transloco }}
+            </button>
+          </furar-callout>
+        }
+
+        @if (store.missing().length || !facility.published) {
+          <furar-facility-draft-notice
+            [missing]="store.missing()"
+            [unpublished]="!facility.published"
+            [facilityId]="facility.id"
+          />
+        }
+
+        <!-- Datos primeiro no DOM: no móbil enriba; en escritorio, columna dereita sen «order». -->
+        <div class="gap-section grid lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <!-- O contedor estírase á altura da fila para que a tarxeta poida quedar fixa (P23). -->
+          <div class="lg:col-start-2 lg:row-start-1" [id]="ids.data">
+            <furar-facility-data-card />
+          </div>
+
+          <div class="gap-section grid min-w-0 lg:col-start-1 lg:row-start-1">
+            <div [id]="ids.uses">
+              <furar-facility-uses />
+            </div>
+            <div [id]="ids.description">
+              <furar-facility-description />
+            </div>
+            <div [id]="ids.houseRules">
+              <furar-facility-house-rules />
+            </div>
+            <div [id]="ids.paymentNotes">
+              <furar-facility-payment-notes />
+            </div>
+            <div [id]="ids.schedule">
+              <furar-facility-schedule />
+            </div>
+            <div [id]="ids.blocks">
+              <furar-facility-blocks />
+            </div>
+            <div [id]="ids.amenities">
+              <furar-facility-amenities />
+            </div>
+            <div [id]="ids.location">
+              <furar-facility-location />
+            </div>
+          </div>
+        </div>
+
+        @if (session.editing()) {
+          <furar-action-bar [label]="t + 'edit.bar' | transloco: { name: facility.name }">
+            <p actionBarStatus class="f-action-bar__state" role="status" data-edit-status>
+              <furar-icon name="pencil" />
+              @if (saveFailed()) {
+                {{ t + 'edit.failedStatus' | transloco }}
+              } @else if (session.dirtyCount()) {
+                <span data-dirty>{{ t + 'edit.unsaved' | transloco }}</span>
+              } @else {
+                {{ t + 'edit.editing' | transloco }}
+              }
+            </p>
+            <button type="button" furarButton data-edit-cancel (click)="cancelEditing()">
+              {{ t + 'edit.cancel' | transloco }}
+            </button>
+            <button
+              type="button"
+              furarButton="primary"
+              data-edit-save
+              [busy]="session.saving()"
+              (click)="saveEditing()"
+            >
+              {{ (session.saving() ? t + 'edit.saving' : t + 'edit.save') | transloco }}
+            </button>
+          </furar-action-bar>
+        }
+      }
+    }
+  }
+</div>

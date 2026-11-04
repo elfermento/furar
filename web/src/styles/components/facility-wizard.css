@@ -1,0 +1,226 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Asistente «Nova instalación» (maqueta 53): unha columna de lectura cómoda co indicador de
+ * pasos, a tarxeta do paso e a barra de accións ao pé. Servizos como casillas grandes coa icona,
+ * debuxos nunha grella de opcións, usos en filas co prezo á dereita e o resumo de «Revisar»
+ * como listas de rótulo e valor.
+ */
+@layer components {
+  .f-wizard {
+    display: grid;
+    gap: var(--spacing-group, 1.5rem);
+    max-width: 60rem;
+    padding-bottom: 6rem;
+  }
+  .f-wizard__card {
+    display: grid;
+    gap: var(--spacing-form, 1.25rem);
+  }
+  .f-wizard__rule {
+    margin: 0.5rem 0;
+    border: 0;
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+
+  /* Servizos e accesibilidade */
+  .f-wizard-checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-wizard-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: var(--f-touch);
+    padding: 0.25rem 0.875rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: 0.75rem;
+    background: var(--f-surface);
+    cursor: pointer;
+  }
+  .f-wizard-check input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0;
+    flex: none;
+    accent-color: var(--f-primary);
+  }
+  .f-wizard-check furar-icon {
+    flex: none;
+    color: var(--f-primary-text);
+  }
+  .f-wizard-check:has(input:checked) {
+    border-color: var(--f-primary);
+    background: var(--f-tint);
+    font-weight: 700;
+  }
+  .f-wizard-check:has(input:focus-visible) {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: 2px;
+  }
+
+  /* Fotos e debuxos */
+  .f-wizard-photo-card {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+  }
+  .f-wizard-photo-card furar-bilingual-field {
+    width: 100%;
+  }
+  .f-wizard-drawings {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 1.25rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: 1.25rem;
+    background: var(--f-page);
+  }
+  .f-wizard-drawings__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+    gap: 0.75rem;
+  }
+  .f-wizard-drawing {
+    position: relative;
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border: var(--f-border-state) solid var(--f-divider);
+    border-radius: 0.875rem;
+    background: var(--f-surface);
+    cursor: pointer;
+  }
+  .f-wizard-drawing img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 0.625rem;
+  }
+  .f-wizard-drawing:has(input:checked) {
+    border-color: var(--f-primary);
+    box-shadow: 0 0 0 2px var(--f-primary);
+  }
+  .f-wizard-drawing:has(input:focus-visible) {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: 2px;
+  }
+  .f-wizard-drawing__name {
+    padding: 0 0.25rem 0.25rem;
+    font-size: 0.875rem;
+  }
+  .f-wizard-drawing:has(input:checked) .f-wizard-drawing__name {
+    font-weight: 700;
+  }
+  .f-wizard-drawing__tag {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
+
+  /* Usos */
+  .f-wizard-uses {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  .f-wizard-uses > li {
+    border-bottom: var(--f-border) solid var(--f-divider);
+  }
+  .f-wizard-uses__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding: 0.75rem 0;
+  }
+  .f-wizard-uses__name {
+    display: grid;
+    flex: 1 1 14rem;
+    gap: 0.25rem;
+  }
+  .f-wizard-uses__acts {
+    display: flex;
+    gap: 0.25rem;
+  }
+  .f-wizard-use {
+    display: grid;
+    gap: var(--spacing-form, 1.25rem);
+    padding: 1rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+  }
+
+  /* Horario por días */
+  .f-wizard-week {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Revisar */
+  .f-wizard-review {
+    display: grid;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  .f-wizard-review__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .f-wizard-review__list {
+    display: grid;
+    margin: 0;
+  }
+  .f-wizard-review__row {
+    display: grid;
+    grid-template-columns: minmax(8rem, 14rem) 1fr;
+    gap: 0.25rem 1rem;
+    padding: 0.375rem 0;
+  }
+  .f-wizard-review__row dt {
+    color: var(--f-ink-soft);
+  }
+  .f-wizard-review__row dd {
+    margin: 0;
+  }
+  .f-wizard-review__thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .f-wizard-review__thumbs img {
+    width: 7.5rem;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 0.625rem;
+  }
+
+  @media (max-width: 47.99rem) {
+    .f-wizard-review__row {
+      grid-template-columns: 1fr;
+    }
+  }
+}

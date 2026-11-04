@@ -1,0 +1,135 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Tokens do sistema de deseño (docs/deseno.md §3, ADR-0021).
+ * As cores son as de deriveTokens(tema por defecto) (core/theme/theme-tokens.ts, comprobado en
+ * theme-tokens.spec.ts); co concello, ThemeService escribe as súas en <html> por CSSOM.
+ * Medidas, tipografía, radios, sombras e movemento non son do concello: iguais en todos.
+ */
+:root {
+  --f-page: #f5f8fa;
+  --f-surface: #ffffff;
+  --f-tint: #e7eff4;
+  --f-ink: #1a1a1a;
+  --f-ink-soft: #5a5a5a;
+  --f-divider: #dadada;
+  --f-line: #818181;
+  --f-primary: #0b5c8e;
+  --f-primary-hover: #094e79;
+  --f-on-primary: #ffffff;
+  --f-primary-text: #0b5c8e;
+  --f-accent: #8a4b00;
+  --f-focus: #0b5c8e;
+  /* Estados como texto (achegados á tinta ata 4,5:1) e como recheo, coa paleta de §3.1. */
+  --f-danger: #c6362c;
+  --f-success: #2a7b3e;
+  --f-warn: #9d5c0e;
+  --f-info: #2c64cc;
+  --f-muted: #5f646b;
+  --f-danger-fill: #c9372c;
+  --f-success-fill: #2a7d3f;
+  --f-warn-fill: #a05d0e;
+  --f-info-fill: #2c64cc;
+  --f-muted-fill: #5f646b;
+  --f-on-danger: #ffffff;
+  --f-on-success: #ffffff;
+  --f-on-warn: #ffffff;
+  --f-on-info: #ffffff;
+  --f-on-muted: #ffffff;
+  --f-soft-mix: 8%;
+  /* Fondo pálido do chip de filtro sen marcar (única excepción a P1-9). */
+  --f-chip-mix: 9%;
+  --f-glass: rgb(255 255 255 / 0.9);
+  /* Velo e sombra en negro fixo: escurecen igual co fondo claro ou escuro (non saen da tinta). */
+  --f-scrim: rgb(0 0 0 / 0.4);
+  --f-shadow-color: rgb(0 0 0 / 0.12);
+
+  /* Bordos e medidas de toque. */
+  --f-border: 1px;
+  --f-border-state: 2px;
+  --f-touch: 2.75rem;
+  --f-control-h: 3rem;
+  --f-row-h: 3.25rem;
+  --f-focus-ring: 3px;
+
+  /* Movemento. */
+  --f-dur-fast: 160ms;
+  --f-dur-med: 280ms;
+  --f-dur-slow: 420ms;
+
+  /* Capas. */
+  --f-z-sticky: 50;
+  --f-z-modal: 100;
+  --f-z-popover: 150;
+  --f-z-toast: 200;
+}
+
+/*
+ * Cores expostas a Tailwind (bg-page, text-ink, border-line…). Leen as variables en tempo de execución.
+ * `--color-*: initial` quita a paleta de Tailwind (bg-red-500, text-gray-600…): só hai cores de tokens.
+ */
+@theme inline {
+  --color-*: initial;
+  --color-page: var(--f-page);
+  --color-surface: var(--f-surface);
+  --color-tint: var(--f-tint);
+  --color-ink: var(--f-ink);
+  --color-ink-soft: var(--f-ink-soft);
+  --color-muted: var(--f-ink-soft);
+  --color-divider: var(--f-divider);
+  --color-line: var(--f-line);
+  --color-primary: var(--f-primary);
+  --color-on-primary: var(--f-on-primary);
+  --color-primary-text: var(--f-primary-text);
+  --color-accent: var(--f-accent);
+  --color-focus: var(--f-focus);
+  --color-danger: var(--f-danger);
+  --color-success: var(--f-success);
+  --color-warn: var(--f-warn);
+  --color-info: var(--f-info);
+  --color-scrim: var(--f-scrim);
+}
+
+/* Escala fixa: aire por relación, columnas, tipografía, radios, sombras e curvas. */
+@theme {
+  --font-sans: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+
+  --spacing-unit: 0.5rem;
+  --spacing-item: 1rem;
+  --spacing-form: 1.25rem;
+  --spacing-card: 1.5rem;
+  --spacing-group: 1.75rem;
+  --spacing-section: 2rem;
+  --spacing-gutter: 1rem;
+
+  --container-col: 35rem;
+  --container-prose: 70ch;
+  /* O contedor de toda a app: barra superior, contido e pé cos mesmos bordos (docs/deseno.md §7). */
+  --container-bar: 76rem;
+
+  --text-display: 1.75rem;
+  --text-display--line-height: 1.25;
+  --text-title: 1.5rem;
+  --text-title--line-height: 1.25;
+  --text-head: 1.25rem;
+  --text-head--line-height: 1.25;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5;
+  --text-support: 0.875rem;
+  --text-support--line-height: 1.5;
+
+  --radius-field: 0.75rem;
+  --radius-row: 0.875rem;
+  --radius-card: 1.25rem;
+  --radius-sheet: 1.75rem;
+  --radius-pill: 999px;
+
+  --shadow-raised: 0 1px 2px var(--f-shadow-color);
+  --shadow-overlay: 0 2px 6px var(--f-shadow-color), 0 8px 24px var(--f-shadow-color);
+  --shadow-float: 0 -1px 0 var(--f-divider), 0 -6px 20px var(--f-shadow-color);
+
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-balanced: cubic-bezier(0.45, 0, 0.55, 1);
+  --ease-overshoot: cubic-bezier(0.35, 1.55, 0.65, 1);
+}

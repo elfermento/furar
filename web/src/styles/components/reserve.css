@@ -1,0 +1,318 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Páxina de reservar e «Reserva confirmada» (D2-12, maquetas 11 e 13): unha columna centrada de
+ * 34rem co «←» redondo e o título; a tarxeta coa miniatura, os campos (`.f-field-group`), o total,
+ * o botón ao ancho e a nota de pago. Nos paneis, os usos con radio, as horas en reixa e as partes.
+ * Confirmada: o check grande, os valores (`furar-value-list`), o QR centrado, o prazo e dúas accións.
+ * Folla `reservas.css`: a ruta leva `bookingStylesResolver`.
+ */
+@layer components {
+  .f-reserve {
+    display: grid;
+    gap: var(--spacing-item);
+    width: 100%;
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+  .f-reserve__title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .f-reserve__title h1,
+  .f-reserve-done__ok h1 {
+    margin: 0;
+    font-size: 2rem;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .f-reserve__card {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .f-reserve__facility {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+  }
+  .f-reserve__facility img {
+    flex: none;
+    width: 6.5rem;
+    height: 4.5rem;
+    border-radius: var(--radius-row);
+    object-fit: cover;
+  }
+  .f-reserve__facility b {
+    display: block;
+    font-size: 1.125rem;
+    line-height: 1.25;
+  }
+  .f-reserve__facility span {
+    color: var(--f-ink-soft);
+  }
+  @media (max-width: 22.5rem) {
+    .f-reserve__facility img {
+      width: 4.5rem;
+      height: 3.25rem;
+    }
+  }
+  .f-reserve__live:empty {
+    display: none;
+  }
+  .f-reserve__alts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.625rem;
+  }
+  .f-reserve__alt,
+  .f-reserve__slot {
+    min-height: var(--f-touch);
+    border: var(--f-border) solid var(--f-primary);
+    background: var(--f-surface);
+    color: var(--f-primary-text);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+  .f-reserve__alt {
+    padding: 0 0.875rem;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+  }
+
+  /* Panel «Que»: os usos nunha lista con radio, nome, detalle e prezo. */
+  .f-reserve__uses {
+    display: grid;
+  }
+  .f-reserve__use {
+    display: grid;
+    grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0.25rem;
+    border: 0;
+    border-radius: var(--radius-field);
+    background: none;
+    color: var(--f-ink);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-reserve__use + .f-reserve__use {
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  .f-reserve__use-text b {
+    display: block;
+    font-size: 1.0625rem;
+  }
+  .f-reserve__use-text span {
+    color: var(--f-ink-soft);
+  }
+  .f-reserve__use-price {
+    font-size: 1.125rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .f-reserve__radio {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid var(--f-line);
+    border-radius: 50%;
+  }
+  [aria-pressed='true'] > .f-reserve__radio {
+    border-color: var(--f-primary);
+  }
+  [aria-pressed='true'] > .f-reserve__radio::after {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: var(--f-primary);
+    content: '';
+  }
+
+  /* Panel «Hora»: a duración enriba e as horas libres en reixa. */
+  .f-reserve__hours {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+  }
+  .f-reserve__slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .f-reserve__slot {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0.5rem 0.875rem;
+    border-radius: var(--radius-row);
+    text-align: start;
+  }
+  .f-reserve__slot b {
+    font-size: 1.0625rem;
+  }
+  .f-reserve__slot small {
+    color: var(--f-ink-soft);
+    font-size: 0.8125rem;
+  }
+  .f-reserve__slot[aria-pressed='true'] {
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+  .f-reserve__slot[aria-pressed='true'] small {
+    color: inherit;
+  }
+  .f-reserve__hint {
+    margin: 0;
+    color: var(--f-ink-soft);
+  }
+
+  /* Panel «Parte». */
+  .f-reserve__parts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .f-reserve__part {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 9rem;
+    min-height: var(--f-touch);
+    padding: 0.75rem 1rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-reserve__part[aria-pressed='true'] {
+    border-color: var(--f-primary);
+    box-shadow: inset 0 0 0 1px var(--f-primary);
+  }
+  .f-reserve__part:disabled {
+    color: var(--f-ink-soft);
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+
+  @media (hover: hover) {
+    .f-reserve__use:hover,
+    .f-reserve__alt:hover,
+    .f-reserve__slot:not([aria-pressed='true']):hover,
+    .f-reserve__part:not(:disabled):hover {
+      background: var(--f-tint);
+    }
+  }
+
+  .f-reserve__total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-inline: 0.25rem;
+  }
+  .f-reserve__total b {
+    font-size: 1.375rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .f-reserve__go.f-button {
+    width: 100%;
+    min-height: 3.25rem;
+    font-size: 1.0625rem;
+  }
+  .f-reserve__fine {
+    margin: -0.5rem 0 0;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    text-align: center;
+  }
+
+  /* Reserva confirmada. */
+  .f-reserve-done {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .f-reserve-done__ok {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  .f-reserve-done__ok > .f-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    color: var(--f-success);
+  }
+  .f-reserve-done__ok p {
+    margin: 0;
+    color: var(--f-ink-soft);
+    overflow-wrap: anywhere;
+  }
+  .f-reserve-done__qr {
+    --f-qr-size: 10rem;
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    padding-bottom: 1.25rem;
+    border-bottom: var(--f-border) solid var(--f-divider);
+    text-align: center;
+  }
+  .f-reserve-done__code {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+  .f-reserve-done__cancel {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    margin: 0;
+    color: var(--f-ink-soft);
+  }
+  .f-reserve-done__cancel .f-icon {
+    margin-top: 0.125rem;
+    color: var(--f-primary-text);
+  }
+  .f-reserve-done__cancel b {
+    color: var(--f-ink);
+  }
+  .f-reserve-done__acts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .f-reserve-done__acts .f-button {
+    min-height: 3rem;
+  }
+  @media (max-width: 32.5rem) {
+    .f-reserve-done__acts {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .f-reserve__alt,
+    .f-reserve__slot,
+    .f-reserve__part {
+      border-color: ButtonText;
+    }
+    .f-reserve__slot[aria-pressed='true'],
+    [aria-pressed='true'] > .f-reserve__radio::after {
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+}

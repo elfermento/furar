@@ -1,0 +1,164 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.uses.';
+@let w = 'facility.wizard.uses.';
+@let id = 'wizard-use';
+<div class="f-wizard-use" role="group" aria-labelledby="wizard-use-title" [formGroup]="editor().form">
+  <h3 id="wizard-use-title" class="font-bold">{{ (editor().use ? t + 'edit' : t + 'add') | transloco }}</h3>
+  <div class="f-field-row sm:grid-cols-2">
+    <furar-field [fieldId]="id + '-name'" [label]="t + 'name' | transloco" [required]="true" [error]="errors().name">
+      <input
+        furarInput
+        formControlName="name"
+        aria-required="true"
+        autocomplete="off"
+        [id]="id + '-name'"
+        [attr.aria-invalid]="errors().name ? 'true' : null"
+        [attr.aria-describedby]="describedBy(id + '-name', false, errors().name)"
+      />
+    </furar-field>
+    <div class="gap-unit grid content-start">
+      <span class="f-label" [id]="id + '-mode'">{{ t + 'rentalMode.label' | transloco }}</span>
+      <div furarSegmented mode="radio" formControlName="rentalMode" [attr.aria-labelledby]="id + '-mode'">
+        @for (mode of modes; track mode) {
+          <button type="button" [furarSegmentedOption]="mode">{{ t + 'rentalMode.' + mode | transloco }}</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (value().rentalMode === 'PARTS') {
+    <fieldset
+      class="gap-unit grid"
+      formArrayName="parts"
+      [attr.aria-describedby]="errors().parts ? id + '-parts-error' : id + '-parts-help'"
+    >
+      <legend class="f-label">
+        {{ t + 'parts.label' | transloco }}
+        <furar-required-mark />
+      </legend>
+      <span class="f-help" [id]="id + '-parts-help'">{{ t + 'parts.help' | transloco: { min: limits.partsMin } }}</span>
+      @for (part of editor().form.controls.parts.controls; track part; let i = $index) {
+        <div class="gap-unit grid" data-part [formGroupName]="i">
+          <div class="gap-unit flex items-center">
+            <input
+              furarInput
+              formControlName="name"
+              autocomplete="off"
+              aria-required="true"
+              [id]="id + '-part-' + i"
+              [attr.aria-label]="t + 'parts.name' | transloco: { n: i + 1 }"
+              [attr.aria-invalid]="errors().partNames[i] ? 'true' : null"
+              [attr.aria-describedby]="errors().partNames[i] ? id + '-part-' + i + '-error' : null"
+            />
+            @if (editor().form.controls.parts.length > limits.partsMin) {
+              <furar-delete-button [label]="t + 'parts.remove' | transloco: { n: i + 1 }" (pressed)="removePart(i)" />
+            }
+          </div>
+          @if (errors().partNames[i]; as e) {
+            <span class="f-field-error" [id]="id + '-part-' + i + '-error'">{{ e.key | transloco: e.params }}</span>
+          }
+        </div>
+      }
+      @if (editor().form.controls.parts.length < limits.partsMax) {
+        <button type="button" furarButton="quiet" size="sm" class="justify-self-start" (click)="addPart()">
+          <furar-icon name="plus" />
+          {{ t + 'parts.add' | transloco }}
+        </button>
+      }
+      @if (errors().parts; as e) {
+        <span class="f-field-error" [id]="id + '-parts-error'">{{ e.key | transloco: e.params }}</span>
+      }
+    </fieldset>
+  }
+
+  @if (value().rentalMode === 'SEATS') {
+    <div class="f-field-row sm:grid-cols-2">
+      <furar-field
+        [fieldId]="id + '-capacity'"
+        [label]="t + 'capacity.label' | transloco"
+        [required]="true"
+        [help]="t + 'capacity.help' | transloco: { min: limits.capacityMin, max: limits.capacityMax }"
+        [error]="errors().capacity"
+      >
+        <input
+          furarInput
+          type="number"
+          inputmode="numeric"
+          formControlName="capacity"
+          aria-required="true"
+          [min]="limits.capacityMin"
+          [max]="limits.capacityMax"
+          [id]="id + '-capacity'"
+          [attr.aria-invalid]="errors().capacity ? 'true' : null"
+          [attr.aria-describedby]="describedBy(id + '-capacity', true, errors().capacity)"
+        />
+      </furar-field>
+    </div>
+  }
+
+  <div class="f-field-row sm:grid-cols-2">
+    <div class="gap-unit grid content-start">
+      <span class="f-label" [id]="id + '-slot'">{{ t + 'slot.label' | transloco }}</span>
+      <div furarSegmented mode="radio" formControlName="slotMinutes" [attr.aria-labelledby]="id + '-slot'">
+        @for (minutes of slots; track minutes) {
+          <button type="button" [furarSegmentedOption]="minutes">
+            {{ t + 'slot.option' | transloco: { minutes } }}
+          </button>
+        }
+      </div>
+    </div>
+    <div class="gap-unit grid content-start" formGroupName="price">
+      <span class="f-label" [id]="id + '-price'">{{ t + 'price.label' | transloco }}</span>
+      <div furarSegmented mode="radio" formControlName="kind" [attr.aria-labelledby]="id + '-price'">
+        @for (kind of priceKinds; track kind) {
+          <button type="button" [furarSegmentedOption]="kind">{{ t + 'price.' + kind | transloco }}</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (value().price.kind === 'PAID') {
+    <div class="f-use-money" formGroupName="price">
+      <label class="font-bold" [for]="id + '-amount'"
+        >{{ t + 'price.amount' | transloco }}
+        <furar-required-mark />
+      </label>
+      <span class="f-use-money__field">
+        <input
+          formControlName="amountCents"
+          inputmode="decimal"
+          aria-required="true"
+          autocomplete="off"
+          [id]="id + '-amount'"
+          [attr.aria-invalid]="errors().amount ? 'true' : null"
+          [attr.aria-describedby]="id + '-amount-per' + (errors().amount ? ' ' + id + '-amount-error' : '')"
+        />
+        <span aria-hidden="true">€</span>
+      </span>
+      <span class="f-use-money__per" [id]="id + '-amount-per'">
+        @if (value().rentalMode === 'SEATS') {
+          {{ t + 'price.perPerson' | transloco }}
+        } @else {
+          {{ t + 'price.perBooking' | transloco }}
+          <b>{{ t + 'slot.option' | transloco: { minutes: value().slotMinutes } }}</b>
+        }
+      </span>
+      @if (errors().amount; as e) {
+        <span class="f-field-error" [id]="id + '-amount-error'">{{ e.key | transloco: e.params }}</span>
+      }
+    </div>
+  }
+
+  <furar-problem-alert [problem]="editing.problem()" />
+  <div class="gap-unit flex flex-wrap justify-end">
+    <button type="button" furarButton="quiet" data-use-cancel (click)="editing.close()">
+      {{ t + 'cancel' | transloco }}
+    </button>
+    <button type="button" furarButton="primary" data-use-apply [busy]="editing.busy()" (click)="apply()">
+      {{ (editor().use ? 'facility.detail.edit.apply' : w + 'add') | transloco }}
+    </button>
+  </div>
+</div>

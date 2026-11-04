@@ -1,0 +1,54 @@
+D01	d890d9928106	base
+D02	3b684a43defb	base
+D03	7cc525fe98ca	base
+D04	f18a239a1851	base
+D05	5cb5b320f9cf	base
+D06	bdfce6e473bd	base
+D07	94beca7229ae	base
+D08	b74a339d7b33	base
+D10	5342de7c2385	base
+D11	e2ba1a5f7c64	base
+D12	19bf6cfa96be	ArchitectureRulesSelfTest.everyRuleHasAFixture
+D13	4f01d46beb26	base
+D14	70cc20826c33	D28:i,j,u,w; NativeSqlRowLevelSecurityIT.policyThatOnlyChecksNotNullIsRejected
+D15	2e6e2d513de6	base
+D16	7a4102646535	D28:x; ProblemDetailsIT.missingFieldFailsWithAnAssertionNamingIt
+D17	620338d2d151	base
+D18	1b4c6f734040	CustomFieldsDatabaseIT.aValueGoesOnlyInTheColumnOfItsType; CustomFieldsMigrationIT.aValueWithoutDefinitionStopsTheMigration
+D19	68a3fe14890d	OccupancyModelIT.withoutTheFacilityLockTheBaseStillNeverDoubleBooks; OccupancyModelIT.btreeGistSupportsUuidNotEqualInTheOneUseExclusion; OccupancyModelIT.samePersonNeverHoldsTwoSeats
+D20	8426768a82be	base
+D21	ff566a9e4797	base
+D22	c2ae5b73af46	base
+D23	6554e3feefe0	base
+D24	2b539e162b0a	base
+D25	e066686e908f	base
+D26	78d5be233887	base
+D27	91a761dfe7db	base
+D28	27417ecdd5b3	D28:v,w,x,y,z
+D29	482a9a9084b6	base
+D30	c970259a0699	base
+D31	2b5ed7cd153f	base
+D32	9ddef68e1733	base
+D33	048de2e4b62a	base
+D34	f0f912597976	D28:p
+D35	1d13e5c48e40	base
+D36	7be885191b25	base
+D37	1de8387491f2	base
+D38	491700f9e611	base
+D39	b477975e05f7	base
+D40	cd4a1bd1f025	base
+D41	fbfacd978971	base
+D42	a5beeb1cf8ad	base
+D43	2cf8a1734f42	base
+D44	83145312995e	base
+D45	0ca7216eeadf	base
+D46a	c48192f50e3c	base
+D46	13867bd3d11b	base
+D47	98bd1a4d4610	base
+D48	0c83a25a688f	MunicipalityPortabilityIT.onlyTheManagerExportsAndOnlyThePlatformImports; CrossTenantAuthorizationIT.platformDoesNotSeeResidentsData; PlatformFirstAdminIT.theVerifiedAccountOfFurarAdminEmailBecomesTheFirstAdministratorOnce; StaffAccessIT.aPasswordOnlySessionGivesTheRoleAndRecordsTheSignIn; JwtCurrentActorTest.theTableRoleCountsInTheMunicipalityOfTheRequest; StaffAccessIT.anActiveMembershipGivesItsRoleAndADeactivationCountsOnTheNextRequest
+D49	f41cd2dae1fc	base
+D50	b4962a1fa061	MunicipalityPortabilityIT.aSavedFileFromVersionOneIsImported; MunicipalityPortabilityIT.facilitiesTravelWithEverythingButPhotoBytes
+D51	372adcd2ab7b	PrivacyNoticeIT.anyoneReadsTheDeploymentPrivacyNotice; MunicipalityLegalDetailsIT.withoutPageIsSavedAndTheMailHasNoPrivacyLink; StaffInvitationMailComposerTest.theMunicipalityOwnPrivacyPageIsTheLink
+D52	63a67ee2943c	base
+D53	8cb75daeeae0	D28:z
+D54	9d948d663ea2	base

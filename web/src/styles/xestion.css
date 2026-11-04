@@ -1,0 +1,32 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+/*
+ * Compoñentes que só usa a xestión (docs/deseno.md §2): folla á parte (`angular.json`,
+ * `bundleName: xestion`, `inject: false`) para que non entre na carga inicial. A ruta de xestión
+ * cárgaa cun `<link>` á mesma orixe e agarda por ela antes de pintar
+ * (`core/layout/management-styles.ts`). As capas son as de styles.css: `components` segue por
+ * debaixo das utilidades de Tailwind.
+ */
+@import './components/action-bar.css';
+@import './components/edit-section.css';
+@import './components/tile.css';
+@import './components/switch.css';
+@import './components/radio-cards.css';
+@import './components/tabs.css';
+@import './components/color-tile.css';
+@import './components/municipality-section.css';
+@import './components/checklist.css';
+@import './components/rich-text.css';
+@import './components/legal-settings.css';
+@import './components/dialog.css';
+@import './components/photos.css';
+@import './components/weekday-picker.css';
+@import './components/use-terms.css';
+@import './components/time-picker.css';
+@import './components/staff-members.css';
+@import './components/staff-invitation.css';
+@import './components/activity.css';
+@import './components/stepper.css';
+@import './components/file-drop.css';
+@import './components/custom-fields.css';
+@import './components/facility-wizard.css';

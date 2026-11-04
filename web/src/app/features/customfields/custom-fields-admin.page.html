@@ -1,0 +1,92 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<furar-page-header
+  [heading]="'customFields.admin.title' | transloco"
+  [intro]="'customFields.admin.intro' | transloco: { name: municipality.name() ?? '' }"
+  [level]="inSection ? 2 : 1"
+  [quiet]="inSection"
+/>
+<furar-problem-alert [problem]="problem()" />
+
+@if (definitions(); as all) {
+  <div class="mb-section gap-item flex flex-wrap items-center justify-between">
+    <p>{{ 'customFields.admin.count' | transloco: { count: active().length, limit } }}</p>
+    <a furarButton="primary" [routerLink]="['novo']">
+      <furar-icon name="plus" />
+      {{ 'customFields.admin.new' | transloco }}
+    </a>
+  </div>
+
+  @for (
+    section of [
+      { key: 'active', list: active() },
+      { key: 'inactive', list: inactive() },
+    ];
+    track section.key
+  ) {
+    @if (section.key === 'active' || section.list.length) {
+      <section class="mb-section" [attr.aria-labelledby]="'cf-' + section.key">
+        <h2 [id]="'cf-' + section.key" class="text-head mb-item">
+          {{ 'customFields.admin.' + section.key | transloco }}
+        </h2>
+        @if (section.list.length) {
+          <ul furarRowList>
+            @for (definition of section.list; track definition.id) {
+              @let label = localized(definition.label, language.lang());
+              <li>
+                <furar-row [label]="label">
+                  <span class="font-mono">{{ definition.code }}</span>
+                  <span class="sr-only">, </span>
+                  <furar-tag>{{ 'customFields.type.' + definition.type | transloco }}</furar-tag>
+                  @for (usage of definition.usages; track usage.target) {
+                    @let site =
+                      knownTarget(usage.target) ? ('customFields.target.' + usage.target | transloco) : usage.target;
+                    @let visibility =
+                      (usage.target === 'BOOKING' ? 'customFields.visibilityBooking.' : 'customFields.visibility.') +
+                        usage.visibility | transloco;
+                    <span class="sr-only">, </span>
+                    <furar-tag>{{
+                      'customFields.admin.' + (usage.required ? 'usageRequired' : 'usage')
+                        | transloco: { site, visibility }
+                    }}</furar-tag>
+                  }
+                  @if (definition.personalData) {
+                    <span class="sr-only">, </span>
+                    <furar-tag>{{ 'customFields.admin.personalData' | transloco }}</furar-tag>
+                  }
+                  <ng-container rowActions>
+                    <a furarButton size="sm" [routerLink]="[definition.id]">
+                      {{ 'customFields.admin.edit' | transloco }}
+                      <span class="sr-only">{{ label }}</span>
+                    </a>
+                    @let active = definition.status === 'ACTIVE';
+                    <furar-active-toggle-button
+                      [active]="active"
+                      [busy]="busy() === definition.id"
+                      [label]="
+                        'customFields.admin.' + (active ? 'deactivateNamed' : 'activateNamed') | transloco: { label }
+                      "
+                      [tooltip]="'customFields.admin.' + (active ? 'deactivate' : 'activate') | transloco"
+                      (pressed)="toggleActive(definition)"
+                    />
+                    <furar-delete-button
+                      [label]="'customFields.admin.deleteNamed' | transloco: { label }"
+                      [tooltip]="'customFields.admin.delete' | transloco"
+                      (pressed)="remove(definition)"
+                    />
+                  </ng-container>
+                </furar-row>
+              </li>
+            }
+          </ul>
+        } @else {
+          <furar-status-state [description]="'customFields.admin.empty' | transloco" />
+        }
+      </section>
+    }
+  }
+} @else if (!problem()) {
+  <furar-status-state mode="loading" />
+}

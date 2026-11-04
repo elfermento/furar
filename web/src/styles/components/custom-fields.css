@@ -1,0 +1,71 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Opcións dunha selección no editor de campos (maqueta 57): táboa compacta cunha soa cabeceira
+ * (Código · Galego · Castelán) e unha fila por opción cos seus campos e, ao final, os botóns só con
+ * icona. No móbil, o código vai na primeira liña xunto aos botóns e os textos debaixo, coa mesma
+ * cabeceira; unha liña separa as filas.
+ */
+@layer components {
+  .f-options {
+    display: grid;
+    gap: var(--spacing-unit);
+    margin: 0 0 var(--spacing-form);
+    padding: 0;
+    list-style: none;
+  }
+  .f-options__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 6rem;
+    grid-template-areas: 'code code acts' 'gl es .';
+    gap: var(--spacing-unit);
+    align-items: start;
+  }
+  .f-options__row > * {
+    min-width: 0;
+  }
+  .f-options__row > :nth-child(1) {
+    grid-area: code;
+  }
+  .f-options__row > :nth-child(2) {
+    grid-area: gl;
+  }
+  .f-options__row > :nth-child(3) {
+    grid-area: es;
+  }
+  .f-options__row > :nth-child(4) {
+    grid-area: acts;
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-unit);
+  }
+  .f-options__head {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-options__row:not(.f-options__head) {
+    padding-bottom: var(--spacing-unit);
+    border-bottom: 1px solid var(--f-divider);
+  }
+  .f-options__row:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  /* Desactivada: os textos tachados e en gris (o botón «Activar» dío tamén ao lector). */
+  .f-options__row[data-inactive] .input {
+    color: var(--f-ink-soft);
+    text-decoration: line-through;
+  }
+  @media (min-width: 40rem) {
+    .f-options__row {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr) minmax(0, 1fr) 6rem;
+      grid-template-areas: 'code gl es acts';
+    }
+    .f-options__row:not(.f-options__head) {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+  }
+}

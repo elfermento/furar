@@ -1,0 +1,92 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'staff.members.';
+<div class="f-staff">
+  <furar-page-header
+    [heading]="t + 'title' | transloco"
+    [intro]="t + 'intro' | transloco"
+    [level]="inSection ? 2 : 1"
+    [quiet]="inSection"
+  >
+    @if (store.state() === 'ready') {
+      <button pageActions type="button" furarButton="primary" data-invite (click)="openInvite()">
+        <furar-icon name="plus" />
+        {{ t + 'invite.open' | transloco }}
+      </button>
+    }
+  </furar-page-header>
+
+  <div class="f-staff__messages">
+    <div role="status">
+      @if (warning()) {
+        <furar-callout tone="warn" data-delivery-warning>
+          <p>{{ warning() }}</p>
+        </furar-callout>
+      }
+      @if (stale()) {
+        <furar-callout tone="warn" data-stale>
+          <p>{{ t + 'stale' | transloco }}</p>
+        </furar-callout>
+      }
+    </div>
+    <div role="status" class="sr-only" data-resend-ready>{{ resendReady() }}</div>
+    <div role="alert">
+      @if (alert()) {
+        <furar-callout tone="danger" data-alert>
+          <p class="font-bold">{{ alert() }}</p>
+        </furar-callout>
+      }
+    </div>
+  </div>
+
+  @switch (store.state()) {
+    @case ('error') {
+      <furar-status-state mode="error" [heading]="t + 'loadError' | transloco">
+        <button type="button" furarButton (click)="load()">{{ t + 'retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @case ('ready') {
+      @let g = groups();
+      @if (g.current.length) {
+        <div class="f-card f-staff__group" data-group="current">
+          <furar-staff-members-list
+            [members]="g.current"
+            [desktop]="desktop()"
+            [now]="now()"
+            [busyId]="busyId()"
+            [caption]="t + 'title' | transloco"
+            (requested)="run($event)"
+          />
+        </div>
+      } @else {
+        <furar-status-state
+          mode="empty"
+          [heading]="t + 'empty.title' | transloco"
+          [description]="t + 'empty.' + mode() | transloco"
+        />
+      }
+      @if (g.deactivated.length) {
+        <section class="f-staff__deactivated" data-group="deactivated" aria-labelledby="staff-deactivated-title">
+          <h2 id="staff-deactivated-title" class="f-staff__heading">
+            {{ t + 'deactivatedTitle' | transloco: { count: g.deactivated.length } }}
+          </h2>
+          <div class="f-card f-staff__group">
+            <furar-staff-members-list
+              [members]="g.deactivated"
+              [desktop]="desktop()"
+              [now]="now()"
+              [busyId]="busyId()"
+              [caption]="t + 'deactivatedCaption' | transloco"
+              (requested)="run($event)"
+            />
+          </div>
+        </section>
+      }
+    }
+    @default {
+      <furar-status-state mode="skeleton" shape="row" [rows]="4" [description]="t + 'loading' | transloco" />
+    }
+  }
+</div>

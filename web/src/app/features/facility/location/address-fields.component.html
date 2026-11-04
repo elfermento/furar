@@ -1,0 +1,63 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.location.';
+@let p = idPrefix();
+<div class="gap-form grid" [formGroup]="form()">
+  @if (manual()) {
+    <furar-callout tone="warn" data-manual [heading]="t + 'manual.title' | transloco">
+      <p>{{ t + 'manual.text' | transloco }}</p>
+    </furar-callout>
+  } @else {
+    <div class="gap-unit grid">
+      <furar-field [fieldId]="p + '-search'" [label]="t + 'search' | transloco" [help]="t + 'searchHelp' | transloco">
+        <furar-combobox
+          minLength="3"
+          [inputId]="p + '-search'"
+          [describedBy]="p + '-search-help'"
+          [label]="t + 'search' | transloco"
+          [errorText]="t + 'manual.title' | transloco"
+          [source]="source"
+          (selected)="pick($event)"
+          (failed)="goManual()"
+        />
+      </furar-field>
+      <p class="text-support text-ink-soft" data-source>{{ t + 'source' | transloco }}</p>
+    </div>
+  }
+
+  @for (row of rows; track $index) {
+    <div class="f-field-row" [class]="row.columns">
+      @for (name of row.fields; track name) {
+        @let id = p + '-' + name;
+        <furar-field
+          [fieldId]="id"
+          [label]="t + 'field.' + name | transloco"
+          [required]="name !== 'streetNumber'"
+          [help]="name === 'streetNumber' ? (t + 'numberHelp' | transloco) : ''"
+          [error]="errors()[name]"
+        >
+          <input
+            furarInput
+            type="text"
+            [id]="id"
+            [formControlName]="name"
+            [attr.inputmode]="name === 'postalCode' ? 'numeric' : null"
+            [attr.autocomplete]="name === 'postalCode' ? 'postal-code' : 'off'"
+            [attr.aria-required]="name !== 'streetNumber' || null"
+            [attr.aria-invalid]="errors()[name] ? 'true' : null"
+            [attr.aria-describedby]="describedBy(id, name === 'streetNumber', errors()[name])"
+          />
+        </furar-field>
+      }
+    </div>
+  }
+
+  <div class="gap-unit grid">
+    <furar-map editable formControlName="point" [idPrefix]="p + '-map'" [label]="t + 'pin' | transloco" />
+    @if (errors().point) {
+      <p class="f-field-error" [id]="p + '-point-error'">{{ t + 'pinRequired' | transloco }}</p>
+    }
+  </div>
+</div>

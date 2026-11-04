@@ -1,0 +1,125 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Tira horizontal (furar-carousel, docs/deseno.md §8). O ancho de cada elemento ponno quen a usa
+ * con --f-carousel-item (por defecto 10rem). As frechas, redondas sobre os bordos, desaparecen nos
+ * extremos (desactivadas: fóra do tabulador). O aviso (role="tooltip") vai enriba, centrado.
+ */
+@layer components {
+  .f-carousel {
+    --f-carousel-item: 10rem;
+    --f-carousel-gap: 0.75rem;
+    display: block;
+    position: relative;
+    min-width: 0;
+  }
+  .f-carousel__strip {
+    display: flex;
+    gap: var(--f-carousel-gap);
+    margin: 0;
+    padding: 0.5rem 0.375rem 0.75rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    list-style: none;
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .f-carousel__strip::-webkit-scrollbar {
+    display: none;
+  }
+  .f-carousel[data-dragging] .f-carousel__strip {
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+  }
+  .f-carousel__item {
+    display: flex;
+    flex: none;
+    width: var(--f-carousel-item);
+    scroll-snap-align: start;
+    transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .f-carousel[data-reorderable] .f-carousel__item {
+    cursor: grab;
+  }
+  .f-carousel[data-dragging] .f-carousel__item {
+    cursor: grabbing;
+  }
+
+  .f-carousel__arrow {
+    display: grid;
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: var(--f-border) solid transparent;
+    border-radius: 50%;
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: opacity var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-carousel__arrow[data-side='start'] {
+    left: -0.375rem;
+  }
+  .f-carousel__arrow[data-side='end'] {
+    right: -0.375rem;
+  }
+  .f-carousel__arrow:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+  @media (hover: hover) {
+    .f-carousel__arrow:hover {
+      background: var(--f-tint);
+    }
+  }
+
+  .f-carousel__hint {
+    position: absolute;
+    bottom: calc(100% + 0.25rem);
+    left: 50%;
+    z-index: 10;
+    max-width: min(32rem, calc(100vw - 2rem));
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.75rem;
+    background: var(--f-ink);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-surface);
+    font-size: var(--text-support);
+    text-align: center;
+    transform: translateX(-50%);
+  }
+  .f-carousel__hint::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border: 6px solid transparent;
+    border-top-color: var(--f-ink);
+  }
+  .f-carousel__hint[hidden] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .f-carousel__strip {
+      scroll-behavior: auto;
+    }
+    .f-carousel__item {
+      transition: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .f-carousel__arrow,
+    .f-carousel__hint {
+      border: 1px solid CanvasText;
+    }
+  }
+}

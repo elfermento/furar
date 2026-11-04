@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# gitleaks (D07): regras por defecto. Só se exclúen directorios xerados ou de terceiros,
+# nunca ficheiros do repositorio con segredos.
+title = "Furar"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Xerados, dependencias e saídas locais (non se versionan)"
+paths = [
+  '''(^|/)\.git/''',
+  '''(^|/)node_modules/''',
+  '''(^|/)target/''',
+  '''(^|/)dist/''',
+  '''(^|/)\.angular/''',
+  '''(^|/)coverage/''',
+  '''(^|/)\.verificar/''',
+  '''(^|/)copias/''',
+  '''(^|/)playwright-report/''',
+  '''(^|/)test-results/''',
+  '''(^|/)bom\.json$''',
+  '''(^|/)web/src/app/api/''',
+]

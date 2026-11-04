@@ -1,0 +1,272 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Campo-resumo con panel (furar-field-popover, D2-10; maquetas 11 e 21): fila de 64 px co rótulo
+ * pequeno en maiúsculas e o valor; aberto, fondo `tint` e a frecha xirada. Só, leva o seu marco;
+ * dentro dun `.f-field-group`, os campos comparten marco e sepáranse cunha liña. O panel vai en
+ * capa (CDK Overlay) debaixo do campo e, por baixo de 640 px, é unha folla desde abaixo co velo.
+ */
+@layer components {
+  .f-field-popover {
+    display: block;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-card);
+  }
+  .f-field-group {
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-card);
+  }
+  .f-field-group > .f-field-popover {
+    border: 0;
+    border-radius: 0;
+  }
+  .f-field-group > .f-field-popover + .f-field-popover {
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+
+  .f-field-popover__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-item);
+    width: 100%;
+    min-height: 4rem;
+    padding: 0.875rem 1.25rem;
+    border: 0;
+    border-radius: inherit;
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition: background-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-field-group > .f-field-popover:first-child .f-field-popover__trigger {
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+  }
+  .f-field-group > .f-field-popover:last-child .f-field-popover__trigger {
+    border-radius: 0 0 var(--radius-card) var(--radius-card);
+  }
+  .f-field-group > .f-field-popover:only-child .f-field-popover__trigger {
+    border-radius: var(--radius-card);
+  }
+  .f-field-popover__trigger[aria-expanded='true'] {
+    background: var(--f-tint);
+  }
+  .f-field-popover__trigger:disabled {
+    background: var(--f-page);
+    cursor: not-allowed;
+  }
+  .f-field-popover__text {
+    display: grid;
+    min-width: 0;
+  }
+  .f-field-popover__label {
+    color: var(--f-ink-soft);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .f-field-popover__value {
+    font-size: 1.0625rem;
+    overflow-wrap: anywhere;
+  }
+  .f-field-popover__value[data-empty] {
+    color: var(--f-ink-soft);
+  }
+  .f-field-popover__chevron {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--f-primary-text);
+    transition: transform var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-field-popover__trigger[aria-expanded='true'] .f-field-popover__chevron {
+    transform: rotate(180deg);
+  }
+  @media (hover: hover) {
+    .f-field-popover__trigger:not(:disabled):hover {
+      background: var(--f-tint);
+    }
+  }
+
+  /*
+   * Fila-resumo (look="summary", maqueta 21, estilo C): o rótulo enriba e fóra do marco; dentro, a
+   * icona na cor principal, o valor grande, o detalle en gris e «Cambiar ⌄» á dereita.
+   */
+  .f-field-popover[data-look='summary'] {
+    display: grid;
+    gap: 0.375rem;
+    border: 0;
+    border-radius: 0;
+  }
+  .f-field-popover__heading {
+    font-weight: 700;
+  }
+  .f-field-popover[data-look='summary'] .f-field-popover__trigger {
+    justify-content: flex-start;
+    gap: var(--spacing-item);
+    padding: 0.875rem 1.125rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+  }
+  .f-field-popover[data-look='summary'] .f-field-popover__trigger[aria-expanded='true'] {
+    border-color: var(--f-primary);
+  }
+  .f-field-popover__icon {
+    flex: none;
+    color: var(--f-primary-text);
+  }
+  .f-field-popover[data-look='summary'] .f-field-popover__value {
+    font-weight: 700;
+  }
+  .f-field-popover__detail {
+    color: var(--f-ink-soft);
+    overflow-wrap: anywhere;
+  }
+  .f-field-popover__action {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 0.25rem;
+    margin-inline-start: auto;
+    color: var(--f-primary-text);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  @media (hover: hover) {
+    .f-field-popover[data-look='summary'] .f-field-popover__trigger:not(:disabled):hover {
+      border-color: var(--f-primary);
+    }
+  }
+
+  /*
+   * Campo dunha fila de filtros (look="filter"): coma un `furar-select`, superficie con bordo `line`
+   * e o valor coa frecha na tinta, sen tinte ao pasar; o rótulo vai fóra (`furar-filter-field`).
+   * A cápsula e os 44 px pona `.f-filter-bar`.
+   */
+  .f-field-popover[data-look='filter'] {
+    border: 0;
+    border-radius: 0;
+  }
+  .f-field-popover[data-look='filter'] .f-field-popover__trigger {
+    position: relative;
+    min-height: var(--f-control-h);
+    padding-inline: 0.875rem 2.75rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-field);
+  }
+  .f-field-popover[data-look='filter'] .f-field-popover__trigger[aria-expanded='true'] {
+    border-color: var(--f-primary);
+    box-shadow: inset 0 0 0 1px var(--f-primary);
+    background: var(--f-surface);
+  }
+  .f-field-popover[data-look='filter'] .f-field-popover__value {
+    overflow: hidden;
+    font-size: var(--text-body);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* Sen valor, o texto (p. ex. «Último ano») é o filtro por defecto, coma «Todas» nun despregable. */
+  .f-field-popover[data-look='filter'] .f-field-popover__value[data-empty] {
+    color: inherit;
+  }
+  /* A frecha debuxada do `furar-select` (select.css), para que os dous campos sexan iguais. */
+  .f-field-popover[data-look='filter'] .f-field-popover__trigger::after {
+    content: '';
+    position: absolute;
+    inset-inline-end: 1.125rem;
+    top: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-70%) rotate(45deg);
+    transition: transform var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-field-popover[data-look='filter'] .f-field-popover__trigger[aria-expanded='true']::after {
+    transform: translateY(-30%) rotate(-135deg);
+  }
+  @media (hover: hover) {
+    .f-field-popover[data-look='filter'] .f-field-popover__trigger:not(:disabled):hover {
+      background: var(--f-surface);
+    }
+  }
+
+  .f-field-popover__panel {
+    /* A capa do CDK é flex: sen isto o panel encolle ao contido e non colle o ancho do campo. */
+    flex: 1 1 auto;
+    min-width: 0;
+    max-height: min(32rem, calc(100vh - 2rem));
+    overflow: auto;
+    padding: 1.25rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-sheet);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+  }
+  .f-field-popover__panel:focus {
+    outline: none;
+  }
+  .f-field-popover__panel[data-sheet] {
+    max-height: 85vh;
+    padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    border-width: 0;
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  }
+  .f-field-popover__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-item);
+    margin: -0.5rem -0.5rem var(--spacing-unit) 0;
+  }
+  .f-field-popover__title {
+    font-size: var(--text-head);
+    font-weight: 700;
+  }
+  .f-field-popover-backdrop {
+    background: var(--f-scrim);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .f-field-popover__panel {
+      animation: f-field-popover-in var(--f-dur-fast) var(--ease-smooth);
+    }
+    .f-field-popover__panel[data-sheet] {
+      animation: f-field-popover-up var(--f-dur-med) var(--ease-smooth);
+    }
+  }
+  @keyframes f-field-popover-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes f-field-popover-up {
+    from {
+      transform: translateY(100%);
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .f-field-popover,
+    .f-field-group {
+      border-width: var(--f-border-state);
+    }
+  }
+  @media (forced-colors: active) {
+    .f-field-popover,
+    .f-field-group,
+    .f-field-popover__panel,
+    .f-field-popover[data-look='summary'] .f-field-popover__trigger,
+    .f-field-popover[data-look='filter'] .f-field-popover__trigger {
+      border-color: CanvasText;
+    }
+    .f-field-popover__panel[data-sheet] {
+      border-width: var(--f-border) 0 0;
+    }
+  }
+}

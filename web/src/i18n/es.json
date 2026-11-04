@@ -1,0 +1,2969 @@
+{
+  "app": {
+    "name": "Reservas deportivas",
+    "skipToContent": "Saltar al contenido",
+    "manageNav": "Gestión del ayuntamiento",
+    "footer": "Reservas deportivas · software libre"
+  },
+  "nav": {
+    "facilities": "Instalaciones",
+    "municipality": "Ayuntamiento",
+    "bookings": "Reservas",
+    "indicators": "Indicadores",
+    "more": "Más",
+    "currentPage": "(página actual)"
+  },
+  "lang": {
+    "label": "Idioma",
+    "gl": "Gallego",
+    "es": "Castellano",
+    "endonym": {
+      "gl": "Galego",
+      "es": "Castellano"
+    },
+    "short": {
+      "gl": "GL",
+      "es": "ES"
+    }
+  },
+  "session": {
+    "login": "Entrar",
+    "logout": "Cerrar sesión",
+    "account": "Mi cuenta",
+    "publicSite": "Ver la web pública",
+    "switchMunicipality": "Ayuntamiento",
+    "municipalities": "Ayuntamientos",
+    "newMunicipality": "Nuevo ayuntamiento",
+    "manage": "Gestión del ayuntamiento",
+    "role": {
+      "PLATFORM_ADMIN": "Administración de la plataforma",
+      "MANAGER": "Gestión",
+      "STAFF": "Recepción",
+      "RESIDENT": "Vecindario"
+    },
+    "municipality": "Concello {{ofName}}",
+    "myBookings": "Mis reservas",
+    "platformActivity": "Registro de la plataforma",
+    "security": "Seguridad de la cuenta",
+    "lastSignIn": "Tu último acceso fue el {{date}}."
+  },
+  "offline": {
+    "message": "Sin conexión. Algunas acciones no estarán disponibles hasta que vuelva la red."
+  },
+  "common": {
+    "yes": "Sí",
+    "no": "No",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "cancel": "Cancelar",
+    "loading": "Cargando…",
+    "period": {
+      "yearsOne": "{{count}} año",
+      "yearsOther": "{{count}} años",
+      "monthsOne": "{{count}} mes",
+      "monthsOther": "{{count}} meses",
+      "daysOne": "{{count}} día",
+      "daysOther": "{{count}} días"
+    }
+  },
+  "forms": {
+    "errorsSummary": "El formulario tiene {{count}} error(es). Revisa los campos marcados."
+  },
+  "titles": {
+    "home": "Inicio",
+    "customFields": "Campos personalizados",
+    "customFieldNew": "Nuevo campo",
+    "customFieldEdit": "Editar campo",
+    "create": "Nuevo ayuntamiento",
+    "error": "Error",
+    "accessibility": "Declaración de accesibilidad",
+    "privacy": "Privacidad",
+    "catalog": "Catálogo de componentes",
+    "facility": "Instalación",
+    "facilities": "Instalaciones",
+    "newFacility": "Nueva instalación",
+    "publicFacility": "Instalación",
+    "reserve": "Reservar",
+    "myBookings": "Mis reservas",
+    "manageBookings": "Reservas",
+    "bookingsCalendar": "Calendario",
+    "indicators": "Indicadores",
+    "staff": "Personal",
+    "staffInvitation": "Invitación al personal",
+    "activity": "Registro de actividad",
+    "platformActivity": "Registro de la plataforma",
+    "legalNotice": "Aviso legal",
+    "municipalityGeneral": "Ayuntamiento: general",
+    "municipalityAppearance": "Ayuntamiento: apariencia",
+    "municipalityService": "Ayuntamiento: servicio",
+    "municipalityLegal": "Ayuntamiento: legal"
+  },
+  "errorPage": {
+    "403": {
+      "title": "Sin permiso",
+      "text": "Tu sesión no tiene permiso para ver esta página."
+    },
+    "404": {
+      "title": "No existe",
+      "text": "No encontramos esta página ni este ayuntamiento. Revisa la dirección."
+    },
+    "500": {
+      "title": "No se pudo cargar",
+      "text": "Algo falló al cargar los datos. Inténtalo de nuevo en un momento."
+    },
+    "home": "Ir al inicio"
+  },
+  "picker": {
+    "title": "Elige tu ayuntamiento",
+    "intro": "Reserva las instalaciones deportivas municipales de tu ayuntamiento.",
+    "listLabel": "Ayuntamientos"
+  },
+  "home": {
+    "data": "Datos del ayuntamiento",
+    "title": {
+      "line1": "Reserva tu",
+      "line2": "pista en"
+    },
+    "search": {
+      "label": "Buscar instalaciones",
+      "what": "¿Qué quieres reservar?",
+      "suggestions": "Sugerencias",
+      "sports": "Deportes",
+      "facilities": "Instalaciones",
+      "day": "Día",
+      "today": "Hoy",
+      "tomorrow": "Mañana",
+      "submit": "Buscar"
+    },
+    "facilities": {
+      "title": "Instalaciones",
+      "rail": "Instalaciones del ayuntamiento",
+      "loading": "Cargando las instalaciones",
+      "error": {
+        "title": "No se pudieron cargar las instalaciones",
+        "text": "Prueba otra vez en un momento.",
+        "retry": "Reintentar"
+      },
+      "sports": "Deportes",
+      "closed": "Cerrada temporalmente",
+      "freeOne": "{{count}} hueco hoy",
+      "freeOther": "{{count}} huecos hoy"
+    },
+    "steps": {
+      "titleStart": "Así",
+      "titleEnd": "de fácil",
+      "search": {
+        "title": "Busca tu hueco",
+        "line": "Sin cuenta"
+      },
+      "book": {
+        "title": "Elige hora y entra",
+        "line": "Cl@ve, Chave365 o correo"
+      },
+      "play": {
+        "title": "A jugar",
+        "line": "Tu QR llega al correo"
+      },
+      "shot": {
+        "date": "Fecha",
+        "time": "Hora",
+        "signIn": "Entra para reservar",
+        "clave": "Cl@ve",
+        "chave": "Chave365",
+        "email": "Correo electrónico",
+        "confirmed": "Reserva confirmada",
+        "when": "Hoy · 19:00–20:30",
+        "calendar": "Añadir a mi calendario"
+      }
+    },
+    "showcase": {
+      "place": "pista"
+    },
+    "examples": {
+      "badge": "Ejemplo",
+      "rail": "Instalaciones de ejemplo",
+      "football": "Campo de fútbol",
+      "padel": "Pista de pádel",
+      "sportsHall": "Pabellón polideportivo",
+      "athletics": "Pista de atletismo",
+      "sports": {
+        "football": "Fútbol",
+        "football7": "Fútbol 7",
+        "padel": "Pádel",
+        "basketball": "Baloncesto",
+        "handball": "Balonmano",
+        "futsal": "Fútbol sala",
+        "athletics": "Atletismo"
+      }
+    }
+  },
+  "settings": {
+    "name": "Nombre del ayuntamiento",
+    "nameHelp": "El topónimo, sin «Concello de» ni «Ayuntamiento de»: p. ej. Narón o A Coruña.",
+    "languages": "Idiomas",
+    "defaultLanguage": "Idioma por defecto",
+    "customFields": "Datos propios",
+    "customFieldsHelp": "Campos que define el propio ayuntamiento.",
+    "manageFields": "Gestionar los campos",
+    "noCustomFields": "Todavía no hay campos personalizados.",
+    "saved": "Cambios guardados",
+    "reload": "Cargar los datos actuales",
+    "sports": {
+      "title": "Servicio de deportes",
+      "name": "Nombre del servicio",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "email": "Correo electrónico"
+    },
+    "payment": {
+      "title": "Pago y devolución",
+      "payment": "Cómo se paga",
+      "refund": "Cómo se devuelve",
+      "default": "Vacío, se ve el texto por defecto: «{{text}}».",
+      "scopeLabel": "Pago y devolución en las instalaciones",
+      "scope": {
+        "ALL": "Igual para todas las instalaciones",
+        "FACILITY": "Distinto por instalación"
+      },
+      "byFacility": "Se indica en la ficha de cada instalación"
+    },
+    "legal": {
+      "pages": "Páginas legales",
+      "tab": {
+        "privacy": "Privacidad",
+        "accessibility": "Accesibilidad",
+        "legalNotice": "Aviso legal"
+      },
+      "withErrors": ", con errores",
+      "modeLabel": {
+        "privacy": "Página de privacidad",
+        "accessibility": "Página de accesibilidad",
+        "legalNotice": "Página del aviso legal"
+      },
+      "mode": {
+        "FURAR": "Página de esta web",
+        "TEXT": "Texto propio",
+        "URL": "Página propia",
+        "NONE": "Sin página"
+      },
+      "url": "Dirección",
+      "urlHelp": "Los enlaces de esta web llevan aquí.",
+      "of": {
+        "privacy": "de privacidad",
+        "accessibility": "de accesibilidad",
+        "legalNotice": "del aviso legal"
+      },
+      "view": "Ver la página",
+      "shared": {
+        "privacy": {
+          "title": "Protección de datos",
+          "help": "El DPD sale también en el aviso de la invitación al personal."
+        },
+        "legalNotice": {
+          "title": "Identificación del ayuntamiento",
+          "help": "La sede sale también en las otras páginas legales."
+        }
+      },
+      "field": {
+        "legalEntityName": "Denominación oficial",
+        "eOfficeUrl": "Sede electrónica",
+        "ineCode": "Código INE",
+        "dir3Code": "Código DIR3",
+        "nif": "NIF",
+        "address": "Domicilio",
+        "generalEmail": "Correo general del ayuntamiento",
+        "dpoEmail": "Correo del DPD",
+        "dpoPhone": "Teléfono del DPD",
+        "processor": "Encargado del tratamiento",
+        "accessibilityEmail": "Correo de accesibilidad",
+        "accessibilityUnit": "Unidad responsable",
+        "accessibilityComplaintUrl": "Formulario de reclamación"
+      },
+      "help": {
+        "ineCode": "Propone el municipio en las direcciones de las instalaciones.",
+        "dir3Code": "Como L01150548.",
+        "accessibilityUnit": "La que resuelve las reclamaciones (art. 13 del RD 1112/2018).",
+        "accessibilityComplaintUrl": "El trámite en la sede electrónica.",
+        "processor": "Solo si otra entidad aloja y opera el servicio por contrato con el ayuntamiento."
+      },
+      "textLanguage": "Idioma del texto",
+      "textLabel": "Texto {{page}} en {{lang}}",
+      "langName": {
+        "gl": "gallego",
+        "es": "castellano"
+      },
+      "textHint": "Los datos del formulario ya no se insertan solos en este texto; revísalo si cambias alguno.",
+      "preview": "Vista previa",
+      "reset": "Volver al texto por defecto",
+      "resetTitle": "¿Volver al texto por defecto?",
+      "resetMessage": "Se pierden los cambios hechos en gallego y en castellano.",
+      "errorsIn": "Hay campos por revisar en {{pages}}.",
+      "required": {
+        "title": "Datos que usan los textos legales",
+        "inList": "los datos que usan los textos legales"
+      },
+      "missing": "Faltan datos que usan las páginas legales por defecto: {{list}}. Sin ellos, esas páginas salen incompletas.",
+      "missingOne": "Falta un dato que usan las páginas legales por defecto: {{list}}. Sin él, esas páginas salen incompletas.",
+      "missingName": {
+        "legalEntityName": "denominación oficial",
+        "nif": "NIF",
+        "address": "domicilio",
+        "generalEmail": "correo general",
+        "dpoEmail": "correo del DPD"
+      },
+      "none": {
+        "privacy": "La ley obliga a informar de cómo se tratan los datos personales. Sin esta página, el pie no la enlaza y nadie podrá consultarla.",
+        "accessibility": "Las administraciones están obligadas a publicar una declaración de accesibilidad. Sin esta página, el pie no la enlaza.",
+        "legalNotice": "La ley obliga a identificar al titular de la web. Sin esta página, el pie no la enlaza y nadie sabrá quién la publica."
+      }
+    }
+  },
+  "theme": {
+    "title": "Colores",
+    "pick": "Selector de color: {{name}}",
+    "help": "Colores en formato #rrggbb. Para que todo el mundo pueda leer la web, el contraste debe llegar al mínimo.",
+    "primary": "Color principal",
+    "onPrimary": "Texto de los botones",
+    "accent": "Color de realce",
+    "background": "Fondo",
+    "text": "Texto",
+    "contrast": "Comprobación de contraste",
+    "pair": {
+      "textOnBackground": "Texto sobre el fondo",
+      "onPrimaryOnPrimary": "Texto sobre el color principal",
+      "accentOnBackground": "Realce sobre el fondo",
+      "primaryOnBackground": "Color principal sobre el fondo (bordes y foco)"
+    },
+    "check": {
+      "ok": "{{pair}}: {{ratio}}:1, correcto (mínimo {{minimum}}:1).",
+      "low": "{{pair}}: {{ratio}}:1, insuficiente (mínimo {{minimum}}:1)."
+    },
+    "checks": "Comprobación de los colores",
+    "technical": "Detalles técnicos",
+    "fix": "Ajustar {{what}}",
+    "fixShort": "Ajustar",
+    "plain": {
+      "darken": "oscurece",
+      "lighten": "aclara",
+      "textOnBackground": {
+        "ok": "El texto se lee bien sobre el fondo",
+        "low": "El texto no se lee bien sobre el fondo: {{action}} el texto o cambia el fondo.",
+        "what": "el texto"
+      },
+      "onPrimaryOnPrimary": {
+        "ok": "El texto de los botones se lee bien",
+        "low": "El texto de los botones no se lee bien: {{action}} el color principal o cambia el color del texto de los botones.",
+        "what": "el texto de los botones"
+      },
+      "accentOnBackground": {
+        "ok": "Los enlaces se leen bien",
+        "low": "Los enlaces no se leen bien: {{action}} el color de realce.",
+        "what": "los enlaces"
+      },
+      "primaryOnBackground": {
+        "ok": "Los bordes y el foco se ven bien",
+        "low": "Los bordes y el foco no se ven bien: {{action}} el color principal.",
+        "what": "los bordes y el foco"
+      }
+    },
+    "preview": {
+      "show": "Vista previa",
+      "hide": "Ocultar la vista previa",
+      "title": "Vista previa",
+      "close": "Cerrar la vista previa",
+      "label": "Vista previa con los colores elegidos",
+      "facility": "Pista de pádel 2",
+      "when": "Martes 10 de noviembre, de 18:00 a 19:00",
+      "link": "Ver los horarios",
+      "button": "Reservar",
+      "field": "Correo electrónico",
+      "value": "nombre@ejemplo.es"
+    }
+  },
+  "platform": {
+    "createLink": "Dar de alta un ayuntamiento",
+    "createTitle": "Nuevo ayuntamiento",
+    "createIntro": "El identificador forma parte de la dirección web y no se puede cambiar después.",
+    "slug": "Identificador",
+    "slugHelp": "Letras minúsculas, números y guiones, sin tildes ni espacios; p. ej. naron, a-coruna o vilagarcia-de-arousa",
+    "create": "Crear ayuntamiento",
+    "created": "Ayuntamiento {{ofName}} creado"
+  },
+  "customFields": {
+    "type": {
+      "TEXT": "Texto corto",
+      "LONG_TEXT": "Texto largo",
+      "NUMBER": "Número",
+      "DATE": "Fecha",
+      "BOOLEAN": "Sí o no",
+      "SELECT": "Una opción de la lista",
+      "MULTI_SELECT": "Varias opciones de la lista"
+    },
+    "visibility": {
+      "PUBLIC": "Público",
+      "OWNER": "Titular y personal",
+      "STAFF": "Solo personal"
+    },
+    "visibilityBooking": {
+      "OWNER": "La persona que reserva y el personal",
+      "STAFF": "Solo el personal"
+    },
+    "target": {
+      "MUNICIPALITY": "Ayuntamiento",
+      "FACILITY": "Instalación",
+      "BOOKING": "Reserva"
+    },
+    "format": {
+      "none": "Cualquier texto",
+      "EMAIL": "Correo electrónico",
+      "PHONE": "Teléfono",
+      "URL": "Dirección web"
+    },
+    "rules": {
+      "minLength": "Longitud mínima",
+      "maxLength": "Longitud máxima",
+      "min": "Valor mínimo",
+      "max": "Valor máximo",
+      "decimals": "Decimales",
+      "minDate": "Fecha mínima",
+      "maxDate": "Fecha máxima",
+      "minItems": "Mínimo de opciones",
+      "maxItems": "Máximo de opciones",
+      "format": "Formato"
+    },
+    "form": {
+      "choose": "Elige una opción"
+    },
+    "admin": {
+      "title": "Campos personalizados",
+      "intro": "Datos propios que {{name}} pide en el ayuntamiento, en las instalaciones o en las reservas, sin tocar el programa.",
+      "count": "Campos activos: {{count}}. Cada sitio admite hasta {{limit}}.",
+      "new": "Nuevo campo",
+      "active": "Activos",
+      "empty": "Todavía no hay campos.",
+      "edit": "Editar",
+      "personalData": "dato personal",
+      "usage": "{{site}}: {{visibility}}",
+      "usageRequired": "{{site}}: {{visibility}}, obligatorio",
+      "inactive": "Desactivados",
+      "deactivate": "Desactivar",
+      "activate": "Activar",
+      "deactivateNamed": "Desactivar el campo «{{label}}»",
+      "activateNamed": "Activar el campo «{{label}}»",
+      "delete": "Eliminar",
+      "deleteNamed": "Eliminar el campo «{{label}}»",
+      "deleting": "Eliminando",
+      "deactivatedNotice": "Campo «{{label}}» desactivado. Los datos guardados se conservan",
+      "activatedNotice": "Campo «{{label}}» activado",
+      "deletedNotice": "Campo «{{label}}» eliminado",
+      "deleteTitle": "¿Eliminar el campo «{{label}}»?",
+      "deleteMessage": "Se borra la definición. No se puede deshacer.",
+      "cannotDeleteTitle": "No se puede eliminar «{{label}}»",
+      "cannotDelete": "Tiene datos guardados. Puedes desactivarlo: deja de pedirse y los datos se conservan.",
+      "cannotDeleteInactive": "Tiene datos guardados y ya está desactivado: los datos se conservan."
+    },
+    "editor": {
+      "newTitle": "Nuevo campo personalizado",
+      "editTitle": "Editar campo personalizado",
+      "intro": "Escribe los textos en los dos idiomas. La vista previa muestra el campo tal como lo verá quien rellene el formulario.",
+      "labelGl": "Etiqueta en gallego",
+      "labelEs": "Etiqueta en castellano",
+      "helpGl": "Ayuda en gallego",
+      "helpEs": "Ayuda en castellano",
+      "code": "Código",
+      "codeHelp": "Identificador interno para la API y las exportaciones: minúsculas, dígitos y «_»; no se puede cambiar después.",
+      "codeLocked": "El código no se puede cambiar.",
+      "type": "Tipo de dato",
+      "typeLocked": "El tipo no se puede cambiar.",
+      "personalData": "Es un dato personal",
+      "personalDataHelp": "Nunca es público. En las reservas, se borra cuando se anonimiza la reserva; en el ayuntamiento y en las instalaciones, entra en la exportación del ayuntamiento.",
+      "usages": "Dónde se usa",
+      "usageRequired": "Obligatorio",
+      "usageVisibility": "Quién lo ve",
+      "rules": "Reglas",
+      "options": "Opciones",
+      "option": {
+        "code": "Código",
+        "labelGl": "Gallego",
+        "labelEs": "Castellano",
+        "codeN": "Código de la opción {{n}}",
+        "labelGlN": "Opción {{n}} en gallego",
+        "labelEsN": "Opción {{n}} en castellano",
+        "add": "Añadir opción",
+        "delete": "Eliminar",
+        "deleteNamed": "Eliminar la opción «{{name}}»",
+        "deactivate": "Desactivar",
+        "activate": "Activar",
+        "deactivateNamed": "Desactivar la opción «{{name}}»",
+        "activateNamed": "Activar la opción «{{name}}»",
+        "deleteTitle": "¿Eliminar la opción «{{name}}»?",
+        "deleteMessage": "Desaparece al guardar el campo.",
+        "cannotDeleteTitle": "No se puede eliminar «{{name}}»",
+        "cannotDelete": "Hay datos guardados con esta opción. Puedes desactivarla: deja de ofrecerse y los datos se conservan.",
+        "cannotDeleteInactive": "Hay datos guardados con esta opción y ya está desactivada."
+      },
+      "preview": "Vista previa",
+      "previewHelp": "Así lo verá quien rellene el formulario. Puedes probar a escribir.",
+      "saved": "Campo «{{label}}» guardado",
+      "personalDataWarningTitle": "Cuidado con las categorías especiales (art. 9 RGPD).",
+      "personalDataWarning": "No pidas datos de salud ni de discapacidad salvo que haya una base legal que lo permita, e indica en la ayuda para qué se usa el dato. Un dato personal no puede ser público.",
+      "personalDataNotPublic": "Un dato personal no puede ser público: solo lo ven el titular y el personal, o solo el personal.",
+      "placeLocked": "Ya tiene valores guardados: no se puede cambiar de sitio."
+    }
+  },
+  "facility": {
+    "list": {
+      "title": "Instalaciones",
+      "new": "Nueva instalación",
+      "loading": "Cargando las instalaciones…",
+      "loadError": {
+        "title": "No se pudieron cargar las instalaciones",
+        "text": "Algo falló al leer los datos. Inténtalo de nuevo en un momento.",
+        "retry": "Intentar de nuevo"
+      },
+      "empty": {
+        "title": "Todavía no hay instalaciones",
+        "text": "Da de alta la primera con nombre y dirección. Después añades los usos, los deportes y el horario."
+      },
+      "statusOf": "Estado de {{name}}",
+      "draft": "Borrador",
+      "draftStep": "Paso {{step}} de {{total}}",
+      "status": {
+        "ACTIVE": "Activa",
+        "TEMPORARILY_CLOSED": "Cerrada temporalmente",
+        "WITHDRAWN": "De baja"
+      },
+      "statusSummary": "{{name}}: {{status}}",
+      "statusChanged": "{{name}}: {{status}}",
+      "withdraw": {
+        "title": "¿Dar de baja?",
+        "text": "«{{name}}» deja de verse y no se puede reservar. Se conserva el historial y se puede volver a activar.",
+        "action": "Dar de baja"
+      },
+      "sports": "Deportes"
+    },
+    "affectedBookings": {
+      "titleOne": "1 reserva afectada",
+      "titleOther": "{{count}} reservas afectadas",
+      "intro": "Este cambio afecta a reservas futuras: decide qué hacer con cada una.",
+      "changed": "Las reservas afectadas cambiaron mientras decidías. Revisa la lista: lo que ya habías decidido se conserva.",
+      "selectAll": "Seleccionar todas",
+      "bulk": "Para las marcadas",
+      "cancelMarked": "Cancelar las marcadas",
+      "keepMarked": "Mantener las marcadas",
+      "list": "Reservas afectadas",
+      "mark": "Marcar {{name}}",
+      "action": "Qué hacer",
+      "cancel": "Cancelar",
+      "keep": "Mantener",
+      "keepNoNotice": "Se mantiene y no se avisa.",
+      "channels": "Cómo avisar",
+      "channel": {
+        "EMAIL": "Correo",
+        "WEB": "Aviso en la web"
+      },
+      "error": {
+        "action": "Elige cancelar o mantener.",
+        "channel": "Elige al menos una forma de avisar."
+      },
+      "status": "Por decidir: {{pending}} · Canceladas: {{cancel}} · Mantenidas: {{keep}}",
+      "incompleteOne": "Falta decidir 1 reserva: revisa la marcada.",
+      "incompleteOther": "Falta decidir {{count}} reservas: revisa las marcadas.",
+      "back": "Volver",
+      "confirm": "Confirmar",
+      "confirming": "Confirmando…"
+    },
+    "detail": {
+      "back": "Volver",
+      "loading": "Cargando la instalación…",
+      "notFound": {
+        "title": "No encontramos esta instalación",
+        "text": "Puede que se haya borrado o que la dirección esté mal. Vuelve al listado."
+      },
+      "loadError": {
+        "title": "No se pudo cargar la instalación",
+        "text": "Algo falló al leer los datos. Inténtalo de nuevo en un momento.",
+        "retry": "Intentar de nuevo"
+      },
+      "status": {
+        "label": "Estado",
+        "ACTIVE": "Activa",
+        "TEMPORARILY_CLOSED": "Cerrada temporalmente",
+        "WITHDRAWN": "De baja"
+      },
+      "withdraw": {
+        "title": "¿Dar de baja?",
+        "text": "Deja de verse y no se puede reservar. Se conserva el historial y se puede volver a activar.",
+        "action": "Dar de baja"
+      },
+      "stale": {
+        "title": "Otra persona cambió esta instalación",
+        "text": "Lo que escribiste sigue en su sitio. Recarga para traer los cambios y vuelve a guardar.",
+        "reload": "Recargar",
+        "reloading": "Recargando"
+      },
+      "draft": {
+        "title": "Borrador: los vecinos aún no la ven",
+        "intro": "Para publicarla falta:",
+        "missing": {
+          "SPORTS": "Los deportes",
+          "USES": "Al menos un uso",
+          "SCHEDULE": "El horario"
+        },
+        "unpublished": "Todavía no está publicada.",
+        "wizard": "Revisar y publicar"
+      },
+      "sections": {
+        "uses": "Usos",
+        "schedule": "Horario",
+        "blocks": "Bloqueos"
+      },
+      "edit": {
+        "start": "Editar",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "saving": "Guardando",
+        "editing": "Editando la ficha",
+        "unsaved": "Cambios sin guardar",
+        "failedStatus": "No se guardó todo: revisa los avisos",
+        "saved": "Se guardaron los cambios",
+        "bar": "Edición de {{name}}",
+        "apply": "Aceptar",
+        "pending": "Sin guardar",
+        "failed": "Esto no se guardó"
+      },
+      "delete": {
+        "action": "Eliminar",
+        "label": "Eliminar {{name}}",
+        "title": "¿Eliminar la instalación?",
+        "text": "Se borra «{{name}}» con su horario, usos, bloqueos y su lista de imágenes. Las fotos siguen en la biblioteca del ayuntamiento. No se puede deshacer.",
+        "phrase": "eliminar instalación",
+        "busy": "Eliminando",
+        "done": "Se eliminó «{{name}}»",
+        "bookedTitle": "No se puede eliminar",
+        "bookedText": "«{{name}}» ha tenido reservas. Para conservar el historial, dala de baja: deja de verse y las reservas se conservan.",
+        "withdraw": "Dar de baja"
+      }
+    },
+    "description": {
+      "title": "Descripción",
+      "help": "Opcional. Si la escribes, va en los dos idiomas, hasta {{max}} caracteres cada uno."
+    },
+    "data": {
+      "title": "Datos",
+      "name": {
+        "label": "Nombre"
+      },
+      "sports": {
+        "label": "Deportes",
+        "add": "Añadir deporte",
+        "help": "Escribe para buscar en el catálogo. Hasta {{max}}; hace falta uno para publicar.",
+        "chosen": "Deportes elegidos",
+        "remove": "Eliminar {{name}}",
+        "create": "Crear deporte"
+      },
+      "createSport": {
+        "title": "Nuevo deporte",
+        "cancel": "Cancelar",
+        "create": "Crear",
+        "creating": "Creando",
+        "name": "Nombre"
+      },
+      "type": {
+        "label": "Tipo",
+        "none": "Sin indicar",
+        "FIELD": "Campo",
+        "SPORTS_HALL": "Pabellón",
+        "PADEL_COURT": "Pista de pádel",
+        "POOL": "Piscina",
+        "OUTDOOR_COURT": "Pista exterior",
+        "OTHER": "Otro"
+      },
+      "ridegaCode": {
+        "label": "Código RIDEGA",
+        "help": "Opcional. Censo deportivo de Galicia, hasta {{max}} caracteres."
+      },
+      "phone": {
+        "label": "Teléfono",
+        "help": "Opcional. Solo números y espacios; puede empezar por +."
+      },
+      "email": {
+        "label": "Correo",
+        "help": "Opcional. Una dirección, hasta {{max}} caracteres."
+      },
+      "ownFields": {
+        "loading": "Cargando los campos propios…",
+        "error": "No se pudieron cargar los campos propios",
+        "retry": "Intentar de nuevo"
+      },
+      "onlineBooking": {
+        "label": "Los vecinos reservan por internet",
+        "help": "Si no, el personal gestiona las reservas desde la gestión."
+      },
+      "showFreeSlots": {
+        "label": "Mostrar los huecos libres",
+        "help": "Los vecinos ven los huecos sin poder reservar y el teléfono para hacerlo."
+      },
+      "covered": {
+        "label": "Cubierta"
+      }
+    },
+    "amenities": {
+      "title": "Servicios y accesibilidad",
+      "change": "Cambiar",
+      "changeContext": "servicios y accesibilidad",
+      "offers": "Lo que ofrece",
+      "empty": "Aún no has indicado qué servicios tiene ni cómo es la accesibilidad.",
+      "add": "Indicar servicios",
+      "saved": "Guardado",
+      "dialogTitle": "Servicios y accesibilidad",
+      "group": {
+        "services": "Servicios",
+        "accessibility": "Accesibilidad"
+      },
+      "item": {
+        "CHANGING_ROOMS": "Vestuarios",
+        "SHOWERS": "Duchas",
+        "COVERED_STANDS": "Gradas cubiertas",
+        "CAFE": "Cafetería",
+        "PARKING": "Aparcamiento",
+        "LIGHTING": "Luz artificial",
+        "STEP_FREE_ACCESS": "Acceso sin escalones",
+        "ACCESSIBLE_TOILET": "Aseo adaptado",
+        "ACCESSIBLE_CHANGING_ROOM": "Vestuario adaptado",
+        "HEARING_LOOP": "Bucle magnético"
+      },
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando…"
+    },
+    "location": {
+      "title": "Ubicación",
+      "change": "Cambiar",
+      "changeContext": "la ubicación",
+      "streetLine": "{{street}}, {{number}}",
+      "placeLine": "{{postalCode}} {{locality}}",
+      "noNumber": "s/n",
+      "pin": "Punto de la instalación en el mapa",
+      "saved": "Guardado",
+      "dialogTitle": "Cambiar la ubicación",
+      "search": "Buscar dirección",
+      "searchHelp": "Escribe al menos 3 letras y elige una sugerencia: rellena los campos y la chincheta.",
+      "source": "Fuente: CartoCiudad, © IGN",
+      "manual": {
+        "title": "El buscador de direcciones no responde",
+        "text": "Escribe la dirección a mano y pulsa en el mapa para poner la chincheta en la entrada."
+      },
+      "field": {
+        "street": "Vía",
+        "streetNumber": "Número",
+        "postalCode": "Código postal",
+        "locality": "Localidad"
+      },
+      "numberHelp": "Vacío si no tiene número.",
+      "pinRequired": "Pon la chincheta en el mapa.",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando…"
+    },
+    "uses": {
+      "list": "Usos de la instalación",
+      "add": "Nuevo uso",
+      "edit": "Editar uso",
+      "loading": "Cargando los usos…",
+      "empty": {
+        "title": "Todavía no hay usos",
+        "text": "Un uso dice cómo se alquila la instalación: entera, por partes o por plazas. Hace falta al menos uno para publicarla."
+      },
+      "error": {
+        "title": "No se pudieron cargar los usos",
+        "text": "Algo falló al leer los usos. Inténtalo de nuevo en un momento.",
+        "retry": "Intentar de nuevo"
+      },
+      "name": "Nombre",
+      "rentalMode": {
+        "label": "Se alquila",
+        "WHOLE": "Entera",
+        "PARTS": "Por partes",
+        "SEATS": "Por plazas"
+      },
+      "parts": {
+        "label": "Partes",
+        "help": "Al menos {{min}}, cada una con su nombre.",
+        "name": "Parte {{n}}",
+        "remove": "Eliminar la parte {{n}}",
+        "add": "Parte"
+      },
+      "capacity": {
+        "label": "Plazas",
+        "help": "Personas por franja, de {{min}} a {{max}}."
+      },
+      "slot": {
+        "label": "Cada reserva",
+        "option": "{{minutes}} min"
+      },
+      "availability": {
+        "label": "Cuándo",
+        "ALWAYS": "Siempre",
+        "DATES": "Solo unas fechas"
+      },
+      "periods": {
+        "label": "Periodos",
+        "from": "Periodo {{n}}, desde",
+        "to": "Periodo {{n}}, hasta",
+        "remove": "Eliminar el periodo {{n}}",
+        "add": "Periodo"
+      },
+      "blocksOthers": {
+        "label": "Bloquea los demás usos",
+        "help": "Mientras está vigente, solo se reserva este uso."
+      },
+      "tags": {
+        "whole": "Entera",
+        "parts": "{{count}} partes: {{names}}",
+        "seats": "{{count}} plazas",
+        "minutes": "{{minutes}} min",
+        "always": "Siempre",
+        "blocks": "Bloquea los demás"
+      },
+      "stale": {
+        "title": "Otra persona cambió este uso",
+        "text": "Lo que escribiste sigue en su sitio. Recarga para traer los cambios y vuelve a guardar."
+      },
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando",
+      "saved": "Se guardó «{{name}}».",
+      "archived": "Se quitó «{{name}}».",
+      "remove": {
+        "action": "Eliminar",
+        "label": "Eliminar el uso {{name}}"
+      },
+      "when": {
+        "change": "Cambiar",
+        "dates": "Fechas",
+        "days": "Días",
+        "done": "Listo",
+        "all": "Todos los días",
+        "workdays": "De lunes a viernes",
+        "weekend": "Fines de semana",
+        "none": "Ningún día",
+        "and": " y ",
+        "always": "Siempre",
+        "day": "El {{day}}",
+        "range": "Del {{from}} al {{to}}",
+        "noDates": "Sin fechas",
+        "blocks": "bloquea los demás usos"
+      },
+      "terms": {
+        "title": "Duración y precio"
+      },
+      "price": {
+        "label": "Precio",
+        "NONE": "Sin precio",
+        "FREE": "Gratis",
+        "PAID": "De pago",
+        "amount": "Importe",
+        "perBooking": "por reserva de",
+        "perPerson": "por persona"
+      },
+      "duration": {
+        "minutes": "{{minutes}} min",
+        "hour": "{{hours}} hora",
+        "hours": "{{hours}} horas",
+        "hoursMinutes": "{{hours}} h {{minutes}} min"
+      },
+      "rules": {
+        "title": "Condiciones de la reserva",
+        "empty": "Sin establecer",
+        "clear": "Quitar la condición",
+        "advance": {
+          "label": "Cuándo reservar",
+          "both": "De {{min}} horas a {{max}} días antes",
+          "min": "Al menos {{min}} horas antes",
+          "max": "Hasta {{max}} días antes",
+          "from": "Desde",
+          "to": "Hasta",
+          "hoursBefore": "horas antes",
+          "daysBefore": "días antes"
+        },
+        "duration": {
+          "label": "Duración máxima",
+          "manager": "Hasta {{duration}}",
+          "public": "Hasta {{duration}} seguidas",
+          "upTo": "Hasta",
+          "slots": "reservas seguidas",
+          "example": "Con reservas de {{minutes}} min:",
+          "total": "{{minutes}} min × {{n}} = {{total}}",
+          "exampleEnd": "como máximo."
+        },
+        "cap": {
+          "label": "Límite por persona",
+          "one": "{{count}} reserva por {{period}}",
+          "many": "{{count}} reservas por {{period}}",
+          "per": "reservas por",
+          "period": "Periodo",
+          "DAY": "día",
+          "WEEK": "semana",
+          "MONTH": "mes"
+        },
+        "cancel": {
+          "label": "Cancelar sin coste",
+          "manager": "Hasta {{hours}} horas antes",
+          "public": "Gratis hasta {{hours}} horas antes",
+          "upTo": "Hasta",
+          "hoursBefore": "horas antes"
+        },
+        "fields": {
+          "minAdvanceHours": "Horas antes como mínimo, de {{min}} a {{max}}",
+          "maxAdvanceDays": "Días antes como máximo, de {{min}} a {{max}}",
+          "maxSlots": "Reservas seguidas, de {{min}} a {{max}}",
+          "capCount": "Número de reservas, de {{min}} a {{max}}",
+          "cancelHours": "Horas antes, de {{min}} a {{max}}"
+        }
+      }
+    },
+    "photos": {
+      "title": "Fotos",
+      "change": "Cambiar fotos",
+      "saved": "Guardado",
+      "previous": "Foto anterior",
+      "next": "Foto siguiente",
+      "position": "{{current}} de {{total}}",
+      "photoPosition": "Foto {{current}} de {{total}}",
+      "photoCover": "Foto {{current}} de {{total}}, portada",
+      "count": "{{count}} fotos",
+      "countOne": "1 foto",
+      "cover": "Portada",
+      "hint": "La primera es la portada · Arrastra para cambiar el orden",
+      "strip": "Fotos de la instalación, en el orden de la galería",
+      "previousPage": "Fotos anteriores",
+      "nextPage": "Fotos siguientes",
+      "add": "Añadir",
+      "addLabel": "Añadir fotos",
+      "description": "Descripción de la foto",
+      "descriptionLang": "Idioma de la descripción",
+      "descriptionHelp": "Para quien no puede verla: la lee el lector de pantalla.",
+      "descriptionShared": "Para quien no puede verla: la lee el lector de pantalla. Cambia en todas las instalaciones que usan esta foto.",
+      "placeholder": "Qué se ve en la foto",
+      "drawingNote": "Dibujo incluido: su descripción es fija.",
+      "uploadedOn": "Subida el {{date}}",
+      "newUpload": "Subida ahora, sin guardar",
+      "drawing": "Dibujo incluido",
+      "remove": "Eliminar",
+      "removeLabel": "Eliminar esta foto de la instalación",
+      "removed": "Foto quitada de la instalación. Sigue en la biblioteca.",
+      "added": "{{count}} fotos añadidas al final.",
+      "addedOne": "Foto añadida al final.",
+      "suggested": "Sin fotos, se ve el dibujo sugerido.",
+      "changes": "{{count}} cambios sin guardar",
+      "changesOne": "1 cambio sin guardar",
+      "missingAlt": "Falta la descripción en {{lang}} de la foto {{current}}.",
+      "langName": {
+        "gl": "gallego",
+        "es": "castellano"
+      },
+      "cancel": "Cancelar",
+      "close": "Cerrar",
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "library": {
+        "title": "Añadir fotos",
+        "back": "Volver a las fotos",
+        "municipality": "Del ayuntamiento",
+        "drawings": "Dibujos incluidos",
+        "tabs": "Origen de las fotos",
+        "upload": "Subir fotos",
+        "uploadHelp": "o arrástralas aquí · JPEG o PNG, hasta {{max}} · quedan en la biblioteca del ayuntamiento al guardar",
+        "uploading": "Subiendo {{name}}…",
+        "uploaded": "{{name}} subida y marcada.",
+        "uploadError": "{{name}}: {{message}}",
+        "empty": "Todavía no hay fotos del ayuntamiento. Sube la primera.",
+        "loading": "Cargando la biblioteca…",
+        "error": "No se pudo cargar la biblioteca.",
+        "retry": "Intentar de nuevo",
+        "unused": "Sin usar",
+        "new": "Nueva",
+        "inList": "Ya está en esta instalación",
+        "usedIn": "{{names}}",
+        "selected": "{{count}} marcadas",
+        "selectedOne": "1 marcada",
+        "addSelected": "Añadir {{count}}",
+        "full": "Como mucho {{max}} fotos por instalación: quedan {{left}}.",
+        "cancel": "Cancelar"
+      }
+    },
+    "schedule": {
+      "loading": "Cargando el horario…",
+      "error": {
+        "title": "No se pudo cargar el horario",
+        "text": "Algo falló al leer el horario. Inténtalo de nuevo en un momento.",
+        "retry": "Reintentar"
+      },
+      "empty": {
+        "title": "Todavía no hay horario",
+        "text": "Crea una temporada (por ejemplo, Invierno, del 1 de septiembre al 30 de junio) y pon las horas de cada día. Hace falta para publicar la instalación."
+      },
+      "seasons": {
+        "label": "Temporadas",
+        "now": "Ahora",
+        "openEnded": "Desde {{from}} · sin fin",
+        "add": "Temporada",
+        "edit": "Editar",
+        "editLabel": "Editar la temporada {{name}}"
+      },
+      "delete": {
+        "label": "Eliminar la temporada {{name}}",
+        "action": "Eliminar",
+        "title": "¿Borrar la temporada?",
+        "text": "«{{name}}» y sus horas desaparecen. Los días que cubría quedan sin horario.",
+        "busy": "Borrando"
+      },
+      "created": "Se creó la temporada «{{name}}».",
+      "saved": "Se guardó la temporada «{{name}}».",
+      "deleted": "Se borró la temporada «{{name}}».",
+      "week": {
+        "label": "Semana de {{season}}",
+        "stale": {
+          "title": "Otra persona cambió esta temporada",
+          "text": "Lo que cambiaste sigue en su sitio. Recarga para traer los cambios y vuelve a guardar."
+        },
+        "invalid": "Corrige los días marcados para poder guardar.",
+        "unsaved": "Cambios sin guardar",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "saving": "Guardando",
+        "saved": "Guardado"
+      },
+      "day": {
+        "closed": "Cerrado",
+        "today": "Hoy",
+        "open": "{{day}} abierto",
+        "from": "{{day}}, tramo {{n}}, desde",
+        "to": "{{day}}, tramo {{n}}, hasta",
+        "remove": "Eliminar el tramo {{n}} de {{day}}",
+        "add": "Tramo",
+        "addLabel": "Añadir un tramo en {{day}}",
+        "holidays": "Festivos"
+      },
+      "errors": {
+        "noIntervals": "Añade un tramo o marca el día como cerrado.",
+        "endBeforeStart": "El tramo {{n}} tiene que terminar después de empezar.",
+        "overlap": "El tramo {{n}} pisa otro tramo del mismo día."
+      },
+      "seasonDialog": {
+        "addTitle": "Nueva temporada",
+        "editTitle": "Editar la temporada",
+        "name": "Nombre",
+        "nameHelp": "Por ejemplo, Invierno o Verano.",
+        "from": "Desde",
+        "to": "Hasta",
+        "noEnd": "Sin fecha de fin",
+        "copyFrom": "Empezar con el horario de",
+        "copyNone": "Ninguna (todo cerrado)",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "create": "Crear temporada",
+        "saving": "Guardando"
+      },
+      "gaps": {
+        "title": "Hay días sin temporada",
+        "text": "Esos días la instalación está cerrada, salvo que una excepción la abra. Crea o amplía una temporada para cubrirlos.",
+        "day": "El {{date}}",
+        "range": "Del {{from}} al {{to}}"
+      },
+      "exceptions": {
+        "title": "Excepciones",
+        "empty": "Sin excepciones.",
+        "add": "Excepción",
+        "addTitle": "Nueva excepción",
+        "edit": "Editar la excepción del {{day}}",
+        "closed": "Cerrado",
+        "date": "Día",
+        "hours": "Horario",
+        "holiday": "Es festivo ({{name}}). Esta excepción cambia su horario.",
+        "open": "Abierto ese día",
+        "openState": "Abierto",
+        "from": "Abierto desde",
+        "to": "Abierto hasta",
+        "reason": "Motivo",
+        "reasonHelp": "Opcional. Por ejemplo, Fiesta local.",
+        "stale": {
+          "title": "Otra persona cambió esta excepción",
+          "text": "Lo que cambiaste sigue en su sitio. Recarga para traer los cambios y vuelve a guardar."
+        },
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "saving": "Guardando",
+        "delete": {
+          "action": "Eliminar",
+          "title": "¿Borrar la excepción?",
+          "text": "El {{day}} vuelve a tener el horario de la temporada.",
+          "label": "Eliminar la excepción del {{day}}"
+        },
+        "saved": "Se guardó la excepción del {{day}}.",
+        "deleted": "Se borró la excepción del {{day}}."
+      }
+    },
+    "blocks": {
+      "loading": "Cargando los bloqueos…",
+      "error": {
+        "title": "No se pudieron cargar los bloqueos",
+        "text": "Algo falló al leer los bloqueos. Inténtalo de nuevo en un momento.",
+        "retry": "Intentar de nuevo"
+      },
+      "empty": "Sin bloqueos.",
+      "add": "Bloqueo",
+      "addTitle": "Nuevo bloqueo",
+      "edit": "Editar el bloqueo del {{when}}",
+      "allDay": "Todo el día",
+      "date": "Día",
+      "hours": "Horas",
+      "hoursHelp": "Todo el día: de 0:00 a 24:00.",
+      "from": "Bloqueado desde",
+      "to": "Bloqueado hasta",
+      "reason": "Motivo",
+      "reasonHelp": "Opcional. Por ejemplo, Mantenimiento del césped o Escuela municipal de fútbol.",
+      "summary": "Bloqueo del {{when}}",
+      "stale": {
+        "title": "Otra persona cambió este bloqueo",
+        "text": "Lo que cambiaste sigue en su sitio. Recarga para traer los cambios y vuelve a guardar."
+      },
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando",
+      "delete": {
+        "action": "Eliminar",
+        "title": "¿Borrar el bloqueo?",
+        "text": "El {{when}} se vuelve a poder reservar.",
+        "label": "Eliminar el bloqueo del {{when}}"
+      },
+      "saved": "Se guardó el bloqueo del {{when}}.",
+      "deleted": "Se borró el bloqueo del {{when}}."
+    },
+    "public": {
+      "back": "Instalaciones",
+      "loading": "Cargando la instalación",
+      "notFound": {
+        "title": "Esta instalación no está disponible",
+        "text": "Puede que ya no exista o que aún no se haya publicado."
+      },
+      "loadError": {
+        "title": "No se pudo cargar la instalación",
+        "text": "Comprueba la conexión e inténtalo de nuevo.",
+        "retry": "Intentar de nuevo"
+      },
+      "description": "Descripción",
+      "uses": "Qué se puede reservar",
+      "use": {
+        "parts": "{{names}}",
+        "or": " o ",
+        "seats": "{{count}} plazas",
+        "minutes": "{{minutes}} minutos",
+        "whole": "Entera"
+      },
+      "howToGet": "Cómo llegar",
+      "pin": "Ubicación de {{name}}",
+      "card": "Dirección, horario y contacto",
+      "address": "Dirección",
+      "schedule": "Horario",
+      "contact": "Contacto",
+      "openNow": "Abierto ahora",
+      "closedNow": "Cerrado ahora",
+      "closesAt": "Cierra a las {{time}}",
+      "opensToday": "Abre hoy a las {{time}}",
+      "opensTomorrow": "Abre mañana a las {{time}}",
+      "opensOn": "Abre el {{day}} a las {{time}}",
+      "today": "Hoy, {{day}}",
+      "dayRange": "{{from}} a {{to}}",
+      "twoDays": "{{from}} y {{to}}",
+      "closedDay": "Cerrado",
+      "closures": "Próximos cierres",
+      "before": {
+        "title": "Antes de reservar",
+        "advance": "Cuándo reservar",
+        "duration": "Duración",
+        "cap": "Límite",
+        "cancel": "Cancelación",
+        "payment": "Pago",
+        "houseRules": "Normas de la instalación"
+      },
+      "price": {
+        "FREE": "Gratis",
+        "perPerson": "por persona"
+      },
+      "reserve": "Reservar"
+    },
+    "houseRules": {
+      "title": "Normas de la instalación",
+      "help": "Opcional. Si las escribes, van en los dos idiomas, hasta {{max}} caracteres cada una."
+    },
+    "publicList": {
+      "title": "Instalaciones",
+      "covered": "Cubierta",
+      "filters": "Filtros",
+      "countOne": "{{count}} instalación",
+      "countOther": "{{count}} instalaciones",
+      "view": {
+        "label": "Vista",
+        "list": "Lista",
+        "map": "Mapa"
+      },
+      "freeOne": "{{count}} hueco {{day}}",
+      "freeOther": "{{count}} huecos {{day}}",
+      "today": "hoy",
+      "tomorrow": "mañana",
+      "times": "Primeras horas libres",
+      "loading": "Cargando las instalaciones",
+      "error": {
+        "title": "No se pudieron cargar las instalaciones",
+        "text": "Prueba otra vez en un momento.",
+        "retry": "Reintentar"
+      },
+      "empty": {
+        "title": "Todavía no hay instalaciones publicadas",
+        "text": "Cuando el ayuntamiento publique sus instalaciones, aparecerán aquí."
+      },
+      "none": {
+        "title": "Ninguna instalación con estos filtros",
+        "clear": "Quitar los filtros"
+      },
+      "map": "Mapa de las instalaciones",
+      "mapAlternative": "Las mismas instalaciones están en la vista Lista.",
+      "mapLoading": "Cargando el mapa"
+    },
+    "paymentNotes": {
+      "title": "Pago y devolución",
+      "payment": "Cómo se paga",
+      "refund": "Cómo se devuelve",
+      "help": "En los dos idiomas o en ninguno. Vacío, se ve el texto por defecto.",
+      "default": "Por defecto: «{{text}}»"
+    },
+    "wizard": {
+      "title": "Nueva instalación",
+      "stepsLabel": "Pasos de Nueva instalación",
+      "actions": "Acciones del paso",
+      "savedAt": "Borrador guardado a las {{time}}",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "skip": "Saltar",
+      "backToReview": "Volver a revisar",
+      "saveDraft": "Guardar como borrador",
+      "publish": "Publicar",
+      "missingOne": "Falta 1 cosa",
+      "missingMany": "Faltan {{count}} cosas",
+      "draftSaved": "Borrador guardado",
+      "published": "Instalación publicada. Ya la ve la vecindad",
+      "discarded": "Se descartó la instalación",
+      "steps": {
+        "data": "Nombre y deportes",
+        "location": "Ubicación",
+        "contact": "Contacto y servicios",
+        "photos": "Fotos",
+        "uses": "Usos",
+        "schedule": "Horario",
+        "rules": "Normas",
+        "rulesAndPayment": "Normas y pago",
+        "review": "Revisar"
+      },
+      "data": {
+        "name": "Nombre",
+        "nameHelp": "Como la conoce la vecindad: «Pista de pádel 2 de O Alto»."
+      },
+      "contact": {
+        "optional": "Todo opcional: puedes rellenarlo ahora o después, en la ficha.",
+        "own": "Datos propios",
+        "ownHelp": "Campos que define el propio ayuntamiento."
+      },
+      "photos": {
+        "drop": "Arrastra aquí las fotos de la instalación",
+        "help": "JPEG o PNG, hasta {{max}} · hasta {{limit}} fotos",
+        "helpLeft": "JPEG o PNG, hasta {{max}} · hasta {{limit}} fotos, quedan {{left}}",
+        "drawingTitle": "¿Aún no tienes fotos? Usa un dibujo mientras tanto",
+        "drawingHelp": "Se ve en la web hasta que subas fotos.",
+        "suggested": "Sugerido",
+        "suggestedLabel": "{{name}}, sugerido",
+        "allDrawings": "Ver los {{count}} dibujos"
+      },
+      "uses": {
+        "introTitle": "Un uso es cada forma de reservar este espacio.",
+        "introText": "Por ejemplo: un campo de fútbol se reserva entero (fútbol 11) o en dos mitades (fútbol 7); una piscina, por calles; un pabellón, la pista entera o media pista.",
+        "add": "Añadir uso",
+        "other": "Otro",
+        "edit": "Editar",
+        "editLabel": "Editar {{name}}",
+        "who": "¿Quién hace las reservas?",
+        "residents": "Los vecinos, desde esta web",
+        "staff": "Solo el personal del ayuntamiento",
+        "staffHelp": "Los vecinos ven la instalación, pero para reservar llaman o van en persona.",
+        "presets": {
+          "wholeCourt": "Pista entera",
+          "halfCourt": "Media pista",
+          "wholeField": "Campo entero (fútbol 11)",
+          "halfField": "Medio campo (fútbol 7)",
+          "field7": "Campo de fútbol 7",
+          "lanes": "Por calles",
+          "freeSwim": "Nado libre",
+          "wholePool": "Piscina entera",
+          "padel": "Pista de pádel",
+          "tennis": "Pista de tenis",
+          "badminton": "Pista de bádminton",
+          "table": "Mesa",
+          "track": "Pista de atletismo",
+          "room": "Sala",
+          "class": "Clase",
+          "rink": "Pista de patinaje"
+        },
+        "parts": {
+          "halfNorth": "Media pista norte",
+          "halfSouth": "Media pista sur",
+          "fieldNorth": "Medio campo norte",
+          "fieldSouth": "Medio campo sur",
+          "lane1": "Calle 1",
+          "lane2": "Calle 2",
+          "lane3": "Calle 3",
+          "lane4": "Calle 4",
+          "lane5": "Calle 5",
+          "lane6": "Calle 6"
+        }
+      },
+      "schedule": {
+        "season": "Temporada:",
+        "wholeYear": "Todo el año",
+        "addSeason": "Añadir temporada",
+        "seasonHint": "Las temporadas se añaden en la ficha, después de publicarla.",
+        "mode": "Horario",
+        "same": "Mismo horario todos los días",
+        "days": "Por días",
+        "from": "Desde",
+        "to": "Hasta",
+        "openFrom": "Abierto desde",
+        "openTo": "Abierto hasta",
+        "week": "Semana de Todo el año"
+      },
+      "review": {
+        "missingTitle": "Para publicarla falta:",
+        "missing": {
+          "name": "El nombre",
+          "sports": "Los deportes",
+          "description": "Descripción: en los dos idiomas o en ninguno",
+          "address": "La dirección",
+          "contact": "Contacto: revisa el teléfono o el correo",
+          "photos": "Fotos: falta la descripción de alguna foto",
+          "uses": "Al menos un uso",
+          "schedule": "El horario",
+          "rules": "Normas: en los dos idiomas o en ninguno",
+          "rulesAndPayment": "Normas y pago: en los dos idiomas o en ninguno"
+        },
+        "edit": "Editar",
+        "editLabel": "Editar {{step}}",
+        "missingValue": "Falta",
+        "invalid": "Formato no válido",
+        "oneLanguage": "En un solo idioma",
+        "address": "Dirección",
+        "season": "Temporada",
+        "drawingUsed": "Sin fotos: se ve el dibujo «{{name}}»."
+      },
+      "leave": {
+        "title": "¿Salir de «Nueva instalación»?",
+        "noName": "Sin nombre no se puede guardar como borrador.",
+        "stay": "Seguir",
+        "discard": "Descartar",
+        "save": "Guardar borrador"
+      }
+    }
+  },
+  "booking": {
+    "reserve": {
+      "title": "Reservar",
+      "back": "Volver a la instalación",
+      "card": "Reserva",
+      "loading": "Cargando la reserva…",
+      "notFound": {
+        "title": "Esta instalación no está disponible",
+        "text": "Puede que ya no esté publicada. Mira las otras instalaciones."
+      },
+      "loadError": {
+        "title": "No pudimos cargar la instalación",
+        "text": "Comprueba la conexión e inténtalo de nuevo.",
+        "retry": "Intentar de nuevo"
+      },
+      "notBookable": "Esta instalación no se reserva por internet.",
+      "workAccount": "Esta es una cuenta de trabajo; para reservar usa tu cuenta personal.",
+      "what": "Qué",
+      "date": "Fecha",
+      "time": "Hora",
+      "part": "Parte",
+      "choose": "Elegir",
+      "anyPart": "Me da igual",
+      "duration": "Duración",
+      "times": "Horas libres",
+      "hour": "{{count}} hora",
+      "hours": "{{count}} horas",
+      "minutes": "{{minutes}} min",
+      "partsFree": {
+        "one": "1 libre",
+        "other": "{{count}} libres"
+      },
+      "seatsFree": {
+        "one": "1 plaza",
+        "other": "{{count}} plazas"
+      },
+      "slotsLoading": "Buscando las horas libres…",
+      "slotsError": "No pudimos cargar las horas. Inténtalo de nuevo.",
+      "noSlots": "No quedan horas libres este día. Prueba otro.",
+      "free": "Gratis",
+      "total": "Total",
+      "continue": "Continuar",
+      "confirm": "Confirmar reserva",
+      "change": {
+        "title": "Cambiar la reserva",
+        "confirm": "Confirmar el cambio",
+        "loadError": "No pudimos cargar la reserva que quieres cambiar. Mírala en «Mis reservas»."
+      },
+      "loginNote": "Te pediremos entrar al continuar",
+      "taken": {
+        "title": "Alguien acaba de reservar las {{time}}",
+        "choose": "Elige otra hora:",
+        "none": "Elige otra hora u otro día."
+      },
+      "bookingError": {
+        "title": "No pudimos mostrar la reserva",
+        "text": "Mírala en «Mis reservas»."
+      },
+      "done": {
+        "title": "Reserva confirmada",
+        "sent": "Te la hemos enviado a {{email}}",
+        "card": "Tu reserva",
+        "use": "Uso",
+        "day": "Día",
+        "time": "Hora",
+        "part": "Parte",
+        "price": "Precio",
+        "show": "Enséñalo al llegar",
+        "cancelUntil": "Puedes cancelarla sin coste hasta el",
+        "at": "{{day}} a las {{time}}",
+        "addToCalendar": "Añadir al calendario",
+        "mine": "Ver mis reservas"
+      }
+    },
+    "mine": {
+      "title": "Mis reservas",
+      "tabs": "Mis reservas",
+      "upcoming": "Próximas",
+      "history": "Historial",
+      "loading": "Cargando tus reservas…",
+      "loadError": {
+        "title": "No pudimos cargar tus reservas",
+        "text": "Comprueba la conexión e inténtalo de nuevo.",
+        "retry": "Intentar de nuevo"
+      },
+      "empty": {
+        "upcoming": {
+          "title": "No tienes reservas próximas",
+          "text": "Elige una instalación y reserva en pocos pasos.",
+          "action": "Ver las instalaciones"
+        },
+        "history": "Aún no tienes reservas pasadas"
+      },
+      "more": "Ver más",
+      "cancelledByPerson": "cancelada por ti",
+      "cancelledByMunicipality": "cancelada por el ayuntamiento",
+      "status": {
+        "pending": "Pendiente de pago",
+        "paid": "Pagada",
+        "toRefund": "A devolver",
+        "refunded": "Devuelta",
+        "free": "Gratis",
+        "done": "Realizada",
+        "cancelled": "Cancelada"
+      },
+      "actions": {
+        "change": "Cambiar",
+        "cancel": "Cancelar",
+        "qr": "Ver QR",
+        "again": "Reservar de nuevo"
+      },
+      "late": {
+        "text": "Ya pasó el plazo para cancelar.",
+        "call": "Llama al"
+      },
+      "cancel": {
+        "title": "¿Cancelar la reserva?",
+        "confirm": "Cancelar la reserva",
+        "busy": "Cancelando",
+        "keep": "Mantener",
+        "free": "Sin coste. Estás dentro del plazo, que acaba el {{deadline}}.",
+        "paid": "Ya está pagada. Quedará pendiente de devolución.",
+        "done": "Cancelaste la reserva de {{name}}"
+      },
+      "stale": "Esta reserva cambió en otro sitio. Recarga para ver cómo está ahora.",
+      "reload": "Recargar",
+      "qr": {
+        "title": "Código de la reserva"
+      }
+    },
+    "manage": {
+      "title": "Reservas",
+      "anonymized": "Persona anonimizada",
+      "search": "Buscar reservas",
+      "searchPlaceholder": "Buscar por nombre, correo o código",
+      "calendar": "Calendario",
+      "latest": "Últimas reservas",
+      "payments": "Cobros",
+      "tab": {
+        "pendingPayment": "Pendientes de pago",
+        "toRefund": "A devolver",
+        "cancelled": "Canceladas"
+      },
+      "more": "Ver más",
+      "back": "Volver a las reservas",
+      "list": {
+        "latest": "Últimas reservas",
+        "pendingPayment": "Pendientes de pago",
+        "toRefund": "A devolver",
+        "cancelled": "Canceladas",
+        "upcoming": "Próximas",
+        "results": "Resultados"
+      },
+      "countOne": "{{count}} reserva",
+      "countOther": "{{count}} reservas",
+      "today": "hoy",
+      "tomorrow": "mañana",
+      "reserved": "Reservada {{ago}}",
+      "loading": "Cargando las reservas",
+      "loadError": "No se pudieron cargar las reservas",
+      "retry": "Intentar de nuevo",
+      "empty": {
+        "latest": "Todavía no hay reservas.",
+        "pendingPayment": "No hay nada pendiente de pago.",
+        "toRefund": "No hay nada que devolver.",
+        "cancelled": "No hay reservas canceladas.",
+        "list": "No hay reservas con estos filtros"
+      },
+      "filters": {
+        "title": "Filtros",
+        "active": "Filtros puestos",
+        "remove": "Quitar el filtro {{name}}",
+        "sort": "Ordenar",
+        "sortRecent": "Más recientes primero",
+        "sortStart": "Por día y hora",
+        "facility": "Instalación",
+        "payment": "Pago",
+        "state": "Estado",
+        "allFemale": "Marcar todas",
+        "noneFemale": "Desmarcar todas",
+        "allMale": "Marcar todos",
+        "noneMale": "Desmarcar todos",
+        "paymentOption": {
+          "PENDING": "Pendiente",
+          "PAID": "Pagada",
+          "TO_REFUND": "A devolver",
+          "REFUNDED": "Devuelta",
+          "NONE": "Gratis"
+        },
+        "stateOption": {
+          "CONFIRMED": "Confirmadas",
+          "CANCELLED": "Canceladas"
+        },
+        "clear": "Quitar filtros",
+        "apply": "Ver reservas",
+        "dates": {
+          "label": "Fechas",
+          "add": "Seleccionar fecha",
+          "panel": "Elegir fechas",
+          "presets": "Atajos",
+          "preset": {
+            "today": "Hoy",
+            "tomorrow": "Mañana",
+            "week": "Esta semana"
+          },
+          "apply": "Aplicar",
+          "clear": "Quitar el filtro de fecha",
+          "today": "Hoy",
+          "tomorrow": "Mañana",
+          "on": "El {{day}}",
+          "between": "Del {{from}} al {{to}}",
+          "since": "Desde el {{day}}"
+        }
+      },
+      "detail": {
+        "title": "Reserva",
+        "pick": "Elige una reserva para ver sus datos.",
+        "close": "Cerrar el detalle",
+        "loading": "Cargando la reserva",
+        "loadError": "No se pudo cargar la reserva",
+        "retry": "Intentar de nuevo",
+        "person": "Persona",
+        "use": "Uso",
+        "part": "Parte",
+        "day": "Día",
+        "time": "Hora",
+        "code": "Código",
+        "total": "Total",
+        "markPaid": "Marcar como pagada",
+        "markRefunded": "Marcar como devuelta",
+        "undoPaid": "Deshacer: volver a pendiente",
+        "undoRefunded": "Deshacer: volver a «A devolver»",
+        "cancel": "Cancelar reserva",
+        "stale": "Esta reserva cambió en otro sitio. Recarga para ver cómo está ahora.",
+        "reload": "Recargar",
+        "done": {
+          "markPaid": "Marcada como pagada",
+          "markRefunded": "Marcada como devuelta",
+          "undoPaid": "Vuelve a estar pendiente de pago",
+          "undoRefunded": "Vuelve a estar a devolver",
+          "cancelled": "Reserva cancelada"
+        }
+      },
+      "cancel": {
+        "title": "¿Cancelar la reserva?",
+        "paid": "Ya está pagada: quedará «A devolver».",
+        "channels": "Avisar",
+        "channel": {
+          "EMAIL": "Por correo",
+          "WEB": "Aviso en la web"
+        },
+        "keep": "Mantener",
+        "confirm": "Cancelar reserva",
+        "busy": "Cancelando…"
+      }
+    },
+    "calendar": {
+      "title": "Calendario",
+      "view": "Vista",
+      "mode": {
+        "DAY": "Día",
+        "WEEK": "Semana",
+        "MONTH": "Mes"
+      },
+      "facility": "Instalación",
+      "allFacilities": "Todas las instalaciones",
+      "previous": {
+        "DAY": "Día anterior",
+        "WEEK": "Semana anterior",
+        "MONTH": "Mes anterior"
+      },
+      "next": {
+        "DAY": "Día siguiente",
+        "WEEK": "Semana siguiente",
+        "MONTH": "Mes siguiente"
+      },
+      "pick": "Elegir fecha",
+      "weekSame": "Semana del {{from}} al {{to}} de {{month}}",
+      "weekCross": "Semana del {{from}} de {{fromMonth}} al {{to}} de {{toMonth}}",
+      "free": "Libre",
+      "empty": "No hay reservas en este período.",
+      "loading": "Cargando el calendario",
+      "loadError": "No se pudo cargar el calendario",
+      "peek": {
+        "close": "Cerrar",
+        "empty": "Sin reservas.",
+        "more": "+{{count}} · Ver el día",
+        "day": "Ver el día",
+        "loading": "Cargando las reservas del día",
+        "error": "No se pudieron cargar las reservas."
+      }
+    }
+  },
+  "indicators": {
+    "title": "Indicadores",
+    "emptyHint": "Prueba con otro periodo, otra instalación u otro uso.",
+    "filters": {
+      "label": "Filtros",
+      "period": "Periodo",
+      "periods": {
+        "semana": "Esta semana",
+        "trimestre": "Trimestre",
+        "ano": "Año",
+        "datas": "Fechas…"
+      },
+      "dates": "Fechas",
+      "datesEmpty": "Elegir",
+      "datesFirst": "Elige el primer día (hasta {{max}} días).",
+      "datesLast": "Elige el último día (hasta {{max}} días).",
+      "datesReady": "Pulsa «Aplicar» o elige otro primer día.",
+      "tooLong": "Como mucho {{max}} días: elige un rango más corto.",
+      "apply": "Aplicar",
+      "range": "Del {{from}} al {{to}}",
+      "facility": "Instalación",
+      "allFacilities": "Todas las instalaciones",
+      "use": "Uso",
+      "allUses": "Todos los usos",
+      "withdrawn": "{{name}} (de baja)",
+      "archived": "{{name}} (archivado)",
+      "pdfHint": "El panel tal cual: en el diálogo, elige «Guardar como PDF»",
+      "csvHint": "Los datos de todos los gráficos, para una hoja de cálculo"
+    },
+    "export": {
+      "chartPdf": "Este gráfico y su tabla: en el diálogo, elige «Guardar como PDF»",
+      "chartCsv": "Sus datos, para una hoja de cálculo",
+      "evolutionPdf": "Esta evolución y su tabla: en el diálogo, elige «Guardar como PDF»",
+      "evolutionCsv": "Sus datos, para una hoja de cálculo"
+    },
+    "status": {
+      "ready": "Indicadores actualizados: {{period}} · {{facility}} · {{use}}.",
+      "empty": "Indicadores actualizados: {{period}} · {{facility}} · {{use}}. Sin reservas en este periodo."
+    },
+    "print": {
+      "header": "Concello {{ofName}} · {{period}} · {{facility}} · {{use}} · generado el {{generated}}"
+    },
+    "period": {
+      "WEEK": "Semana del {{from}} al {{to}}",
+      "QUARTER": "{{quarter}}.º trimestre de {{year}}",
+      "YEAR": "Año {{year}}",
+      "CUSTOM": "Del {{from}} al {{to}}"
+    },
+    "inProgress": "en curso",
+    "kpi": {
+      "title": "Cifras principales",
+      "bookings": "Reservas",
+      "occupancy": "Ocupación media",
+      "occupancyPercent": "Ocupación media (%)",
+      "reservedHours": "Horas reservadas",
+      "people": "Personas distintas",
+      "paidCents": "Cobrado",
+      "comparison": {
+        "WEEK": "respecto a la semana anterior",
+        "MONTH": "respecto a {{label}}",
+        "QUARTER": "respecto al trimestre anterior",
+        "YEAR": "respecto a {{label}}",
+        "CUSTOM": "respecto a los {{days}} días anteriores"
+      },
+      "comparisonToDate": {
+        "WEEK": "hasta hoy, frente al mismo tramo de la semana anterior",
+        "MONTH": "hasta hoy, frente al mismo tramo de {{label}}",
+        "QUARTER": "hasta hoy, frente al mismo tramo del trimestre anterior",
+        "YEAR": "hasta hoy, frente al mismo tramo de {{label}}",
+        "CUSTOM": "hasta hoy, frente al mismo tramo de los {{days}} días anteriores"
+      }
+    },
+    "column": {
+      "facility": "Instalación",
+      "occupancy": "Ocupación",
+      "occupancyPercent": "Ocupación (%)",
+      "period": "Periodo",
+      "day": "Día",
+      "month": "Mes",
+      "people": "Personas",
+      "euros": "{{name}} (€)",
+      "figure": "Cifra",
+      "value": "Valor",
+      "previous": "Periodo anterior",
+      "valueInProgress": "Valor ({{inProgress}})",
+      "toDate": "Hasta hoy ({{span}})",
+      "comparedToDate": "Mismo tramo anterior ({{span}})"
+    },
+    "occupancy": {
+      "title": "Ocupación por instalación"
+    },
+    "daily": {
+      "title": {
+        "DAY": "Ocupación día a día",
+        "WEEK": "Ocupación semana a semana",
+        "MONTH": "Ocupación mes a mes"
+      }
+    },
+    "peak": {
+      "title": "Horas punta",
+      "closed": "cerrado",
+      "less": "Ocupación: 0 %",
+      "more": "100 %",
+      "closedLegend": "Cerrado"
+    },
+    "cancellations": {
+      "title": "Cancelaciones por motivo",
+      "inTime": "Persona, en plazo",
+      "late": "Persona, fuera de plazo",
+      "municipality": "Ayuntamiento"
+    },
+    "revenue": {
+      "title": "Ingresos por instalación",
+      "paid": "Cobrado",
+      "pending": "Pendiente",
+      "toRefund": "A devolver",
+      "refunded": "Devuelto"
+    },
+    "people": {
+      "title": "Personas distintas que reservan"
+    },
+    "when": {
+      "DAY": "el {{label}}",
+      "WEEK": "la semana del {{label}}",
+      "MONTH": "en {{label}}"
+    },
+    "count": {
+      "cancellation": "{{count}} cancelación",
+      "cancellations": "{{count}} cancelaciones"
+    },
+    "conclusion": {
+      "empty": "Sin reservas en este periodo",
+      "occupancy": {
+        "top": "{{name}} es la más llena: {{value}} de sus horas abiertas.",
+        "one": "{{name}} ocupa {{value}} de sus horas abiertas."
+      },
+      "daily": {
+        "weekends": "Los fines de semana suben a más del {{value}}.",
+        "top": {
+          "DAY": "El día más lleno, el {{label}}: {{value}}.",
+          "WEEK": "La semana más llena, la del {{label}}: {{value}}.",
+          "MONTH": "El mes más lleno, {{label}}: {{value}}."
+        }
+      },
+      "peak": {
+        "top": "El {{day}} de {{from}} a {{to}} h es la franja más reservada.",
+        "topQuietMornings": "El {{day}} de {{from}} a {{to}} h es la franja más reservada; las mañanas entre semana, casi vacías."
+      },
+      "cancellations": {
+        "none": "Ninguna cancelación en este periodo.",
+        "inTime": "{{total}} en plazo.",
+        "late": "{{total}} fuera de plazo.",
+        "inTimeLate": "{{total}}; {{late}} fuera de plazo.",
+        "lateMunicipality": "{{total}}; {{late}} fuera de plazo y {{municipality}} por el ayuntamiento.",
+        "municipality": "{{total}} por el ayuntamiento.",
+        "municipalityWhen": "{{total}} por el ayuntamiento, {{when}}.",
+        "inTimeMunicipality": "{{total}}; el ayuntamiento canceló {{municipality}}.",
+        "inTimeMunicipalityWhen": "{{total}}; el ayuntamiento canceló {{municipality}} {{when}}."
+      },
+      "revenue": {
+        "p": "Cobrado {{paid}}.",
+        "pn": "Cobrado {{paid}}; quedan {{pending}} pendientes de pago en el mostrador.",
+        "pr": "Cobrado {{paid}}; hay {{toRefund}} por devolver.",
+        "pnr": "Cobrado {{paid}}; quedan {{pending}} pendientes de pago en el mostrador y {{toRefund}} por devolver.",
+        "n": "Aún sin cobrar: quedan {{pending}} pendientes de pago en el mostrador.",
+        "nr": "Aún sin cobrar: quedan {{pending}} pendientes de pago en el mostrador y {{toRefund}} por devolver.",
+        "r": "Sin cobros; hay {{toRefund}} por devolver.",
+        "refunded": "Se devolvieron {{refunded}}; no queda nada cobrado.",
+        "none": "Sin cobros en este periodo."
+      },
+      "people": {
+        "only": "{{value}} en {{month}}.",
+        "max": "{{value}} en {{month}}, el máximo de los últimos {{count}} meses.",
+        "min": "{{value}} en {{month}}, el mínimo de los últimos {{count}} meses.",
+        "more": "{{value}} en {{month}}, {{diff}} más que en {{previous}}.",
+        "fewer": "{{value}} en {{month}}, {{diff}} menos que en {{previous}}.",
+        "same": "{{value}} en {{month}}, tantas como en {{previous}}."
+      }
+    },
+    "evolution": {
+      "title": "{{figure}} por {{unit}}",
+      "unit": {
+        "DAY": "días",
+        "WEEK": "semanas",
+        "MONTH": "meses",
+        "QUARTER": "trimestres",
+        "YEAR": "años"
+      },
+      "quarterShort": "T{{quarter}} {{year}}",
+      "summary": "{{value}} en este periodo, {{change}}.",
+      "column": {
+        "bookings": "Reservas",
+        "reservedHours": "Horas reservadas",
+        "people": "Personas distintas",
+        "paidCents": "Cobrado (€)"
+      }
+    }
+  },
+  "staff": {
+    "members": {
+      "title": "Personal",
+      "intro": "Quién entra en la gestión del ayuntamiento y con qué rol.",
+      "loading": "Cargando el personal…",
+      "loadError": "No se pudo cargar el personal.",
+      "retry": "Intentar de nuevo",
+      "empty": {
+        "title": "Todavía no hay personal",
+        "manager": "Invita a las personas que van a trabajar en la gestión con el botón «Invitar».",
+        "platform": "Invita a la primera persona de Gestión del ayuntamiento con el botón «Invitar»."
+      },
+      "deactivatedTitle": "Desactivadas ({{count}})",
+      "deactivatedCaption": "Personal desactivado",
+      "col": {
+        "user": "Usuario",
+        "role": "Rol",
+        "state": "Estado",
+        "lastAccess": "Último acceso",
+        "actions": "Acciones"
+      },
+      "role": {
+        "MANAGER": "Gestión",
+        "STAFF": "Recepción"
+      },
+      "roleCaps": {
+        "MANAGER": {
+          "bookings": "Reservas, cobros y cancelaciones",
+          "facilities": "Instalaciones y horarios",
+          "indicators": "Indicadores",
+          "staff": "Personal y datos del ayuntamiento"
+        },
+        "STAFF": {
+          "bookings": "Reservas y cobros",
+          "cancel": "Cancelar reservas",
+          "facilities": "Cambiar instalaciones",
+          "staff": "Indicadores y personal"
+        }
+      },
+      "state": {
+        "ACTIVE": "Activa",
+        "INVITED": "Pendiente",
+        "DEACTIVATED": "Desactivada"
+      },
+      "anonymized": "Persona anonimizada",
+      "access": {
+        "at": "{{date}}",
+        "never": "Nunca",
+        "sending": "Enviando…",
+        "sent": "Invitación enviada el {{date}}",
+        "failed": "No se pudo enviar",
+        "expired": "Invitación caducada"
+      },
+      "resendFor": "Reenviar la invitación a {{name}}",
+      "resendWait": {
+        "in": "Podrás reenviar en {{time}}",
+        "spent": "Ya se envió el máximo de veces",
+        "ready": "Ya puedes reenviar la invitación a {{name}}."
+      },
+      "actionsFor": "Acciones: {{name}}",
+      "action": {
+        "resend": "Reenviar",
+        "role": "Cambiar el rol",
+        "deactivate": "Desactivar",
+        "reactivate": "Reactivar"
+      },
+      "invite": {
+        "open": "Invitar",
+        "title": "Invitar al personal",
+        "intro": "Le enviamos un correo con un enlace válido durante 7 días para entrar con su cuenta o crearla.",
+        "email": "Correo electrónico",
+        "role": "Rol",
+        "language": "Idioma del correo",
+        "send": "Enviar invitación",
+        "sending": "Enviando…"
+      },
+      "changeRole": {
+        "title": "Cambiar el rol",
+        "label": "Rol",
+        "phrase": "recepción",
+        "demote": "Pasa a Recepción: deja de gestionar el ayuntamiento y solo ve las reservas."
+      },
+      "deactivate": {
+        "title": "¿Desactivar?",
+        "confirm": "Desactivar",
+        "busy": "Desactivando…",
+        "losesMANAGER": "Deja de entrar en la gestión del ayuntamiento: instalaciones, reservas, indicadores y personal.",
+        "losesSTAFF": "Deja de entrar en las reservas del ayuntamiento.",
+        "losesInvitation": "La invitación deja de valer: el enlace del correo ya no servirá.",
+        "again": "Se puede reactivar cuando vuelva a hacer falta, con el mismo rol.",
+        "inviteAgain": "Si vuelve a hacer falta, puedes invitarla de nuevo.",
+        "phrase": "desactivar",
+        "acknowledge": "Entiendo que no se borra la cuenta ni su historial: el acceso se puede reactivar y los datos se conservan según la política de conservación.",
+        "acknowledgeInvitation": "Entiendo que la invitación deja de valer, que se puede invitar de nuevo y que los datos se conservan según la política de conservación."
+      },
+      "reactivate": {
+        "title": "¿Reactivar?",
+        "confirm": "Reactivar",
+        "busy": "Reactivando…",
+        "returns": "Vuelve a entrar con el rol {{role}}, sin invitación nueva.",
+        "signIn": "Entra con su correo y contraseña, como siempre."
+      },
+      "done": {
+        "invited": "Invitación enviada a {{email}}",
+        "invitedFailed": "Se guardó la invitación de {{email}}, pero el correo no se pudo enviar. Prueba a reenviarla.",
+        "resent": "Invitación reenviada a {{email}}",
+        "resentFailed": "El correo a {{email}} no se pudo enviar. Prueba de nuevo más tarde.",
+        "roleChanged": "{{name}} ahora tiene el rol {{role}}",
+        "deactivated": "{{name}} ya está desactivada",
+        "reactivated": "{{name}} vuelve a estar en el personal con el rol {{role}}"
+      },
+      "stale": "Alguien cambió a esta persona mientras tanto. Hemos actualizado la lista: revisa su estado y vuelve a probar.",
+      "rateLimited": {
+        "waitMinutes": "Todavía no se puede enviar otra vez. Puedes reenviar en {{count}} min.",
+        "waitHours": "Se llegó al límite de envíos. Puedes volver a enviar en {{count}} h.",
+        "spent": "Esta invitación ya se envió el máximo de veces. Si hace falta, desactívala e invítala de nuevo."
+      },
+      "blocked": "Persona desactivada"
+    },
+    "invitation": {
+      "loading": "Cargando la invitación…",
+      "home": "Ir al inicio",
+      "role": {
+        "MANAGER": "Gestión",
+        "STAFF": "Recepción"
+      },
+      "signIn": {
+        "title": "Invitación al personal {{ofName}}",
+        "intro": "{{municipality}} te ha invitado a formar parte de su personal con el rol {{role}}.",
+        "text": "Para aceptarla, crea tu cuenta con {{email}} o entra con ella.",
+        "action": "Continuar"
+      },
+      "accepted": "Ya formas parte del personal {{ofName}}",
+      "expired": {
+        "title": "La invitación ha caducado",
+        "text": "Pídele una nueva a quien te invitó: te llegará en otro correo."
+      },
+      "invalid": {
+        "title": "Esta invitación no sirve",
+        "text": "El enlace no es válido, ya se ha usado o hay otro más reciente. Abre el enlace del último correo que recibiste o pídele otro a quien te invitó."
+      },
+      "otherAccount": {
+        "title": "Ya has iniciado sesión con otra cuenta.",
+        "action": "Cerrar sesión y continuar",
+        "back": "Volver"
+      },
+      "personal": {
+        "title": "Esta cuenta es personal",
+        "text": "La cuenta de {{invited}} ya tiene reservas personales, y el personal usa una cuenta solo para el trabajo. Pide a quien te invitó que te invite con tu correo del trabajo."
+      },
+      "already": {
+        "title": "Ya formas parte del personal",
+        "text": "Ya estás en el personal {{ofName}}: no tienes que aceptar nada más.",
+        "action": "Ir a la gestión"
+      },
+      "unverified": {
+        "title": "Verifica tu correo",
+        "text": "Antes de aceptar tienes que confirmar que el correo es tuyo. Busca en la bandeja de entrada (y en el correo no deseado) el mensaje de verificación y abre su enlace.",
+        "how": "Después, vuelve a esta página y pulsa «Continuar».",
+        "action": "Continuar"
+      },
+      "error": {
+        "title": "No se ha podido continuar",
+        "action": "Intentar de nuevo"
+      }
+    }
+  },
+  "activity": {
+    "title": "Registro de actividad",
+    "platformTitle": "Registro de la plataforma",
+    "intro": {
+      "municipality": "Quién hizo qué en el ayuntamiento y con qué resultado, también lo que hizo la administración de la plataforma. Solo se puede leer.",
+      "platform": "Lo que hizo la administración de la plataforma en todos los ayuntamientos y lo que no tiene ayuntamiento. Solo se puede leer."
+    },
+    "filters": {
+      "label": "Filtros del registro",
+      "period": "Período",
+      "lastYear": "Último año",
+      "datesFirst": "Elige el primer día.",
+      "datesLast": "Ahora, el último día.",
+      "datesReady": "Pulsa «Aplicar» para ver ese período.",
+      "tooLong": "Como mucho {{max}} días: elige un último día anterior.",
+      "apply": "Aplicar",
+      "lastYearAction": "Ver el último año",
+      "area": "Área",
+      "allAreas": "Todas",
+      "person": "Persona",
+      "allPeople": "Todas",
+      "deactivated": "{{name}} (desactivada)",
+      "failedOnly": "Solo fallidos",
+      "reset": "Quitar los filtros"
+    },
+    "areas": {
+      "staff": "Personal",
+      "facility": "Instalaciones",
+      "booking": "Reservas",
+      "municipality": "Ayuntamiento",
+      "customfield": "Campos personalizados",
+      "audit": "Registro"
+    },
+    "col": {
+      "date": "Fecha",
+      "person": "Persona",
+      "action": "Acción",
+      "target": "Sobre qué",
+      "municipality": "Ayuntamiento",
+      "outcome": "Resultado"
+    },
+    "caption": "Acciones registradas, de la más nueva a la más antigua",
+    "actor": {
+      "platform": "Administración de la plataforma",
+      "system": "Tarea automática",
+      "other": "Cuenta sin rol",
+      "anonymized": "Persona anonimizada",
+      "platformTag": "Plataforma",
+      "blocked": "Persona desactivada"
+    },
+    "target": {
+      "STAFF_MEMBER": "Personal",
+      "BOOKING": "Reserva",
+      "FACILITY": "Instalación",
+      "PHOTO": "Foto",
+      "MUNICIPALITY": "Ayuntamiento",
+      "none": "—"
+    },
+    "outcome": {
+      "SUCCESS": "Hecho",
+      "FAILURE": "Falló"
+    },
+    "unknownAction": "Otra acción ({{code}})",
+    "loading": "Cargando el registro…",
+    "loadError": "No se pudo cargar el registro.",
+    "retry": "Intentar de nuevo",
+    "empty": {
+      "title": "No hay actividad",
+      "all": "Todavía no hay nada registrado en este período.",
+      "filtered": "No hay acciones con estos filtros. Prueba con otro período o quita los filtros."
+    },
+    "more": "Cargar más",
+    "loadingMore": "Cargando…",
+    "status": {
+      "count": "{{count}} acciones a la vista.",
+      "more": "Se cargaron {{count}} acciones más.",
+      "end": "Ya no hay más acciones en este período."
+    },
+    "actions": {
+      "booking": {
+        "cancel": "Cancelar una reserva",
+        "payment": "Cambiar el cobro de una reserva",
+        "anonymize": "Anonimizar las reservas que pasaron el plazo de conservación"
+      },
+      "customfield": {
+        "create": "Crear un campo personalizado",
+        "update": "Cambiar un campo personalizado",
+        "deactivate": "Desactivar un campo personalizado",
+        "activate": "Activar un campo personalizado",
+        "delete": "Eliminar un campo personalizado"
+      },
+      "facility": {
+        "create": "Crear una instalación",
+        "rename": "Cambiar el nombre de una instalación",
+        "status": "Cambiar el estado de una instalación",
+        "publish": "Publicar una instalación",
+        "details": "Cambiar los datos de una instalación",
+        "description": "Cambiar la descripción de una instalación",
+        "house-rules": "Cambiar las normas de una instalación",
+        "payment-notes": "Cambiar el pago y la devolución de una instalación",
+        "address": "Cambiar la dirección de una instalación",
+        "amenities": "Cambiar los servicios y la accesibilidad",
+        "delete": "Eliminar una instalación",
+        "use-create": "Crear un uso",
+        "use-update": "Cambiar un uso",
+        "use-archive": "Archivar un uso",
+        "season-create": "Crear una temporada",
+        "season-update": "Cambiar una temporada",
+        "season-delete": "Eliminar una temporada",
+        "exception-create": "Crear una excepción del horario",
+        "exception-update": "Cambiar una excepción del horario",
+        "exception-delete": "Eliminar una excepción del horario",
+        "block-create": "Crear un bloqueo",
+        "block-update": "Cambiar un bloqueo",
+        "block-delete": "Eliminar un bloqueo",
+        "sport-create": "Añadir un deporte",
+        "photo": {
+          "upload": "Subir una foto",
+          "discard": "Descartar una foto"
+        },
+        "images": {
+          "arrange": "Ordenar las fotos de una instalación"
+        }
+      },
+      "municipality": {
+        "create": "Dar de alta un ayuntamiento",
+        "update": "Cambiar los datos del ayuntamiento",
+        "legal-texts": "Cambiar los textos legales",
+        "sports-contact": "Cambiar el contacto del servicio de deportes",
+        "payment-notes": "Cambiar el pago y la devolución del ayuntamiento",
+        "export": "Exportar los datos del ayuntamiento",
+        "import": "Importar los datos de un ayuntamiento"
+      },
+      "staff": {
+        "invite": "Invitar al personal",
+        "invite-resend": "Reenviar una invitación",
+        "role-change": "Cambiar el rol de una persona",
+        "deactivate": "Desactivar a una persona",
+        "reactivate": "Reactivar a una persona",
+        "revoke": "Desactivar a una persona",
+        "accept": "Aceptar la invitación",
+        "sign-in": "Entrar en la gestión",
+        "anonymize": "Anonimizar a una persona"
+      },
+      "audit": {
+        "export-blocked": "Exportar eventos bloqueados"
+      },
+      "platform": {
+        "first-admin": "Primer acceso de la administración de la plataforma"
+      }
+    },
+    "blockedNote": {
+      "municipality": "Los eventos de hace más de {{period}} no se muestran: están bloqueados y solo se exportan con un motivo.",
+      "platform": "Los eventos de hace más de {{period}} no se muestran: están bloqueados."
+    },
+    "exportBlocked": {
+      "action": "Exportar bloqueados",
+      "title": "Exportar bloqueados",
+      "intro": "Solo para un requerimiento o un expediente abierto. La exportación queda en el registro con el motivo y la referencia.",
+      "period": "Periodo",
+      "periodHelp": "Entre el {{first}} y el {{last}}; como máximo {{max}} días.",
+      "from": "Desde",
+      "to": "Hasta",
+      "reason": "Motivo",
+      "reasonPlaceholder": "Elige el motivo",
+      "reasons": {
+        "COURT_ORDER": "Requerimiento judicial",
+        "PUBLIC_PROSECUTOR": "Ministerio Fiscal",
+        "DATA_PROTECTION_AUTHORITY": "Autoridad de protección de datos",
+        "OPEN_PROCEEDINGS": "Expediente abierto"
+      },
+      "reference": "Referencia",
+      "referenceHelp": "Número del expediente, de las diligencias o del requerimiento.",
+      "send": "Exportar CSV",
+      "sending": "Exportando…",
+      "done": "Se exportaron {{count}} eventos bloqueados.",
+      "empty": "No había eventos bloqueados en ese periodo.",
+      "csv": {
+        "email": "Correo",
+        "roles": "Rol",
+        "request": "Petición"
+      }
+    }
+  },
+  "errors": {
+    "audit": {
+      "range-invalid": "El periodo tiene que empezar antes de terminar y durar como máximo {{maxDays}} días.",
+      "export-not-blocked": "En el periodo elegido no hay eventos bloqueados: solo se exportan los que ya no se ven en el registro y todavía se guardan.",
+      "export-reference-invalid": "Indica la referencia del expediente o de las diligencias, con {{max}} caracteres como máximo.",
+      "export-too-large": "El periodo tiene más de {{maxRows}} eventos: elige un periodo más corto."
+    },
+    "auth": {
+      "email-not-verified": "Para continuar tienes que verificar tu correo. Revisa tu bandeja de entrada.",
+      "forbidden": "No tienes permiso para hacer esto en este ayuntamiento.",
+      "unauthenticated": "Esta operación necesita una sesión válida."
+    },
+    "booking": {
+      "not-found": "No existe esa reserva.",
+      "facility-not-bookable": "Esta instalación no se reserva por internet.",
+      "use-not-available": "Esto no se puede reservar ese día.",
+      "slot-invalid": "Esa hora no está disponible. Elige una de las horas libres.",
+      "slot-taken": "Alguien acaba de reservar esa hora. Elige otra.",
+      "part-taken": "Esa parte ya está reservada a esa hora. Elige otra.",
+      "seat-taken-by-you": "Ya tienes una plaza reservada a esa hora.",
+      "too-soon": "Esa hora ya ha empezado o está demasiado cerca. Elige otra más adelante.",
+      "too-far": "Todavía no se puede reservar ese día.",
+      "too-long": "Esa duración supera el máximo permitido.",
+      "cap-reached": "Ya has llegado al máximo de reservas en este periodo.",
+      "cancel-deadline-passed": "Ya ha pasado el plazo para cancelar o cambiar esta reserva.",
+      "not-cancellable": "Esta reserva ya está cancelada.",
+      "change-other-facility": "Solo se puede cambiar dentro de la misma instalación. Para otra, cancela y reserva de nuevo.",
+      "change-price-paid": "Para cambiar a un precio distinto, cancela y reserva de nuevo.",
+      "payment-transition-invalid": "El pago de esta reserva no puede pasar a ese estado.",
+      "staff-account": "Esta es una cuenta de trabajo; para reservar usa tu cuenta personal.",
+      "affected-needs-manager": "Este cambio afecta a {{count}} reservas futuras. Solo la gestión del ayuntamiento puede decidir qué hacer con ellas.",
+      "idempotency-key-missing": "No se pudo enviar la reserva. Vuelve a intentarlo.",
+      "idempotency-key-invalid": "No se pudo enviar la reserva. Vuelve a intentarlo.",
+      "idempotency-key-reused": "Esta petición ya se usó para otra reserva. Vuelve a elegir la hora y confirma de nuevo."
+    },
+    "common": {
+      "busy": "Otra persona está cambiando lo mismo ahora. Espera unos segundos y vuelve a intentarlo.",
+      "internal": "Algo falló en el servidor. Si se repite, comunica el código del error.",
+      "invalid-parameter": "Algún parámetro de la petición no es válido.",
+      "malformed-json": "El cuerpo de la petición no es un JSON válido o tiene campos desconocidos.",
+      "method-not-allowed": "Este recurso no admite esa operación.",
+      "not-acceptable": "No se puede responder en el formato pedido.",
+      "not-found": "El recurso pedido no existe.",
+      "precondition-required": "Para cambiar este recurso hay que indicar la versión que leíste (If-Match).",
+      "rate-limited": "Han llegado muchas peticiones desde tu conexión en un minuto. Espera un poco y vuelve a intentarlo.",
+      "stale-version": "Los datos cambiaron desde que los abriste. Recarga y vuelve a intentarlo.",
+      "unsupported-media-type": "Envía los datos en JSON.",
+      "network": "No hay conexión con el servidor. Comprueba la red e inténtalo de nuevo.",
+      "unexpected": "Algo falló. Inténtalo de nuevo."
+    },
+    "customfield": {
+      "above-max": "El valor máximo es {{max}}.",
+      "below-min": "El valor mínimo es {{min}}.",
+      "code-invalid": "El código debe empezar por letra y tener de 2 a 40 letras minúsculas, dígitos o guiones bajos.",
+      "code-reserved": "«{{code}}» es un campo propio de la aplicación y no se puede usar.",
+      "code-taken": "Ya hay un campo con el código «{{code}}».",
+      "date-too-early": "La fecha debe ser {{min}} o posterior.",
+      "date-too-late": "La fecha debe ser {{max}} o anterior.",
+      "definition-not-found": "No existe ese campo personalizado en este ayuntamiento.",
+      "duplicate-option": "No repitas la misma opción.",
+      "has-values": "El campo tiene datos guardados y no se puede eliminar. Puedes desactivarlo.",
+      "inactive-field": "Este campo está desactivado y no se puede cambiar.",
+      "invalid-date": "Escribe una fecha válida (AAAA-MM-DD).",
+      "invalid-definition": "La configuración del campo no es coherente ({{reason}}).",
+      "invalid-format": "El valor no tiene el formato esperado ({{format}}).",
+      "invalid-option": "La opción «{{option}}» no está disponible.",
+      "invalid-type": "El valor no es del tipo esperado.",
+      "limit-exceeded": "Se superó el límite de campos personalizados ({{limit}}).",
+      "option-has-values": "La opción «{{option}}» tiene datos guardados y no se puede eliminar. Puedes desactivarla.",
+      "personal-data-public": "Un dato personal no puede ser público: elige «Titular y personal» o «Solo personal».",
+      "required": "Este campo es obligatorio.",
+      "single-usage": "Cada campo se usa en un solo sitio. Para pedirlo en otro, crea otro campo.",
+      "target-has-values": "El campo ya tiene valores guardados: no se puede cambiar de sitio.",
+      "too-few-options": "Elige al menos {{min}} opciones.",
+      "too-long": "Escribe como máximo {{max}} caracteres.",
+      "too-many-decimals": "Se admiten como máximo {{decimals}} decimales.",
+      "too-many-options": "Elige como máximo {{max}} opciones.",
+      "too-short": "Escribe al menos {{min}} caracteres.",
+      "unknown-field": "Este campo no existe en este ayuntamiento.",
+      "visibility-not-allowed": "Los campos de la reserva solo los ven la persona que reserva y el personal."
+    },
+    "facility": {
+      "address-invalid": "Revisa los campos marcados de la dirección.",
+      "address-not-found": "No se encontró esa dirección. Escríbela a mano y marca el punto en el mapa.",
+      "address-required": "Indica la vía, el código postal, la localidad, el código INE y el punto en el mapa.",
+      "affected-bookings": "Este cambio afecta a {{count}} reservas futuras: decide qué hacer con cada una.",
+      "block-invalid": "Revisa los campos marcados del bloqueo.",
+      "block-invalid-period": "El bloqueo termina después de empezar, sin pasar de medianoche, en múltiplos de {{step}} minutos y en horas que existan ese día.",
+      "block-not-found": "Esta instalación no tiene ese bloqueo.",
+      "block-overlap": "Ya hay un bloqueo en esas horas.",
+      "booking-mode-invalid": "Los huecos libres solo se muestran si los vecinos no reservan por internet.",
+      "decision-invalid": "Para cancelar una reserva elige al menos una forma de avisar; si se mantiene, no se avisa.",
+      "description-invalid": "Escribe la descripción en gallego y en castellano, de hasta {{max}} caracteres cada una.",
+      "house-rules-invalid": "Escribe las normas de la instalación en gallego y en castellano, de hasta {{max}} caracteres cada una.",
+      "details-invalid": "Revisa los campos marcados de la tarjeta Datos.",
+      "exception-date-taken": "Esta instalación ya tiene una excepción en esa fecha. Edítala en lugar de crear otra.",
+      "exception-invalid": "Revisa los campos marcados de la excepción.",
+      "exception-not-found": "Esta instalación no tiene esa excepción.",
+      "exclusive-use-overlap": "El uso «{{name}}» ya bloquea los demás en alguna de estas fechas.",
+      "geocoder-unavailable": "Ahora no se pueden buscar direcciones. Escribe la dirección a mano y marca el punto en el mapa.",
+      "holiday-year-invalid": "Pide un año entre {{min}} y {{max}}.",
+      "interval-invalid": "Cada tramo termina después de empezar, sin pasar de la medianoche y en múltiplos de {{step}} minutos.",
+      "interval-overlap": "Dos tramos del mismo día no se pueden solapar.",
+      "name-invalid": "El nombre es obligatorio y tiene como máximo {{max}} caracteres.",
+      "name-taken": "Ya hay una instalación llamada «{{name}}» en este ayuntamiento.",
+      "not-found": "No existe esa instalación en este ayuntamiento.",
+      "photo-alt-invalid": "Describe la foto en gallego y en castellano, con hasta {{max}} caracteres.",
+      "photo-limit": "Una instalación puede tener como máximo {{max}} fotos. Quita alguna antes de añadir otra.",
+      "photo-not-found": "Esa foto ya no está en la biblioteca. Recarga la ficha.",
+      "photo-too-large": "La foto puede tener como máximo {{max}}.",
+      "photo-too-many-pixels": "La foto puede tener como máximo {{max}} megapíxeles. Redúcela y vuelve a subirla.",
+      "photo-unreadable": "No se puede leer esta foto. Guárdala otra vez como JPEG o PNG.",
+      "photo-unsupported-type": "Sube la foto en JPEG o PNG.",
+      "season-invalid": "Revisa los campos marcados de la temporada.",
+      "season-not-found": "Esta instalación no tiene esa temporada.",
+      "season-overlap": "Estas fechas se solapan con la temporada «{{name}}». Para cambiar solo unos días sueltos, usa una excepción.",
+      "sport-duplicated": "La instalación ya tiene ese deporte.",
+      "sport-name-invalid": "Escribe el nombre en gallego y en castellano, de hasta {{max}} caracteres.",
+      "sport-name-taken": "Ya hay un deporte llamado «{{name}}» en este ayuntamiento.",
+      "sport-unknown": "Ese deporte no está en el catálogo ni entre los del ayuntamiento.",
+      "use-archived": "El uso «{{name}}» ya no está en la instalación.",
+      "use-blocks-others-needs-dates": "Solo puede bloquear los demás usos un uso de «solo unas fechas».",
+      "use-capacity-required": "Indica cuántas personas caben en cada franja.",
+      "use-dates-required": "Indica al menos un periodo de fechas.",
+      "use-has-bookings": "Este uso tiene {{count}} reservas futuras: no se puede cambiar así. Puedes cambiar el nombre y las fechas, o crear un uso nuevo.",
+      "use-invalid": "Revisa los campos marcados del uso.",
+      "use-name-taken": "Esta instalación ya tiene un uso llamado «{{name}}».",
+      "use-not-found": "Esta instalación no tiene ese uso.",
+      "use-part-name-taken": "Dos partes de este uso tienen el mismo nombre: cambia uno de ellos.",
+      "use-parts-required": "Un uso por partes tiene al menos {{min}} partes con nombre.",
+      "use-period-overlap": "Los periodos de este uso no se pueden solapar.",
+      "use-price-invalid": "Un uso de pago lleva un importe de 0,01 a 1.000 euros.",
+      "use-rule-invalid": "Revisa las condiciones de la reserva del uso: cada una tiene su rango y el límite por persona lleva número y periodo.",
+      "use-weekdays-invalid": "Elige al menos un día de la semana.",
+      "images-invalid": "Las imágenes han cambiado mientras las editabas: hay una repetida o ya no está. Recarga la ficha y vuelve a elegirlas.",
+      "photo-not-pending": "Esa foto ya está guardada en la biblioteca.",
+      "has-bookings": "Ha tenido reservas: para conservar el historial, dala de baja en vez de eliminarla.",
+      "not-publishable": "Para publicarla hace falta la dirección, al menos un deporte, al menos un uso y el horario.",
+      "sports-required": "Elige al menos un deporte.",
+      "uses-required": "Añade al menos un uso.",
+      "no-open-day": "Abre al menos un día."
+    },
+    "indicators": {
+      "filter-invalid": "Revisa la instalación y los usos elegidos: alguno no es de este ayuntamiento o de esa instalación, o hay demasiados.",
+      "period-invalid": "Elige un periodo entre el año 2000 y dos años desde hoy. En un rango de fechas, la de fin no puede ser anterior a la de inicio y entre las dos puede haber como mucho {{max}} días."
+    },
+    "municipality": {
+      "language-required": "En esta instalación todo ayuntamiento debe ofrecer el idioma «{{language}}».",
+      "languages-invalid": "Indica al menos un idioma (gallego o castellano) y el idioma por defecto entre ellos.",
+      "name-invalid": "El nombre es obligatorio y tiene como máximo {{max}} caracteres.",
+      "not-found": "No hay ningún ayuntamiento con ese identificador.",
+      "slug-invalid": "El identificador debe tener de 2 a 40 letras minúsculas, dígitos o guiones.",
+      "slug-reserved": "El identificador «{{slug}}» está reservado. Elige otro.",
+      "slug-taken": "El identificador «{{slug}}» ya lo usa otro ayuntamiento.",
+      "theme-color-invalid": "El color «{{color}}» no tiene el formato #rrggbb.",
+      "theme-low-contrast": "El contraste {{pair}} es {{ratio}}:1 y debe ser al menos {{minimum}}:1."
+    },
+    "portability": {
+      "conflict": "Este ayuntamiento (o alguno de sus datos) ya existe en esta instalación.",
+      "invalid-file": "El fichero no es una exportación válida (furar-export, versiones 1 a 3)."
+    },
+    "reference": "Referencia del error: {{id}}",
+    "staff": {
+      "already-member": "Esta persona ya está en el personal de este ayuntamiento o tiene una invitación pendiente.",
+      "anonymised": "Los datos de esta persona ya se anonimizaron y no se puede reactivar. Si vuelve a hacer falta, invítala de nuevo.",
+      "email-invalid": "Escribe un correo válido.",
+      "invitation-email-mismatch": "Esta invitación es para otro correo. Entra con la cuenta del correo invitado.",
+      "invitation-expired": "Esta invitación ha caducado. Pide otra a quien te invitó.",
+      "invitation-invalid": "Esta invitación no es válida o ya se ha usado. Pide otra a quien te invitó.",
+      "invitation-own": "No puedes aceptar una invitación que hiciste tú. Pide a otra persona con el rol Gestión que te invite.",
+      "invitation-personal-account": "Esta cuenta ya tiene reservas personales y el personal usa una cuenta solo para el trabajo. Pide a quien te invitó que te invite con el correo del trabajo.",
+      "invitation-platform-account": "Con la cuenta de la administración de la plataforma no se puede formar parte del personal de un ayuntamiento. Entra con una cuenta propia con el correo invitado.",
+      "invitation-rate-limited": "Se han enviado demasiadas invitaciones. Espera un poco antes de enviar otra.",
+      "last-manager": "El ayuntamiento tiene que tener siempre al menos una persona activa con el rol Gestión. Invita a otra antes.",
+      "not-found": "No existe esa persona en el personal de este ayuntamiento.",
+      "personal-account": "Esta cuenta reservó como vecina mientras estaba desactivada, así que ya no se puede reactivar. Invita a la persona de nuevo, en el correo del trabajo.",
+      "transition-invalid": "Esto no se puede hacer con el estado actual de esta persona."
+    },
+    "theme": {
+      "low-contrast": "Hay combinaciones de colores con poco contraste: revisa la lista de comprobación."
+    },
+    "validation": {
+      "failed": "Algún campo no es válido. Revisa los campos marcados.",
+      "invalid": "El valor no es válido.",
+      "pattern": "El formato no es válido.",
+      "range": "El valor está fuera del rango permitido.",
+      "required": "Este campo es obligatorio.",
+      "size": "La longitud debe estar entre {{min}} y {{max}}."
+    },
+    "legal": {
+      "https": "Tiene que empezar por https://",
+      "email": "Escribe un correo como nombre@concello.gal",
+      "ine": "Tiene que tener 5 dígitos",
+      "dir3": "Una letra mayúscula y 8 letras o números",
+      "nif": "Una letra, 7 números y una letra o número",
+      "phone": "Escribe solo números, con un + delante si es internacional",
+      "url-required": "Escribe la dirección de vuestra página"
+    }
+  },
+  "footer": {
+    "nav": "Información legal y código fuente",
+    "accessibility": "Accesibilidad",
+    "privacy": "Privacidad",
+    "source": "Código fuente",
+    "license": "Licencia (EUPL-1.2)",
+    "thirdParty": "Licencias de terceros",
+    "legalNotice": "Aviso legal",
+    "external": "(página del ayuntamiento)"
+  },
+  "accessibility": {
+    "title": "Declaración de accesibilidad",
+    "intro": "El Concello {{ofName}} se ha comprometido a hacer accesible su sitio web de conformidad con el Real Decreto 1112/2018, de 7 de septiembre, sobre accesibilidad de los sitios web y aplicaciones para dispositivos móviles del sector público.",
+    "scope": "La presente declaración de accesibilidad se aplica a las páginas de este ayuntamiento en el servicio de reserva de instalaciones deportivas municipales.",
+    "statusTitle": "Situación de cumplimiento",
+    "status": "Este sitio web es parcialmente conforme con el RD 1112/2018 debido a la falta de conformidad de los aspectos que se indican a continuación.",
+    "nonAccessibleTitle": "Contenido no accesible",
+    "nonAccessibleManual": "Falta de conformidad: todavía no se ha hecho la revisión manual con lectores de pantalla (NVDA, VoiceOver y TalkBack), por lo que puede haber barreras que las pruebas automáticas no detectan.",
+    "nonAccessibleBurden": "Carga desproporcionada y contenido fuera del ámbito de la legislación: no aplica.",
+    "preparationTitle": "Preparación de la presente declaración",
+    "preparation": "La presente declaración se preparó el 22 de octubre de 2026 mediante autoevaluación: pruebas automáticas (axe-core, WCAG 2.1 niveles A y AA) en cada pantalla, en gallego y en castellano, a 320 píxeles de ancho y con los temas de color de dos ayuntamientos, y pruebas de navegación con teclado. Última revisión: 22 de octubre de 2026.",
+    "contactTitle": "Observaciones y datos de contacto",
+    "contact": "Puede comunicar al Concello {{ofName}} los problemas de accesibilidad que encuentre, solicitar información en formato accesible o presentar quejas sobre el cumplimiento del RD 1112/2018 a través del registro electrónico de su sede electrónica o del registro presencial del ayuntamiento.",
+    "enforcementTitle": "Procedimiento de aplicación",
+    "enforcement": "Si una vez realizada una solicitud de información accesible o queja, esta hubiera sido desestimada, no se estuviera de acuerdo con la decisión adoptada o la respuesta no cumpliera los requisitos contemplados en el artículo 12.5 del RD 1112/2018, la persona interesada podrá iniciar una reclamación.",
+    "contactEmail": "Correo de accesibilidad del ayuntamiento:",
+    "contactOffice": "Sede electrónica:",
+    "complaintUnit": "La reclamación se presenta ante {{unit}}, unidad responsable de accesibilidad (artículo 13 del RD 1112/2018).",
+    "complaintUnitDefault": "La reclamación se presenta ante la unidad responsable de accesibilidad del Concello {{ofName}} (artículo 13 del RD 1112/2018), a través del registro de su sede electrónica o del registro presencial.",
+    "complaintLink": "Formulario de reclamación:"
+  },
+  "privacy": {
+    "title": "Privacidad",
+    "controllerTitle": "Responsable del tratamiento",
+    "controller": "{{owner}}. Usa esta web para gestionar las cuentas y las reservas de las instalaciones deportivas municipales.",
+    "dpoTitle": "Delegado de protección de datos",
+    "phone": "Teléfono: {{value}}",
+    "purposeTitle": "Finalidad y base jurídica",
+    "purpose": "Gestionar las cuentas, las reservas y los avisos del servicio municipal de instalaciones deportivas, en ejercicio de una misión de interés público (artículo 6.1.e del RGPD; Ley 7/1985, artículo 25.2.l). No se pide consentimiento: registrarse es la forma de usar el servicio.",
+    "dataTitle": "Datos que se tratan",
+    "data": "Los que aportas al crear la cuenta (nombre, correo) y al reservar, y los campos adicionales que defina el ayuntamiento.",
+    "recipientsTitle": "Destinatarios y encargado",
+    "recipients": "Ninguno, salvo obligación legal. El propio ayuntamiento aloja el servicio.",
+    "recipientsProcessor": "Ninguno, salvo obligación legal. {{processor}} aloja y opera el servicio como encargado del tratamiento (artículo 28 del RGPD), por contrato con el ayuntamiento.",
+    "retentionTitle": "Conservación",
+    "retention": "La cuenta, hasta que pidas la baja por los canales de «Derechos»: no se borra sola. Las reservas, 2 años desde su fecha o su último cambio (las de pago, 5 años, por la normativa tributaria); después se anonimizan y solo quedan para las estadísticas, sin ningún dato tuyo. Los registros de acceso y de seguridad de la cuenta, 90 días.",
+    "rightsTitle": "Derechos",
+    "rights": "Puedes ejercer los derechos de acceso, rectificación, supresión, oposición y limitación ante el ayuntamiento.",
+    "complaint": "Si consideras que no se han respetado, puedes reclamar ante la Agencia Española de Protección de Datos.",
+    "rightsDpo": "Delegado de protección de datos:",
+    "storageTitle": "Almacenamiento en el navegador",
+    "storage": "Solo el técnico imprescindible: el idioma elegido y si el tema es claro u oscuro (localStorage), los datos temporales del inicio de sesión (sessionStorage) y las cookies de sesión del servidor de identidad. No hay cookies de análisis ni de publicidad ni recursos de terceros.",
+    "staff": {
+      "heading": "Personal del ayuntamiento",
+      "controller": "El Ayuntamiento {{ofName}}, de la pertenencia al personal y del registro de actividad.",
+      "data": "Nombre y correo, rol, accesos y las acciones en la gestión (registro de actividad).",
+      "purpose": "Controlar quién entra en la gestión y garantizar la seguridad del servicio (Esquema Nacional de Seguridad), por obligación legal y en ejercicio de una misión de interés público (artículo 6.1.c y 6.1.e del RGPD). El registro también puede usarse para exigir responsabilidades, también disciplinarias (artículo 87 de la Ley Orgánica 3/2018).",
+      "retention": "Cada acción se ve en la gestión durante {{visible}}. Después queda bloqueada hasta que se borra, a los {{retention}}, el plazo de prescripción de las infracciones de protección de datos y de las faltas disciplinarias. Si te desactivan, tu nombre y correo se bloquean cuando pasa {{visible}} y se anonimizan cuando se borra tu última acción.",
+      "recipients": "Ninguno, salvo obligación legal. Los eventos bloqueados solo se ponen a disposición de juzgados y tribunales, del Ministerio Fiscal, de las autoridades de protección de datos o de un expediente abierto, y cada entrega queda en el registro con el motivo."
+    }
+  },
+  "legalNotice": {
+    "title": "Aviso legal",
+    "ownerTitle": "Titular",
+    "ownerDefault": "Concello {{ofName}}",
+    "nif": "NIF: {{value}}",
+    "address": "Domicilio: {{value}}",
+    "email": "Correo electrónico:",
+    "dir3": "Código DIR3: {{value}}",
+    "office": "Sede electrónica:",
+    "staffTitle": "Obligaciones del personal",
+    "staffIntro": "El personal del ayuntamiento que trabaja en la gestión debe:",
+    "staffItems": {
+      "credentials": "Custodiar sus credenciales: la contraseña es personal, no se comparte ni se deja a la vista.",
+      "confidentiality": "Guardar secreto de los datos personales que conozca en la gestión, también después de dejar el puesto (deber de confidencialidad, artículo 5 de la Ley Orgánica 3/2018).",
+      "purpose": "Usar la gestión y los datos solo para sus tareas en el ayuntamiento.",
+      "report": "Avisar enseguida a la gestión del ayuntamiento si cree que alguien ha podido usar su cuenta o si pierde el acceso a su correo.",
+      "signOut": "Cerrar la sesión al terminar si usa un equipo compartido."
+    },
+    "softwareTitle": "Software",
+    "software": "Furar es software libre bajo la licencia EUPL-1.2."
+  },
+  "legal": {
+    "external": "El ayuntamiento publica esta página en su web:",
+    "externalHint": "(página del ayuntamiento)",
+    "none": "El ayuntamiento no publica esta página."
+  },
+  "ui": {
+    "tone": {
+      "info": "Información:",
+      "warn": "Aviso:",
+      "danger": "Error:",
+      "success": "Hecho:"
+    },
+    "timePicker": {
+      "name": "{{label}}, {{time}}",
+      "empty": "Elegir hora"
+    },
+    "calendar": {
+      "previousMonth": "Mes anterior",
+      "nextMonth": "Mes siguiente",
+      "rangeStart": "inicio",
+      "rangeEnd": "fin"
+    },
+    "dateField": {
+      "name": "{{label}}, {{date}}",
+      "empty": "Elegir fecha",
+      "dialog": "{{label}}: elegir fecha"
+    },
+    "dialog": {
+      "close": "Cerrar"
+    },
+    "confirm": {
+      "cancel": "Cancelar",
+      "typeToConfirm": "Para confirmar, escribe «{{phrase}}»"
+    },
+    "chipMenu": {
+      "name": "{{label}}: {{value}}. Cambiar"
+    },
+    "combobox": {
+      "searching": "Buscando…",
+      "empty": "Sin resultados",
+      "error": "No se pudo buscar",
+      "countOne": "1 sugerencia",
+      "countOther": "{{count}} sugerencias",
+      "create": "Crear",
+      "createWith": "{{action}} «{{query}}»",
+      "createHint": "Opción al final: {{option}}."
+    },
+    "editSection": {
+      "unsaved": "Cambios sin guardar",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "saved": "Guardado",
+      "edit": "editar",
+      "empty": "Sin indicar"
+    },
+    "unsavedChanges": {
+      "title": "¿Salir sin guardar?",
+      "message": "Hay cambios sin guardar en esta página. Si sales, se pierden.",
+      "leave": "Salir sin guardar",
+      "stay": "Seguir editando",
+      "discardTitle": "¿Descartar los cambios?",
+      "discardMessage": "Hay cambios sin guardar. Si los descartas, se pierden.",
+      "discard": "Descartar los cambios"
+    },
+    "map": {
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar",
+      "newWindow": "(abre en otra ventana)",
+      "marker": "Chincheta: {{latitude}}, {{longitude}}",
+      "moved": "Chincheta en {{latitude}}, {{longitude}}",
+      "hint": "Mueve la chincheta arrastrándola, pulsando en el mapa, con las flechas cuando tenga el foco o escribiendo las coordenadas.",
+      "hintEmpty": "Pulsa en el mapa para poner la chincheta o escribe las coordenadas.",
+      "hintNoMap": "Se rellenan al buscar la dirección; también se pueden escribir.",
+      "latitude": "Latitud",
+      "longitude": "Longitud",
+      "invalid": {
+        "latitude": "Escribe un número entre −90 y 90, por ejemplo 43,491400.",
+        "longitude": "Escribe un número entre −180 y 180, por ejemplo −8,187300."
+      }
+    },
+    "carousel": {
+      "previous": "Anteriores",
+      "next": "Siguientes",
+      "moved": "Movida a la posición {{position}} de {{total}}."
+    },
+    "bilingual": {
+      "language": "Idioma de «{{label}}»",
+      "errorIn": "{{lang}}:"
+    },
+    "qr": {
+      "name": "Código QR de la reserva {{code}}"
+    },
+    "fieldPopover": {
+      "close": "Cerrar «{{label}}»"
+    },
+    "weekdayPicker": {
+      "shortcuts": "Atajos",
+      "all": "Todos",
+      "workdays": "Lunes a viernes",
+      "weekend": "Fines de semana"
+    },
+    "statTile": {
+      "more": "Ver evolución",
+      "noPrevious": "Sin datos del periodo anterior"
+    },
+    "chartCard": {
+      "table": "Tabla",
+      "tableFor": "Tabla: {{title}}"
+    },
+    "exportMenu": {
+      "label": "Exportar",
+      "named": "Exportar: {{subject}}",
+      "pdf": "PDF",
+      "csv": "CSV",
+      "pdfHint": "Para imprimir: en el diálogo, elige «Guardar como PDF»",
+      "csvHint": "Los datos, para una hoja de cálculo"
+    },
+    "richText": {
+      "toolbar": "Formato",
+      "h2": "Título",
+      "h3": "Subtítulo",
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "bulletList": "Lista",
+      "orderedList": "Lista numerada",
+      "link": "Enlace",
+      "keys": {
+        "h2": "Ctrl+Alt+2",
+        "h3": "Ctrl+Alt+3",
+        "bold": "Ctrl+B",
+        "italic": "Ctrl+I",
+        "bulletList": "Ctrl+Mayús+8",
+        "orderedList": "Ctrl+Mayús+7",
+        "link": "Ctrl+K"
+      },
+      "linkUrl": "Dirección del enlace",
+      "linkAdd": "Añadir",
+      "linkCancel": "Cancelar",
+      "linkRequired": "Escribe la dirección",
+      "linkInvalid": "Tiene que empezar por https:// o mailto:"
+    },
+    "toast": {
+      "close": "Cerrar el aviso"
+    },
+    "unsavedChoice": {
+      "title": "¿Guardar los cambios de {{tab}}?",
+      "message": "Si los descartas, vuelven los datos guardados.",
+      "discard": "Descartar"
+    },
+    "checklist": {
+      "count": "{{done}} de {{total}}",
+      "done": " (hecho)",
+      "step": "paso",
+      "go": "Ir",
+      "goTo": "Ir: {{step}}"
+    },
+    "form": {
+      "required": "obligatorio",
+      "requiredNote": "Campo obligatorio"
+    },
+    "stepper": {
+      "optional": "Opcional",
+      "position": "Paso {{current}} de {{total}}",
+      "state": {
+        "done": "hecho",
+        "todo": "falta algo",
+        "current": "paso actual"
+      }
+    }
+  },
+  "catalog": {
+    "title": "Catálogo de componentes",
+    "intro": "Solo en desarrollo: las piezas de shared/ui con el tema que elijas. No es una pantalla del producto.",
+    "theme": "Tema de prueba",
+    "themes": {
+      "default": "Por defecto",
+      "limit": "Límite AA",
+      "dark": "Fondo oscuro"
+    },
+    "buttons": "Botones",
+    "fields": "Campos",
+    "group": "Grupo de opciones",
+    "callouts": "Avisos",
+    "rows": "Filas",
+    "states": "Estados",
+    "tags": "Etiquetas",
+    "card": "Card destacada",
+    "sample": {
+      "primary": "Acción principal",
+      "secondary": "Secundaria",
+      "danger": "Eliminar",
+      "quiet": "Terciaria",
+      "small": "Pequeño",
+      "large": "Grande",
+      "disabled": "No disponible",
+      "name": "Nombre",
+      "nameHelp": "Cómo aparece en la web.",
+      "notes": "Notas",
+      "choice": "Una opción",
+      "optionA": "Opción A",
+      "optionB": "Opción B",
+      "optionC": "Opción C",
+      "selectFilled": "Con valor",
+      "selectHelp": "La opción C se ve pero no se puede elegir.",
+      "selectEmpty": "Sin valor",
+      "selectPlaceholder": "Elige una opción",
+      "selectError": "Con error",
+      "selectDisabled": "Desactivado",
+      "calloutTitle": "Título del aviso",
+      "calloutText": "Texto del aviso, corto y claro.",
+      "rowLink": "Fila que lleva a otra pantalla",
+      "rowActions": "Fila con acciones",
+      "rowDetail": "Detalle en texto secundario",
+      "rowValue": "12",
+      "empty": "Todavía no hay nada aquí.",
+      "errorTitle": "No se pudo cargar",
+      "errorText": "Algo falló. Inténtalo de nuevo.",
+      "tag": "Etiqueta",
+      "cardText": "Una card con el tinte del color del ayuntamiento.",
+      "timeFrom": "Lunes, tramo 1, desde",
+      "timeTo": "Lunes, tramo 1, hasta",
+      "timeFromVisible": "Desde",
+      "timeToVisible": "Hasta",
+      "timeDisabled": "Domingo, tramo 1, desde",
+      "timeHelp": "Cada 15 minutos; el fin puede ser a las 24:00.",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "dateHelp": "Solo desde hoy hasta dentro de un año; los domingos no se pueden elegir.",
+      "dateDisabled": "Fecha cerrada",
+      "calendar": "Calendario suelto",
+      "calendarValue": "Fecha elegida: {{date}}",
+      "softTag": "Fútbol sala"
+    },
+    "context": "Avisos en contexto",
+    "ctx": {
+      "errorTitle": "Revisa 2 campos",
+      "errorText": "Falta la etiqueta en castellano y el código ya existe.",
+      "okTitle": "Campo guardado",
+      "label": "Etiqueta (gallego)",
+      "code": "Código",
+      "save": "Guardar",
+      "sample": "Desfibrilador"
+    },
+    "select": "Desplegable",
+    "timePicker": "Selector de hora",
+    "dates": "Calendario y campo de fecha",
+    "overlays": "Diálogo, menú y interruptor",
+    "ov": {
+      "openDialog": "Abrir diálogo",
+      "dialogTitle": "Título del diálogo",
+      "dialogText": "Una línea que explica la capa.",
+      "dialogBody": "Contenido de la capa: campos, una lista o un aviso. Si no cabe, se desplaza y el pie queda a la vista.",
+      "dialogSave": "Guardar",
+      "openConfirm": "Eliminar la foto",
+      "confirmTitle": "¿Eliminar la foto?",
+      "confirmText": "Deja de verse en la ficha. No se puede deshacer.",
+      "confirmAction": "Eliminar",
+      "confirmBusy": "Eliminando",
+      "answerYes": "Confirmado",
+      "answerNo": "Cancelado",
+      "openAffected": "Reservas afectadas",
+      "affectedSummary": "Bloqueo del 3 nov, 8:00–12:00 · Mantenimiento del césped",
+      "statusLabel": "Estado",
+      "active": "Activa",
+      "closed": "Cerrada temporalmente",
+      "withdrawn": "De baja",
+      "withdrawTitle": "¿Dar de baja?",
+      "withdrawText": "Deja de verse y no se puede reservar. Se puede volver a activar.",
+      "withdrawAction": "Dar de baja",
+      "switchOnline": "Reserva por internet",
+      "switchSlots": "Mostrar huecos libres",
+      "switchDisabled": "Cubierta"
+    },
+    "choices": "Segmentado y pestañas",
+    "choice": {
+      "mode": "Se alquila",
+      "modes": {
+        "WHOLE": "Entera",
+        "PARTS": "Por partes",
+        "SEATS": "Por plazas"
+      },
+      "value": "Elegido: {{value}}",
+      "duration": "Cada reserva dura",
+      "minutes": "{{minutes}} min",
+      "locked": "Modo fijado (desactivado)",
+      "tabsTitle": "Pestañas",
+      "seasons": "Temporadas",
+      "season": {
+        "winter": "Invierno",
+        "summer": "Verano",
+        "christmas": "Navidad"
+      },
+      "range": {
+        "winter": "1 sep – 30 jun",
+        "summer": "1 jul – 31 ago",
+        "christmas": "22 dic – 7 ene"
+      },
+      "now": "Ahora",
+      "addSeason": "Añadir temporada",
+      "panel": "Aquí iría la semana de {{season}}."
+    },
+    "search": {
+      "title": "Campo con sugerencias y esqueletos",
+      "address": "Dirección",
+      "addressHelp": "Escribe al menos 3 letras. Con «erro» se simula un fallo del buscador.",
+      "manual": "El buscador no responde: en la pantalla real, la dirección se rellena a mano.",
+      "sport": "Deportes",
+      "sportHelp": "Elige uno o crea uno nuevo.",
+      "createSport": "Crear deporte",
+      "chosen": "Deportes elegidos",
+      "sports": {
+        "football": "Fútbol",
+        "futsal": "Fútbol sala",
+        "basketball": "Baloncesto",
+        "handball": "Balonmano",
+        "padel": "Pádel",
+        "swimming": "Natación",
+        "tennis": "Tenis",
+        "volleyball": "Voleibol"
+      }
+    },
+    "edit": {
+      "title": "Sección editable",
+      "contact": "Contacto",
+      "phone": "Teléfono",
+      "email": "Correo",
+      "emailHelp": "Escribe «error@ejemplo.es» para ver un error del servidor en el campo.",
+      "description": "Descripción",
+      "fail": "Falla el guardado"
+    },
+    "map": {
+      "title": "Mapa",
+      "readOnly": "Solo lectura",
+      "editable": "Editable",
+      "label": "Punto de la instalación",
+      "address": "Rúa de Piñeiros, s/n, 15572 Narón"
+    },
+    "charts": {
+      "title": "Gráficos",
+      "intro": "Un ejemplo de cada constructor de furar-chart con datos inventados. El nombre y la tabla de cada gráfico los pone quien lo usa.",
+      "lineArea": "Línea con área (etiqueta solo en el último valor)",
+      "sparkline": "Minigráfico",
+      "hBars": "Barras horizontales",
+      "columns": "Columnas (la actual destacada)",
+      "stackedBars": "Barras apiladas por estado (la alerta con trama)",
+      "heatmap": "Mapa de calor (cerrado en gris)",
+      "data": {
+        "months": "ene,feb,mar,abr,may,jun",
+        "facilities": "Pabellón,Piscina,Campo de fútbol",
+        "days": "lun,mar,mié,jue,vie,sáb,dom",
+        "occupancy": "Ocupación",
+        "people": "Personas distintas",
+        "inTime": "En plazo",
+        "late": "Fuera de plazo",
+        "municipality": "Por el ayuntamiento",
+        "closed": "Cerrado"
+      }
+    },
+    "media": {
+      "title": "Tira, borrar y menú de la persona",
+      "strip": "Imágenes de ejemplo",
+      "hint": "La primera es la portada · Arrastra para cambiar el orden",
+      "item": "Imagen {{n}}",
+      "deleteRound": "Eliminar la imagen 2",
+      "deleteLabel": "Eliminar esta imagen",
+      "delete": "Eliminar",
+      "user": "Persona de ejemplo",
+      "role": "Gestión",
+      "context": "Ayuntamiento de ejemplo"
+    },
+    "editing": {
+      "title": "Edición y tarjetas",
+      "card": "Pista de ejemplo",
+      "place": "Calle de ejemplo, 1",
+      "tiles": "Tarjetas que se pulsan",
+      "tile": "Uso de ejemplo",
+      "add": "Añadir",
+      "bilingual": "Descripción",
+      "confirm": "Eliminar",
+      "confirmTitle": "¿Eliminar el ejemplo?",
+      "confirmText": "No se puede deshacer.",
+      "phrase": "eliminar ejemplo",
+      "bar": "Barra de acciones",
+      "unsaved": "Cambios sin guardar"
+    },
+    "booking": {
+      "title": "Filtros, campos con panel, días y QR",
+      "filters": "Chips de filtro",
+      "facilities": "Instalación",
+      "payment": "Pago",
+      "court1": "Pista de pádel 1",
+      "court2": "Pista de pádel 2",
+      "pending": "Pendiente",
+      "paid": "Pagada",
+      "toRefund": "A devolver",
+      "refunded": "Devuelta",
+      "free": "Gratis",
+      "fields": "Campos con panel",
+      "what": "Qué",
+      "date": "Fecha",
+      "choose": "Elegir",
+      "uses": "Usos",
+      "football11": "Fútbol 11",
+      "football7": "Fútbol 7",
+      "days": "Días",
+      "qr": "Código QR",
+      "tags": "Estados",
+      "values": "Valores",
+      "use": "Uso",
+      "day": "Día",
+      "dayValue": "martes, 27 de octubre",
+      "time": "Hora",
+      "filterBar": "Fila de filtros",
+      "anyDate": "Cualquier día",
+      "covered": "Cubierta",
+      "allCourts": "Todas"
+    },
+    "indicators": {
+      "title": "Indicadores",
+      "intro": "Cifras que abren su evolución, tarjeta de un gráfico con «Tabla» y «Exportar», y una tabla ancha que se mueve dentro de su región. Los textos y las cifras los pone quien los usa.",
+      "bookings": "Reservas",
+      "occupancy": "Ocupación media",
+      "people": "Personas distintas",
+      "comparison": "respecto a septiembre",
+      "opened": "Se abrió el detalle de «{{label}}».",
+      "chart": "Reservas por mes",
+      "conclusion": "Junio fue el mes con más reservas del semestre.",
+      "month": "Mes",
+      "pdfHint": "Este gráfico, para compartir",
+      "csvHint": "Sus datos, para Excel o LibreOffice",
+      "heat": "Ocupación por día y hora (%)",
+      "day": "Día",
+      "down": "−{{value}} p.p."
+    }
+  },
+  "site": {
+    "tagline": "Deportes municipales",
+    "mainNav": "Principal",
+    "mobileNav": "Navegación",
+    "home": "Inicio",
+    "facilities": "Instalaciones",
+    "myBookings": "Mis reservas"
+  },
+  "section": {
+    "title": "Ayuntamiento",
+    "tab": {
+      "general": "General",
+      "appearance": "Apariencia",
+      "service": "Servicio",
+      "legal": "Legal",
+      "staff": "Personal",
+      "customFields": "Campos personalizados",
+      "activity": "Registro"
+    },
+    "unsaved": ", con cambios sin guardar",
+    "legalWarning": {
+      "missing": ", faltan datos",
+      "page": ", falta una página legal"
+    },
+    "opening": {
+      "title": "Para abrir las reservas",
+      "legal": "Datos que usan los textos legales",
+      "legalNext": "completa los datos legales",
+      "complete": "Completar",
+      "facility": "Primera instalación",
+      "facilityNext": "crea la primera instalación",
+      "create": "Crear"
+    }
+  }
+}

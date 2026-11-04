@@ -1,0 +1,133 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Calendario (furar-calendar, D1-04; docs/deseno.md §8): mes con luns primeiro e
+ * seis filas. Hoxe leva aro (bordo de 2 px), o escollido recheo `primary` e negra; os días que
+ * non se poden escoller, apagados en gris claro, sen riscar nin bordo (2026-10-26: 1.4.3
+ * exime os controles inactivos; o estado vai en `aria-disabled` e, con cores forzadas, en
+ * `GrayText`). Celas de 44 px de alto que se estreitan co ancho: a 320 px a grella enteira cabe sen
+ * scroll lateral.
+ */
+@layer components {
+  .f-calendar {
+    display: block;
+    width: 100%;
+    max-width: 22rem;
+    color: var(--f-ink);
+  }
+
+  .f-calendar__header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    margin-bottom: var(--spacing-unit);
+  }
+  .f-calendar__title {
+    flex: 1;
+    text-align: center;
+    font-weight: 700;
+  }
+  .f-calendar__nav {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--f-touch);
+    height: var(--f-touch);
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-primary-text);
+    cursor: pointer;
+    transition: border-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-calendar__nav[aria-disabled='true'] {
+    border-style: dashed;
+    color: var(--f-ink-soft);
+    cursor: not-allowed;
+  }
+  @media (hover: hover) {
+    .f-calendar__nav:not([aria-disabled='true']):hover {
+      border-color: var(--f-primary);
+    }
+  }
+
+  .f-calendar__grid {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0.125rem;
+  }
+  .f-calendar__weekday {
+    padding-bottom: 0.25rem;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .f-calendar__day {
+    height: var(--f-touch);
+    padding: 0;
+    border: var(--f-border-state) solid transparent;
+    border-radius: var(--radius-field);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    cursor: pointer;
+    transition:
+      background-color var(--f-dur-fast) var(--ease-smooth),
+      border-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-calendar__day[data-outside] {
+    cursor: default;
+  }
+  .f-calendar__day[aria-current='date'] {
+    border-color: var(--f-primary);
+    font-weight: 700;
+  }
+  .f-calendar__day[aria-selected='true'] {
+    border-color: var(--f-primary);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-weight: 700;
+  }
+  /* O foco sobre o recheo `primary` usa a tinta de dentro (docs/deseno.md §5). */
+  .f-calendar__day[aria-selected='true']:focus-visible {
+    outline-color: var(--f-on-primary);
+    outline-offset: calc(-1 * var(--f-focus-ring) - 0.125rem);
+  }
+  /* Apagado: a tinta suave mesturada coa superficie (gris claro en calquera tema). */
+  .f-calendar__day[aria-disabled='true'] {
+    color: color-mix(in srgb, var(--f-ink-soft) 50%, var(--f-surface));
+    cursor: not-allowed;
+  }
+  @media (hover: hover) {
+    .f-calendar__day[data-date]:not([aria-selected='true'], [aria-disabled='true']):hover {
+      background: var(--f-tint);
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .f-calendar__weekday {
+      color: var(--f-ink);
+    }
+  }
+  @media (forced-colors: active) {
+    .f-calendar__nav {
+      border-color: ButtonText;
+    }
+    .f-calendar__day[aria-current='date'] {
+      border-color: CanvasText;
+    }
+    .f-calendar__day[aria-selected='true'] {
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+    .f-calendar__day[aria-disabled='true'] {
+      color: GrayText;
+    }
+  }
+}

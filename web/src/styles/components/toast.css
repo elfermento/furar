@@ -1,0 +1,79 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Toast de «feito» (furar-toast, docs/deseno.md §8, «Toast de feito»): flotante ao pé, centrado, enriba da barra
+ * inferior do móbil e da barra de accións. Superficie con bordo e sombra de capa; o texto na tinta
+ * e o verde só na icona (≥ 3:1), así vale en claro e escuro. Sen scroll horizontal a 320 px: o
+ * ancho nunca pasa do da xanela menos as marxes. A entrada só se anima se a persoa non pide menos
+ * movemento.
+ */
+@layer components {
+  .f-toast-region {
+    --f-toast-bottom: 1rem;
+    position: fixed;
+    right: 0;
+    bottom: calc(var(--f-toast-bottom) + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    z-index: var(--f-z-toast);
+    display: flex;
+    justify-content: center;
+    padding-inline: var(--spacing-gutter);
+    pointer-events: none;
+  }
+  html:has(.f-action-bar) .f-toast-region {
+    --f-toast-bottom: 5.5rem;
+  }
+  @media (max-width: 899px) {
+    html:has(.f-bottomnav) .f-toast-region {
+      --f-toast-bottom: 5.5rem;
+    }
+    html:has(.f-bottomnav):has(.f-action-bar) .f-toast-region {
+      --f-toast-bottom: 10rem;
+    }
+  }
+  .f-toast {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: max-content;
+    max-width: min(32rem, 100%);
+    min-width: 0;
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+    pointer-events: auto;
+  }
+  .f-toast__icon {
+    color: var(--f-success);
+  }
+  .f-toast__text {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .f-toast__close {
+    flex: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .f-toast {
+      animation: f-toast-in 160ms ease-out;
+    }
+  }
+  @keyframes f-toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+  }
+  @media (forced-colors: active) {
+    .f-toast {
+      border-color: CanvasText;
+    }
+  }
+}

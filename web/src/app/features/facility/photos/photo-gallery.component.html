@@ -1,0 +1,70 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.photos.';
+<!-- Enriba do h1 (maqueta): rexión con nome, sen título que adiante ao da instalación. -->
+<section class="gap-unit grid" [attr.aria-label]="t + 'title' | transloco">
+  @if (photos().length) {
+    <div class="relative">
+      <ul class="rounded-card grid gap-2 overflow-hidden sm:h-90 sm:grid-cols-[2fr_1fr_1fr] sm:grid-rows-2">
+        @for (photo of photos(); track photo.kind + photo.id; let i = $index) {
+          <li class="bg-tint max-sm:aspect-[4/3]" [class]="tileClass(i)" [attr.data-photo]="photo.id">
+            <img
+              class="size-full object-cover"
+              [src]="photo.large"
+              [srcset]="photo.thumb + ' 480w, ' + photo.large + ' ' + photo.width + 'w'"
+              [sizes]="i === 0 ? '(min-width: 640px) 50vw, 100vw' : '(min-width: 640px) 25vw, 100vw'"
+              [width]="photo.width"
+              [height]="photo.height"
+              [alt]="alt(photo)"
+              [attr.loading]="i === 0 ? null : 'lazy'"
+            />
+          </li>
+        }
+      </ul>
+      @if (session.editing()) {
+        <button
+          type="button"
+          furarButton="secondary"
+          size="sm"
+          class="absolute right-4 bottom-4"
+          data-change
+          (click)="open()"
+        >
+          <furar-icon name="image" />
+          {{ t + 'change' | transloco }}
+        </button>
+      }
+    </div>
+    @if (photos().length > 1) {
+      <div class="gap-unit flex items-center justify-center sm:hidden" data-pager>
+        <button
+          type="button"
+          furarButton="quiet"
+          size="sm"
+          data-previous
+          [attr.aria-label]="t + 'previous' | transloco"
+          [disabled]="current() === 0"
+          (click)="step(-1)"
+        >
+          <furar-icon name="chevron-left" />
+        </button>
+        <p class="text-support min-w-16 text-center font-bold" aria-live="polite" data-position>
+          {{ t + 'position' | transloco: { current: current() + 1, total: photos().length } }}
+        </p>
+        <button
+          type="button"
+          furarButton="quiet"
+          size="sm"
+          data-next
+          [attr.aria-label]="t + 'next' | transloco"
+          [disabled]="current() === photos().length - 1"
+          (click)="step(1)"
+        >
+          <furar-icon name="chevron-right" />
+        </button>
+      </div>
+    }
+  }
+</section>

@@ -1,0 +1,92 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: CC0-1.0
+-->
+
+# Keycloak de Furar
+
+Identidade OIDC na mesma orixe, baixo `/auth` ([ADR-0007](../../docs/adr/0007-seguridade-pechada.md), [ADR-0015](../../docs/adr/0015-despregue.md)).
+
+| Ficheiro | Que é |
+|---|---|
+| `Dockerfile` | Keycloak 26.8.1 con build optimizado (`postgres`, `/auth`, health, caché local), o tema `furar` e a extensión de Furar (compilada e probada nunha etapa previa co wrapper de Maven da API). |
+| `extension/` | Extensión de Keycloak de Furar (Java, EUPL-1.2; Keycloak só en `provided`, build reproducible): o paso `furar-invitation-email` do formulario de rexistro. Se o URL de acceso trae a proba da invitación do persoal (`furar_invitation`, asinada pola API con `FURAR_INVITATION_PROOF_SECRET`), a firma vale, non caducou (30 minutos ou a invitación) e o correo da conta nova é o mesmo, a conta nace co correo verificado, sen correo de verificación; o tema pon o correo só de lectura e queda un evento `VERIFY_EMAIL` con `furar_verified_by=staff_invitation`. Un só uso por invitación. En calquera outro caso non fai nada ([ADR-0027](../../docs/adr/0027-persoal-e-permisos-fase-1.md)). **Ligazón curta dos correos** (maqueta 55, 2026-11-04; [ADR-0007](../../docs/adr/0007-seguridade-pechada.md)): o provedor de modelos de correo de Keycloak con `order` 100 (`ShortLinkEmailTemplateProvider`, o de por defecto sen configurar nada) garda o URL de cada correo con ligazón de acción (verificar o correo, cambiar o contrasinal, accións da administración, cambio de correo, vinculación) baixo un código de 12 caracteres ao chou sen letras que se confundan (`XXXX-XXXX-XXXX`, ~59 bits) no almacén de obxectos dun só uso de Keycloak, coa mesma vida ca a ligazón; o tema mostra baixo o botón «Non funciona o botón? Abre esta ligazón:» e `<orixe>/auth/realms/furar/l/<código>`, na orixe do propio URL da acción (o hostname configurado). O recurso do realm `l` (`ShortLinkResource`) responde 302 ao URL gardado ou, se non existe ou caducou, 404 coa páxina de erro do tema (`furarShortLinkExpired`: como pedir outra). Non se rexistran códigos nin URL. O botón leva sempre o URL orixinal; se non se pode gardar o código, o correo sae co URL longo. Os códigos viven na caché local de Keycloak: un reinicio pérdeos (queda o botón). **Ligazón da privacidade no rexistro** (`RegistrationPrivacy`, ADR-0017, revisión do 2026-11-03): o parámetro `furar_privacy` do URL de acceso leva o camiño da «Privacidade» do concello (`/naron/privacidade`); a extensión dálle ao tema `furarPrivacyUrl` na orixe do `redirect_uri` xa validado (o parámetro só elixe o camiño, nunca o sitio); un valor que non sexa un camiño simple non vale e a frase non sae. Ademais, só para a vista: se o URL de acceso trae `furar_setup=1` (a web pono mentres non hai ningún concello), a páxina de rexistro recibe `furarSetup` e o tema non mostra a frase de privacidade (nomearía un responsable que aínda non existe); sen efecto de seguridade: un URL feito á man só agocha esa frase na propia vista, e sen o parámetro sae coma sempre (`RegistrationSetup`). Tests: `api/mvnw -B -f deploy/keycloak/extension/pom.xml verify`. |
+| `themes/furar/login/` | Tema de acceso sobre `keycloak.v2` co estilo da web (letra Atkinson Hyperlegible Next en `resources/fonts`, os tokens de cor claros e escuros, tarxeta, campos e botóns en pílula: `resources/css/furar.css`; `template.ftl` pinta claro e só escuro se a web gardou `dark` en `localStorage`, `furar.colorScheme`, porque o concello ten fondo escuro; non segue o esquema do sistema) e galego **completo** (`messages_gl`) e castelán, en todas as pantallas (entrar, crear a conta, esquecín o contrasinal, poñer o contrasinal, verificar o correo, información e erros). `template.ftl`: cabeceira coa marca e o nome do despregue (o do realm) e a etiqueta do usuario xa escrito ligada ao seu campo; `register-commons.ftl`: a información de protección de datos **nunha frase curta e xenérica** («O concello trata os teus datos…» e «Privacidade e os teus dereitos», a páxina «Privacidade» do concello desde o que se entra, `furarPrivacyUrl`), sen casiña «acepto os termos» (art. 13, ADR-0017, revisión do 2026-11-03: sen datos do despregue); sen concello non sae; coa proba da invitación do persoal non sae (os datos do persoal chegan de quen invita: infórmase no correo da invitación, art. 14, ADR-0027), nin con `furarSetup` (aínda sen concellos); `register.ftl` e `login-update-password.ftl`: a axuda «Mínimo 12 caracteres» entre o rótulo e o contrasinal (no HTML vai despois do campo; `furar.css` sóbea á vista) e «Xa tes conta? Entrar»; no rexistro, o contrasinal despois do nome e os apelidos e, coa proba da invitación, o correo só de lectura; `password-validation.ftl`: sen validación no navegador (o erro chega ao enviar, de Keycloak); `password-commons.ftl`: sen «Pechar a sesión noutros dispositivos»; `login.ftl`: tras un acceso fallido, o aviso xenérico do bloqueo; `login-verify-email.ftl` (maqueta 45): un só texto («Mandámosche un correo coas instrucións para verificar a túa conta.»), sen o aviso «Tes que verificar o teu correo…» que Keycloak pon cada vez, e ao centro «Non recibiches o correo de verificación?» co botón «Reenviar o correo» (POST á mesma acción ca a ligazón da base; os erros, como a espera de 30 s entre envíos, seguen saíndo); `furar.css` abre enriba a pista de «Volver empezar» para que non haxa scroll horizontal a 320 px (D4-17). O castelán (`messages_es`) leva os mesmos textos ca o galego nas pantallas de acceso, rexistro, contrasinal, verificación, información e erros (os de base de Keycloak non casan co estilo). Ningún texto das pantallas nin dos correos di «Furar»: a marca é o nome do realm. X09 avisa se a base de Keycloak cambia. |
+| `themes/furar/email/` | Correos co deseño dos da API (`api/src/main/resources/mail/staff-invitation.html`: banda co nome do despregue, título, botón, «Non funciona o botón? Abre esta ligazón:» coa ligazón curta e o mesmo pé, por que chega e «Privacidade»), en HTML e texto, gl e es: verificación do correo («Verifica o teu correo», botón «Verificar o meu correo», maqueta 55; a ligazón vale 30 minutos), restablecer o contrasinal (30 minutos), accións pedidas pola administración, cambio de correo, vinculación cunha conta externa, código de verificación e proba (`html/*.ftl`, `text/*.ftl`); o resto, os de base co mesmo deseño (`html/template.ftl`). |
+| `themes/furar/account/` | Consola da conta (`keycloak.v3`) en galego completo. |
+| `import/furar-realm.json` | **Realm de produción**: nome «Reservas deportivas» (`displayName`, a marca das pantallas e dos correos, e o nome do remitente, `smtpServer.fromDisplayName`); clientes `furar-web` (público, código + PKCE; só o mapeador de audiencia) e `furar-api` (sen roles: a administración da plataforma e o persoal de cada concello saen da base de datos de Furar, [ADR-0027](../../docs/adr/0027-persoal-e-permisos-fase-1.md) e [ADR-0028](../../docs/adr/0028-administracion-da-plataforma-e-primeiro-acceso.md)); fluxo `browser` de Keycloak, rexistro `furar-registration` (o de Keycloak co contrasinal no formulario, `always_set_password_on_register_form`, e o paso `furar-invitation-email`) e **sen segundo factor** para ninguén (decisión do mantedor do 2026-11-02: sen `furar-2fa`, sen `acr.loa.map`, accións `CONFIGURE_TOTP` e `CONFIGURE_RECOVERY_AUTHN_CODES` listadas pero desactivadas, porque importar a lista substitúe a de Keycloak; [nota](../../docs/notas-realm/2026-11-02-sen-segundo-factor-e-estilo.md)); sen grupos ([nota do 2026-11-03](../../docs/notas-realm/2026-11-03-administracion-na-base-e-nome.md) para un Keycloak xa instalado); rotación do refresh token, eventos de acceso e administración (90 días), galego por defecto, verificación de correo (ligazón de 30 minutos, `actionTokenGeneratedByUserLifespan.verify-email`; a do contrasinal, igual), o correo como usuario (`registrationEmailAsUsername`, [`notas-realm/2026-10-29-correo-como-usuario.md`](../../docs/notas-realm/2026-10-29-correo-como-usuario.md)). **Sen usuarios.** |
+| `password-blacklists/furar-contrasinais-comuns.txt` | Lista de contrasinais comúns da política do realm (`passwordBlacklist`), en minúsculas e só de 12 caracteres ou máis (os curtos xa os rexeita a lonxitude). Xerada para Furar a partir de patróns habituais (secuencias de teclado e de díxitos, repeticións, palabras comúns en galego, castelán e inglés con números, anos e símbolos); CC0 (REUSE.toml). Vai na imaxe en `/opt/keycloak/data/password-blacklists`. |
+| `demo/overlay.json` | O que a demo engade: cliente `furar-e2e`, usuarios con `id` fixo, URL de `localhost` e o provedor SAML `clave-simulada` cos seus mapeadores (nome e correo; o NIF non). O acceso é o mesmo ca en produción. Sen roles nin grupos por concello: o persoal sae da API. |
+| `import-demo/clave-simulada-realm.json` | **Só demo** (CC0): realm que fai de Cl@ve, IdP SAML 2.0 con asercións asinadas e `NameID` persistente; usuaria NIF `00000000T`. Edítase á man ([ADR-0019](../../docs/adr/0019-autenticacion-publica-clave.md)). |
+| `import-demo/furar-realm.json` | Realm de `dev` e `full` = produción + overlay. **Xerado**: non se edita á man. |
+
+Despois de cambiar `import/` ou `demo/`: `scripts/realm-demo.sh` (a CI comproba que está ao día con `--check`).
+
+Galego: Keycloak non o trae. `scripts/proba-temas-keycloak.sh` (X09) compara as claves dos tres temas coas da versión fixada no `Dockerfile` e falla se falta unha ou se cambian os parámetros; ao subir Keycloak, traduce as claves novas que liste. X10 comproba en Mailpit que o correo de verificación chega en galego.
+
+Placeholders que resolve Keycloak ao importar: `${FURAR_PUBLIC_URL}` e `${FURAR_SMTP_*}`. Desde o 2026-11-03 non hai `${FURAR_PRIVACY_*}` nin textos do realm `furarPrivacy*`: a ligazón da frase do rexistro vén do parámetro `furar_privacy` (o camiño da «Privacidade» do concello, que pon a web) e a extensión (`RegistrationPrivacy`) só o acepta como camiño simple e o pon na orixe do `redirect_uri` xa validado ([`notas-realm/2026-11-03-privacidade-por-concello.md`](../../docs/notas-realm/2026-11-03-privacidade-por-concello.md)). A extensión le en cada arranque `FURAR_INVITATION_PROOF_SECRET` (o mesmo valor ca a API; sen el, ou curto, avisa e non verifica nada). D51 e D52 (`scripts/proba-identidade-keycloak.sh`) proban o rexistro (tamén coa proba da invitación: válida —sen a frase de privacidade—, reutilizada, doutro segredo, caducada e con outro correo; a frase só co camiño do concello en `furar_privacy` e nunca con `furar_setup=1` nin cun camiño que non vale; a marca «Reservas deportivas» e ningún «Furar»; a verificación do correo co botón de reenviar e o correo nun Mailpit de usar e tirar; e o tema escuro) e a entrada por Cl@ve simulada nun Keycloak de usar e tirar coa extensión. O realm só se importa se non existe: os cambios posteriores fanse na consola ou cunha migración documentada.
+
+## Acceso: bloqueo e contrasinal
+
+Igual para a veciñanza e o persoal, e só con contrasinal ([`docs/ens.md`](../../docs/ens.md), op.acc.5, op.acc.6 e op.acc.6.8; notas do realm [do bloqueo](../../docs/notas-realm/2026-10-29-bloqueo-e-contrasinal.md) e [do 2026-11-02](../../docs/notas-realm/2026-11-02-sen-segundo-factor-e-estilo.md) para un Keycloak xa instalado). Quen perde o acceso ao seu correo de traballo: a xestión desactívaa en Furar e invita o correo novo.
+
+- **Bloqueo temporal:** 5 intentos fallidos bloquean a conta 15 minutos (`failureFactor` 5, `waitIncrementSeconds` e `maxFailureWaitSeconds` 900, `bruteForceStrategy` `MULTIPLE`). Sen o bloqueo curto por dous fallos rápidos (`minimumQuickLoginWaitSeconds` 0) e co contador a cero 15 minutos despois do último fallo (`maxDeltaTimeSeconds` 900), así que tras o bloqueo volve haber 5 intentos. Nunca permanente (`permanentLockout` false). Restablecer o contrasinal desde «Esqueciches o contrasinal?» desbloquea; a administración tamén (*Users* → a persoa → *Unlock*, ou `DELETE …/attack-detection/brute-force/users/{id}`).
+- **Aviso:** tras cada acceso fallido, baixo o contrasinal, «Despois de 5 intentos fallidos, a conta bloquéase 15 minutos. Se xa está bloqueada, agarda ese tempo ou usa «Esqueciches o contrasinal?»». Os números saen do realm. O texto é o mesmo exista ou non a conta, e unha conta bloqueada dá o mesmo erro ca un contrasinal malo (como a base de Keycloak): non se di cantos intentos quedan, porque iso descubriría que contas existen.
+- **Política de contrasinais:** `length(12) and notUsername and notEmail and passwordBlacklist(furar-contrasinais-comuns.txt) and maxLength(128)`: 12 caracteres ou máis, distinto do correo (que é o usuario) e fóra da lista de contrasinais comúns. Entre o rótulo e o campo, unha liña: «Mínimo 12 caracteres»; o resto explícao Keycloak ao enviar («ese contrasinal non está permitido», «non pode ser igual ao nome de usuario»…).
+- **Orde ao crear a conta** (desde o 2026-11-02, [nota](../../docs/notas-realm/2026-11-02-invitacion-verifica-o-correo.md)): correo, nome, apelidos, contrasinal e repetilo nun só formulario (maqueta 36). Desde a invitación do persoal: o correo xa posto e só de lectura, sen a frase de privacidade (vai no correo da invitación) → «Crear a conta» → volta á web co correo verificado, sen outro correo. Por calquera outro camiño (a veciñanza, ou unha invitación sen proba válida): «Crear a conta» → «Verificación do correo» → a ligazón do correo (30 minutos) → volta á web. Ata o 2026-11-02, Keycloak pedía o contrasinal despois de verificar o correo (o seu comportamento por defecto co correo verificado no realm); agora pídese antes, así que unha conta sen verificar pode ter contrasinal, pero non entra ata verificar o correo, e quen é dono do correo recupera a conta con «Esqueciches o contrasinal?».
+
+## Token
+
+- `aud` contén `furar-api` (mapeador de audiencia).
+- Sen roles: nin `furar_roles` nin roles de cliente. A administración da plataforma e o persoal de cada concello están na base de datos de Furar (ADR-0027, [ADR-0028](../../docs/adr/0028-administracion-da-plataforma-e-primeiro-acceso.md); a primeira administración é a conta co correo verificado igual a `FURAR_ADMIN_EMAIL` mentres non hai ningunha). A veciñanza non ten rol: os seus casos de uso (`@PersonUseCase`) piden sesión e correo verificado ([ADR-0025](../../docs/adr/0025-reservas-fase-1.md)). `scripts/comprobar-realm.sh` falla se queda o grupo `plataforma`, algún rol en `furar-api` ou o mapeador `furar_roles`.
+- `iss` = `${FURAR_PUBLIC_URL}/auth/realms/furar`.
+- `azp` = `furar-web` (na demo tamén `furar-e2e`); a API rexeita outros clientes.
+
+## Usuarios de demo (só `dev` e `full`)
+
+Contrasinal de todos: `Furar-demo-2026` (cumpre a política do realm, a mesma ca en produción; os tests e scripts léno de `demo/overlay.json`). Na pantalla de acceso escríbese o correo (`xestor-naron@example.org`): o correo é o usuario. O nome de usuario da táboa tamén entra, porque as contas importadas consérvano.
+
+Cada usuario ten un id fixo (o `sub` do token): a API recoñéceo nos datos de demo. Os roles **saen da base de datos de Furar**: o persoal, da táboa de pertenzas (`db/demo/R__demo_staff.sql`, [ADR-0027](../../docs/adr/0027-persoal-e-permisos-fase-1.md)), e a administración da plataforma de `admin-plataforma`, dos datos de demo da API ([ADR-0028](../../docs/adr/0028-administracion-da-plataforma-e-primeiro-acceso.md)). A web le os roles da API, así que a demo non ten grupos nin roles en Keycloak. As reservas de demo de Narón (`R__demo_naron_bookings.sql`) son de `vecino-naron`; as de Verín (`R__demo_verin_bookings.sql`), de persoas ficticias sen conta.
+
+| Usuario | `sub` | Rol en Furar | Concello | Grupo de Keycloak |
+|---|---|---|---|---|
+| `admin-plataforma` | `019a0b6e-0000-7000-8000-000000000900` | administración da plataforma (na base de Furar) | — | — |
+| `vecino-naron` | `…0901` | veciño (sen rol), idioma es | — | — |
+| `xestor-naron` | `…0902` | MANAGER, activo | Narón | — |
+| `xestor-ferrol` | `…0903` | MANAGER, activo | Ferrol | — |
+| `recepcion-naron` | `…0904` | STAFF, activo: reservas e cobros, sen xestión | Narón | — |
+| `ex-recepcion-naron` | `…0905` | STAFF desactivado: a API respóndelle 403 | Narón | — |
+| `xestor-verin` | `…0907` | MANAGER, activo | Verín | — |
+| `xestor-vilardevos` | `…0908` | MANAGER, activo | Vilardevós | — |
+| `xestor-rios` | `…0909` | MANAGER, activo | Riós | — |
+| `xestor-castrelo-do-val` | `…090a` | MANAGER, activo | Castrelo do Val | — |
+| `xestor-cualedro` | `…090b` | MANAGER, activo | Cualedro | — |
+| `xestor-laza` | `…090c` | MANAGER, activo | Laza | — |
+| `xestor-monterrei` | `…090d` | MANAGER, activo | Monterrei | — |
+| `xestor-oimbra` | `…090e` | MANAGER, activo | Oímbra | — |
+| `persoal-novo@example.org` | — | STAFF invitado (invitación vixente, sen conta) | Narón | — |
+| `persoal-antigo@example.org` | — | STAFF invitado (invitación caducada, sen conta) | Narón | — |
+| `00000000T` en «Cl@ve (simulada)» | — | veciña (en Furar, `cidada.clave@example.org`, o correo que manda o IdP) | — | — |
+
+O rexistro de actividade de Narón e Ferrol trae as altas, aceptacións e a desactivación de exemplo.
+
+### Recrear o Keycloak de `dev` ou `full`
+
+O realm só se importa se non existe: un Keycloak de demo creado cunha versión anterior do realm non colle os cambios (contrasinal, bloqueo, usuarios e os seus `sub`; se os `sub` non coinciden, os xestores entran pero a API non os recoñece como persoal). Bórrase o realm e vólvese importar ao reiniciar:
+
+```sh
+k=http://localhost:8082/auth   # en full: http://localhost:8080/auth
+t=$(curl -s -d grant_type=password -d client_id=admin-cli -d username=admin -d password=admin-demo \
+  "$k/realms/master/protocol/openid-connect/token" | jq -r .access_token)
+curl -s -X DELETE -H "Authorization: Bearer $t" "$k/admin/realms/furar"
+docker compose --profile dev restart keycloak-dev   # en full: docker compose --profile full restart keycloak
+```
+
+Administración de Keycloak en local: `admin` / `admin-demo` (en `full`: http://localhost:8080/auth/admin, só desde redes privadas; en `dev`: http://localhost:8082/auth/admin). En produción, só por túnel SSH a `127.0.0.1:8082` ([instalacion.md](../../docs/instalacion.md) §5).
+
+Token para probas (cliente `furar-e2e`, só demo):
+
+```sh
+curl -s -d grant_type=password -d client_id=furar-e2e -d username=xestor-naron -d password=Furar-demo-2026 \
+  http://localhost:8080/auth/realms/furar/protocol/openid-connect/token | jq -r .access_token
+```

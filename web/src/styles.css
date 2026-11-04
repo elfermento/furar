@@ -1,0 +1,58 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+/*
+ * A capa `print` vai antes ca todas: un `!important` dunha capa anterior gaña aos das seguintes,
+ * e só así a impresión dos indicadores (styles/components/print.css) pode mostrar o que leva
+ * `hidden` (o `[hidden] { display: none !important }` da capa `base` de Tailwind).
+ */
+@layer print;
+@import '@fontsource/atkinson-hyperlegible-next/latin-400.css';
+@import '@fontsource/atkinson-hyperlegible-next/latin-700.css';
+@import 'tailwindcss';
+/* Estruturais do CDK na folla global, non en <style> (CSP; shared/ui/overlay/cdk-styles.ts). */
+@import '@angular/cdk/overlay-prebuilt.css';
+@import '@angular/cdk/a11y-prebuilt.css';
+
+/* Sistema de deseño (docs/deseno.md, ADR-0021). Os da xestión van en styles/xestion.css. */
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/components/button.css';
+@import './styles/components/field.css';
+@import './styles/components/card.css';
+@import './styles/components/callout.css';
+@import './styles/components/toast.css';
+@import './styles/components/row.css';
+@import './styles/components/status-state.css';
+@import './styles/components/tag.css';
+@import './styles/components/price.css';
+@import './styles/components/icon.css';
+@import './styles/components/segmented.css';
+@import './styles/components/page-header.css';
+@import './styles/components/calendar.css';
+@import './styles/components/date-field.css';
+@import './styles/components/menu.css';
+@import './styles/components/combobox.css';
+@import './styles/components/carousel.css';
+@import './styles/components/site.css';
+@import './styles/components/media-card.css';
+@import './styles/components/home.css';
+
+/*
+ * Tema por concello (ADR-0014): entrada do tema, os 5 campos de sempre. ThemeService pon estas
+ * variables en <html> desde a API, xunto ás cores derivadas --f-* (core/theme/theme-tokens.ts).
+ * Os valores por defecto cumpren AA (texto 4,5:1; primary fronte ao fondo 3:1).
+ */
+:root {
+  --furar-primary: #0b5c8e;
+  --furar-on-primary: #ffffff;
+  --furar-accent: #8a4b00;
+  --furar-background: #ffffff;
+  --furar-text: #1a1a1a;
+  color-scheme: light;
+}
+
+@utility sr-only-focusable {
+  &:not(:focus) {
+    @apply sr-only;
+  }
+}

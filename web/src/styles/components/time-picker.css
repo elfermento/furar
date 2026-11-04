@@ -1,0 +1,137 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Selector de hora (furar-time-picker, D1-03): a hora vese resolta como texto nun botón de 44 px
+ * co tinte e unha liña de marca debaixo; ao pulsar, lista curta en capa (CDK Overlay).
+ * A escollida leva ✓ e negra ademais do tinte (non só cor, 1.4.1).
+ */
+@layer components {
+  .f-time-picker {
+    display: inline-block;
+  }
+
+  .f-time-picker__button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    min-width: 5.5rem;
+    min-height: var(--f-touch);
+    padding: 0 0.75rem;
+    border: var(--f-border) solid transparent;
+    border-radius: var(--radius-field);
+    background: var(--f-tint);
+    box-shadow: inset 0 calc(-1 * var(--f-border-state)) 0 var(--f-primary);
+    color: var(--f-ink);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  /* Frecha debuxada coa tinta (decorativa: o botón xa anuncia aria-haspopup). */
+  .f-time-picker__button::after {
+    content: '';
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-inline-start: auto;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-0.125rem) rotate(45deg);
+  }
+  .f-time-picker__button[aria-expanded='true']::after {
+    transform: translateY(0.125rem) rotate(-135deg);
+  }
+  .f-time-picker__button[data-empty] {
+    color: var(--f-ink-soft);
+    font-weight: 400;
+  }
+  .f-time-picker__button[aria-invalid='true'] {
+    border-color: var(--f-danger);
+    box-shadow: inset 0 calc(-1 * var(--f-border-state)) 0 var(--f-danger);
+  }
+  .f-time-picker__button:disabled {
+    border-style: dashed;
+    border-color: var(--f-line);
+    background: var(--f-page);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  @media (hover: hover) {
+    .f-time-picker__button:not(:disabled):hover {
+      border-color: var(--f-line);
+    }
+  }
+
+  .f-time-picker__list {
+    min-width: 7rem;
+    max-height: min(18rem, 60vh);
+    margin: 0;
+    padding: 0.25rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+    z-index: var(--f-z-popover);
+  }
+  .f-time-picker__option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    min-height: var(--f-touch);
+    padding: 0 0.75rem 0 2rem;
+    border-radius: var(--radius-field);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+  .f-time-picker__option[aria-selected='true'] {
+    padding-inline-start: 0.75rem;
+    background: var(--f-tint);
+    font-weight: 700;
+  }
+  .f-time-picker__option[aria-selected='true']::before {
+    content: '✓' / '';
+    width: 1rem;
+  }
+  .f-time-picker__option:focus-visible {
+    outline-offset: calc(-1 * var(--f-focus-ring));
+  }
+  @media (hover: hover) {
+    .f-time-picker__option:hover {
+      background: var(--f-tint);
+    }
+  }
+
+  /* Aparece cun fundido curto; con movemento reducido, de golpe. */
+  @media (prefers-reduced-motion: no-preference) {
+    .f-time-picker__list {
+      animation: f-time-picker-in var(--f-dur-fast) var(--ease-smooth);
+    }
+  }
+  @keyframes f-time-picker-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .f-time-picker__button {
+      border-color: var(--f-line);
+    }
+  }
+  @media (forced-colors: active) {
+    .f-time-picker__button {
+      border-color: ButtonText;
+    }
+    .f-time-picker__option[aria-selected='true'] {
+      background: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+  }
+}

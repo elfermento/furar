@@ -1,0 +1,151 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/* Base e preferencias do sistema (docs/deseno.md §5). */
+@layer base {
+  html {
+    font-size: 100%;
+    background: var(--f-page);
+  }
+  body {
+    min-height: 100dvh;
+    background: var(--f-page);
+    color: var(--f-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  a {
+    color: var(--f-primary-text);
+    text-decoration-line: underline;
+    text-underline-offset: 0.18em;
+  }
+  ::placeholder {
+    color: var(--f-ink-soft);
+    opacity: 1;
+  }
+  /*
+   * Casillas e radios redondos (docs/deseno.md P1-3b): a mesma forma para os dous; distínguense
+   * polo que levan dentro (check fronte a punto). Bordo na liña (3:1) e marcado no primary.
+   */
+  input[type='checkbox'],
+  input[type='radio'] {
+    appearance: none;
+    display: inline-grid;
+    place-content: center;
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 0;
+    font-size: inherit;
+    border: var(--f-border-state) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    cursor: pointer;
+    transition:
+      background-color var(--f-dur-fast) var(--ease-smooth),
+      border-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  input[type='checkbox']::before,
+  input[type='radio']::before {
+    content: '';
+    width: 0.625em;
+    height: 0.625em;
+    background: var(--f-on-primary);
+    transform: scale(0);
+    transition: transform var(--f-dur-med) var(--ease-overshoot);
+  }
+  input[type='checkbox']::before {
+    width: 0.75em;
+    height: 0.75em;
+    clip-path: polygon(14% 44%, 0 65%, 40% 100%, 100% 22%, 84% 6%, 38% 68%);
+  }
+  input[type='radio']::before {
+    border-radius: var(--radius-pill);
+  }
+  input[type='checkbox']:checked,
+  input[type='radio']:checked {
+    border-color: var(--f-primary);
+    background: var(--f-primary);
+  }
+  input[type='checkbox']:checked::before,
+  input[type='radio']:checked::before {
+    transform: scale(1);
+  }
+  input[type='checkbox']:disabled,
+  input[type='radio']:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  input[type='checkbox'][aria-invalid='true'],
+  input[type='radio'][aria-invalid='true'] {
+    border-color: var(--f-danger);
+  }
+  @media (forced-colors: active) {
+    input[type='checkbox'],
+    input[type='radio'] {
+      border-color: CanvasText;
+    }
+    input[type='checkbox']:checked,
+    input[type='radio']:checked {
+      border-color: Highlight;
+      background: Highlight;
+    }
+    input[type='checkbox']::before,
+    input[type='radio']::before {
+      background: HighlightText;
+    }
+  }
+
+  /* Foco: outline (sobrevive a forced-colors), na cor do primary con 3:1 garantido. */
+  :focus-visible {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: 2px;
+  }
+  [tabindex='-1']:focus {
+    outline: none;
+  }
+  .on-primary :focus-visible,
+  .on-primary:focus-visible {
+    outline-color: var(--f-on-primary);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /*
+   * Máis contraste: texto secundario e bordos coa tinta, sen tintes nin cristal. !important
+   * porque ThemeService escribe as variables en liña en <html> e esta preferencia ten que gañar.
+   */
+  @media (prefers-contrast: more) {
+    html {
+      --f-ink-soft: var(--f-ink) !important;
+      --f-line: var(--f-ink) !important;
+      --f-divider: var(--f-ink) !important;
+      --f-page: var(--f-surface) !important;
+      --f-tint: var(--f-surface) !important;
+      --f-glass: var(--f-surface) !important;
+      --f-border: 2px !important;
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    html {
+      --f-glass: var(--f-surface) !important;
+    }
+  }
+}

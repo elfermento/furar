@@ -1,0 +1,19 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Transicións entre vistas (withViewTransition, shared/ui/view-transition.ts): a cifra que se fai
+ * modal. Os nomes pónense por CSSOM; aquí só o ritmo, e nada con movemento reducido (o código
+ * tampouco chama á API entón).
+ */
+::view-transition-group(*) {
+  animation-duration: var(--f-dur-med);
+  animation-timing-function: var(--ease-smooth);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}

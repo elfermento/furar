@@ -1,0 +1,124 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Etiqueta (furar-tag, docs/deseno.md P1-9). Regra dos chips de cor: ou recheo do ton con letra
+ * branca ou negra (`solid`, o habitual), ou fondo da superficie con bordo e letra no ton (`outline`).
+ * Nunca fondo tinguido co texto no ton (o trinquete está en tag-color.spec.ts). A neutra vai sempre
+ * en `outline`, cun bordo fino na liña. `soft` (2026-10-26): fondo `tint` e letra na tinta,
+ * sen ton (ink sobre tint ≥ 4,5:1 garantido pola derivación, docs/deseno.md §3.1); para etiquetas
+ * informativas que se repiten, como os deportes das tarxetas da portada.
+ */
+@layer components {
+  /*
+   * `--f-tag-fill` é o recheo (`solid`) e `--f-tag-tone` o ton como texto (`outline`): nos estados
+   * son tokens distintos porque en escuro o texto sobe de luz e o recheo queda no ton da paleta,
+   * sempre con letra branca (docs/deseno.md §3.1, 2026-10-26).
+   */
+  .f-tag {
+    --f-tag-tone: var(--f-ink);
+    --f-tag-fill: var(--f-ink);
+    --f-tag-on: var(--f-surface);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.625rem;
+    border: var(--f-border) solid var(--f-tag-fill);
+    border-radius: var(--radius-pill);
+    background: var(--f-tag-fill);
+    color: var(--f-tag-on);
+    font-size: var(--text-support);
+    font-weight: 700;
+    line-height: 1.5;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  :is(.f-tag, .f-tag-swatch)[data-tone='primary'] {
+    --f-tag-tone: var(--f-primary);
+    --f-tag-fill: var(--f-primary);
+    --f-tag-on: var(--f-on-primary);
+  }
+  :is(.f-tag, .f-tag-swatch)[data-tone='success'] {
+    --f-tag-tone: var(--f-success);
+    --f-tag-fill: var(--f-success-fill);
+    --f-tag-on: var(--f-on-success);
+  }
+  :is(.f-tag, .f-tag-swatch)[data-tone='warn'] {
+    --f-tag-tone: var(--f-warn);
+    --f-tag-fill: var(--f-warn-fill);
+    --f-tag-on: var(--f-on-warn);
+  }
+  :is(.f-tag, .f-tag-swatch)[data-tone='danger'] {
+    --f-tag-tone: var(--f-danger);
+    --f-tag-fill: var(--f-danger-fill);
+    --f-tag-on: var(--f-on-danger);
+  }
+  :is(.f-tag, .f-tag-swatch)[data-tone='info'] {
+    --f-tag-tone: var(--f-info);
+    --f-tag-fill: var(--f-info-fill);
+    --f-tag-on: var(--f-on-info);
+  }
+  /*
+   * Apagado: o que xa non está en uso (instalación de baixa, reserva devolta). O `muted` da paleta
+   * con letra branca; en `outline`, bordo e letra no ton como texto. O estado vai sempre en texto:
+   * a cor só acompaña.
+   */
+  :is(.f-tag, .f-tag-swatch)[data-tone='muted'] {
+    --f-tag-tone: var(--f-muted);
+    --f-tag-fill: var(--f-muted-fill);
+    --f-tag-on: var(--f-on-muted);
+  }
+  /* Bordo e letra no ton sobre a superficie. O primary como texto vai en primary-text (4,5:1). */
+  .f-tag[data-look='outline'] {
+    border-color: var(--f-tag-tone);
+    background: var(--f-surface);
+    color: var(--f-tag-tone);
+  }
+  .f-tag[data-look='outline'][data-tone='primary'] {
+    --f-tag-tone: var(--f-primary-text);
+  }
+  .f-tag[data-tone='neutral'] {
+    border-color: var(--f-line);
+    background: var(--f-surface);
+    color: var(--f-ink);
+  }
+  /* Bordo transparente: con cores forzadas vese (CanvasText, abaixo). */
+  .f-tag[data-look='soft'] {
+    border-color: transparent;
+    background: var(--f-tint);
+    color: var(--f-ink);
+  }
+  /* Lista de etiquetas (`ul.f-tag-list > li > furar-tag`): en liña, baixan de liña se non caben. */
+  .f-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /*
+   * Punto de cor dunha opción (menú do chip): decorativo, o valor vai en texto ao lado. Neutro =
+   * aro na liña. Con cores forzadas desaparece o recheo e queda o aro.
+   */
+  .f-tag-swatch {
+    --f-tag-fill: var(--f-surface);
+    flex: none;
+    width: 0.75rem;
+    height: 0.75rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-tag-fill);
+  }
+  .f-tag-swatch:not([data-tone='neutral']) {
+    border-color: var(--f-tag-fill);
+  }
+  @media (forced-colors: active) {
+    .f-tag {
+      border-color: CanvasText;
+    }
+    .f-tag-swatch {
+      border-color: CanvasText;
+    }
+  }
+}

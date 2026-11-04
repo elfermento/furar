@@ -1,0 +1,148 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+
+Correo dunha reserva (maqueta 29, opción «C · en unha liña»; ADR-0025, punto 15). Seguro para
+clientes de correo: táboas, estilos en liña, ancho 600, sen fontes web nin SVG. {{valor}} sae
+sempre escapado; {{#valor}}…{{/valor}} só se o valor non está baleiro (MailTemplate).
+-->
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>{{subject}}</title>
+<style>
+@media (max-width: 540px) {
+  .card { padding: 24px 16px !important; }
+  .col { max-width: 100% !important; }
+  .qrcell { padding: 20px 0 4px !important; }
+  .big { font-size: 22px !important; }
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f7fa;-webkit-text-size-adjust:100%;">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">{{preheader}}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f7fa;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1a1a1a;">
+<tr>
+<td align="center" bgcolor="{{primary}}" style="background-color:{{primary}};padding:16px 24px 8px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+<tr>
+<td valign="middle" style="padding:0 12px 0 0;"><img src="cid:shield" width="32" height="32" alt="" style="display:block;border:0;width:32px;height:32px;"></td>
+<td valign="middle" style="font-size:17px;line-height:22px;font-weight:700;color:{{onPrimary}};">{{municipality}}</td>
+<td valign="middle" style="padding:0 12px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="1" height="18" bgcolor="{{separator}}" style="width:1px;height:18px;background-color:{{separator}};font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+<td valign="middle" style="font-size:15px;line-height:22px;color:{{onPrimarySoft}};">{{service}}</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td align="center" style="padding:0 16px;background-color:#f4f7fa;background-image:linear-gradient({{primary}},{{primary}} 32px,#f4f7fa 32px,#f4f7fa);">
+<!--[if mso]><table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td><![endif]-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;margin:8px auto 0;">
+<tr>
+<td class="card" bgcolor="#ffffff" style="background-color:#ffffff;border-radius:16px;padding:28px 24px;box-shadow:0 2px 10px rgba(0,0,0,0.08);">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td align="center" style="padding:0 0 20px;border-bottom:1px solid #dde3e8;">
+<p style="margin:0;font-size:15px;line-height:20px;font-weight:700;color:{{titleColor}};">{{title}}</p>
+<p class="big" style="margin:6px 0 0;font-size:26px;line-height:32px;font-weight:800;color:#1a1a1a;">{{day}}<br>{{hours}}</p>
+</td>
+</tr>
+<tr>
+<td style="padding:20px 0;font-size:15px;line-height:22px;color:#55595e;">{{greeting}}<br>{{lead}}</td>
+</tr>
+<tr>
+<td style="font-size:0;line-height:0;">
+<!--[if mso]><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td width="{{dataWidth}}" valign="top"><![endif]-->
+<div class="col" style="display:inline-block;width:100%;max-width:{{dataWidth}}px;vertical-align:top;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:15px;line-height:20px;">
+<tr>
+<td colspan="2" style="padding:0 0 8px;"><b style="display:block;font-size:17px;line-height:22px;color:#1a1a1a;">{{facility}}</b>{{#address}}<span style="font-size:15px;color:#55595e;">{{address}}</span>{{/address}}</td>
+</tr>
+<tr>
+<td style="padding:8px 8px 8px 0;border-top:1px solid #dde3e8;color:#55595e;">{{labelUse}}</td>
+<td align="right" style="padding:8px 0;border-top:1px solid #dde3e8;font-weight:700;">{{use}}</td>
+</tr>
+{{#part}}<tr>
+<td style="padding:8px 8px 8px 0;border-top:1px solid #dde3e8;color:#55595e;">{{labelPart}}</td>
+<td align="right" style="padding:8px 0;border-top:1px solid #dde3e8;font-weight:700;">{{part}}</td>
+</tr>
+{{/part}}{{#price}}<tr>
+<td style="padding:8px 8px 8px 0;border-top:1px solid #dde3e8;color:#55595e;">{{labelPrice}}</td>
+<td align="right" style="padding:8px 0;border-top:1px solid #dde3e8;font-weight:700;">{{price}}</td>
+</tr>
+{{/price}}{{#before}}<tr>
+<td style="padding:8px 8px 8px 0;border-top:1px solid #dde3e8;color:#55595e;">{{labelBefore}}</td>
+<td align="right" style="padding:8px 0;border-top:1px solid #dde3e8;font-weight:700;">{{before}}</td>
+</tr>
+{{/before}}{{#codeRow}}<tr>
+<td style="padding:8px 8px 8px 0;border-top:1px solid #dde3e8;color:#55595e;">{{labelCode}}</td>
+<td align="right" style="padding:8px 0;border-top:1px solid #dde3e8;font-weight:700;letter-spacing:1px;">{{code}}</td>
+</tr>
+{{/codeRow}}</table>
+</div>
+{{#qr}}<!--[if mso]></td><td width="170" valign="top"><![endif]-->
+<div class="col" style="display:inline-block;width:100%;max-width:170px;vertical-align:top;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td class="qrcell" align="center" style="padding:0 0 0 20px;font-size:14px;line-height:20px;">
+<img src="cid:qr" width="150" height="150" alt="{{qrAlt}}" style="display:block;margin:0 auto;border:1px solid #dde3e8;border-radius:12px;width:150px;height:150px;">
+<p style="margin:6px 0 0;font-size:18px;line-height:24px;font-weight:700;letter-spacing:1px;color:#1a1a1a;">{{code}}</p>
+<p style="margin:0;color:#55595e;">{{qrHint}}</p>
+</td>
+</tr>
+</table>
+</div>
+{{/qr}}<!--[if mso]></td></tr></table><![endif]-->
+</td>
+</tr>
+{{#deadline}}<tr>
+<td style="padding:16px 0 0;font-size:15px;line-height:22px;">{{deadlineBefore}} <b>{{deadlineAt}}</b>{{deadlineAfter}}</td>
+</tr>
+{{/deadline}}{{#deadlinePassed}}<tr>
+<td style="padding:16px 0 0;font-size:15px;line-height:22px;">{{deadlinePassed}}</td>
+</tr>
+{{/deadlinePassed}}<tr>
+<td style="padding:16px 0 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td align="center" bgcolor="{{primary}}" style="background-color:{{primary}};border-radius:999px;">
+<a href="{{link1}}" style="display:block;padding:13px 16px;font-size:15px;line-height:20px;font-weight:700;color:{{onPrimary}};text-decoration:none;border-radius:999px;">{{button1}}</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+{{#link2}}<tr>
+<td style="padding:10px 0 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td align="center" style="border:1px solid {{primary}};border-radius:999px;">
+<a href="{{link2}}" style="display:block;padding:12px 16px;font-size:15px;line-height:20px;font-weight:700;color:{{primary}};text-decoration:none;border-radius:999px;">{{button2}}</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+{{/link2}}<tr>
+<td style="padding:12px 0 0;font-size:13px;line-height:18px;color:#55595e;">{{note}}</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td align="center" style="padding:16px 8px 32px;font-size:13px;line-height:20px;color:#55595e;">
+{{#footerBlock}}<p style="margin:0 0 12px;">{{#footerAddress}}{{footerAddress}}{{/footerAddress}}{{#footerBreak}}<br>{{/footerBreak}}{{#footerContact}}{{#footerPhone}}{{footerPhone}}{{/footerPhone}}{{#footerSeparator}} · {{/footerSeparator}}{{#footerEmail}}<a href="mailto:{{footerEmail}}" style="color:{{primary}};">{{footerEmail}}</a>{{/footerEmail}}{{/footerContact}}</p>{{/footerBlock}}
+<p style="margin:0;">{{why}}{{#privacyLink}} <a href="{{privacyUrl}}" style="color:{{primary}};">{{privacy}}</a>{{/privacyLink}}</p>
+</td>
+</tr>
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td>
+</tr>
+</table>
+</body>
+</html>

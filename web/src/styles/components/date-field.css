@@ -1,0 +1,174 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Campo de data (furar-date-field, D1-04): botón coa data en texto e a icona do calendario, co
+ * mesmo aspecto ca un campo (48 px, bordo `line`, 2 px no foco e co erro); ao pulsar, o
+ * calendario nun panel en capa (CDK Overlay).
+ */
+@layer components {
+  .f-date-field {
+    display: inline-block;
+    max-width: 100%;
+  }
+  /* Nun campo do formulario (furar-field ou .f-field) colle o ancho da columna (docs/deseno.md P1-3). */
+  .f-field .f-date-field:not([data-look='pill']) {
+    display: block;
+  }
+  .f-field .f-date-field:not([data-look='pill']) .f-date-field__button {
+    width: 100%;
+  }
+
+  .f-date-field__button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    min-width: 10rem;
+    max-width: 100%;
+    min-height: var(--f-control-h);
+    /* Recheo que resérvalle ao bordo de estado a diferenza, así o contido non salta. */
+    padding: 0 calc(0.875rem + var(--f-border-state) - var(--f-border));
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-field);
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: start;
+    cursor: pointer;
+    transition: border-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-date-field__button .f-icon {
+    color: var(--f-primary-text);
+  }
+  .f-date-field__button[data-empty] {
+    color: var(--f-ink-soft);
+  }
+  .f-date-field__button:focus-visible,
+  .f-date-field__button[aria-expanded='true'],
+  .f-date-field__button[aria-invalid='true'] {
+    padding-inline: 0.875rem;
+    border-width: var(--f-border-state);
+  }
+  .f-date-field__button:focus-visible,
+  .f-date-field__button[aria-expanded='true'] {
+    border-color: var(--f-primary);
+  }
+  .f-date-field__button[aria-invalid='true'] {
+    border-color: var(--f-danger);
+  }
+  .f-date-field__button:disabled {
+    border-style: dashed;
+    background: var(--f-page);
+    cursor: not-allowed;
+  }
+  @media (hover: hover) {
+    .f-date-field__button:not(:disabled):hover {
+      border-color: var(--f-primary);
+    }
+  }
+
+  .f-date-field__panel {
+    width: min(22rem, calc(100vw - 2rem));
+    padding: var(--spacing-unit);
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    z-index: var(--f-z-popover);
+  }
+
+  /* Atallos («Hoxe», «Mañá»): cápsulas co ancho repartido; a escollida, rechea (e aria-pressed). */
+  .f-date-field__shortcuts {
+    display: flex;
+    gap: var(--spacing-unit);
+    margin-bottom: var(--spacing-unit);
+  }
+  .f-date-field__shortcut {
+    flex: 1;
+    min-height: var(--f-touch);
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .f-date-field__shortcut[aria-pressed='true'] {
+    border-color: var(--f-primary);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+  .f-date-field__shortcut[aria-pressed='true']:focus-visible {
+    outline-offset: 2px;
+  }
+  @media (hover: hover) {
+    .f-date-field__shortcut:not([aria-pressed='true']):hover {
+      border-color: var(--f-primary);
+    }
+  }
+
+  /* Dentro dunha barra de busca (look="pill"): sen marco nin alto de campo; frecha que xira. */
+  .f-date-field[data-look='pill'] {
+    display: flex;
+    align-self: stretch;
+  }
+  .f-date-field[data-look='pill'] .f-date-field__button {
+    min-width: 0;
+    min-height: var(--f-touch);
+    padding: 0 1rem 0 1.125rem;
+    border: 0;
+    border-radius: var(--radius-field);
+    background: none;
+    white-space: nowrap;
+  }
+  .f-date-field[data-look='pill'] .f-date-field__button:focus-visible {
+    padding: 0 1rem 0 1.125rem;
+    border-width: 0;
+    outline-offset: -0.25rem;
+  }
+  .f-date-field__chevron {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-date-field__button[aria-expanded='true'] .f-date-field__chevron {
+    transform: rotate(180deg);
+  }
+  .f-date-field__panel[data-look='pill'] {
+    padding: 1rem;
+    border-color: var(--f-divider);
+    border-radius: var(--radius-sheet);
+  }
+
+  /* Aparece cun fundido curto; con movemento reducido, de golpe. */
+  @media (prefers-reduced-motion: no-preference) {
+    .f-date-field__panel {
+      animation: f-date-field-in var(--f-dur-fast) var(--ease-smooth);
+    }
+  }
+  @keyframes f-date-field-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .f-date-field__button {
+      border-width: var(--f-border-state);
+      padding-inline: 0.875rem;
+    }
+  }
+  @media (forced-colors: active) {
+    .f-date-field__button {
+      border-color: ButtonText;
+    }
+    .f-date-field__shortcut[aria-pressed='true'] {
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+  }
+}

@@ -1,0 +1,129 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<div class="f-combobox__field" cdkOverlayOrigin #origin="cdkOverlayOrigin">
+  <input
+    #field
+    type="text"
+    role="combobox"
+    class="f-combobox__input"
+    autocomplete="off"
+    aria-autocomplete="list"
+    [class.f-input]="look() === 'field'"
+    [id]="inputId()"
+    [value]="text()"
+    [placeholder]="placeholder()"
+    [disabled]="isDisabled()"
+    [attr.aria-expanded]="open()"
+    [attr.aria-controls]="open() && items().length ? listId : null"
+    [attr.aria-activedescendant]="activeId()"
+    [attr.aria-invalid]="invalid() || null"
+    [attr.aria-describedby]="describedBy() || null"
+    (input)="onInput($event)"
+    (keydown)="onKeydown($event)"
+    (blur)="onBlur()"
+  />
+</div>
+<span class="cdk-visually-hidden" role="status" data-announcer>{{ announcement() }}</span>
+<ng-template
+  cdkConnectedOverlay
+  cdkConnectedOverlayUsePopover="inline"
+  [cdkConnectedOverlayOrigin]="panelOrigin() ?? origin"
+  [cdkConnectedOverlayOpen]="open()"
+  [cdkConnectedOverlayPositions]="positions()"
+  [cdkConnectedOverlayWidth]="panelWidth()"
+  [cdkConnectedOverlayDisableClose]="true"
+  (detach)="close()"
+>
+  <div
+    class="f-combobox__panel"
+    [attr.data-phase]="phase()"
+    [attr.data-look]="look()"
+    (mousedown)="$event.preventDefault()"
+    (mouseup)="onPanelMouseup($event)"
+  >
+    @switch (phase()) {
+      @case ('loading') {
+        <p class="f-combobox__state" aria-hidden="true">
+          <furar-icon name="loading" class="f-combobox__spinner" />
+          {{ 'ui.combobox.searching' | transloco }}
+        </p>
+      }
+      @case ('error') {
+        <p class="f-combobox__state" data-tone="danger" aria-hidden="true">
+          <furar-icon name="error" />
+          {{ errorText() || ('ui.combobox.error' | transloco) }}
+        </p>
+      }
+      @case ('ready') {
+        @if (!options().length) {
+          <p class="f-combobox__state" aria-hidden="true">{{ 'ui.combobox.empty' | transloco }}</p>
+        }
+      }
+    }
+    @if (groups(); as groups) {
+      <div role="listbox" class="f-combobox__list" [id]="listId" [attr.aria-label]="label()">
+        @for (group of groups; track group.id) {
+          <ul
+            role="group"
+            class="f-combobox__group"
+            [attr.aria-labelledby]="group.label ? group.id : null"
+            [attr.aria-label]="group.label ? null : createText()"
+          >
+            @if (group.label) {
+              <li role="presentation" class="f-combobox__group-label" [id]="group.id">{{ group.label }}</li>
+            }
+            @for (entry of group.items; track entry.item.id) {
+              <ng-container *ngTemplateOutlet="row; context: { $implicit: entry.item, index: entry.index }" />
+            }
+          </ul>
+        }
+      </div>
+    } @else if (items().length) {
+      <ul role="listbox" class="f-combobox__list" [id]="listId" [attr.aria-label]="label()">
+        @for (item of items(); track item.id; let i = $index) {
+          <ng-container *ngTemplateOutlet="row; context: { $implicit: item, index: i }" />
+        }
+      </ul>
+    }
+  </div>
+</ng-template>
+
+<ng-template #row let-item let-i="index">
+  <li
+    role="option"
+    class="f-combobox__option"
+    [id]="item.id"
+    [attr.data-index]="i"
+    [attr.data-kind]="item.kind"
+    [attr.aria-selected]="i === active()"
+  >
+    @if (item.kind === 'option') {
+      @if (item.option.image) {
+        <img class="f-combobox__thumb" [src]="item.option.image" alt="" />
+      } @else if (item.option.icon) {
+        <span class="f-combobox__thumb" data-icon><furar-icon [name]="item.option.icon" /></span>
+      }
+      <span class="f-combobox__text">
+        <span class="f-combobox__label">
+          @for (part of parts(item.option.label); track $index) {
+            @if (part.match) {
+              <mark>{{ part.text }}</mark>
+            } @else {
+              <span>{{ part.text }}</span>
+            }
+          }
+        </span>
+        @if (item.option.detail) {
+          <span class="f-combobox__detail">{{ item.option.detail }}</span>
+        }
+      </span>
+    } @else {
+      <span class="f-combobox__label">
+        <furar-icon name="plus" />
+        {{ createText() }}
+      </span>
+    }
+  </li>
+</ng-template>

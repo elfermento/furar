@@ -1,0 +1,90 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.wizard.review.';
+@if (store.missing().length) {
+  <furar-callout tone="warn" id="wizard-missing" tabindex="-1" [heading]="t + 'missingTitle' | transloco">
+    <ul class="mt-unit ps-item list-disc">
+      @for (item of store.missing(); track item.key) {
+        <li>
+          <button
+            type="button"
+            class="cursor-pointer underline"
+            [attr.data-missing]="item.key"
+            (click)="edit.emit(item.step)"
+          >
+            {{ t + 'missing.' + item.key | transloco }}
+          </button>
+        </li>
+      }
+    </ul>
+  </furar-callout>
+}
+
+@for (section of sections(); track section.step) {
+  <section class="f-wizard-review" [attr.aria-labelledby]="'wizard-review-' + section.step">
+    <div class="f-wizard-review__head">
+      <h3 class="font-bold" [id]="'wizard-review-' + section.step">{{ section.step + 1 }}. {{ section.title }}</h3>
+      <button
+        type="button"
+        furarButton="quiet"
+        size="sm"
+        [attr.data-edit-step]="section.step"
+        [attr.aria-label]="t + 'editLabel' | transloco: { step: section.title }"
+        (click)="edit.emit(section.step)"
+      >
+        <furar-icon name="pencil" />
+        <span aria-hidden="true">{{ t + 'edit' | transloco }}</span>
+      </button>
+    </div>
+    @switch (section.step) {
+      @case (steps.photos) {
+        <div class="f-wizard-review__thumbs">
+          @for (image of thumbs(); track image.src) {
+            <img [src]="image.src" [alt]="image.alt" />
+          }
+        </div>
+        @if (drawingName(); as name) {
+          <p class="text-ink-soft">{{ t + 'drawingUsed' | transloco: { name } }}</p>
+        }
+      }
+      @case (steps.uses) {
+        @if (store.uses.uses().length) {
+          <ul class="f-wizard-uses" [attr.aria-label]="'facility.uses.list' | transloco">
+            @for (use of store.uses.uses(); track use.id) {
+              <li class="f-wizard-uses__row">
+                <span class="f-wizard-uses__name">
+                  <b>{{ use.name }}</b>
+                  <furar-facility-use-tags withoutWhen [use]="use" />
+                </span>
+                <furar-price [amount]="price(use)" [per]="per(use)" [muted]="muted(use)" />
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="f-field-error">{{ t + 'missingValue' | transloco }}</p>
+        }
+      }
+    }
+    @if (section.rows.length) {
+      <dl class="f-wizard-review__list">
+        @for (row of section.rows; track row.id) {
+          <div class="f-wizard-review__row" [attr.data-row]="row.id">
+            <dt>{{ row.label }}</dt>
+            @if (row.problem) {
+              <dd class="f-field-error" data-problem>{{ row.problem }}</dd>
+            } @else if (row.value) {
+              <dd class="whitespace-pre-line">{{ row.value }}</dd>
+            } @else {
+              <dd class="text-ink-soft">{{ 'ui.editSection.empty' | transloco }}</dd>
+            }
+          </div>
+        }
+      </dl>
+    }
+    @if (section.step === steps.location && mapEnabled() && point()) {
+      <furar-map [point]="point()" [label]="'facility.location.pin' | transloco" />
+    }
+  </section>
+}

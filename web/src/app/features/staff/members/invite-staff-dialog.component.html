@@ -1,0 +1,70 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'staff.members.invite.';
+<furar-dialog size="md" [heading]="t + 'title' | transloco" [description]="t + 'intro' | transloco" [busy]="busy()">
+  <form
+    class="gap-form grid"
+    novalidate
+    [id]="formId"
+    [formGroup]="form"
+    [attr.inert]="busy() ? '' : null"
+    (ngSubmit)="submit()"
+  >
+    <furar-form-errors-summary [count]="errorCount()" />
+    <furar-required-note />
+
+    <furar-field
+      fieldId="staff-invite-email"
+      [label]="t + 'email' | transloco"
+      [required]="true"
+      [error]="emailError()"
+    >
+      <input
+        furarInput
+        type="email"
+        id="staff-invite-email"
+        formControlName="email"
+        autocomplete="off"
+        inputmode="email"
+        spellcheck="false"
+        aria-required="true"
+        [attr.aria-invalid]="emailError() ? 'true' : null"
+        [attr.aria-describedby]="describedBy('staff-invite-email', false, emailError())"
+      />
+    </furar-field>
+
+    <div class="gap-unit grid" data-invite-role>
+      <span class="f-label" id="staff-invite-role">{{ t + 'role' | transloco }}</span>
+      <furar-radio-cards formControlName="role" labelledBy="staff-invite-role" [options]="roleCards()" />
+    </div>
+
+    <div class="gap-unit grid" data-invite-language>
+      <span class="f-label" id="staff-invite-language">{{ t + 'language' | transloco }}</span>
+      <div furarSegmented mode="radio" formControlName="language" aria-labelledby="staff-invite-language">
+        @for (lang of languages; track lang) {
+          <button type="button" [furarSegmentedOption]="lang" [attr.data-language]="lang">
+            {{ 'lang.' + lang | transloco }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div role="alert">
+      @if (alert(); as text) {
+        <furar-callout tone="danger" data-invite-alert>
+          <p class="font-bold">{{ text }}</p>
+        </furar-callout>
+      }
+    </div>
+  </form>
+  <ng-container dialogActions>
+    <button type="button" furarButton="quiet" data-cancel (click)="ref.close()">
+      {{ 'common.cancel' | transloco }}
+    </button>
+    <button type="submit" furarButton="primary" data-send [attr.form]="formId" [busy]="busy()">
+      {{ (busy() ? t + 'sending' : t + 'send') | transloco }}
+    </button>
+  </ng-container>
+</furar-dialog>

@@ -1,0 +1,21 @@
+{
+  "titles": { "@name@": "@Names@", "@name@New": "Nuevo registro", "@name@Edit": "Editar registro" },
+  "@name@": {
+    "title": "@Names@",
+    "listLabel": "Lista",
+    "new": "Añadir",
+    "newTitle": "Nuevo registro",
+    "editTitle": "Editar registro",
+    "name": "Nombre",
+    "saved": "«{{name}}» guardado",
+    "reload": "Cargar los datos actuales (se pierden tus cambios)",
+    "customFields": "Datos adicionales", // @cf
+    "empty": "Todavía no hay ningún registro."
+  },
+  "errors": {
+    "@module@": {
+      "not-found": "No existe en este ayuntamiento.",
+      "name-invalid": "El nombre es obligatorio y tiene como máximo {{max}} caracteres."
+    }
+  }
+}

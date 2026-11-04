@@ -1,0 +1,106 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.calendar.';
+<div class="f-bcal">
+  <div class="f-bcal__top">
+    <a
+      furarButton
+      round
+      data-calendar-back
+      [attr.aria-label]="'booking.manage.back' | transloco"
+      [routerLink]="['/', slug(), 'xestion', 'reservas']"
+    >
+      <furar-icon name="arrow-left" />
+    </a>
+    <h1>{{ t + 'title' | transloco }}</h1>
+    <span class="f-bcal__sp"></span>
+    <div
+      furarSegmented
+      mode="radio"
+      data-calendar-mode
+      [attr.aria-label]="t + 'view' | transloco"
+      [value]="mode()"
+      (valueChange)="go($event)"
+    >
+      @for (m of modes; track m) {
+        <button type="button" [furarSegmentedOption]="m" [attr.data-mode]="m">{{ t + 'mode.' + m | transloco }}</button>
+      }
+    </div>
+    <furar-select
+      class="f-bcal__fac"
+      data-calendar-facility
+      [label]="t + 'facility' | transloco"
+      [options]="[{ value: '', label: (t + 'allFacilities' | transloco) }].concat(facilityOptions())"
+      [value]="facilityId()"
+      (changed)="setFacility($event)"
+    />
+  </div>
+
+  <furar-calendar-period
+    [mode]="mode()"
+    [date]="date()"
+    [today]="today"
+    [label]="label()"
+    (picked)="go(null, $event)"
+  />
+
+  <div class="f-bcal__two" [attr.data-detail]="inlineDetail() || null">
+    <div class="f-bcal__main" [attr.aria-busy]="store.state() === 'loading' || null">
+      @if (store.state() === 'error') {
+        <furar-status-state mode="error" [heading]="t + 'loadError' | transloco">
+          <button type="button" furarButton (click)="reload()">{{ 'booking.manage.retry' | transloco }}</button>
+        </furar-status-state>
+      } @else if (mode() === 'MONTH') {
+        <furar-calendar-month [weekdays]="weekdays()" [weeks]="monthDays()" (peeked)="openPeek($event)" />
+      } @else if (mode() === 'DAY' && narrow()) {
+        @if (data(); as d) {
+          <furar-calendar-day-list [bookings]="d.blocks" [selectedId]="selectedId()" (picked)="select($event)" />
+        } @else {
+          <furar-status-state mode="skeleton" [rows]="3" [description]="t + 'loading' | transloco" />
+        }
+      } @else {
+        <furar-calendar-grid
+          [columns]="columns()"
+          [hours]="hours()"
+          [closed]="closed()"
+          [blocks]="blocks()"
+          [counts]="counts()"
+          [selectedId]="selectedId()"
+          (picked)="select($event)"
+          (peeked)="openPeek($event)"
+        />
+      }
+      <p class="sr-only" role="status">
+        @if (data() && !blocks().length && !counts().length && mode() !== 'MONTH') {
+          {{ t + 'empty' | transloco }}
+        }
+      </p>
+    </div>
+    @if (inlineDetail()) {
+      <aside
+        #detailCard
+        class="f-card f-manage__detail"
+        data-detail-card
+        [attr.aria-label]="'booking.manage.detail.title' | transloco"
+      >
+        <furar-managed-booking-detail [closable]="true" [facility]="selectedFacility()" (closed)="closeDetail()" />
+      </aside>
+    }
+  </div>
+</div>
+
+@if (store.peek(); as peek) {
+  @if (peekAnchor(); as anchor) {
+    <furar-calendar-peek
+      [peek]="peek"
+      [anchor]="anchor"
+      [heading]="peekHeading()"
+      [allFacilities]="!facilityId()"
+      (opened)="select($event)"
+      (day)="go('DAY', $event)"
+      (closed)="closePeek(true)"
+    />
+  }
+}

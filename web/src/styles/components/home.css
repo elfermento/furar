@@ -1,0 +1,700 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Portada do concello (maqueta aprobada 02-portada): título grande co nome do concello na cor
+ * principal, buscador en cápsula, collaxe de fotos, tarxetas das instalacións e «Así de fácil».
+ * Todo con tokens; os tamaños propios da portada (título, collaxe) viven aquí como variables.
+ */
+@property --t {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+@property --u {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@layer components {
+  /* Os bordos do contedor da barra superior e do pé (.f-main, site.css). */
+  .f-wrap {
+    width: 100%;
+    max-width: calc(var(--container-bar) + 2 * var(--spacing-gutter));
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  /* --- Cabeceira: título, buscador e collaxe --- */
+  .f-hero {
+    position: relative;
+    padding: 3rem 0;
+  }
+  @media (min-width: 640px) {
+    .f-hero {
+      padding-top: 4rem;
+    }
+  }
+  .f-hero__blobs {
+    position: absolute;
+    inset: calc(-1 * var(--f-topbar-h, 5rem)) 0 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .f-hero__blobs span {
+    position: absolute;
+    border-radius: var(--radius-pill);
+    filter: blur(4rem);
+  }
+  .f-hero__blobs span:first-child {
+    top: -16rem;
+    right: -10rem;
+    width: 38rem;
+    height: 38rem;
+    background: color-mix(in srgb, var(--f-primary) 16%, transparent);
+  }
+  .f-hero__blobs span:last-child {
+    bottom: -10rem;
+    left: -8rem;
+    width: 24rem;
+    height: 24rem;
+    background: color-mix(in srgb, var(--f-accent) 10%, transparent);
+  }
+  .f-hero__grid {
+    position: relative;
+    display: grid;
+    align-items: center;
+    gap: 3rem;
+  }
+  @media (min-width: 1024px) {
+    .f-hero__grid[data-collage] {
+      grid-template-columns: 1.15fr 0.85fr;
+      min-height: 26rem;
+    }
+  }
+  .f-hero__title {
+    margin: 0 0 2.5rem;
+    font-size: clamp(2.5rem, 7.5vw, 5.5rem);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    overflow-wrap: anywhere;
+  }
+  .f-hero__title > * {
+    display: block;
+  }
+  .f-hero__title em {
+    color: var(--f-primary-text);
+    font-style: normal;
+  }
+  @media (min-width: 640px) {
+    .f-hero__title {
+      margin-bottom: 3.5rem;
+    }
+  }
+
+  /* Buscador: cápsula sólida de 4rem (o cristal só vai nas barras fixas, §6). */
+  .f-search {
+    display: flex;
+    align-items: center;
+    max-width: 40rem;
+    min-height: 4rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    font-size: 1.125rem;
+  }
+  /* Desactivado (portada sen concello): vese, pero sen sombra nin cursor de escribir. */
+  .f-search[data-disabled] {
+    box-shadow: none;
+    opacity: 0.6;
+  }
+  .f-search[data-disabled] .f-search__query {
+    cursor: default;
+  }
+  /* O campo vai sen aro propio: o foco vese na cápsula enteira. */
+  .f-search:has(.f-combobox__input:focus-visible) {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: 2px;
+  }
+  .f-search__query {
+    display: flex;
+    flex: none;
+    align-items: center;
+    align-self: stretch;
+    padding: 0 0.75rem 0 1.375rem;
+    color: var(--f-ink-soft);
+    cursor: text;
+  }
+  .f-search__combobox {
+    flex: 1;
+    min-width: 0;
+  }
+  .f-search__day {
+    border-left: var(--f-border) solid var(--f-divider);
+  }
+  .f-search__go {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    margin: 0 0.375rem;
+    border: var(--f-border) solid transparent;
+    border-radius: var(--radius-pill);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    cursor: pointer;
+    transition: background-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  @media (hover: hover) {
+    .f-search__go:hover {
+      background: var(--f-primary-hover);
+    }
+  }
+  .f-search__go:active {
+    transform: scale(0.98);
+  }
+  @media (max-width: 639px) {
+    .f-search {
+      font-size: var(--text-body);
+    }
+    .f-search__query {
+      padding-left: 1rem;
+    }
+    .f-search__day .f-date-field__button {
+      padding-inline: 0.625rem;
+    }
+    /* Só a icona: o día vai no nome accesible do botón. */
+    .f-search__day .f-date-field__text {
+      display: none;
+    }
+    .f-search__go {
+      width: var(--f-touch);
+      height: var(--f-touch);
+    }
+  }
+
+  /* Collaxe: tres fotos de portada inclinadas (só no escritorio; decorativo). */
+  .f-collage {
+    position: relative;
+    display: none;
+    height: 26rem;
+  }
+  @media (min-width: 1024px) {
+    .f-collage {
+      display: block;
+    }
+  }
+  .f-collage figure {
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+    border: 0.375rem solid var(--f-surface);
+    border-radius: var(--radius-sheet);
+    box-shadow: var(--shadow-overlay);
+  }
+  .f-collage img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* «Exemplo» enriba da primeira foto do collaxe (maqueta 46), como o [cardBadge] das tarxetas. */
+  .f-collage__badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+  .f-collage [data-place='1'] {
+    top: 0;
+    right: 0;
+    width: 20rem;
+    height: 14rem;
+    transform: rotate(3deg);
+  }
+  .f-collage [data-place='2'] {
+    top: 8rem;
+    left: 0;
+    width: 16rem;
+    height: 11rem;
+    transform: rotate(-4deg);
+  }
+  .f-collage [data-place='3'] {
+    right: 2rem;
+    bottom: 0;
+    width: 15rem;
+    height: 10.5rem;
+    transform: rotate(2deg);
+  }
+
+  /* --- Instalacións --- */
+  .f-home__section {
+    margin-block: 4rem;
+  }
+  .f-home__heading {
+    margin: 0 0 1.5rem;
+    font-size: var(--text-title);
+    letter-spacing: -0.02em;
+  }
+  /* Carril horizontal no móbil (con scroll-snap) e reixa de catro no escritorio. */
+  /* Tarxetas: furar-carousel no móbil e na tableta; grella de catro desde 1024 px. */
+  .f-rail.f-carousel {
+    --f-carousel-item: 15.5rem;
+    --f-carousel-gap: 1.25rem;
+  }
+  .f-rail .f-carousel__strip {
+    padding-bottom: 1.5rem;
+  }
+  .f-rail .f-carousel__item {
+    display: flex;
+  }
+  @media (min-width: 1024px) {
+    .f-rail .f-carousel__strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 0.5rem 0 1rem;
+      overflow: visible;
+    }
+    .f-rail .f-carousel__item {
+      width: auto;
+    }
+    .f-rail .f-carousel__arrow {
+      display: none;
+    }
+  }
+
+  /* --- Así de fácil: franxa da marca con raias e baralla fixa --- */
+  .f-steps {
+    position: relative;
+    height: 300vh;
+    margin-top: 5rem;
+    background-color: var(--f-primary);
+    background-image: repeating-linear-gradient(
+      -35deg,
+      transparent 0 2.875rem,
+      color-mix(in srgb, var(--f-on-primary) 7%, transparent) 2.875rem 3rem
+    );
+    color: var(--f-on-primary);
+    view-timeline: --f-steps block;
+  }
+  .f-steps__pin {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .f-steps__title {
+    margin: 0 0 2.5rem;
+    padding-inline: var(--spacing-gutter);
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    text-align: center;
+  }
+  .f-steps__title em {
+    font-style: normal;
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.12em;
+  }
+  .f-steps__deck {
+    position: relative;
+    width: min(64rem, 92vw);
+    height: min(30rem, 62vh);
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+  .f-step {
+    --rest: 0deg;
+    position: absolute;
+    inset: 0;
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    overflow: hidden;
+    border: var(--f-border-state) solid var(--f-ink);
+    border-radius: var(--radius-sheet);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+    transform: translateX(calc((1 - var(--t)) * 105vw)) translateY(calc(var(--u) * -0.625rem))
+      rotate(calc(var(--rest) + (1 - var(--t)) * 10deg)) scale(calc(1 - var(--u) * 0.04));
+    transform-origin: 50% 100%;
+  }
+  .f-step[data-step='1'] {
+    --rest: -2.5deg;
+    z-index: 1;
+  }
+  .f-step[data-step='2'] {
+    --rest: 1.5deg;
+    z-index: 2;
+  }
+  .f-step[data-step='3'] {
+    --rest: -1deg;
+    z-index: 3;
+  }
+  @media (min-width: 768px) {
+    .f-step {
+      grid-template-columns: 0.8fr 1.2fr;
+      align-items: center;
+      gap: 2.5rem;
+      padding: 2.5rem;
+    }
+  }
+  .f-step__n {
+    display: inline-grid;
+    place-items: center;
+    width: var(--f-touch);
+    height: var(--f-touch);
+    border-radius: var(--radius-pill);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-size: var(--text-head);
+    font-weight: 700;
+  }
+  .f-step h3 {
+    margin: 1rem 0 0.5rem;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .f-step p {
+    margin: 0;
+    color: var(--f-ink-soft);
+    font-size: 1.125rem;
+  }
+
+  /*
+   * Animación por scroll (sen JS): cada tarxeta anima --t (entrar) e --u (quedar debaixo) ao longo
+   * da sección fixa. Os tramos son os de step-deck.ts (respaldo en JS).
+   */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .f-step {
+        animation: f-step-1 linear both;
+        animation-range: contain 0% contain 100%;
+        animation-timeline: --f-steps;
+      }
+      .f-step[data-step='2'] {
+        animation-name: f-step-2;
+      }
+      .f-step[data-step='3'] {
+        animation-name: f-step-3;
+      }
+    }
+  }
+  @keyframes f-step-1 {
+    0% {
+      --t: 1;
+      --u: 0;
+    }
+    43.5%,
+    100% {
+      --t: 1;
+      --u: 1;
+    }
+  }
+  @keyframes f-step-2 {
+    0% {
+      --t: 0;
+      --u: 0;
+      animation-timing-function: var(--ease-smooth);
+    }
+    43.5% {
+      --t: 1;
+      --u: 0;
+    }
+    87%,
+    100% {
+      --t: 1;
+      --u: 1;
+    }
+  }
+  @keyframes f-step-3 {
+    0%,
+    43.5% {
+      --t: 0;
+      --u: 0;
+      animation-timing-function: var(--ease-smooth);
+    }
+    87% {
+      --t: 1;
+      --u: 0;
+    }
+    100% {
+      --t: 1;
+      --u: 0.3;
+    }
+  }
+  /* Antes de animar (e no respaldo en JS, ata o primeiro cálculo), só a primeira á vista. */
+  .f-step[data-step='2'],
+  .f-step[data-step='3'] {
+    --t: 0;
+  }
+
+  /* Movemento reducido: as tres tarxetas unha debaixo doutra, sen fixar nin animar. */
+  @media (prefers-reduced-motion: reduce) {
+    .f-steps {
+      height: auto;
+      padding: 4rem 0;
+    }
+    .f-steps__pin {
+      position: static;
+      height: auto;
+    }
+    .f-steps__deck {
+      display: grid;
+      gap: 1.5rem;
+      height: auto;
+    }
+    .f-step,
+    .f-step[data-step] {
+      position: relative;
+      transform: none;
+    }
+  }
+
+  /* «Capturas» debuxadas (aria-hidden): unha xanela mínima co deseño da web. */
+  .f-shot {
+    position: relative;
+    align-self: stretch;
+    max-height: 15rem;
+    overflow: hidden;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-row);
+    background: var(--f-page);
+    box-shadow: var(--shadow-overlay);
+    font-size: 0.8125rem;
+  }
+  @media (min-width: 768px) {
+    .f-shot {
+      max-height: 22rem;
+    }
+  }
+  .f-shot__chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    height: 1.75rem;
+    padding: 0 0.75rem;
+    background: var(--f-tint);
+  }
+  .f-shot__chrome i {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-divider);
+  }
+  .f-shot__chrome span {
+    margin-left: 0.75rem;
+    padding: 0 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-ink-soft);
+  }
+  .f-shot__page {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 1rem 1.25rem;
+  }
+  .f-shot__title {
+    margin: 0;
+    font-size: 1.6em;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .f-shot__title em {
+    color: var(--f-primary-text);
+    font-style: normal;
+  }
+  .f-shot__search,
+  .f-shot__button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.5rem 0.4rem 0.75rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+  }
+  .f-shot__hint,
+  .f-shot__muted {
+    color: var(--f-ink-soft);
+  }
+  .f-shot__go {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-left: auto;
+    border-radius: var(--radius-pill);
+    background: var(--f-primary);
+  }
+  /* Paso 1: a portada en pequeno, coas instalacións do concello. */
+  .f-shot__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  .f-shot__mini {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    padding: 0.3rem 0.3rem 0.45rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-field);
+    background: var(--f-surface);
+  }
+  .f-shot__mini img,
+  .f-shot__mini .f-shot__square {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    border-radius: calc(var(--radius-field) - 0.2rem);
+    object-fit: cover;
+  }
+  .f-shot__mini b {
+    overflow: hidden;
+    font-size: 0.9em;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .f-shot__tag {
+    align-self: flex-start;
+    padding: 0 0.4rem;
+    border-radius: var(--radius-field);
+    background: var(--f-tint);
+    font-size: 0.85em;
+  }
+  .f-shot__card,
+  .f-shot__ticket {
+    padding: 0.375rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+  }
+  .f-shot__square {
+    flex: none;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: var(--radius-field);
+    background: var(--f-tint);
+  }
+  .f-shot__square[data-large],
+  .f-shot__thumb {
+    flex: none;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-field);
+    object-fit: cover;
+  }
+  /* Paso 2: a tarxeta de reservar, cos campos Data e Hora. */
+  .f-shot__fields,
+  .f-shot__row {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .f-shot__fields > span {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 0.3rem 0.75rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-field);
+    background: var(--f-surface);
+    font-weight: 700;
+  }
+  .f-shot__fields small {
+    color: var(--f-ink-soft);
+    font-size: 0.85em;
+    font-weight: 400;
+  }
+  .f-shot__row > * {
+    flex: 1;
+  }
+  .f-shot__code {
+    font-size: 1.15em;
+    letter-spacing: 0.04em;
+  }
+  .f-shot__card,
+  .f-shot__ticket {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+  .f-shot__slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.35rem;
+  }
+  .f-shot__slots span {
+    padding: 0.05rem 0.55rem;
+    border: var(--f-border) solid var(--f-primary);
+    border-radius: var(--radius-pill);
+    color: var(--f-primary-text);
+    font-weight: 700;
+  }
+  .f-shot__slots span[data-on] {
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+  .f-shot__button {
+    justify-content: center;
+    font-weight: 700;
+  }
+  .f-shot__button[data-primary] {
+    border-color: var(--f-primary);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+  .f-shot__ok {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--f-success);
+    font-size: 1.15em;
+    font-weight: 700;
+  }
+  .f-shot__qr {
+    flex: none;
+    width: 6.5rem;
+    height: 6.5rem;
+    padding: 0.4rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-field);
+    background: var(--f-surface);
+    fill: var(--f-ink);
+  }
+
+  /* Máis contraste e cores forzadas: sen manchas de cor nin raias; bordos á vista. */
+  @media (prefers-contrast: more) {
+    .f-hero__blobs {
+      display: none;
+    }
+    .f-steps {
+      background-image: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .f-hero__blobs {
+      display: none;
+    }
+    .f-search,
+    .f-step {
+      border-color: CanvasText;
+    }
+    .f-search__go {
+      border-color: ButtonText;
+    }
+  }
+}

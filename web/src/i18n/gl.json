@@ -1,0 +1,2969 @@
+{
+  "app": {
+    "name": "Reservas deportivas",
+    "skipToContent": "Saltar ao contido",
+    "manageNav": "Xestión do concello",
+    "footer": "Reservas deportivas · software libre"
+  },
+  "nav": {
+    "facilities": "Instalacións",
+    "municipality": "Concello",
+    "bookings": "Reservas",
+    "indicators": "Indicadores",
+    "more": "Máis",
+    "currentPage": "(páxina actual)"
+  },
+  "lang": {
+    "label": "Idioma",
+    "gl": "Galego",
+    "es": "Castelán",
+    "endonym": {
+      "gl": "Galego",
+      "es": "Castellano"
+    },
+    "short": {
+      "gl": "GL",
+      "es": "ES"
+    }
+  },
+  "session": {
+    "login": "Entrar",
+    "logout": "Pechar sesión",
+    "account": "A miña conta",
+    "publicSite": "Ver a web pública",
+    "switchMunicipality": "Concello",
+    "municipalities": "Concellos",
+    "newMunicipality": "Novo concello",
+    "manage": "Xestión do concello",
+    "role": {
+      "PLATFORM_ADMIN": "Administración da plataforma",
+      "MANAGER": "Xestión",
+      "STAFF": "Recepción",
+      "RESIDENT": "Veciñanza"
+    },
+    "municipality": "Concello {{ofName}}",
+    "myBookings": "As miñas reservas",
+    "platformActivity": "Rexistro da plataforma",
+    "security": "Seguridade da conta",
+    "lastSignIn": "O teu último acceso foi o {{date}}."
+  },
+  "offline": {
+    "message": "Sen conexión. Algunhas accións non estarán dispoñibles ata que volva a rede."
+  },
+  "common": {
+    "yes": "Si",
+    "no": "Non",
+    "save": "Gardar",
+    "saving": "Gardando…",
+    "cancel": "Cancelar",
+    "loading": "Cargando…",
+    "period": {
+      "yearsOne": "{{count}} ano",
+      "yearsOther": "{{count}} anos",
+      "monthsOne": "{{count}} mes",
+      "monthsOther": "{{count}} meses",
+      "daysOne": "{{count}} día",
+      "daysOther": "{{count}} días"
+    }
+  },
+  "forms": {
+    "errorsSummary": "O formulario ten {{count}} erro(s). Revisa os campos marcados."
+  },
+  "titles": {
+    "home": "Inicio",
+    "customFields": "Campos personalizados",
+    "customFieldNew": "Novo campo",
+    "customFieldEdit": "Editar campo",
+    "create": "Novo concello",
+    "error": "Erro",
+    "accessibility": "Declaración de accesibilidade",
+    "privacy": "Privacidade",
+    "catalog": "Catálogo de compoñentes",
+    "facility": "Instalación",
+    "facilities": "Instalacións",
+    "newFacility": "Nova instalación",
+    "publicFacility": "Instalación",
+    "reserve": "Reservar",
+    "myBookings": "As miñas reservas",
+    "manageBookings": "Reservas",
+    "bookingsCalendar": "Calendario",
+    "indicators": "Indicadores",
+    "staff": "Persoal",
+    "staffInvitation": "Invitación ao persoal",
+    "activity": "Rexistro de actividade",
+    "platformActivity": "Rexistro da plataforma",
+    "legalNotice": "Aviso legal",
+    "municipalityGeneral": "Concello: xeral",
+    "municipalityAppearance": "Concello: aparencia",
+    "municipalityService": "Concello: servizo",
+    "municipalityLegal": "Concello: legal"
+  },
+  "errorPage": {
+    "403": {
+      "title": "Sen permiso",
+      "text": "A túa sesión non ten permiso para ver esta páxina."
+    },
+    "404": {
+      "title": "Non existe",
+      "text": "Non atopamos esta páxina nin este concello. Revisa o enderezo."
+    },
+    "500": {
+      "title": "Non se puido cargar",
+      "text": "Algo fallou ao cargar os datos. Téntao de novo nun intre."
+    },
+    "home": "Ir ao inicio"
+  },
+  "picker": {
+    "title": "Escolle o teu concello",
+    "intro": "Reserva as instalacións deportivas municipais do teu concello.",
+    "listLabel": "Concellos"
+  },
+  "home": {
+    "data": "Datos do concello",
+    "title": {
+      "line1": "Reserva a túa",
+      "line2": "pista en"
+    },
+    "search": {
+      "label": "Buscar instalacións",
+      "what": "¿Que queres reservar?",
+      "suggestions": "Suxestións",
+      "sports": "Deportes",
+      "facilities": "Instalacións",
+      "day": "Día",
+      "today": "Hoxe",
+      "tomorrow": "Mañá",
+      "submit": "Buscar"
+    },
+    "facilities": {
+      "title": "Instalacións",
+      "rail": "Instalacións do concello",
+      "loading": "Cargando as instalacións",
+      "error": {
+        "title": "Non se puideron cargar as instalacións",
+        "text": "Proba outra vez nun momento.",
+        "retry": "Tentar de novo"
+      },
+      "sports": "Deportes",
+      "closed": "Pechada temporalmente",
+      "freeOne": "{{count}} oco hoxe",
+      "freeOther": "{{count}} ocos hoxe"
+    },
+    "steps": {
+      "titleStart": "Así",
+      "titleEnd": "de fácil",
+      "search": {
+        "title": "Busca o teu oco",
+        "line": "Sen conta"
+      },
+      "book": {
+        "title": "Elixe hora e entra",
+        "line": "Cl@ve, Chave365 ou correo"
+      },
+      "play": {
+        "title": "A xogar",
+        "line": "O teu QR chega ao correo"
+      },
+      "shot": {
+        "date": "Data",
+        "time": "Hora",
+        "signIn": "Entra para reservar",
+        "clave": "Cl@ve",
+        "chave": "Chave365",
+        "email": "Correo electrónico",
+        "confirmed": "Reserva confirmada",
+        "when": "Hoxe · 19:00–20:30",
+        "calendar": "Engadir ao meu calendario"
+      }
+    },
+    "showcase": {
+      "place": "pista"
+    },
+    "examples": {
+      "badge": "Exemplo",
+      "rail": "Instalacións de exemplo",
+      "football": "Campo de fútbol",
+      "padel": "Pista de pádel",
+      "sportsHall": "Pavillón polideportivo",
+      "athletics": "Pista de atletismo",
+      "sports": {
+        "football": "Fútbol",
+        "football7": "Fútbol 7",
+        "padel": "Pádel",
+        "basketball": "Baloncesto",
+        "handball": "Balonmán",
+        "futsal": "Fútbol sala",
+        "athletics": "Atletismo"
+      }
+    }
+  },
+  "settings": {
+    "name": "Nome do concello",
+    "nameHelp": "O topónimo, sen «Concello de»: p. ex. Narón ou A Coruña.",
+    "languages": "Idiomas",
+    "defaultLanguage": "Idioma por defecto",
+    "customFields": "Datos propios",
+    "customFieldsHelp": "Campos que define o propio concello.",
+    "manageFields": "Xestionar os campos",
+    "noCustomFields": "Aínda non hai campos personalizados.",
+    "saved": "Cambios gardados",
+    "reload": "Cargar os datos actuais",
+    "sports": {
+      "title": "Servizo de deportes",
+      "name": "Nome do servizo",
+      "address": "Enderezo",
+      "phone": "Teléfono",
+      "email": "Correo electrónico"
+    },
+    "payment": {
+      "title": "Pago e devolución",
+      "payment": "Como se paga",
+      "refund": "Como se devolve",
+      "default": "Baleiro, vese o texto por defecto: «{{text}}».",
+      "scopeLabel": "Pago e devolución nas instalacións",
+      "scope": {
+        "ALL": "Igual para todas as instalacións",
+        "FACILITY": "Distinto por instalación"
+      },
+      "byFacility": "Indícase na ficha de cada instalación"
+    },
+    "legal": {
+      "pages": "Páxinas legais",
+      "tab": {
+        "privacy": "Privacidade",
+        "accessibility": "Accesibilidade",
+        "legalNotice": "Aviso legal"
+      },
+      "withErrors": ", con erros",
+      "modeLabel": {
+        "privacy": "Páxina de privacidade",
+        "accessibility": "Páxina de accesibilidade",
+        "legalNotice": "Páxina do aviso legal"
+      },
+      "mode": {
+        "FURAR": "Páxina desta web",
+        "TEXT": "Texto propio",
+        "URL": "Páxina propia",
+        "NONE": "Sen páxina"
+      },
+      "url": "Enderezo",
+      "urlHelp": "Os enlaces desta web levan aquí.",
+      "of": {
+        "privacy": "de privacidade",
+        "accessibility": "de accesibilidade",
+        "legalNotice": "do aviso legal"
+      },
+      "view": "Ver a páxina",
+      "shared": {
+        "privacy": {
+          "title": "Protección de datos",
+          "help": "O DPD sae tamén no aviso da invitación ao persoal."
+        },
+        "legalNotice": {
+          "title": "Identificación do concello",
+          "help": "A sede sae tamén nas outras páxinas legais."
+        }
+      },
+      "field": {
+        "legalEntityName": "Denominación oficial",
+        "eOfficeUrl": "Sede electrónica",
+        "ineCode": "Código INE",
+        "dir3Code": "Código DIR3",
+        "nif": "NIF",
+        "address": "Domicilio",
+        "generalEmail": "Correo xeral do concello",
+        "dpoEmail": "Correo do DPD",
+        "dpoPhone": "Teléfono do DPD",
+        "processor": "Encargado do tratamento",
+        "accessibilityEmail": "Correo de accesibilidade",
+        "accessibilityUnit": "Unidade responsable",
+        "accessibilityComplaintUrl": "Formulario de reclamación"
+      },
+      "help": {
+        "ineCode": "Propón o concello nos enderezos das instalacións.",
+        "dir3Code": "Coma L01150548.",
+        "accessibilityUnit": "A que resolve as reclamacións (art. 13 do RD 1112/2018).",
+        "accessibilityComplaintUrl": "O trámite na sede electrónica.",
+        "processor": "Só se outra entidade aloxa e opera o servizo por contrato co concello."
+      },
+      "textLanguage": "Idioma do texto",
+      "textLabel": "Texto {{page}} en {{lang}}",
+      "langName": {
+        "gl": "galego",
+        "es": "castelán"
+      },
+      "textHint": "Os datos do formulario xa non se insiren sós neste texto; revísao se cambias algún.",
+      "preview": "Vista previa",
+      "reset": "Volver ao texto por defecto",
+      "resetTitle": "Volver ao texto por defecto?",
+      "resetMessage": "Pérdense os cambios feitos en galego e en castelán.",
+      "errorsIn": "Hai campos por revisar en {{pages}}.",
+      "required": {
+        "title": "Datos que usan os textos legais",
+        "inList": "os datos que usan os textos legais"
+      },
+      "missing": "Faltan datos que usan as páxinas legais por defecto: {{list}}. Sen eles, esas páxinas saen incompletas.",
+      "missingOne": "Falta un dato que usan as páxinas legais por defecto: {{list}}. Sen el, esas páxinas saen incompletas.",
+      "missingName": {
+        "legalEntityName": "denominación oficial",
+        "nif": "NIF",
+        "address": "domicilio",
+        "generalEmail": "correo xeral",
+        "dpoEmail": "correo do DPD"
+      },
+      "none": {
+        "privacy": "A lei obriga a informar de como se tratan os datos persoais. Sen esta páxina, o pé non a liga e ninguén poderá consultala.",
+        "accessibility": "As administracións están obrigadas a publicar unha declaración de accesibilidade. Sen esta páxina, o pé non a liga.",
+        "legalNotice": "A lei obriga a identificar o titular da web. Sen esta páxina, o pé non a liga e ninguén saberá quen a publica."
+      }
+    }
+  },
+  "theme": {
+    "title": "Cores",
+    "pick": "Selector de cor: {{name}}",
+    "help": "Cores en formato #rrggbb. Para que todo o mundo poida ler a web, o contraste debe chegar ao mínimo.",
+    "primary": "Cor principal",
+    "onPrimary": "Texto dos botóns",
+    "accent": "Cor de realce",
+    "background": "Fondo",
+    "text": "Texto",
+    "contrast": "Comprobación de contraste",
+    "pair": {
+      "textOnBackground": "Texto sobre o fondo",
+      "onPrimaryOnPrimary": "Texto sobre a cor principal",
+      "accentOnBackground": "Realce sobre o fondo",
+      "primaryOnBackground": "Cor principal sobre o fondo (bordos e foco)"
+    },
+    "check": {
+      "ok": "{{pair}}: {{ratio}}:1, correcto (mínimo {{minimum}}:1).",
+      "low": "{{pair}}: {{ratio}}:1, insuficiente (mínimo {{minimum}}:1)."
+    },
+    "checks": "Comprobación das cores",
+    "technical": "Detalles técnicos",
+    "fix": "Axustar {{what}}",
+    "fixShort": "Axustar",
+    "plain": {
+      "darken": "escurece",
+      "lighten": "aclara",
+      "textOnBackground": {
+        "ok": "O texto lese ben sobre o fondo",
+        "low": "O texto non se le ben sobre o fondo: {{action}} o texto ou cambia o fondo.",
+        "what": "o texto"
+      },
+      "onPrimaryOnPrimary": {
+        "ok": "O texto dos botóns lese ben",
+        "low": "O texto dos botóns non se le ben: {{action}} a cor principal ou cambia a cor do texto dos botóns.",
+        "what": "o texto dos botóns"
+      },
+      "accentOnBackground": {
+        "ok": "As ligazóns lense ben",
+        "low": "As ligazóns non se len ben: {{action}} a cor de realce.",
+        "what": "as ligazóns"
+      },
+      "primaryOnBackground": {
+        "ok": "Os bordos e o foco vense ben",
+        "low": "Os bordos e o foco non se ven ben: {{action}} a cor principal.",
+        "what": "os bordos e o foco"
+      }
+    },
+    "preview": {
+      "show": "Vista previa",
+      "hide": "Agochar a vista previa",
+      "title": "Vista previa",
+      "close": "Pechar a vista previa",
+      "label": "Vista previa coas cores escollidas",
+      "facility": "Pista de pádel 2",
+      "when": "Martes 10 de novembro, de 18:00 a 19:00",
+      "link": "Ver os horarios",
+      "button": "Reservar",
+      "field": "Correo electrónico",
+      "value": "nome@exemplo.gal"
+    }
+  },
+  "platform": {
+    "createLink": "Dar de alta un concello",
+    "createTitle": "Novo concello",
+    "createIntro": "O identificador forma parte do enderezo web e non se pode cambiar despois.",
+    "slug": "Identificador",
+    "slugHelp": "Letras minúsculas, números e guións, sen tiles nin espazos; p. ex. naron, a-coruna ou vilagarcia-de-arousa",
+    "create": "Crear concello",
+    "created": "Concello {{ofName}} creado"
+  },
+  "customFields": {
+    "type": {
+      "TEXT": "Texto curto",
+      "LONG_TEXT": "Texto longo",
+      "NUMBER": "Número",
+      "DATE": "Data",
+      "BOOLEAN": "Si ou non",
+      "SELECT": "Unha opción da lista",
+      "MULTI_SELECT": "Varias opcións da lista"
+    },
+    "visibility": {
+      "PUBLIC": "Público",
+      "OWNER": "Titular e persoal",
+      "STAFF": "Só persoal"
+    },
+    "visibilityBooking": {
+      "OWNER": "A persoa que reserva e o persoal",
+      "STAFF": "Só o persoal"
+    },
+    "target": {
+      "MUNICIPALITY": "Concello",
+      "FACILITY": "Instalación",
+      "BOOKING": "Reserva"
+    },
+    "format": {
+      "none": "Calquera texto",
+      "EMAIL": "Correo electrónico",
+      "PHONE": "Teléfono",
+      "URL": "Enderezo web"
+    },
+    "rules": {
+      "minLength": "Lonxitude mínima",
+      "maxLength": "Lonxitude máxima",
+      "min": "Valor mínimo",
+      "max": "Valor máximo",
+      "decimals": "Decimais",
+      "minDate": "Data mínima",
+      "maxDate": "Data máxima",
+      "minItems": "Mínimo de opcións",
+      "maxItems": "Máximo de opcións",
+      "format": "Formato"
+    },
+    "form": {
+      "choose": "Escolle unha opción"
+    },
+    "admin": {
+      "title": "Campos personalizados",
+      "intro": "Datos propios que {{name}} pide no concello, nas instalacións ou nas reservas, sen tocar o programa.",
+      "count": "Campos activos: {{count}}. Cada sitio admite ata {{limit}}.",
+      "new": "Novo campo",
+      "active": "Activos",
+      "empty": "Aínda non hai campos.",
+      "edit": "Editar",
+      "personalData": "dato persoal",
+      "usage": "{{site}}: {{visibility}}",
+      "usageRequired": "{{site}}: {{visibility}}, obrigatorio",
+      "inactive": "Desactivados",
+      "deactivate": "Desactivar",
+      "activate": "Activar",
+      "deactivateNamed": "Desactivar o campo «{{label}}»",
+      "activateNamed": "Activar o campo «{{label}}»",
+      "delete": "Eliminar",
+      "deleteNamed": "Eliminar o campo «{{label}}»",
+      "deleting": "Eliminando",
+      "deactivatedNotice": "Campo «{{label}}» desactivado. Os datos gardados consérvanse",
+      "activatedNotice": "Campo «{{label}}» activado",
+      "deletedNotice": "Campo «{{label}}» eliminado",
+      "deleteTitle": "Eliminar o campo «{{label}}»?",
+      "deleteMessage": "Bórrase a definición. Non se pode desfacer.",
+      "cannotDeleteTitle": "Non se pode eliminar «{{label}}»",
+      "cannotDelete": "Ten datos gardados. Podes desactivalo: deixa de pedirse e os datos consérvanse.",
+      "cannotDeleteInactive": "Ten datos gardados e xa está desactivado: os datos consérvanse."
+    },
+    "editor": {
+      "newTitle": "Novo campo personalizado",
+      "editTitle": "Editar campo personalizado",
+      "intro": "Escribe os textos nos dous idiomas. A vista previa amosa o campo tal como o verá quen encha o formulario.",
+      "labelGl": "Etiqueta en galego",
+      "labelEs": "Etiqueta en castelán",
+      "helpGl": "Axuda en galego",
+      "helpEs": "Axuda en castelán",
+      "code": "Código",
+      "codeHelp": "Identificador interno para a API e as exportacións: minúsculas, díxitos e «_»; non se pode cambiar despois.",
+      "codeLocked": "O código non se pode cambiar.",
+      "type": "Tipo de dato",
+      "typeLocked": "O tipo non se pode cambiar.",
+      "personalData": "É un dato persoal",
+      "personalDataHelp": "Nunca é público. Nas reservas, bórrase cando se anonimiza a reserva; no concello e nas instalacións, entra na exportación do concello.",
+      "usages": "Onde se usa",
+      "usageRequired": "Obrigatorio",
+      "usageVisibility": "Quen o ve",
+      "rules": "Regras",
+      "options": "Opcións",
+      "option": {
+        "code": "Código",
+        "labelGl": "Galego",
+        "labelEs": "Castelán",
+        "codeN": "Código da opción {{n}}",
+        "labelGlN": "Opción {{n}} en galego",
+        "labelEsN": "Opción {{n}} en castelán",
+        "add": "Engadir opción",
+        "delete": "Eliminar",
+        "deleteNamed": "Eliminar a opción «{{name}}»",
+        "deactivate": "Desactivar",
+        "activate": "Activar",
+        "deactivateNamed": "Desactivar a opción «{{name}}»",
+        "activateNamed": "Activar a opción «{{name}}»",
+        "deleteTitle": "Eliminar a opción «{{name}}»?",
+        "deleteMessage": "Desaparece ao gardar o campo.",
+        "cannotDeleteTitle": "Non se pode eliminar «{{name}}»",
+        "cannotDelete": "Hai datos gardados con esta opción. Podes desactivala: deixa de ofrecerse e os datos consérvanse.",
+        "cannotDeleteInactive": "Hai datos gardados con esta opción e xa está desactivada."
+      },
+      "preview": "Vista previa",
+      "previewHelp": "Así o verá quen encha o formulario. Podes probar a escribir.",
+      "saved": "Campo «{{label}}» gardado",
+      "personalDataWarningTitle": "Coidado coas categorías especiais (art. 9 RGPD).",
+      "personalDataWarning": "Non pidas datos de saúde nin de discapacidade salvo que haxa unha base legal que o permita, e indica na axuda para que se usa o dato. Un dato persoal non pode ser público.",
+      "personalDataNotPublic": "Un dato persoal non pode ser público: só o ven o titular e o persoal, ou só o persoal.",
+      "placeLocked": "Xa ten valores gardados: non se pode cambiar de sitio."
+    }
+  },
+  "facility": {
+    "list": {
+      "title": "Instalacións",
+      "new": "Nova instalación",
+      "loading": "Cargando as instalacións…",
+      "loadError": {
+        "title": "Non se puideron cargar as instalacións",
+        "text": "Algo fallou ao ler os datos. Téntao de novo nun intre.",
+        "retry": "Tentar de novo"
+      },
+      "empty": {
+        "title": "Aínda non hai instalacións",
+        "text": "Dá de alta a primeira con nome e enderezo. Despois engades os usos, os deportes e o horario."
+      },
+      "statusOf": "Estado de {{name}}",
+      "draft": "Borrador",
+      "draftStep": "Paso {{step}} de {{total}}",
+      "status": {
+        "ACTIVE": "Activa",
+        "TEMPORARILY_CLOSED": "Pechada temporalmente",
+        "WITHDRAWN": "De baixa"
+      },
+      "statusSummary": "{{name}}: {{status}}",
+      "statusChanged": "{{name}}: {{status}}",
+      "withdraw": {
+        "title": "Dar de baixa?",
+        "text": "«{{name}}» deixa de verse e non se pode reservar. Consérvase o historial e pódese volver activar.",
+        "action": "Dar de baixa"
+      },
+      "sports": "Deportes"
+    },
+    "affectedBookings": {
+      "titleOne": "1 reserva afectada",
+      "titleOther": "{{count}} reservas afectadas",
+      "intro": "Este cambio afecta a reservas futuras: decide que facer con cada unha.",
+      "changed": "As reservas afectadas cambiaron mentres decidías. Revisa a lista: o que xa decidiras consérvase.",
+      "selectAll": "Seleccionar todas",
+      "bulk": "Para as marcadas",
+      "cancelMarked": "Cancelar as marcadas",
+      "keepMarked": "Manter as marcadas",
+      "list": "Reservas afectadas",
+      "mark": "Marcar {{name}}",
+      "action": "Que facer",
+      "cancel": "Cancelar",
+      "keep": "Manter",
+      "keepNoNotice": "Mantense e non se avisa.",
+      "channels": "Como avisar",
+      "channel": {
+        "EMAIL": "Correo",
+        "WEB": "Aviso na web"
+      },
+      "error": {
+        "action": "Escolle cancelar ou manter.",
+        "channel": "Escolle polo menos unha forma de avisar."
+      },
+      "status": "Por decidir: {{pending}} · Canceladas: {{cancel}} · Mantidas: {{keep}}",
+      "incompleteOne": "Falta decidir 1 reserva: revisa a marcada.",
+      "incompleteOther": "Falta decidir {{count}} reservas: revisa as marcadas.",
+      "back": "Volver",
+      "confirm": "Confirmar",
+      "confirming": "Confirmando…"
+    },
+    "detail": {
+      "back": "Volver",
+      "loading": "Cargando a instalación…",
+      "notFound": {
+        "title": "Non atopamos esta instalación",
+        "text": "Pode que se borrase ou que o enderezo estea mal. Volve ao listado."
+      },
+      "loadError": {
+        "title": "Non se puido cargar a instalación",
+        "text": "Algo fallou ao ler os datos. Téntao de novo nun intre.",
+        "retry": "Tentar de novo"
+      },
+      "status": {
+        "label": "Estado",
+        "ACTIVE": "Activa",
+        "TEMPORARILY_CLOSED": "Pechada temporalmente",
+        "WITHDRAWN": "De baixa"
+      },
+      "withdraw": {
+        "title": "Dar de baixa?",
+        "text": "Deixa de verse e non se pode reservar. Consérvase o historial e pódese volver activar.",
+        "action": "Dar de baixa"
+      },
+      "stale": {
+        "title": "Outra persoa cambiou esta instalación",
+        "text": "O que escribiches segue no seu sitio. Recarga para traer os cambios e volve gardar.",
+        "reload": "Recargar",
+        "reloading": "Recargando"
+      },
+      "draft": {
+        "title": "Borrador: a veciñanza aínda non a ve",
+        "intro": "Para publicala falta:",
+        "missing": {
+          "SPORTS": "Os deportes",
+          "USES": "Polo menos un uso",
+          "SCHEDULE": "O horario"
+        },
+        "unpublished": "Aínda non está publicada.",
+        "wizard": "Revisar e publicar"
+      },
+      "sections": {
+        "uses": "Usos",
+        "schedule": "Horario",
+        "blocks": "Bloqueos"
+      },
+      "edit": {
+        "start": "Editar",
+        "cancel": "Cancelar",
+        "save": "Gardar",
+        "saving": "Gardando",
+        "editing": "Editando a ficha",
+        "unsaved": "Cambios sen gardar",
+        "failedStatus": "Non se gardou todo: revisa os avisos",
+        "saved": "Gardáronse os cambios",
+        "bar": "Edición de {{name}}",
+        "apply": "Aceptar",
+        "pending": "Sen gardar",
+        "failed": "Isto non se gardou"
+      },
+      "delete": {
+        "action": "Eliminar",
+        "label": "Eliminar {{name}}",
+        "title": "Eliminar a instalación?",
+        "text": "Bórrase «{{name}}» co seu horario, usos, bloqueos e a súa lista de imaxes. As fotos seguen na biblioteca do concello. Non se pode desfacer.",
+        "phrase": "eliminar instalación",
+        "busy": "Eliminando",
+        "done": "Eliminouse «{{name}}»",
+        "bookedTitle": "Non se pode eliminar",
+        "bookedText": "«{{name}}» tivo reservas. Para conservar o historial, dáa de baixa: deixa de verse e as reservas quedan.",
+        "withdraw": "Dar de baixa"
+      }
+    },
+    "description": {
+      "title": "Descrición",
+      "help": "Opcional. Se a escribes, vai nos dous idiomas, ata {{max}} caracteres cada un."
+    },
+    "data": {
+      "title": "Datos",
+      "name": {
+        "label": "Nome"
+      },
+      "sports": {
+        "label": "Deportes",
+        "add": "Engadir deporte",
+        "help": "Escribe para buscar no catálogo. Ata {{max}}; fai falta un para publicar.",
+        "chosen": "Deportes escollidos",
+        "remove": "Eliminar {{name}}",
+        "create": "Crear deporte"
+      },
+      "createSport": {
+        "title": "Novo deporte",
+        "cancel": "Cancelar",
+        "create": "Crear",
+        "creating": "Creando",
+        "name": "Nome"
+      },
+      "type": {
+        "label": "Tipo",
+        "none": "Sen indicar",
+        "FIELD": "Campo",
+        "SPORTS_HALL": "Pavillón",
+        "PADEL_COURT": "Pista de pádel",
+        "POOL": "Piscina",
+        "OUTDOOR_COURT": "Pista exterior",
+        "OTHER": "Outro"
+      },
+      "ridegaCode": {
+        "label": "Código RIDEGA",
+        "help": "Opcional. Censo deportivo de Galicia, ata {{max}} caracteres."
+      },
+      "phone": {
+        "label": "Teléfono",
+        "help": "Opcional. Só números e espazos; pode empezar por +."
+      },
+      "email": {
+        "label": "Correo",
+        "help": "Opcional. Un enderezo, ata {{max}} caracteres."
+      },
+      "ownFields": {
+        "loading": "Cargando os campos propios…",
+        "error": "Non se puideron cargar os campos propios",
+        "retry": "Tentar de novo"
+      },
+      "onlineBooking": {
+        "label": "A veciñanza reserva por internet",
+        "help": "Se non, o persoal xestiona as reservas desde a xestión."
+      },
+      "showFreeSlots": {
+        "label": "Mostrar os ocos libres",
+        "help": "A veciñanza ve os ocos sen poder reservar e o teléfono para facelo."
+      },
+      "covered": {
+        "label": "Cuberta"
+      }
+    },
+    "amenities": {
+      "title": "Servizos e accesibilidade",
+      "change": "Cambiar",
+      "changeContext": "servizos e accesibilidade",
+      "offers": "O que ofrece",
+      "empty": "Aínda non indicaches que servizos ten nin como é a accesibilidade.",
+      "add": "Indicar servizos",
+      "saved": "Gardado",
+      "dialogTitle": "Servizos e accesibilidade",
+      "group": {
+        "services": "Servizos",
+        "accessibility": "Accesibilidade"
+      },
+      "item": {
+        "CHANGING_ROOMS": "Vestiarios",
+        "SHOWERS": "Duchas",
+        "COVERED_STANDS": "Bancadas cubertas",
+        "CAFE": "Cafetaría",
+        "PARKING": "Aparcadoiro",
+        "LIGHTING": "Luz artificial",
+        "STEP_FREE_ACCESS": "Acceso sen chanzos",
+        "ACCESSIBLE_TOILET": "Aseo adaptado",
+        "ACCESSIBLE_CHANGING_ROOM": "Vestiario adaptado",
+        "HEARING_LOOP": "Bucle magnético"
+      },
+      "cancel": "Cancelar",
+      "save": "Gardar",
+      "saving": "Gardando…"
+    },
+    "location": {
+      "title": "Localización",
+      "change": "Cambiar",
+      "changeContext": "a localización",
+      "streetLine": "{{street}}, {{number}}",
+      "placeLine": "{{postalCode}} {{locality}}",
+      "noNumber": "s/n",
+      "pin": "Punto da instalación no mapa",
+      "saved": "Gardado",
+      "dialogTitle": "Cambiar a localización",
+      "search": "Buscar enderezo",
+      "searchHelp": "Escribe polo menos 3 letras e escolle unha suxestión: enche os campos e a chincheta.",
+      "source": "Fonte: CartoCiudad, © IGN",
+      "manual": {
+        "title": "O buscador de enderezos non responde",
+        "text": "Escribe o enderezo a man e pica no mapa para poñer a chincheta na entrada."
+      },
+      "field": {
+        "street": "Vía",
+        "streetNumber": "Número",
+        "postalCode": "Código postal",
+        "locality": "Localidade"
+      },
+      "numberHelp": "Baleiro se non ten número.",
+      "pinRequired": "Pon a chincheta no mapa.",
+      "cancel": "Cancelar",
+      "save": "Gardar",
+      "saving": "Gardando…"
+    },
+    "uses": {
+      "list": "Usos da instalación",
+      "add": "Novo uso",
+      "edit": "Editar uso",
+      "loading": "Cargando os usos…",
+      "empty": {
+        "title": "Aínda non hai usos",
+        "text": "Un uso di como se aluga a instalación: enteira, por partes ou por prazas. Fai falta polo menos un para publicala."
+      },
+      "error": {
+        "title": "Non se puideron cargar os usos",
+        "text": "Algo fallou ao ler os usos. Téntao de novo nun intre.",
+        "retry": "Tentar de novo"
+      },
+      "name": "Nome",
+      "rentalMode": {
+        "label": "Alúgase",
+        "WHOLE": "Enteira",
+        "PARTS": "Por partes",
+        "SEATS": "Por prazas"
+      },
+      "parts": {
+        "label": "Partes",
+        "help": "Polo menos {{min}}, cada unha co seu nome.",
+        "name": "Parte {{n}}",
+        "remove": "Eliminar a parte {{n}}",
+        "add": "Parte"
+      },
+      "capacity": {
+        "label": "Prazas",
+        "help": "Persoas por franxa, de {{min}} a {{max}}."
+      },
+      "slot": {
+        "label": "Cada reserva",
+        "option": "{{minutes}} min"
+      },
+      "availability": {
+        "label": "Cando",
+        "ALWAYS": "Sempre",
+        "DATES": "Só unhas datas"
+      },
+      "periods": {
+        "label": "Períodos",
+        "from": "Período {{n}}, desde",
+        "to": "Período {{n}}, ata",
+        "remove": "Eliminar o período {{n}}",
+        "add": "Período"
+      },
+      "blocksOthers": {
+        "label": "Bloquea os demais usos",
+        "help": "Mentres está vixente, só se reserva este uso."
+      },
+      "tags": {
+        "whole": "Enteira",
+        "parts": "{{count}} partes: {{names}}",
+        "seats": "{{count}} prazas",
+        "minutes": "{{minutes}} min",
+        "always": "Sempre",
+        "blocks": "Bloquea os demais"
+      },
+      "stale": {
+        "title": "Outra persoa cambiou este uso",
+        "text": "O que escribiches segue no seu sitio. Recarga para traer os cambios e volve gardar."
+      },
+      "cancel": "Cancelar",
+      "save": "Gardar",
+      "saving": "Gardando",
+      "saved": "Gardouse «{{name}}».",
+      "archived": "Quitouse «{{name}}».",
+      "remove": {
+        "action": "Eliminar",
+        "label": "Eliminar o uso {{name}}"
+      },
+      "when": {
+        "change": "Cambiar",
+        "dates": "Datas",
+        "days": "Días",
+        "done": "Listo",
+        "all": "Todos os días",
+        "workdays": "De luns a venres",
+        "weekend": "Fins de semana",
+        "none": "Ningún día",
+        "and": " e ",
+        "always": "Sempre",
+        "day": "O {{day}}",
+        "range": "Do {{from}} ao {{to}}",
+        "noDates": "Sen datas",
+        "blocks": "bloquea os demais usos"
+      },
+      "terms": {
+        "title": "Duración e prezo"
+      },
+      "price": {
+        "label": "Prezo",
+        "NONE": "Sen prezo",
+        "FREE": "Gratis",
+        "PAID": "De pago",
+        "amount": "Importe",
+        "perBooking": "por reserva de",
+        "perPerson": "por persoa"
+      },
+      "duration": {
+        "minutes": "{{minutes}} min",
+        "hour": "{{hours}} hora",
+        "hours": "{{hours}} horas",
+        "hoursMinutes": "{{hours}} h {{minutes}} min"
+      },
+      "rules": {
+        "title": "Condicións da reserva",
+        "empty": "Sen establecer",
+        "clear": "Quitar a condición",
+        "advance": {
+          "label": "Cando reservar",
+          "both": "De {{min}} horas a {{max}} días antes",
+          "min": "Polo menos {{min}} horas antes",
+          "max": "Ata {{max}} días antes",
+          "from": "Desde",
+          "to": "Ata",
+          "hoursBefore": "horas antes",
+          "daysBefore": "días antes"
+        },
+        "duration": {
+          "label": "Duración máxima",
+          "manager": "Ata {{duration}}",
+          "public": "Ata {{duration}} seguidas",
+          "upTo": "Ata",
+          "slots": "reservas seguidas",
+          "example": "Con reservas de {{minutes}} min:",
+          "total": "{{minutes}} min × {{n}} = {{total}}",
+          "exampleEnd": "como máximo."
+        },
+        "cap": {
+          "label": "Límite por persoa",
+          "one": "{{count}} reserva por {{period}}",
+          "many": "{{count}} reservas por {{period}}",
+          "per": "reservas por",
+          "period": "Período",
+          "DAY": "día",
+          "WEEK": "semana",
+          "MONTH": "mes"
+        },
+        "cancel": {
+          "label": "Cancelar sen custo",
+          "manager": "Ata {{hours}} horas antes",
+          "public": "Gratis ata {{hours}} horas antes",
+          "upTo": "Ata",
+          "hoursBefore": "horas antes"
+        },
+        "fields": {
+          "minAdvanceHours": "Horas antes como mínimo, de {{min}} a {{max}}",
+          "maxAdvanceDays": "Días antes como máximo, de {{min}} a {{max}}",
+          "maxSlots": "Reservas seguidas, de {{min}} a {{max}}",
+          "capCount": "Número de reservas, de {{min}} a {{max}}",
+          "cancelHours": "Horas antes, de {{min}} a {{max}}"
+        }
+      }
+    },
+    "photos": {
+      "title": "Fotos",
+      "change": "Cambiar fotos",
+      "saved": "Gardado",
+      "previous": "Foto anterior",
+      "next": "Foto seguinte",
+      "position": "{{current}} de {{total}}",
+      "photoPosition": "Foto {{current}} de {{total}}",
+      "photoCover": "Foto {{current}} de {{total}}, portada",
+      "count": "{{count}} fotos",
+      "countOne": "1 foto",
+      "cover": "Portada",
+      "hint": "A primeira é a portada · Arrastra para cambiar a orde",
+      "strip": "Fotos da instalación, na orde da galería",
+      "previousPage": "Fotos anteriores",
+      "nextPage": "Fotos seguintes",
+      "add": "Engadir",
+      "addLabel": "Engadir fotos",
+      "description": "Descrición da foto",
+      "descriptionLang": "Idioma da descrición",
+      "descriptionHelp": "Para quen non pode vela: lea o lector de pantalla.",
+      "descriptionShared": "Para quen non pode vela: lea o lector de pantalla. Cambia en todas as instalacións que usan esta foto.",
+      "placeholder": "Que se ve na foto",
+      "drawingNote": "Debuxo incluído: a súa descrición é fixa.",
+      "uploadedOn": "Subida o {{date}}",
+      "newUpload": "Subida agora, sen gardar",
+      "drawing": "Debuxo incluído",
+      "remove": "Eliminar",
+      "removeLabel": "Eliminar esta foto da instalación",
+      "removed": "Foto quitada da instalación. Segue na biblioteca.",
+      "added": "{{count}} fotos engadidas ao final.",
+      "addedOne": "Foto engadida ao final.",
+      "suggested": "Sen fotos, vese o debuxo suxerido.",
+      "changes": "{{count}} cambios sen gardar",
+      "changesOne": "1 cambio sen gardar",
+      "missingAlt": "Falta a descrición en {{lang}} da foto {{current}}.",
+      "langName": {
+        "gl": "galego",
+        "es": "castelán"
+      },
+      "cancel": "Cancelar",
+      "close": "Pechar",
+      "save": "Gardar",
+      "saving": "Gardando…",
+      "library": {
+        "title": "Engadir fotos",
+        "back": "Volver ás fotos",
+        "municipality": "Do concello",
+        "drawings": "Debuxos incluídos",
+        "tabs": "Orixe das fotos",
+        "upload": "Subir fotos",
+        "uploadHelp": "ou arrástraas aquí · JPEG ou PNG, ata {{max}} · quedan na biblioteca do concello ao gardar",
+        "uploading": "Subindo {{name}}…",
+        "uploaded": "{{name}} subida e marcada.",
+        "uploadError": "{{name}}: {{message}}",
+        "empty": "Aínda non hai fotos do concello. Sube a primeira.",
+        "loading": "Cargando a biblioteca…",
+        "error": "Non se puido cargar a biblioteca.",
+        "retry": "Tentar de novo",
+        "unused": "Sen usar",
+        "new": "Nova",
+        "inList": "Xa está nesta instalación",
+        "usedIn": "{{names}}",
+        "selected": "{{count}} marcadas",
+        "selectedOne": "1 marcada",
+        "addSelected": "Engadir {{count}}",
+        "full": "Como moito {{max}} fotos por instalación: quedan {{left}}.",
+        "cancel": "Cancelar"
+      }
+    },
+    "schedule": {
+      "loading": "Cargando o horario…",
+      "error": {
+        "title": "Non se puido cargar o horario",
+        "text": "Algo fallou ao ler o horario. Téntao de novo nun intre.",
+        "retry": "Tentar de novo"
+      },
+      "empty": {
+        "title": "Aínda non hai horario",
+        "text": "Crea unha tempada (por exemplo, Inverno, do 1 de setembro ao 30 de xuño) e pon as horas de cada día. Fai falta para publicar a instalación."
+      },
+      "seasons": {
+        "label": "Tempadas",
+        "now": "Agora",
+        "openEnded": "Desde {{from}} · sen fin",
+        "add": "Tempada",
+        "edit": "Editar",
+        "editLabel": "Editar a tempada {{name}}"
+      },
+      "delete": {
+        "label": "Eliminar a tempada {{name}}",
+        "action": "Eliminar",
+        "title": "Borrar a tempada?",
+        "text": "«{{name}}» e as súas horas desaparecen. Os días que cubría quedan sen horario.",
+        "busy": "Borrando"
+      },
+      "created": "Creouse a tempada «{{name}}».",
+      "saved": "Gardouse a tempada «{{name}}».",
+      "deleted": "Borrouse a tempada «{{name}}».",
+      "week": {
+        "label": "Semana de {{season}}",
+        "stale": {
+          "title": "Outra persoa cambiou esta tempada",
+          "text": "O que cambiaches segue no seu sitio. Recarga para traer os cambios e volve gardar."
+        },
+        "invalid": "Corrixe os días marcados para poder gardar.",
+        "unsaved": "Cambios sen gardar",
+        "cancel": "Cancelar",
+        "save": "Gardar",
+        "saving": "Gardando",
+        "saved": "Gardado"
+      },
+      "day": {
+        "closed": "Pechado",
+        "today": "Hoxe",
+        "open": "{{day}} aberto",
+        "from": "{{day}}, tramo {{n}}, desde",
+        "to": "{{day}}, tramo {{n}}, ata",
+        "remove": "Eliminar o tramo {{n}} de {{day}}",
+        "add": "Tramo",
+        "addLabel": "Engadir un tramo en {{day}}",
+        "holidays": "Festivos"
+      },
+      "errors": {
+        "noIntervals": "Engade un tramo ou marca o día como pechado.",
+        "endBeforeStart": "O tramo {{n}} ten que rematar despois de empezar.",
+        "overlap": "O tramo {{n}} pisa outro tramo do mesmo día."
+      },
+      "seasonDialog": {
+        "addTitle": "Nova tempada",
+        "editTitle": "Editar a tempada",
+        "name": "Nome",
+        "nameHelp": "Por exemplo, Inverno ou Verán.",
+        "from": "Desde",
+        "to": "Ata",
+        "noEnd": "Sen data de fin",
+        "copyFrom": "Empezar co horario de",
+        "copyNone": "Ningunha (todo pechado)",
+        "cancel": "Cancelar",
+        "save": "Gardar",
+        "create": "Crear tempada",
+        "saving": "Gardando"
+      },
+      "gaps": {
+        "title": "Hai días sen tempada",
+        "text": "Neses días a instalación está pechada, agás que unha excepción a abra. Crea ou amplía unha tempada para cubrilos.",
+        "day": "O {{date}}",
+        "range": "Do {{from}} ao {{to}}"
+      },
+      "exceptions": {
+        "title": "Excepcións",
+        "empty": "Sen excepcións.",
+        "add": "Excepción",
+        "addTitle": "Nova excepción",
+        "edit": "Editar a excepción do {{day}}",
+        "closed": "Pechado",
+        "date": "Día",
+        "hours": "Horario",
+        "holiday": "É festivo ({{name}}). Esta excepción cambia o seu horario.",
+        "open": "Aberto ese día",
+        "openState": "Aberto",
+        "from": "Aberto desde",
+        "to": "Aberto ata",
+        "reason": "Motivo",
+        "reasonHelp": "Opcional. Por exemplo, Festa local.",
+        "stale": {
+          "title": "Outra persoa cambiou esta excepción",
+          "text": "O que cambiaches segue no seu sitio. Recarga para traer os cambios e volve gardar."
+        },
+        "cancel": "Cancelar",
+        "save": "Gardar",
+        "saving": "Gardando",
+        "delete": {
+          "action": "Eliminar",
+          "title": "Borrar a excepción?",
+          "text": "O {{day}} volve ter o horario da tempada.",
+          "label": "Eliminar a excepción do {{day}}"
+        },
+        "saved": "Gardouse a excepción do {{day}}.",
+        "deleted": "Borrouse a excepción do {{day}}."
+      }
+    },
+    "blocks": {
+      "loading": "Cargando os bloqueos…",
+      "error": {
+        "title": "Non se puideron cargar os bloqueos",
+        "text": "Algo fallou ao ler os bloqueos. Téntao de novo nun intre.",
+        "retry": "Tentar de novo"
+      },
+      "empty": "Sen bloqueos.",
+      "add": "Bloqueo",
+      "addTitle": "Novo bloqueo",
+      "edit": "Editar o bloqueo do {{when}}",
+      "allDay": "Todo o día",
+      "date": "Día",
+      "hours": "Horas",
+      "hoursHelp": "Todo o día: de 0:00 a 24:00.",
+      "from": "Bloqueado desde",
+      "to": "Bloqueado ata",
+      "reason": "Motivo",
+      "reasonHelp": "Opcional. Por exemplo, Mantemento do céspede ou Escola municipal de fútbol.",
+      "summary": "Bloqueo do {{when}}",
+      "stale": {
+        "title": "Outra persoa cambiou este bloqueo",
+        "text": "O que cambiaches segue no seu sitio. Recarga para traer os cambios e volve gardar."
+      },
+      "cancel": "Cancelar",
+      "save": "Gardar",
+      "saving": "Gardando",
+      "delete": {
+        "action": "Eliminar",
+        "title": "Borrar o bloqueo?",
+        "text": "O {{when}} vólvese poder reservar.",
+        "label": "Eliminar o bloqueo do {{when}}"
+      },
+      "saved": "Gardouse o bloqueo do {{when}}.",
+      "deleted": "Borrouse o bloqueo do {{when}}."
+    },
+    "public": {
+      "back": "Instalacións",
+      "loading": "Cargando a instalación",
+      "notFound": {
+        "title": "Esta instalación non está dispoñible",
+        "text": "Pode que xa non exista ou que aínda non se publicase."
+      },
+      "loadError": {
+        "title": "Non se puido cargar a instalación",
+        "text": "Comproba a conexión e téntao de novo.",
+        "retry": "Tentar de novo"
+      },
+      "description": "Descrición",
+      "uses": "Que se pode reservar",
+      "use": {
+        "parts": "{{names}}",
+        "or": " ou ",
+        "seats": "{{count}} prazas",
+        "minutes": "{{minutes}} minutos",
+        "whole": "Enteira"
+      },
+      "howToGet": "Como chegar",
+      "pin": "Situación de {{name}}",
+      "card": "Enderezo, horario e contacto",
+      "address": "Enderezo",
+      "schedule": "Horario",
+      "contact": "Contacto",
+      "openNow": "Aberto agora",
+      "closedNow": "Pechado agora",
+      "closesAt": "Pecha ás {{time}}",
+      "opensToday": "Abre hoxe ás {{time}}",
+      "opensTomorrow": "Abre mañá ás {{time}}",
+      "opensOn": "Abre o {{day}} ás {{time}}",
+      "today": "Hoxe, {{day}}",
+      "dayRange": "{{from}} a {{to}}",
+      "twoDays": "{{from}} e {{to}}",
+      "closedDay": "Pechado",
+      "closures": "Próximos peches",
+      "before": {
+        "title": "Antes de reservar",
+        "advance": "Cando reservar",
+        "duration": "Duración",
+        "cap": "Límite",
+        "cancel": "Cancelación",
+        "payment": "Pago",
+        "houseRules": "Normas da instalación"
+      },
+      "price": {
+        "FREE": "Gratis",
+        "perPerson": "por persoa"
+      },
+      "reserve": "Reservar"
+    },
+    "houseRules": {
+      "title": "Normas da instalación",
+      "help": "Opcional. Se as escribes, van nos dous idiomas, ata {{max}} caracteres cada unha."
+    },
+    "publicList": {
+      "title": "Instalacións",
+      "covered": "Cuberta",
+      "filters": "Filtros",
+      "countOne": "{{count}} instalación",
+      "countOther": "{{count}} instalacións",
+      "view": {
+        "label": "Vista",
+        "list": "Lista",
+        "map": "Mapa"
+      },
+      "freeOne": "{{count}} oco {{day}}",
+      "freeOther": "{{count}} ocos {{day}}",
+      "today": "hoxe",
+      "tomorrow": "mañá",
+      "times": "Primeiras horas libres",
+      "loading": "Cargando as instalacións",
+      "error": {
+        "title": "Non se puideron cargar as instalacións",
+        "text": "Proba outra vez nun momento.",
+        "retry": "Tentar de novo"
+      },
+      "empty": {
+        "title": "Aínda non hai instalacións publicadas",
+        "text": "Cando o concello publique as súas instalacións, aparecerán aquí."
+      },
+      "none": {
+        "title": "Ningunha instalación con estes filtros",
+        "clear": "Quitar os filtros"
+      },
+      "map": "Mapa das instalacións",
+      "mapAlternative": "As mesmas instalacións están na vista Lista.",
+      "mapLoading": "Cargando o mapa"
+    },
+    "paymentNotes": {
+      "title": "Pago e devolución",
+      "payment": "Como se paga",
+      "refund": "Como se devolve",
+      "help": "Nos dous idiomas ou en ningún. Baleiro, vese o texto por defecto.",
+      "default": "Por defecto: «{{text}}»"
+    },
+    "wizard": {
+      "title": "Nova instalación",
+      "stepsLabel": "Pasos de Nova instalación",
+      "actions": "Accións do paso",
+      "savedAt": "Borrador gardado ás {{time}}",
+      "previous": "Anterior",
+      "next": "Seguinte",
+      "skip": "Saltar",
+      "backToReview": "Volver a revisar",
+      "saveDraft": "Gardar como borrador",
+      "publish": "Publicar",
+      "missingOne": "Falta 1 cousa",
+      "missingMany": "Faltan {{count}} cousas",
+      "draftSaved": "Borrador gardado",
+      "published": "Instalación publicada. Xa a ve a veciñanza",
+      "discarded": "Descartouse a instalación",
+      "steps": {
+        "data": "Nome e deportes",
+        "location": "Ubicación",
+        "contact": "Contacto e servizos",
+        "photos": "Fotos",
+        "uses": "Usos",
+        "schedule": "Horario",
+        "rules": "Normas",
+        "rulesAndPayment": "Normas e pago",
+        "review": "Revisar"
+      },
+      "data": {
+        "name": "Nome",
+        "nameHelp": "Como a coñece a veciñanza: «Pista de pádel 2 de O Alto»."
+      },
+      "contact": {
+        "optional": "Todo opcional: podes enchelo agora ou despois, na ficha.",
+        "own": "Datos propios",
+        "ownHelp": "Campos que define o propio concello."
+      },
+      "photos": {
+        "drop": "Arrastra aquí as fotos da instalación",
+        "help": "JPEG ou PNG, ata {{max}} · ata {{limit}} fotos",
+        "helpLeft": "JPEG ou PNG, ata {{max}} · ata {{limit}} fotos, quedan {{left}}",
+        "drawingTitle": "Aínda non tes fotos? Usa un debuxo mentres tanto",
+        "drawingHelp": "Vese na web ata que subas fotos.",
+        "suggested": "Suxerido",
+        "suggestedLabel": "{{name}}, suxerido",
+        "allDrawings": "Ver os {{count}} debuxos"
+      },
+      "uses": {
+        "introTitle": "Un uso é cada forma de reservar este espazo.",
+        "introText": "Por exemplo: un campo de fútbol resérvase enteiro (fútbol 11) ou en dúas metades (fútbol 7); unha piscina, por rúas; un pavillón, a pista enteira ou media pista.",
+        "add": "Engadir uso",
+        "other": "Outro",
+        "edit": "Editar",
+        "editLabel": "Editar {{name}}",
+        "who": "Quen fai as reservas?",
+        "residents": "A veciñanza, desde esta web",
+        "staff": "Só o persoal do concello",
+        "staffHelp": "A veciñanza ve a instalación, pero para reservar chama ou vai en persoa.",
+        "presets": {
+          "wholeCourt": "Pista enteira",
+          "halfCourt": "Media pista",
+          "wholeField": "Campo enteiro (fútbol 11)",
+          "halfField": "Medio campo (fútbol 7)",
+          "field7": "Campo de fútbol 7",
+          "lanes": "Por rúas",
+          "freeSwim": "Nado libre",
+          "wholePool": "Piscina enteira",
+          "padel": "Pista de pádel",
+          "tennis": "Pista de tenis",
+          "badminton": "Pista de bádminton",
+          "table": "Mesa",
+          "track": "Pista de atletismo",
+          "room": "Sala",
+          "class": "Clase",
+          "rink": "Pista de patinaxe"
+        },
+        "parts": {
+          "halfNorth": "Media pista norte",
+          "halfSouth": "Media pista sur",
+          "fieldNorth": "Medio campo norte",
+          "fieldSouth": "Medio campo sur",
+          "lane1": "Rúa 1",
+          "lane2": "Rúa 2",
+          "lane3": "Rúa 3",
+          "lane4": "Rúa 4",
+          "lane5": "Rúa 5",
+          "lane6": "Rúa 6"
+        }
+      },
+      "schedule": {
+        "season": "Tempada:",
+        "wholeYear": "Todo o ano",
+        "addSeason": "Engadir tempada",
+        "seasonHint": "As tempadas engádense na ficha, despois de publicala.",
+        "mode": "Horario",
+        "same": "Mesmo horario todos os días",
+        "days": "Por días",
+        "from": "Desde",
+        "to": "Ata",
+        "openFrom": "Aberto desde",
+        "openTo": "Aberto ata",
+        "week": "Semana de Todo o ano"
+      },
+      "review": {
+        "missingTitle": "Para publicala falta:",
+        "missing": {
+          "name": "O nome",
+          "sports": "Os deportes",
+          "description": "Descrición: nos dous idiomas ou en ningún",
+          "address": "O enderezo",
+          "contact": "Contacto: revisa o teléfono ou o correo",
+          "photos": "Fotos: falta a descrición dalgunha foto",
+          "uses": "Polo menos un uso",
+          "schedule": "O horario",
+          "rules": "Normas: nos dous idiomas ou en ningún",
+          "rulesAndPayment": "Normas e pago: nos dous idiomas ou en ningún"
+        },
+        "edit": "Editar",
+        "editLabel": "Editar {{step}}",
+        "missingValue": "Falta",
+        "invalid": "Formato non válido",
+        "oneLanguage": "Nun só idioma",
+        "address": "Enderezo",
+        "season": "Tempada",
+        "drawingUsed": "Sen fotos: vese o debuxo «{{name}}»."
+      },
+      "leave": {
+        "title": "Saír de «Nova instalación»?",
+        "noName": "Sen nome non se pode gardar como borrador.",
+        "stay": "Seguir",
+        "discard": "Descartar",
+        "save": "Gardar borrador"
+      }
+    }
+  },
+  "booking": {
+    "reserve": {
+      "title": "Reservar",
+      "back": "Volver á instalación",
+      "card": "Reserva",
+      "loading": "Cargando a reserva…",
+      "notFound": {
+        "title": "Esta instalación non está dispoñible",
+        "text": "Pode que xa non estea publicada. Mira as outras instalacións."
+      },
+      "loadError": {
+        "title": "Non puidemos cargar a instalación",
+        "text": "Comproba a conexión e téntao de novo.",
+        "retry": "Tentar de novo"
+      },
+      "notBookable": "Esta instalación non se reserva por internet.",
+      "workAccount": "Esta é unha conta de traballo; para reservar usa a túa conta persoal.",
+      "what": "Que",
+      "date": "Data",
+      "time": "Hora",
+      "part": "Parte",
+      "choose": "Escoller",
+      "anyPart": "Tanto me ten",
+      "duration": "Duración",
+      "times": "Horas libres",
+      "hour": "{{count}} hora",
+      "hours": "{{count}} horas",
+      "minutes": "{{minutes}} min",
+      "partsFree": {
+        "one": "1 libre",
+        "other": "{{count}} libres"
+      },
+      "seatsFree": {
+        "one": "1 praza",
+        "other": "{{count}} prazas"
+      },
+      "slotsLoading": "Buscando as horas libres…",
+      "slotsError": "Non puidemos cargar as horas. Téntao de novo.",
+      "noSlots": "Non quedan horas libres este día. Proba outro.",
+      "free": "Gratis",
+      "total": "Total",
+      "continue": "Continuar",
+      "confirm": "Confirmar reserva",
+      "change": {
+        "title": "Cambiar a reserva",
+        "confirm": "Confirmar o cambio",
+        "loadError": "Non puidemos cargar a reserva que queres cambiar. Mírala en «As miñas reservas»."
+      },
+      "loginNote": "Pedirémosche entrar ao continuar",
+      "taken": {
+        "title": "Alguén acaba de reservar as {{time}}",
+        "choose": "Escolle outra hora:",
+        "none": "Escolle outra hora ou outro día."
+      },
+      "bookingError": {
+        "title": "Non puidemos amosar a reserva",
+        "text": "Mírala en «As miñas reservas»."
+      },
+      "done": {
+        "title": "Reserva confirmada",
+        "sent": "Enviámoscha a {{email}}",
+        "card": "A túa reserva",
+        "use": "Uso",
+        "day": "Día",
+        "time": "Hora",
+        "part": "Parte",
+        "price": "Prezo",
+        "show": "Ensínao ao chegar",
+        "cancelUntil": "Podes cancelala sen custo ata o",
+        "at": "{{day}} ás {{time}}",
+        "addToCalendar": "Engadir ao calendario",
+        "mine": "Ver as miñas reservas"
+      }
+    },
+    "mine": {
+      "title": "As miñas reservas",
+      "tabs": "As miñas reservas",
+      "upcoming": "Próximas",
+      "history": "Historial",
+      "loading": "Cargando as túas reservas…",
+      "loadError": {
+        "title": "Non puidemos cargar as túas reservas",
+        "text": "Comproba a conexión e téntao de novo.",
+        "retry": "Tentar de novo"
+      },
+      "empty": {
+        "upcoming": {
+          "title": "Non tes reservas próximas",
+          "text": "Escolle unha instalación e reserva en poucos pasos.",
+          "action": "Ver as instalacións"
+        },
+        "history": "Aínda non tes reservas pasadas"
+      },
+      "more": "Ver máis",
+      "cancelledByPerson": "cancelada por ti",
+      "cancelledByMunicipality": "cancelada polo concello",
+      "status": {
+        "pending": "Pendente de pago",
+        "paid": "Pagada",
+        "toRefund": "A devolver",
+        "refunded": "Devolta",
+        "free": "Gratis",
+        "done": "Realizada",
+        "cancelled": "Cancelada"
+      },
+      "actions": {
+        "change": "Cambiar",
+        "cancel": "Cancelar",
+        "qr": "Ver QR",
+        "again": "Reservar de novo"
+      },
+      "late": {
+        "text": "Xa pasou o prazo para cancelar.",
+        "call": "Chama ao"
+      },
+      "cancel": {
+        "title": "Cancelar a reserva?",
+        "confirm": "Cancelar a reserva",
+        "busy": "Cancelando",
+        "keep": "Manter",
+        "free": "Sen custo. Estás dentro do prazo, que acaba o {{deadline}}.",
+        "paid": "Xa está pagada. Quedará pendente de devolución.",
+        "done": "Cancelaches a reserva de {{name}}"
+      },
+      "stale": "Esta reserva cambiou noutro sitio. Recarga para ver como está agora.",
+      "reload": "Recargar",
+      "qr": {
+        "title": "Código da reserva"
+      }
+    },
+    "manage": {
+      "title": "Reservas",
+      "anonymized": "Persoa anonimizada",
+      "search": "Buscar reservas",
+      "searchPlaceholder": "Buscar por nome, correo ou código",
+      "calendar": "Calendario",
+      "latest": "Últimas reservas",
+      "payments": "Cobros",
+      "tab": {
+        "pendingPayment": "Pendentes de pago",
+        "toRefund": "A devolver",
+        "cancelled": "Canceladas"
+      },
+      "more": "Ver máis",
+      "back": "Volver ás reservas",
+      "list": {
+        "latest": "Últimas reservas",
+        "pendingPayment": "Pendentes de pago",
+        "toRefund": "A devolver",
+        "cancelled": "Canceladas",
+        "upcoming": "Próximas",
+        "results": "Resultados"
+      },
+      "countOne": "{{count}} reserva",
+      "countOther": "{{count}} reservas",
+      "today": "hoxe",
+      "tomorrow": "mañá",
+      "reserved": "Reservada {{ago}}",
+      "loading": "Cargando as reservas",
+      "loadError": "Non se puideron cargar as reservas",
+      "retry": "Tentar de novo",
+      "empty": {
+        "latest": "Aínda non hai reservas.",
+        "pendingPayment": "Non hai nada pendente de pago.",
+        "toRefund": "Non hai nada que devolver.",
+        "cancelled": "Non hai reservas canceladas.",
+        "list": "Non hai reservas con estes filtros"
+      },
+      "filters": {
+        "title": "Filtros",
+        "active": "Filtros postos",
+        "remove": "Quitar o filtro {{name}}",
+        "sort": "Ordenar",
+        "sortRecent": "Máis recentes primeiro",
+        "sortStart": "Por día e hora",
+        "facility": "Instalación",
+        "payment": "Pago",
+        "state": "Estado",
+        "allFemale": "Marcar todas",
+        "noneFemale": "Desmarcar todas",
+        "allMale": "Marcar todos",
+        "noneMale": "Desmarcar todos",
+        "paymentOption": {
+          "PENDING": "Pendente",
+          "PAID": "Pagada",
+          "TO_REFUND": "A devolver",
+          "REFUNDED": "Devolta",
+          "NONE": "Gratis"
+        },
+        "stateOption": {
+          "CONFIRMED": "Confirmadas",
+          "CANCELLED": "Canceladas"
+        },
+        "clear": "Quitar filtros",
+        "apply": "Ver reservas",
+        "dates": {
+          "label": "Datas",
+          "add": "Seleccionar data",
+          "panel": "Escoller datas",
+          "presets": "Atallos",
+          "preset": {
+            "today": "Hoxe",
+            "tomorrow": "Mañá",
+            "week": "Esta semana"
+          },
+          "apply": "Aplicar",
+          "clear": "Quitar o filtro de data",
+          "today": "Hoxe",
+          "tomorrow": "Mañá",
+          "on": "O {{day}}",
+          "between": "Do {{from}} ao {{to}}",
+          "since": "Desde o {{day}}"
+        }
+      },
+      "detail": {
+        "title": "Reserva",
+        "pick": "Escolle unha reserva para ver os seus datos.",
+        "close": "Pechar o detalle",
+        "loading": "Cargando a reserva",
+        "loadError": "Non se puido cargar a reserva",
+        "retry": "Tentar de novo",
+        "person": "Persoa",
+        "use": "Uso",
+        "part": "Parte",
+        "day": "Día",
+        "time": "Hora",
+        "code": "Código",
+        "total": "Total",
+        "markPaid": "Marcar como pagada",
+        "markRefunded": "Marcar como devolta",
+        "undoPaid": "Desfacer: volver a pendente",
+        "undoRefunded": "Desfacer: volver a «A devolver»",
+        "cancel": "Cancelar reserva",
+        "stale": "Esta reserva cambiou noutro sitio. Recarga para ver como está agora.",
+        "reload": "Recargar",
+        "done": {
+          "markPaid": "Marcada como pagada",
+          "markRefunded": "Marcada como devolta",
+          "undoPaid": "Volve estar pendente de pago",
+          "undoRefunded": "Volve estar a devolver",
+          "cancelled": "Reserva cancelada"
+        }
+      },
+      "cancel": {
+        "title": "Cancelar a reserva?",
+        "paid": "Xa está pagada: quedará «A devolver».",
+        "channels": "Avisar",
+        "channel": {
+          "EMAIL": "Por correo",
+          "WEB": "Aviso na web"
+        },
+        "keep": "Manter",
+        "confirm": "Cancelar reserva",
+        "busy": "Cancelando…"
+      }
+    },
+    "calendar": {
+      "title": "Calendario",
+      "view": "Vista",
+      "mode": {
+        "DAY": "Día",
+        "WEEK": "Semana",
+        "MONTH": "Mes"
+      },
+      "facility": "Instalación",
+      "allFacilities": "Todas as instalacións",
+      "previous": {
+        "DAY": "Día anterior",
+        "WEEK": "Semana anterior",
+        "MONTH": "Mes anterior"
+      },
+      "next": {
+        "DAY": "Día seguinte",
+        "WEEK": "Semana seguinte",
+        "MONTH": "Mes seguinte"
+      },
+      "pick": "Escoller data",
+      "weekSame": "Semana do {{from}} ao {{to}} de {{month}}",
+      "weekCross": "Semana do {{from}} de {{fromMonth}} ao {{to}} de {{toMonth}}",
+      "free": "Libre",
+      "empty": "Non hai reservas neste período.",
+      "loading": "Cargando o calendario",
+      "loadError": "Non se puido cargar o calendario",
+      "peek": {
+        "close": "Pechar",
+        "empty": "Sen reservas.",
+        "more": "+{{count}} · Ver o día",
+        "day": "Ver o día",
+        "loading": "Cargando as reservas do día",
+        "error": "Non se puideron cargar as reservas."
+      }
+    }
+  },
+  "indicators": {
+    "title": "Indicadores",
+    "emptyHint": "Proba con outro período, outra instalación ou outro uso.",
+    "filters": {
+      "label": "Filtros",
+      "period": "Período",
+      "periods": {
+        "semana": "Esta semana",
+        "trimestre": "Trimestre",
+        "ano": "Ano",
+        "datas": "Datas…"
+      },
+      "dates": "Datas",
+      "datesEmpty": "Escoller",
+      "datesFirst": "Escolle o primeiro día (ata {{max}} días).",
+      "datesLast": "Escolle o último día (ata {{max}} días).",
+      "datesReady": "Preme «Aplicar» ou escolle outro primeiro día.",
+      "tooLong": "Como moito {{max}} días: escolle un rango máis curto.",
+      "apply": "Aplicar",
+      "range": "Do {{from}} ao {{to}}",
+      "facility": "Instalación",
+      "allFacilities": "Todas as instalacións",
+      "use": "Uso",
+      "allUses": "Todos os usos",
+      "withdrawn": "{{name}} (de baixa)",
+      "archived": "{{name}} (arquivado)",
+      "pdfHint": "O panel tal cal: no diálogo, elixe «Gardar como PDF»",
+      "csvHint": "Os datos de todos os gráficos, para unha folla de cálculo"
+    },
+    "export": {
+      "chartPdf": "Este gráfico e a súa táboa: no diálogo, elixe «Gardar como PDF»",
+      "chartCsv": "Os seus datos, para unha folla de cálculo",
+      "evolutionPdf": "Esta evolución e a súa táboa: no diálogo, elixe «Gardar como PDF»",
+      "evolutionCsv": "Os seus datos, para unha folla de cálculo"
+    },
+    "status": {
+      "ready": "Indicadores actualizados: {{period}} · {{facility}} · {{use}}.",
+      "empty": "Indicadores actualizados: {{period}} · {{facility}} · {{use}}. Sen reservas neste período."
+    },
+    "print": {
+      "header": "Concello {{ofName}} · {{period}} · {{facility}} · {{use}} · xerado o {{generated}}"
+    },
+    "period": {
+      "WEEK": "Semana do {{from}} ao {{to}}",
+      "QUARTER": "{{quarter}}.º trimestre de {{year}}",
+      "YEAR": "Ano {{year}}",
+      "CUSTOM": "Do {{from}} ao {{to}}"
+    },
+    "inProgress": "en curso",
+    "kpi": {
+      "title": "Cifras principais",
+      "bookings": "Reservas",
+      "occupancy": "Ocupación media",
+      "occupancyPercent": "Ocupación media (%)",
+      "reservedHours": "Horas reservadas",
+      "people": "Persoas distintas",
+      "paidCents": "Cobrado",
+      "comparison": {
+        "WEEK": "respecto á semana anterior",
+        "MONTH": "respecto a {{label}}",
+        "QUARTER": "respecto ao trimestre anterior",
+        "YEAR": "respecto a {{label}}",
+        "CUSTOM": "respecto aos {{days}} días anteriores"
+      },
+      "comparisonToDate": {
+        "WEEK": "ata hoxe, fronte ao mesmo tramo da semana anterior",
+        "MONTH": "ata hoxe, fronte ao mesmo tramo de {{label}}",
+        "QUARTER": "ata hoxe, fronte ao mesmo tramo do trimestre anterior",
+        "YEAR": "ata hoxe, fronte ao mesmo tramo de {{label}}",
+        "CUSTOM": "ata hoxe, fronte ao mesmo tramo dos {{days}} días anteriores"
+      }
+    },
+    "column": {
+      "facility": "Instalación",
+      "occupancy": "Ocupación",
+      "occupancyPercent": "Ocupación (%)",
+      "period": "Período",
+      "day": "Día",
+      "month": "Mes",
+      "people": "Persoas",
+      "euros": "{{name}} (€)",
+      "figure": "Cifra",
+      "value": "Valor",
+      "previous": "Período anterior",
+      "valueInProgress": "Valor ({{inProgress}})",
+      "toDate": "Ata hoxe ({{span}})",
+      "comparedToDate": "Mesmo tramo anterior ({{span}})"
+    },
+    "occupancy": {
+      "title": "Ocupación por instalación"
+    },
+    "daily": {
+      "title": {
+        "DAY": "Ocupación día a día",
+        "WEEK": "Ocupación semana a semana",
+        "MONTH": "Ocupación mes a mes"
+      }
+    },
+    "peak": {
+      "title": "Horas punta",
+      "closed": "pechado",
+      "less": "Ocupación: 0 %",
+      "more": "100 %",
+      "closedLegend": "Pechado"
+    },
+    "cancellations": {
+      "title": "Cancelacións por motivo",
+      "inTime": "Persoa, en prazo",
+      "late": "Persoa, fóra de prazo",
+      "municipality": "Concello"
+    },
+    "revenue": {
+      "title": "Ingresos por instalación",
+      "paid": "Cobrado",
+      "pending": "Pendente",
+      "toRefund": "A devolver",
+      "refunded": "Devolto"
+    },
+    "people": {
+      "title": "Persoas distintas que reservan"
+    },
+    "when": {
+      "DAY": "o {{label}}",
+      "WEEK": "a semana do {{label}}",
+      "MONTH": "en {{label}}"
+    },
+    "count": {
+      "cancellation": "{{count}} cancelación",
+      "cancellations": "{{count}} cancelacións"
+    },
+    "conclusion": {
+      "empty": "Sen reservas neste período",
+      "occupancy": {
+        "top": "{{name}} é a máis chea: {{value}} das súas horas abertas.",
+        "one": "{{name}} ocupa {{value}} das súas horas abertas."
+      },
+      "daily": {
+        "weekends": "As fins de semana soben a máis do {{value}}.",
+        "top": {
+          "DAY": "O día máis cheo, o {{label}}: {{value}}.",
+          "WEEK": "A semana máis chea, a do {{label}}: {{value}}.",
+          "MONTH": "O mes máis cheo, {{label}}: {{value}}."
+        }
+      },
+      "peak": {
+        "top": "O {{day}} de {{from}} a {{to}} h é a franxa máis reservada.",
+        "topQuietMornings": "O {{day}} de {{from}} a {{to}} h é a franxa máis reservada; as mañás entre semana, case baleiras."
+      },
+      "cancellations": {
+        "none": "Ningunha cancelación neste período.",
+        "inTime": "{{total}} en prazo.",
+        "late": "{{total}} fóra de prazo.",
+        "inTimeLate": "{{total}}; {{late}} fóra de prazo.",
+        "lateMunicipality": "{{total}}; {{late}} fóra de prazo e {{municipality}} polo concello.",
+        "municipality": "{{total}} polo concello.",
+        "municipalityWhen": "{{total}} polo concello, {{when}}.",
+        "inTimeMunicipality": "{{total}}; o concello cancelou {{municipality}}.",
+        "inTimeMunicipalityWhen": "{{total}}; o concello cancelou {{municipality}} {{when}}."
+      },
+      "revenue": {
+        "p": "Cobrado {{paid}}.",
+        "pn": "Cobrado {{paid}}; quedan {{pending}} pendentes de pago no mostrador.",
+        "pr": "Cobrado {{paid}}; hai {{toRefund}} por devolver.",
+        "pnr": "Cobrado {{paid}}; quedan {{pending}} pendentes de pago no mostrador e {{toRefund}} por devolver.",
+        "n": "Aínda sen cobrar: quedan {{pending}} pendentes de pago no mostrador.",
+        "nr": "Aínda sen cobrar: quedan {{pending}} pendentes de pago no mostrador e {{toRefund}} por devolver.",
+        "r": "Sen cobros; hai {{toRefund}} por devolver.",
+        "refunded": "Devolvéronse {{refunded}}; non queda nada cobrado.",
+        "none": "Sen cobros neste período."
+      },
+      "people": {
+        "only": "{{value}} en {{month}}.",
+        "max": "{{value}} en {{month}}, o máximo dos últimos {{count}} meses.",
+        "min": "{{value}} en {{month}}, o mínimo dos últimos {{count}} meses.",
+        "more": "{{value}} en {{month}}, {{diff}} máis ca en {{previous}}.",
+        "fewer": "{{value}} en {{month}}, {{diff}} menos ca en {{previous}}.",
+        "same": "{{value}} en {{month}}, tantas coma en {{previous}}."
+      }
+    },
+    "evolution": {
+      "title": "{{figure}} por {{unit}}",
+      "unit": {
+        "DAY": "días",
+        "WEEK": "semanas",
+        "MONTH": "meses",
+        "QUARTER": "trimestres",
+        "YEAR": "anos"
+      },
+      "quarterShort": "T{{quarter}} {{year}}",
+      "summary": "{{value}} neste período, {{change}}.",
+      "column": {
+        "bookings": "Reservas",
+        "reservedHours": "Horas reservadas",
+        "people": "Persoas distintas",
+        "paidCents": "Cobrado (€)"
+      }
+    }
+  },
+  "staff": {
+    "members": {
+      "title": "Persoal",
+      "intro": "Quen entra na xestión do concello e con que rol.",
+      "loading": "Cargando o persoal…",
+      "loadError": "Non se puido cargar o persoal.",
+      "retry": "Tentar de novo",
+      "empty": {
+        "title": "Aínda non hai persoal",
+        "manager": "Invita as persoas que van traballar na xestión co botón «Invitar».",
+        "platform": "Invita a primeira persoa de Xestión do concello co botón «Invitar»."
+      },
+      "deactivatedTitle": "Desactivadas ({{count}})",
+      "deactivatedCaption": "Persoal desactivado",
+      "col": {
+        "user": "Usuario",
+        "role": "Rol",
+        "state": "Estado",
+        "lastAccess": "Último acceso",
+        "actions": "Accións"
+      },
+      "role": {
+        "MANAGER": "Xestión",
+        "STAFF": "Recepción"
+      },
+      "roleCaps": {
+        "MANAGER": {
+          "bookings": "Reservas, cobros e cancelacións",
+          "facilities": "Instalacións e horarios",
+          "indicators": "Indicadores",
+          "staff": "Persoal e datos do concello"
+        },
+        "STAFF": {
+          "bookings": "Reservas e cobros",
+          "cancel": "Cancelar reservas",
+          "facilities": "Cambiar instalacións",
+          "staff": "Indicadores e persoal"
+        }
+      },
+      "state": {
+        "ACTIVE": "Activa",
+        "INVITED": "Pendente",
+        "DEACTIVATED": "Desactivada"
+      },
+      "anonymized": "Persoa anonimizada",
+      "access": {
+        "at": "{{date}}",
+        "never": "Nunca",
+        "sending": "Enviando…",
+        "sent": "Invitación enviada o {{date}}",
+        "failed": "Non se puido enviar",
+        "expired": "Invitación caducada"
+      },
+      "resendFor": "Reenviar a invitación a {{name}}",
+      "resendWait": {
+        "in": "Podes reenviar en {{time}}",
+        "spent": "Xa se enviou o máximo de veces",
+        "ready": "Xa podes reenviar a invitación a {{name}}."
+      },
+      "actionsFor": "Accións: {{name}}",
+      "action": {
+        "resend": "Reenviar",
+        "role": "Cambiar o rol",
+        "deactivate": "Desactivar",
+        "reactivate": "Reactivar"
+      },
+      "invite": {
+        "open": "Invitar",
+        "title": "Invitar ao persoal",
+        "intro": "Enviámoslle un correo cunha ligazón que vale 7 días para entrar coa súa conta ou creala.",
+        "email": "Correo electrónico",
+        "role": "Rol",
+        "language": "Idioma do correo",
+        "send": "Enviar invitación",
+        "sending": "Enviando…"
+      },
+      "changeRole": {
+        "title": "Cambiar o rol",
+        "label": "Rol",
+        "phrase": "recepción",
+        "demote": "Pasa a Recepción: deixa de xestionar o concello e só ve as reservas."
+      },
+      "deactivate": {
+        "title": "Desactivar?",
+        "confirm": "Desactivar",
+        "busy": "Desactivando…",
+        "losesMANAGER": "Deixa de entrar na xestión do concello: instalacións, reservas, indicadores e persoal.",
+        "losesSTAFF": "Deixa de entrar nas reservas do concello.",
+        "losesInvitation": "A invitación deixa de valer: a ligazón do correo xa non servirá.",
+        "again": "Pódese reactivar cando volva facer falta, co mesmo rol.",
+        "inviteAgain": "Se volve facer falta, podes invitala de novo.",
+        "phrase": "desactivar",
+        "acknowledge": "Entendo que non se borra a conta nin o seu historial: o acceso pódese reactivar e os datos consérvanse segundo a política de conservación.",
+        "acknowledgeInvitation": "Entendo que a invitación deixa de valer, que se pode invitar de novo e que os datos se conservan segundo a política de conservación."
+      },
+      "reactivate": {
+        "title": "Reactivar?",
+        "confirm": "Reactivar",
+        "busy": "Reactivando…",
+        "returns": "Volve entrar co rol {{role}}, sen invitación nova.",
+        "signIn": "Entra co seu correo e contrasinal, coma sempre."
+      },
+      "done": {
+        "invited": "Invitación enviada a {{email}}",
+        "invitedFailed": "Gardouse a invitación de {{email}}, pero o correo non se puido enviar. Proba a reenviala.",
+        "resent": "Invitación reenviada a {{email}}",
+        "resentFailed": "O correo a {{email}} non se puido enviar. Proba de novo máis tarde.",
+        "roleChanged": "{{name}} agora ten o rol {{role}}",
+        "deactivated": "{{name}} xa está desactivada",
+        "reactivated": "{{name}} volve estar no persoal co rol {{role}}"
+      },
+      "stale": "Alguén cambiou esta persoa mentres tanto. Cargamos a lista ao día: revisa o seu estado e volve probar.",
+      "rateLimited": {
+        "waitMinutes": "Aínda non se pode enviar outra vez. Podes reenviar en {{count}} min.",
+        "waitHours": "Chegouse ao límite de envíos. Podes volver enviar en {{count}} h.",
+        "spent": "Esta invitación xa se enviou o máximo de veces. Se fai falta, desactívaa e invítaa de novo."
+      },
+      "blocked": "Persoa desactivada"
+    },
+    "invitation": {
+      "loading": "Cargando a invitación…",
+      "home": "Ir ao inicio",
+      "role": {
+        "MANAGER": "Xestión",
+        "STAFF": "Recepción"
+      },
+      "signIn": {
+        "title": "Invitación ao persoal {{ofName}}",
+        "intro": "{{municipality}} invitoute a formar parte do seu persoal co rol {{role}}.",
+        "text": "Para aceptala, crea a túa conta con {{email}} ou entra con ela.",
+        "action": "Continuar"
+      },
+      "accepted": "Xa formas parte do persoal {{ofName}}",
+      "expired": {
+        "title": "A invitación caducou",
+        "text": "Pídelle unha nova a quen te invitou: chegarache noutro correo."
+      },
+      "invalid": {
+        "title": "Esta invitación non serve",
+        "text": "A ligazón non é válida, xa se usou ou hai outra máis nova. Abre a ligazón do último correo que recibiches ou pídelle outra a quen te invitou."
+      },
+      "otherAccount": {
+        "title": "Xa iniciaches sesión con outra conta.",
+        "action": "Pechar sesión e continuar",
+        "back": "Volver"
+      },
+      "personal": {
+        "title": "Esta conta é persoal",
+        "text": "A conta de {{invited}} xa ten reservas persoais, e o persoal usa unha conta só para o traballo. Pídelle a quen te invitou que te invite co teu correo do traballo."
+      },
+      "already": {
+        "title": "Xa formas parte do persoal",
+        "text": "Xa estás no persoal {{ofName}}: non tes que aceptar nada máis.",
+        "action": "Ir á xestión"
+      },
+      "unverified": {
+        "title": "Verifica o teu correo",
+        "text": "Antes de aceptar tes que confirmar que o correo é teu. Busca na caixa de entrada (e no correo non desexado) a mensaxe de verificación e abre a súa ligazón.",
+        "how": "Despois, volve a esta páxina e preme «Continuar».",
+        "action": "Continuar"
+      },
+      "error": {
+        "title": "Non se puido continuar",
+        "action": "Tentar de novo"
+      }
+    }
+  },
+  "activity": {
+    "title": "Rexistro de actividade",
+    "platformTitle": "Rexistro da plataforma",
+    "intro": {
+      "municipality": "Quen fixo que no concello e con que resultado, tamén o que fixo a administración da plataforma. Só se pode ler.",
+      "platform": "O que fixo a administración da plataforma en todos os concellos e o que non ten concello. Só se pode ler."
+    },
+    "filters": {
+      "label": "Filtros do rexistro",
+      "period": "Período",
+      "lastYear": "Último ano",
+      "datesFirst": "Escolle o primeiro día.",
+      "datesLast": "Agora, o último día.",
+      "datesReady": "Preme «Aplicar» para ver ese período.",
+      "tooLong": "Como moito {{max}} días: escolle un último día máis cedo.",
+      "apply": "Aplicar",
+      "lastYearAction": "Ver o último ano",
+      "area": "Área",
+      "allAreas": "Todas",
+      "person": "Persoa",
+      "allPeople": "Todas",
+      "deactivated": "{{name}} (desactivada)",
+      "failedOnly": "Só fallidos",
+      "reset": "Quitar os filtros"
+    },
+    "areas": {
+      "staff": "Persoal",
+      "facility": "Instalacións",
+      "booking": "Reservas",
+      "municipality": "Concello",
+      "customfield": "Campos personalizados",
+      "audit": "Rexistro"
+    },
+    "col": {
+      "date": "Data",
+      "person": "Persoa",
+      "action": "Acción",
+      "target": "Sobre que",
+      "municipality": "Concello",
+      "outcome": "Resultado"
+    },
+    "caption": "Accións rexistradas, da máis nova á máis vella",
+    "actor": {
+      "platform": "Administración da plataforma",
+      "system": "Tarefa automática",
+      "other": "Conta sen rol",
+      "anonymized": "Persoa anonimizada",
+      "platformTag": "Plataforma",
+      "blocked": "Persoa desactivada"
+    },
+    "target": {
+      "STAFF_MEMBER": "Persoal",
+      "BOOKING": "Reserva",
+      "FACILITY": "Instalación",
+      "PHOTO": "Foto",
+      "MUNICIPALITY": "Concello",
+      "none": "—"
+    },
+    "outcome": {
+      "SUCCESS": "Feito",
+      "FAILURE": "Fallou"
+    },
+    "unknownAction": "Outra acción ({{code}})",
+    "loading": "Cargando o rexistro…",
+    "loadError": "Non se puido cargar o rexistro.",
+    "retry": "Tentar de novo",
+    "empty": {
+      "title": "Non hai actividade",
+      "all": "Aínda non hai nada rexistrado neste período.",
+      "filtered": "Non hai accións con estes filtros. Proba con outro período ou quita os filtros."
+    },
+    "more": "Cargar máis",
+    "loadingMore": "Cargando…",
+    "status": {
+      "count": "{{count}} accións á vista.",
+      "more": "Cargáronse {{count}} accións máis.",
+      "end": "Xa non hai máis accións neste período."
+    },
+    "actions": {
+      "booking": {
+        "cancel": "Cancelar unha reserva",
+        "payment": "Cambiar o cobro dunha reserva",
+        "anonymize": "Anonimizar as reservas que pasaron o prazo de conservación"
+      },
+      "customfield": {
+        "create": "Crear un campo personalizado",
+        "update": "Cambiar un campo personalizado",
+        "deactivate": "Desactivar un campo personalizado",
+        "activate": "Activar un campo personalizado",
+        "delete": "Eliminar un campo personalizado"
+      },
+      "facility": {
+        "create": "Crear unha instalación",
+        "rename": "Cambiar o nome dunha instalación",
+        "status": "Cambiar o estado dunha instalación",
+        "publish": "Publicar unha instalación",
+        "details": "Cambiar os datos dunha instalación",
+        "description": "Cambiar a descrición dunha instalación",
+        "house-rules": "Cambiar as normas dunha instalación",
+        "payment-notes": "Cambiar o pago e a devolución dunha instalación",
+        "address": "Cambiar o enderezo dunha instalación",
+        "amenities": "Cambiar os servizos e a accesibilidade",
+        "delete": "Eliminar unha instalación",
+        "use-create": "Crear un uso",
+        "use-update": "Cambiar un uso",
+        "use-archive": "Arquivar un uso",
+        "season-create": "Crear unha tempada",
+        "season-update": "Cambiar unha tempada",
+        "season-delete": "Eliminar unha tempada",
+        "exception-create": "Crear unha excepción do horario",
+        "exception-update": "Cambiar unha excepción do horario",
+        "exception-delete": "Eliminar unha excepción do horario",
+        "block-create": "Crear un bloqueo",
+        "block-update": "Cambiar un bloqueo",
+        "block-delete": "Eliminar un bloqueo",
+        "sport-create": "Engadir un deporte",
+        "photo": {
+          "upload": "Subir unha foto",
+          "discard": "Descartar unha foto"
+        },
+        "images": {
+          "arrange": "Ordenar as fotos dunha instalación"
+        }
+      },
+      "municipality": {
+        "create": "Dar de alta un concello",
+        "update": "Cambiar os datos do concello",
+        "legal-texts": "Cambiar os textos legais",
+        "sports-contact": "Cambiar o contacto do servizo de deportes",
+        "payment-notes": "Cambiar o pago e a devolución do concello",
+        "export": "Exportar os datos do concello",
+        "import": "Importar os datos dun concello"
+      },
+      "staff": {
+        "invite": "Invitar ao persoal",
+        "invite-resend": "Reenviar unha invitación",
+        "role-change": "Cambiar o rol dunha persoa",
+        "deactivate": "Desactivar a unha persoa",
+        "reactivate": "Reactivar a unha persoa",
+        "revoke": "Desactivar a unha persoa",
+        "accept": "Aceptar a invitación",
+        "sign-in": "Entrar na xestión",
+        "anonymize": "Anonimizar a unha persoa"
+      },
+      "audit": {
+        "export-blocked": "Exportar eventos bloqueados"
+      },
+      "platform": {
+        "first-admin": "Primeiro acceso da administración da plataforma"
+      }
+    },
+    "blockedNote": {
+      "municipality": "Os eventos de hai máis de {{period}} non se mostran: están bloqueados e só se exportan cun motivo.",
+      "platform": "Os eventos de hai máis de {{period}} non se mostran: están bloqueados."
+    },
+    "exportBlocked": {
+      "action": "Exportar bloqueados",
+      "title": "Exportar bloqueados",
+      "intro": "Só para un requirimento ou un expediente aberto. A exportación queda no rexistro co motivo e a referencia.",
+      "period": "Período",
+      "periodHelp": "Entre o {{first}} e o {{last}}; como moito {{max}} días.",
+      "from": "Desde",
+      "to": "Ata",
+      "reason": "Motivo",
+      "reasonPlaceholder": "Escolle o motivo",
+      "reasons": {
+        "COURT_ORDER": "Requirimento xudicial",
+        "PUBLIC_PROSECUTOR": "Ministerio Fiscal",
+        "DATA_PROTECTION_AUTHORITY": "Autoridade de protección de datos",
+        "OPEN_PROCEEDINGS": "Expediente aberto"
+      },
+      "reference": "Referencia",
+      "referenceHelp": "Número do expediente, das dilixencias ou do requirimento.",
+      "send": "Exportar CSV",
+      "sending": "Exportando…",
+      "done": "Exportáronse {{count}} eventos bloqueados.",
+      "empty": "Non había eventos bloqueados nese período.",
+      "csv": {
+        "email": "Correo",
+        "roles": "Rol",
+        "request": "Petición"
+      }
+    }
+  },
+  "errors": {
+    "audit": {
+      "range-invalid": "O período ten que comezar antes de rematar e durar como moito {{maxDays}} días.",
+      "export-not-blocked": "No período escollido non hai eventos bloqueados: só se exportan os que xa non se ven no rexistro e aínda se gardan.",
+      "export-reference-invalid": "Indica a referencia do expediente ou das dilixencias, con {{max}} caracteres como moito.",
+      "export-too-large": "O período ten máis de {{maxRows}} eventos: escolle un período máis curto."
+    },
+    "auth": {
+      "email-not-verified": "Para continuar tes que verificar o teu correo. Revisa a túa caixa de entrada.",
+      "forbidden": "Non tes permiso para facer isto neste concello.",
+      "unauthenticated": "Esta operación precisa unha sesión válida."
+    },
+    "booking": {
+      "not-found": "Non existe esa reserva.",
+      "facility-not-bookable": "Esta instalación non se reserva por internet.",
+      "use-not-available": "Isto non se pode reservar ese día.",
+      "slot-invalid": "Esa hora non está dispoñible. Escolle unha das horas libres.",
+      "slot-taken": "Alguén acaba de reservar esa hora. Escolle outra.",
+      "part-taken": "Esa parte xa está reservada a esa hora. Escolle outra.",
+      "seat-taken-by-you": "Xa tes unha praza reservada a esa hora.",
+      "too-soon": "Esa hora xa empezou ou está demasiado preto. Escolle outra máis adiante.",
+      "too-far": "Aínda non se pode reservar ese día.",
+      "too-long": "Esa duración pasa do máximo permitido.",
+      "cap-reached": "Xa chegaches ao máximo de reservas neste período.",
+      "cancel-deadline-passed": "Xa pasou o prazo para cancelar ou cambiar esta reserva.",
+      "not-cancellable": "Esta reserva xa está cancelada.",
+      "change-other-facility": "Só se pode cambiar dentro da mesma instalación. Para outra, cancela e reserva de novo.",
+      "change-price-paid": "Para cambiar a un prezo distinto, cancela e reserva de novo.",
+      "payment-transition-invalid": "O pago desta reserva non pode pasar a ese estado.",
+      "staff-account": "Esta é unha conta de traballo; para reservar usa a túa conta persoal.",
+      "affected-needs-manager": "Este cambio afecta a {{count}} reservas futuras. Só a xestión do concello pode decidir que facer con elas.",
+      "idempotency-key-missing": "Non se puido enviar a reserva. Volve tentalo.",
+      "idempotency-key-invalid": "Non se puido enviar a reserva. Volve tentalo.",
+      "idempotency-key-reused": "Esta petición xa se usou para outra reserva. Volve escoller a hora e confirma de novo."
+    },
+    "common": {
+      "busy": "Outra persoa está a cambiar o mesmo agora. Agarda uns segundos e volve tentalo.",
+      "internal": "Algo fallou no servidor. Se se repite, comunica o código do erro.",
+      "invalid-parameter": "Algún parámetro da petición non é válido.",
+      "malformed-json": "O corpo da petición non é un JSON válido ou ten campos descoñecidos.",
+      "method-not-allowed": "Este recurso non admite esa operación.",
+      "not-acceptable": "Non se pode responder no formato pedido.",
+      "not-found": "O recurso pedido non existe.",
+      "precondition-required": "Para cambiar este recurso hai que indicar a versión que leches (If-Match).",
+      "rate-limited": "Chegaron moitas peticións desde a túa conexión nun minuto. Agarda un pouco e volve tentalo.",
+      "stale-version": "Os datos cambiaron desde que os abriches. Recarga e volve tentalo.",
+      "unsupported-media-type": "Envía os datos en JSON.",
+      "network": "Non hai conexión co servidor. Comproba a rede e téntao de novo.",
+      "unexpected": "Algo fallou. Téntao de novo."
+    },
+    "customfield": {
+      "above-max": "O valor máximo é {{max}}.",
+      "below-min": "O valor mínimo é {{min}}.",
+      "code-invalid": "O código debe empezar por letra e ter de 2 a 40 letras minúsculas, díxitos ou guións baixos.",
+      "code-reserved": "«{{code}}» é un campo propio da aplicación e non se pode usar.",
+      "code-taken": "Xa hai un campo co código «{{code}}».",
+      "date-too-early": "A data debe ser {{min}} ou posterior.",
+      "date-too-late": "A data debe ser {{max}} ou anterior.",
+      "definition-not-found": "Non existe ese campo personalizado neste concello.",
+      "duplicate-option": "Non repitas a mesma opción.",
+      "has-values": "O campo ten datos gardados e non se pode eliminar. Podes desactivalo.",
+      "inactive-field": "Este campo está desactivado e non se pode cambiar.",
+      "invalid-date": "Escribe unha data válida (AAAA-MM-DD).",
+      "invalid-definition": "A configuración do campo non é coherente ({{reason}}).",
+      "invalid-format": "O valor non ten o formato esperado ({{format}}).",
+      "invalid-option": "A opción «{{option}}» non está dispoñible.",
+      "invalid-type": "O valor non é do tipo esperado.",
+      "limit-exceeded": "Superouse o límite de campos personalizados ({{limit}}).",
+      "option-has-values": "A opción «{{option}}» ten datos gardados e non se pode eliminar. Podes desactivala.",
+      "personal-data-public": "Un dato persoal non pode ser público: escolle «Titular e persoal» ou «Só persoal».",
+      "required": "Este campo é obrigatorio.",
+      "single-usage": "Cada campo úsase nun só sitio. Para pedilo noutro, crea outro campo.",
+      "target-has-values": "O campo xa ten valores gardados: non se pode cambiar de sitio.",
+      "too-few-options": "Escolle polo menos {{min}} opcións.",
+      "too-long": "Escribe como máximo {{max}} caracteres.",
+      "too-many-decimals": "Admítense como máximo {{decimals}} decimais.",
+      "too-many-options": "Escolle como máximo {{max}} opcións.",
+      "too-short": "Escribe polo menos {{min}} caracteres.",
+      "unknown-field": "Este campo non existe neste concello.",
+      "visibility-not-allowed": "Os campos da reserva só os ven a persoa que reserva e o persoal."
+    },
+    "facility": {
+      "address-invalid": "Revisa os campos marcados do enderezo.",
+      "address-not-found": "Non se atopou ese enderezo. Escríbeo a man e marca o punto no mapa.",
+      "address-required": "Indica a vía, o código postal, a localidade, o código INE e o punto no mapa.",
+      "affected-bookings": "Este cambio afecta a {{count}} reservas futuras: decide que facer con cada unha.",
+      "block-invalid": "Revisa os campos marcados do bloqueo.",
+      "block-invalid-period": "O bloqueo remata despois de empezar, sen pasar da medianoite, en múltiplos de {{step}} minutos e en horas que existan ese día.",
+      "block-not-found": "Esta instalación non ten ese bloqueo.",
+      "block-overlap": "Xa hai un bloqueo nesas horas.",
+      "booking-mode-invalid": "Os ocos libres só se mostran se a veciñanza non reserva por internet.",
+      "decision-invalid": "Para cancelar unha reserva escolle polo menos unha forma de avisar; se se mantén, non se avisa.",
+      "description-invalid": "Escribe a descrición en galego e en castelán, de ata {{max}} caracteres cada unha.",
+      "house-rules-invalid": "Escribe as normas da instalación en galego e en castelán, de ata {{max}} caracteres cada unha.",
+      "details-invalid": "Revisa os campos marcados da tarxeta Datos.",
+      "exception-date-taken": "Esta instalación xa ten unha excepción nesa data. Edítaa no canto de crear outra.",
+      "exception-invalid": "Revisa os campos marcados da excepción.",
+      "exception-not-found": "Esta instalación non ten esa excepción.",
+      "exclusive-use-overlap": "O uso «{{name}}» xa bloquea os demais nalgunha destas datas.",
+      "geocoder-unavailable": "Agora non se poden buscar enderezos. Escribe o enderezo a man e marca o punto no mapa.",
+      "holiday-year-invalid": "Pide un ano entre {{min}} e {{max}}.",
+      "interval-invalid": "Cada tramo remata despois de empezar, sen pasar da medianoite e en múltiplos de {{step}} minutos.",
+      "interval-overlap": "Dous tramos do mesmo día non se poden pisar.",
+      "name-invalid": "O nome é obrigatorio e ten como máximo {{max}} caracteres.",
+      "name-taken": "Xa hai unha instalación chamada «{{name}}» neste concello.",
+      "not-found": "Non existe esa instalación neste concello.",
+      "photo-alt-invalid": "Describe a foto en galego e en castelán, con ata {{max}} caracteres.",
+      "photo-limit": "Unha instalación pode ter como máximo {{max}} fotos. Quita algunha antes de engadir outra.",
+      "photo-not-found": "Esa foto xa non está na biblioteca. Recarga a ficha.",
+      "photo-too-large": "A foto pode ter como máximo {{max}}.",
+      "photo-too-many-pixels": "A foto pode ter como máximo {{max}} megapíxeles. Redúcea e volve subila.",
+      "photo-unreadable": "Non se pode ler esta foto. Gárdaa outra vez como JPEG ou PNG.",
+      "photo-unsupported-type": "Sube a foto en JPEG ou PNG.",
+      "season-invalid": "Revisa os campos marcados da tempada.",
+      "season-not-found": "Esta instalación non ten esa tempada.",
+      "season-overlap": "Estas datas pisan a tempada «{{name}}». Para cambiar só uns días soltos, usa unha excepción.",
+      "sport-duplicated": "A instalación xa ten ese deporte.",
+      "sport-name-invalid": "Escribe o nome en galego e en castelán, de ata {{max}} caracteres.",
+      "sport-name-taken": "Xa hai un deporte chamado «{{name}}» neste concello.",
+      "sport-unknown": "Ese deporte non está no catálogo nin entre os do concello.",
+      "use-archived": "O uso «{{name}}» xa non está na instalación.",
+      "use-blocks-others-needs-dates": "Só pode bloquear os demais usos un uso de «só unhas datas».",
+      "use-capacity-required": "Indica cantas persoas caben en cada franxa.",
+      "use-dates-required": "Indica polo menos un período de datas.",
+      "use-has-bookings": "Este uso ten {{count}} reservas futuras: non se pode cambiar así. Podes cambiar o nome e as datas, ou crear un uso novo.",
+      "use-invalid": "Revisa os campos marcados do uso.",
+      "use-name-taken": "Esta instalación xa ten un uso chamado «{{name}}».",
+      "use-not-found": "Esta instalación non ten ese uso.",
+      "use-part-name-taken": "Dúas partes deste uso teñen o mesmo nome: cambia un deles.",
+      "use-parts-required": "Un uso por partes ten polo menos {{min}} partes con nome.",
+      "use-period-overlap": "Os períodos deste uso non se poden pisar.",
+      "use-price-invalid": "Un uso de pago leva un importe de 0,01 a 1.000 euros.",
+      "use-rule-invalid": "Revisa as condicións da reserva do uso: cada unha ten o seu rango e o límite por persoa leva número e período.",
+      "use-weekdays-invalid": "Escolle polo menos un día da semana.",
+      "images-invalid": "As imaxes cambiaron mentres as editabas: hai unha repetida ou xa non está. Recarga a ficha e volve escollelas.",
+      "photo-not-pending": "Esa foto xa está gardada na biblioteca.",
+      "has-bookings": "Tivo reservas: para conservar o historial, dáa de baixa en vez de eliminala.",
+      "not-publishable": "Para publicala fai falta o enderezo, polo menos un deporte, polo menos un uso e o horario.",
+      "sports-required": "Escolle polo menos un deporte.",
+      "uses-required": "Engade polo menos un uso.",
+      "no-open-day": "Abre polo menos un día."
+    },
+    "indicators": {
+      "filter-invalid": "Revisa a instalación e os usos escollidos: algún non é deste concello ou desa instalación, ou hai demasiados.",
+      "period-invalid": "Escolle un período entre o ano 2000 e dous anos desde hoxe. Nun rango de datas, a de fin non pode ser anterior á de inicio e entre as dúas pode haber como moito {{max}} días."
+    },
+    "municipality": {
+      "language-required": "Nesta instalación todo concello ten que ofrecer o idioma «{{language}}».",
+      "languages-invalid": "Indica polo menos un idioma (galego ou castelán) e o idioma por defecto entre eles.",
+      "name-invalid": "O nome é obrigatorio e ten como máximo {{max}} caracteres.",
+      "not-found": "Non hai ningún concello con ese identificador.",
+      "slug-invalid": "O identificador debe ter de 2 a 40 letras minúsculas, díxitos ou guións.",
+      "slug-reserved": "O identificador «{{slug}}» está reservado. Escolle outro.",
+      "slug-taken": "O identificador «{{slug}}» xa o usa outro concello.",
+      "theme-color-invalid": "A cor «{{color}}» non ten o formato #rrggbb.",
+      "theme-low-contrast": "O contraste {{pair}} é {{ratio}}:1 e debe ser polo menos {{minimum}}:1."
+    },
+    "portability": {
+      "conflict": "Este concello (ou algún dos seus datos) xa existe nesta instalación.",
+      "invalid-file": "O ficheiro non é unha exportación válida (furar-export, versións 1 a 3)."
+    },
+    "reference": "Referencia do erro: {{id}}",
+    "staff": {
+      "already-member": "Esta persoa xa está no persoal deste concello ou ten unha invitación pendente.",
+      "anonymised": "Os datos desta persoa xa se anonimizaron e non se pode reactivar. Se volve facer falta, invítaa de novo.",
+      "email-invalid": "Escribe un correo válido.",
+      "invitation-email-mismatch": "Esta invitación é para outro correo. Entra coa conta do correo invitado.",
+      "invitation-expired": "Esta invitación caducou. Pídelle outra a quen te invitou.",
+      "invitation-invalid": "Esta invitación non é válida ou xa se usou. Pídelle outra a quen te invitou.",
+      "invitation-own": "Non podes aceptar unha invitación que fixeches ti. Pídelle a outra persoa co rol Xestión que te invite.",
+      "invitation-personal-account": "Esta conta xa ten reservas persoais e o persoal usa unha conta só para o traballo. Pídelle a quen te invitou que te invite co correo do traballo.",
+      "invitation-platform-account": "Coa conta da administración da plataforma non se pode formar parte do persoal dun concello. Entra cunha conta propia co correo invitado.",
+      "invitation-rate-limited": "Enviáronse demasiadas invitacións. Agarda un pouco antes de enviar outra.",
+      "last-manager": "O concello ten que ter sempre polo menos unha persoa activa co rol Xestión. Invita outra antes.",
+      "not-found": "Non existe esa persoa no persoal deste concello.",
+      "personal-account": "Esta conta reservou como veciña mentres estaba desactivada, así que xa non se pode reactivar. Invita a persoa de novo, no correo do traballo.",
+      "transition-invalid": "Isto non se pode facer co estado actual desta persoa."
+    },
+    "theme": {
+      "low-contrast": "Hai combinacións de cores con pouco contraste: revisa a lista de comprobación."
+    },
+    "validation": {
+      "failed": "Algún campo non é válido. Revisa os campos marcados.",
+      "invalid": "O valor non é válido.",
+      "pattern": "O formato non é válido.",
+      "range": "O valor está fóra do rango permitido.",
+      "required": "Este campo é obrigatorio.",
+      "size": "A lonxitude debe estar entre {{min}} e {{max}}."
+    },
+    "legal": {
+      "https": "Ten que empezar por https://",
+      "email": "Escribe un correo coma nome@concello.gal",
+      "ine": "Ten que ter 5 díxitos",
+      "dir3": "Unha letra maiúscula e 8 letras ou números",
+      "nif": "Unha letra, 7 números e unha letra ou número",
+      "phone": "Escribe só números, cun + diante se é internacional",
+      "url-required": "Escribe o enderezo da vosa páxina"
+    }
+  },
+  "footer": {
+    "nav": "Información legal e código fonte",
+    "accessibility": "Accesibilidade",
+    "privacy": "Privacidade",
+    "source": "Código fonte",
+    "license": "Licenza (EUPL-1.2)",
+    "thirdParty": "Licenzas de terceiros",
+    "legalNotice": "Aviso legal",
+    "external": "(páxina do concello)"
+  },
+  "accessibility": {
+    "title": "Declaración de accesibilidade",
+    "intro": "O Concello {{ofName}} comprométese a facer accesible o seu sitio web de conformidade co Real decreto 1112/2018, do 7 de setembro, sobre accesibilidade dos sitios web e aplicacións para dispositivos móbiles do sector público.",
+    "scope": "Esta declaración de accesibilidade aplícase ás páxinas deste concello no servizo de reserva de instalacións deportivas municipais.",
+    "statusTitle": "Situación de cumprimento",
+    "status": "Este sitio web é parcialmente conforme co RD 1112/2018 debido á falta de conformidade dos aspectos que se indican a continuación.",
+    "nonAccessibleTitle": "Contido non accesible",
+    "nonAccessibleManual": "Falta de conformidade: aínda non se fixo a revisión manual con lectores de pantalla (NVDA, VoiceOver e TalkBack), polo que pode haber barreiras que as probas automáticas non detectan.",
+    "nonAccessibleBurden": "Carga desproporcionada e contido fóra do ámbito da lexislación: non aplica.",
+    "preparationTitle": "Preparación desta declaración",
+    "preparation": "Esta declaración preparouse o 22 de outubro de 2026 mediante autoavaliación: probas automáticas (axe-core, WCAG 2.1 niveis A e AA) en cada pantalla, en galego e en castelán, a 320 píxeles de ancho e cos temas de cor de dous concellos, e probas de navegación con teclado. Última revisión: 22 de outubro de 2026.",
+    "contactTitle": "Observacións e datos de contacto",
+    "contact": "Pode comunicar ao Concello {{ofName}} os problemas de accesibilidade que atope, pedir información en formato accesible ou presentar queixas sobre o cumprimento do RD 1112/2018 polo rexistro electrónico da súa sede electrónica ou polo rexistro presencial do concello.",
+    "enforcementTitle": "Procedemento de aplicación",
+    "enforcement": "Se, unha vez feita unha solicitude de información accesible ou unha queixa, esta fose desestimada, non estivese de acordo coa decisión adoptada ou a resposta non cumprise os requisitos do artigo 12.5 do RD 1112/2018, a persoa interesada poderá iniciar unha reclamación.",
+    "contactEmail": "Correo de accesibilidade do concello:",
+    "contactOffice": "Sede electrónica:",
+    "complaintUnit": "A reclamación preséntase ante {{unit}}, unidade responsable de accesibilidade (artigo 13 do RD 1112/2018).",
+    "complaintUnitDefault": "A reclamación preséntase ante a unidade responsable de accesibilidade do Concello {{ofName}} (artigo 13 do RD 1112/2018), polo rexistro da súa sede electrónica ou polo rexistro presencial.",
+    "complaintLink": "Formulario de reclamación:"
+  },
+  "privacy": {
+    "title": "Privacidade",
+    "controllerTitle": "Responsable do tratamento",
+    "controller": "{{owner}}. Usa esta web para xestionar as contas e as reservas das instalacións deportivas municipais.",
+    "dpoTitle": "Delegado de protección de datos",
+    "phone": "Teléfono: {{value}}",
+    "purposeTitle": "Finalidade e base xurídica",
+    "purpose": "Xestionar as contas, as reservas e os avisos do servizo municipal de instalacións deportivas, en exercicio dunha misión de interese público (artigo 6.1.e do RGPD; Lei 7/1985, artigo 25.2.l). Non se pide consentimento: rexistrarse é a forma de usar o servizo.",
+    "dataTitle": "Datos que se tratan",
+    "data": "Os que achegas ao crear a conta (nome, correo) e ao reservar, e os campos adicionais que defina o concello.",
+    "recipientsTitle": "Destinatarios e encargado",
+    "recipients": "Ningún, salvo obriga legal. O propio concello aloxa o servizo.",
+    "recipientsProcessor": "Ningún, salvo obriga legal. {{processor}} aloxa e opera o servizo como encargado do tratamento (artigo 28 do RGPD), por contrato co concello.",
+    "retentionTitle": "Conservación",
+    "retention": "A conta, ata que pidas a baixa polas canles de «Dereitos»: non se borra soa. As reservas, 2 anos desde a súa data ou o seu último cambio (as de pago, 5 anos, pola normativa tributaria); despois anonimízanse e só quedan para as estatísticas, sen ningún dato teu. Os rexistros de acceso e de seguridade da conta, 90 días.",
+    "rightsTitle": "Dereitos",
+    "rights": "Podes exercer os dereitos de acceso, rectificación, supresión, oposición e limitación ante o concello.",
+    "complaint": "Se consideras que non se respectaron, podes reclamar ante a Axencia Española de Protección de Datos.",
+    "rightsDpo": "Delegado de protección de datos:",
+    "storageTitle": "Almacenamento no navegador",
+    "storage": "Só o técnico imprescindible: o idioma escollido e se o tema é claro ou escuro (localStorage), os datos temporais do inicio de sesión (sessionStorage) e as cookies de sesión do servidor de identidade. Non hai cookies de análise nin de publicidade nin recursos de terceiros.",
+    "staff": {
+      "heading": "Persoal do concello",
+      "controller": "O Concello {{ofName}}, da pertenza ao persoal e do rexistro de actividade.",
+      "data": "Nome e correo, rol, accesos e as accións na xestión (rexistro de actividade).",
+      "purpose": "Controlar quen entra na xestión e garantir a seguridade do servizo (Esquema Nacional de Seguridade), por obriga legal e en exercicio dunha misión de interese público (artigo 6.1.c e 6.1.e do RGPD). O rexistro tamén pode usarse para exixir responsabilidades, tamén disciplinarias (artigo 87 da Lei Orgánica 3/2018).",
+      "retention": "Cada acción vese na xestión durante {{visible}}. Despois queda bloqueada ata que se borra, aos {{retention}}, o prazo de prescrición das infraccións de protección de datos e das faltas disciplinarias. Se te desactivan, o teu nome e correo bloquéanse cando pasa {{visible}} e anonimízanse cando se borra a túa última acción.",
+      "recipients": "Ningún, salvo obriga legal. Os eventos bloqueados só se poñen á disposición de xulgados e tribunais, do Ministerio Fiscal, das autoridades de protección de datos ou dun expediente aberto, e cada entrega queda no rexistro co motivo."
+    }
+  },
+  "legalNotice": {
+    "title": "Aviso legal",
+    "ownerTitle": "Titular",
+    "ownerDefault": "Concello {{ofName}}",
+    "nif": "NIF: {{value}}",
+    "address": "Domicilio: {{value}}",
+    "email": "Correo electrónico:",
+    "dir3": "Código DIR3: {{value}}",
+    "office": "Sede electrónica:",
+    "staffTitle": "Obrigas do persoal",
+    "staffIntro": "O persoal do concello que traballa na xestión debe:",
+    "staffItems": {
+      "credentials": "Custodiar as súas credenciais: o contrasinal é persoal, non se comparte nin se deixa á vista.",
+      "confidentiality": "Gardar segredo dos datos persoais que coñeza na xestión, tamén despois de deixar o posto (deber de confidencialidade, artigo 5 da Lei Orgánica 3/2018).",
+      "purpose": "Usar a xestión e os datos só para as súas tarefas no concello.",
+      "report": "Avisar axiña á xestión do concello se cre que alguén puido usar a súa conta ou se perde o acceso ao seu correo.",
+      "signOut": "Pechar a sesión ao rematar se usa un equipo compartido."
+    },
+    "softwareTitle": "Software",
+    "software": "Furar é software libre baixo a licenza EUPL-1.2."
+  },
+  "legal": {
+    "external": "O concello publica esta páxina na súa web:",
+    "externalHint": "(páxina do concello)",
+    "none": "O concello non publica esta páxina."
+  },
+  "ui": {
+    "tone": {
+      "info": "Información:",
+      "warn": "Aviso:",
+      "danger": "Erro:",
+      "success": "Feito:"
+    },
+    "timePicker": {
+      "name": "{{label}}, {{time}}",
+      "empty": "Escoller hora"
+    },
+    "calendar": {
+      "previousMonth": "Mes anterior",
+      "nextMonth": "Mes seguinte",
+      "rangeStart": "inicio",
+      "rangeEnd": "fin"
+    },
+    "dateField": {
+      "name": "{{label}}, {{date}}",
+      "empty": "Escoller data",
+      "dialog": "{{label}}: escoller data"
+    },
+    "dialog": {
+      "close": "Pechar"
+    },
+    "confirm": {
+      "cancel": "Cancelar",
+      "typeToConfirm": "Para confirmar, escribe «{{phrase}}»"
+    },
+    "chipMenu": {
+      "name": "{{label}}: {{value}}. Cambiar"
+    },
+    "combobox": {
+      "searching": "Buscando…",
+      "empty": "Sen resultados",
+      "error": "Non se puido buscar",
+      "countOne": "1 suxestión",
+      "countOther": "{{count}} suxestións",
+      "create": "Crear",
+      "createWith": "{{action}} «{{query}}»",
+      "createHint": "Opción ao final: {{option}}."
+    },
+    "editSection": {
+      "unsaved": "Cambios sen gardar",
+      "cancel": "Cancelar",
+      "save": "Gardar",
+      "saving": "Gardando…",
+      "saved": "Gardado",
+      "edit": "editar",
+      "empty": "Sen indicar"
+    },
+    "unsavedChanges": {
+      "title": "Saír sen gardar?",
+      "message": "Hai cambios sen gardar nesta páxina. Se saes, pérdense.",
+      "leave": "Saír sen gardar",
+      "stay": "Seguir editando",
+      "discardTitle": "Descartar os cambios?",
+      "discardMessage": "Hai cambios sen gardar. Se os descartas, pérdense.",
+      "discard": "Descartar os cambios"
+    },
+    "map": {
+      "zoomIn": "Achegar",
+      "zoomOut": "Afastar",
+      "newWindow": "(abre noutra xanela)",
+      "marker": "Chincheta: {{latitude}}, {{longitude}}",
+      "moved": "Chincheta en {{latitude}}, {{longitude}}",
+      "hint": "Move a chincheta arrastrándoa, picando no mapa, coas frechas cando teña o foco ou escribindo as coordenadas.",
+      "hintEmpty": "Pica no mapa para poñer a chincheta ou escribe as coordenadas.",
+      "hintNoMap": "Énchense ao buscar o enderezo; tamén se poden escribir.",
+      "latitude": "Latitude",
+      "longitude": "Lonxitude",
+      "invalid": {
+        "latitude": "Escribe un número entre −90 e 90, por exemplo 43,491400.",
+        "longitude": "Escribe un número entre −180 e 180, por exemplo −8,187300."
+      }
+    },
+    "carousel": {
+      "previous": "Anteriores",
+      "next": "Seguintes",
+      "moved": "Movida á posición {{position}} de {{total}}."
+    },
+    "bilingual": {
+      "language": "Idioma de «{{label}}»",
+      "errorIn": "{{lang}}:"
+    },
+    "qr": {
+      "name": "Código QR da reserva {{code}}"
+    },
+    "fieldPopover": {
+      "close": "Pechar «{{label}}»"
+    },
+    "weekdayPicker": {
+      "shortcuts": "Atallos",
+      "all": "Todos",
+      "workdays": "Luns a venres",
+      "weekend": "Fins de semana"
+    },
+    "statTile": {
+      "more": "Ver evolución",
+      "noPrevious": "Sen datos do período anterior"
+    },
+    "chartCard": {
+      "table": "Táboa",
+      "tableFor": "Táboa: {{title}}"
+    },
+    "exportMenu": {
+      "label": "Exportar",
+      "named": "Exportar: {{subject}}",
+      "pdf": "PDF",
+      "csv": "CSV",
+      "pdfHint": "Para imprimir: no diálogo, elixe «Gardar como PDF»",
+      "csvHint": "Os datos, para unha folla de cálculo"
+    },
+    "richText": {
+      "toolbar": "Formato",
+      "h2": "Título",
+      "h3": "Subtítulo",
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "bulletList": "Lista",
+      "orderedList": "Lista numerada",
+      "link": "Ligazón",
+      "keys": {
+        "h2": "Ctrl+Alt+2",
+        "h3": "Ctrl+Alt+3",
+        "bold": "Ctrl+B",
+        "italic": "Ctrl+I",
+        "bulletList": "Ctrl+Maiús+8",
+        "orderedList": "Ctrl+Maiús+7",
+        "link": "Ctrl+K"
+      },
+      "linkUrl": "Enderezo da ligazón",
+      "linkAdd": "Engadir",
+      "linkCancel": "Cancelar",
+      "linkRequired": "Escribe o enderezo",
+      "linkInvalid": "Ten que empezar por https:// ou mailto:"
+    },
+    "toast": {
+      "close": "Pechar o aviso"
+    },
+    "unsavedChoice": {
+      "title": "Gardar os cambios de {{tab}}?",
+      "message": "Se os descartas, volven os datos gardados.",
+      "discard": "Descartar"
+    },
+    "checklist": {
+      "count": "{{done}} de {{total}}",
+      "done": " (feito)",
+      "step": "paso",
+      "go": "Ir",
+      "goTo": "Ir: {{step}}"
+    },
+    "form": {
+      "required": "obrigatorio",
+      "requiredNote": "Campo obrigatorio"
+    },
+    "stepper": {
+      "optional": "Opcional",
+      "position": "Paso {{current}} de {{total}}",
+      "state": {
+        "done": "feito",
+        "todo": "falta algo",
+        "current": "paso actual"
+      }
+    }
+  },
+  "catalog": {
+    "title": "Catálogo de compoñentes",
+    "intro": "Só en desenvolvemento: as pezas de shared/ui co tema que escollas. Non é unha pantalla do produto.",
+    "theme": "Tema de proba",
+    "themes": {
+      "default": "Por defecto",
+      "limit": "Límite AA",
+      "dark": "Fondo escuro"
+    },
+    "buttons": "Botóns",
+    "fields": "Campos",
+    "group": "Grupo de opcións",
+    "callouts": "Avisos",
+    "rows": "Filas",
+    "states": "Estados",
+    "tags": "Etiquetas",
+    "card": "Card destacada",
+    "sample": {
+      "primary": "Acción principal",
+      "secondary": "Secundaria",
+      "danger": "Eliminar",
+      "quiet": "Terciaria",
+      "small": "Pequeno",
+      "large": "Grande",
+      "disabled": "Non dispoñible",
+      "name": "Nome",
+      "nameHelp": "Como aparece na web.",
+      "notes": "Notas",
+      "choice": "Unha opción",
+      "optionA": "Opción A",
+      "optionB": "Opción B",
+      "optionC": "Opción C",
+      "selectFilled": "Con valor",
+      "selectHelp": "A opción C vese pero non se pode escoller.",
+      "selectEmpty": "Sen valor",
+      "selectPlaceholder": "Escolle unha opción",
+      "selectError": "Con erro",
+      "selectDisabled": "Desactivado",
+      "calloutTitle": "Título do aviso",
+      "calloutText": "Texto do aviso, curto e claro.",
+      "rowLink": "Fila que leva a outra pantalla",
+      "rowActions": "Fila con accións",
+      "rowDetail": "Detalle en texto secundario",
+      "rowValue": "12",
+      "empty": "Aínda non hai nada aquí.",
+      "errorTitle": "Non se puido cargar",
+      "errorText": "Algo fallou. Téntao de novo.",
+      "tag": "Etiqueta",
+      "cardText": "Unha card co tinte da cor do concello.",
+      "timeFrom": "Luns, tramo 1, desde",
+      "timeTo": "Luns, tramo 1, ata",
+      "timeFromVisible": "Desde",
+      "timeToVisible": "Ata",
+      "timeDisabled": "Domingo, tramo 1, desde",
+      "timeHelp": "Cada 15 minutos; o fin pode ser ás 24:00.",
+      "dateFrom": "Desde",
+      "dateTo": "Ata",
+      "dateHelp": "Só desde hoxe ata dentro dun ano; os domingos non se poden escoller.",
+      "dateDisabled": "Data pechada",
+      "calendar": "Calendario solto",
+      "calendarValue": "Data escollida: {{date}}",
+      "softTag": "Fútbol sala"
+    },
+    "context": "Avisos en contexto",
+    "ctx": {
+      "errorTitle": "Revisa 2 campos",
+      "errorText": "Falta a etiqueta en castelán e o código xa existe.",
+      "okTitle": "Campo gardado",
+      "label": "Etiqueta (galego)",
+      "code": "Código",
+      "save": "Gardar",
+      "sample": "Desfibrilador"
+    },
+    "select": "Despregable",
+    "timePicker": "Selector de hora",
+    "dates": "Calendario e campo de data",
+    "overlays": "Diálogo, menú e interruptor",
+    "ov": {
+      "openDialog": "Abrir diálogo",
+      "dialogTitle": "Título do diálogo",
+      "dialogText": "Unha liña que explica a capa.",
+      "dialogBody": "Contido da capa: campos, unha lista ou un aviso. Se non cabe, desprázase e o pé queda á vista.",
+      "dialogSave": "Gardar",
+      "openConfirm": "Eliminar a foto",
+      "confirmTitle": "Eliminar a foto?",
+      "confirmText": "Deixa de verse na ficha. Non se pode desfacer.",
+      "confirmAction": "Eliminar",
+      "confirmBusy": "Eliminando",
+      "answerYes": "Confirmado",
+      "answerNo": "Cancelado",
+      "openAffected": "Reservas afectadas",
+      "affectedSummary": "Bloqueo do 3 nov, 8:00–12:00 · Mantemento do céspede",
+      "statusLabel": "Estado",
+      "active": "Activa",
+      "closed": "Pechada temporalmente",
+      "withdrawn": "De baixa",
+      "withdrawTitle": "Dar de baixa?",
+      "withdrawText": "Deixa de verse e non se pode reservar. Pódese volver activar.",
+      "withdrawAction": "Dar de baixa",
+      "switchOnline": "Reserva por internet",
+      "switchSlots": "Mostrar ocos libres",
+      "switchDisabled": "Cuberta"
+    },
+    "choices": "Segmentado e pestanas",
+    "choice": {
+      "mode": "Se aluga",
+      "modes": {
+        "WHOLE": "Enteira",
+        "PARTS": "Por partes",
+        "SEATS": "Por prazas"
+      },
+      "value": "Escollido: {{value}}",
+      "duration": "Cada reserva dura",
+      "minutes": "{{minutes}} min",
+      "locked": "Modo fixado (desactivado)",
+      "tabsTitle": "Pestanas",
+      "seasons": "Tempadas",
+      "season": {
+        "winter": "Inverno",
+        "summer": "Verán",
+        "christmas": "Nadal"
+      },
+      "range": {
+        "winter": "1 set – 30 xuñ",
+        "summer": "1 xul – 31 ago",
+        "christmas": "22 dec – 7 xan"
+      },
+      "now": "Agora",
+      "addSeason": "Engadir tempada",
+      "panel": "Aquí iría a semana de {{season}}."
+    },
+    "search": {
+      "title": "Campo con suxestións e esqueletos",
+      "address": "Enderezo",
+      "addressHelp": "Escribe polo menos 3 letras. Con «erro» simúlase un fallo do buscador.",
+      "manual": "O buscador non responde: na pantalla real, o enderezo énchese a man.",
+      "sport": "Deportes",
+      "sportHelp": "Escolle un ou crea un novo.",
+      "createSport": "Crear deporte",
+      "chosen": "Deportes escollidos",
+      "sports": {
+        "football": "Fútbol",
+        "futsal": "Fútbol sala",
+        "basketball": "Baloncesto",
+        "handball": "Balonmán",
+        "padel": "Pádel",
+        "swimming": "Natación",
+        "tennis": "Tenis",
+        "volleyball": "Voleibol"
+      }
+    },
+    "edit": {
+      "title": "Sección editable",
+      "contact": "Contacto",
+      "phone": "Teléfono",
+      "email": "Correo",
+      "emailHelp": "Escribe «erro@exemplo.gal» para ver un erro do servidor no campo.",
+      "description": "Descrición",
+      "fail": "Falla o gardado"
+    },
+    "map": {
+      "title": "Mapa",
+      "readOnly": "Só lectura",
+      "editable": "Editable",
+      "label": "Punto da instalación",
+      "address": "Rúa de Piñeiros, s/n, 15572 Narón"
+    },
+    "charts": {
+      "title": "Gráficos",
+      "intro": "Un exemplo de cada construtor de furar-chart con datos inventados. O nome e a táboa de cada gráfico pona quen o usa.",
+      "lineArea": "Liña con área (etiqueta só no último valor)",
+      "sparkline": "Minigráfica",
+      "hBars": "Barras deitadas",
+      "columns": "Columnas (a actual destacada)",
+      "stackedBars": "Barras apiladas por estado (a alerta con trama)",
+      "heatmap": "Mapa de calor (pechado en gris)",
+      "data": {
+        "months": "xan,feb,mar,abr,mai,xuñ",
+        "facilities": "Pavillón,Piscina,Campo de fútbol",
+        "days": "lun,mar,mér,xov,ven,sáb,dom",
+        "occupancy": "Ocupación",
+        "people": "Persoas distintas",
+        "inTime": "En prazo",
+        "late": "Fóra de prazo",
+        "municipality": "Polo concello",
+        "closed": "Pechado"
+      }
+    },
+    "media": {
+      "title": "Tira, borrar e menú da persoa",
+      "strip": "Imaxes de exemplo",
+      "hint": "A primeira é a portada · Arrastra para cambiar a orde",
+      "item": "Imaxe {{n}}",
+      "deleteRound": "Eliminar a imaxe 2",
+      "deleteLabel": "Eliminar esta imaxe",
+      "delete": "Eliminar",
+      "user": "Persoa de exemplo",
+      "role": "Xestión",
+      "context": "Concello de exemplo"
+    },
+    "editing": {
+      "title": "Edición e tarxetas",
+      "card": "Pista de exemplo",
+      "place": "Rúa de exemplo, 1",
+      "tiles": "Tarxetas que se pulsan",
+      "tile": "Uso de exemplo",
+      "add": "Engadir",
+      "bilingual": "Descrición",
+      "confirm": "Eliminar",
+      "confirmTitle": "Eliminar o exemplo?",
+      "confirmText": "Non se pode desfacer.",
+      "phrase": "eliminar exemplo",
+      "bar": "Barra de accións",
+      "unsaved": "Cambios sen gardar"
+    },
+    "booking": {
+      "title": "Filtros, campos con panel, días e QR",
+      "filters": "Chips de filtro",
+      "facilities": "Instalación",
+      "payment": "Pago",
+      "court1": "Pista de pádel 1",
+      "court2": "Pista de pádel 2",
+      "pending": "Pendente",
+      "paid": "Pagada",
+      "toRefund": "A devolver",
+      "refunded": "Devolta",
+      "free": "Gratis",
+      "fields": "Campos con panel",
+      "what": "Que",
+      "date": "Data",
+      "choose": "Escoller",
+      "uses": "Usos",
+      "football11": "Fútbol 11",
+      "football7": "Fútbol 7",
+      "days": "Días",
+      "qr": "Código QR",
+      "tags": "Estados",
+      "values": "Valores",
+      "use": "Uso",
+      "day": "Día",
+      "dayValue": "martes, 27 de outubro",
+      "time": "Hora",
+      "filterBar": "Fila de filtros",
+      "anyDate": "Calquera día",
+      "covered": "Cuberta",
+      "allCourts": "Todas"
+    },
+    "indicators": {
+      "title": "Indicadores",
+      "intro": "Cifras que abren a súa evolución, tarxeta dun gráfico con «Táboa» e «Exportar», e unha táboa ancha que se move dentro da súa rexión. Os textos e as cifras pono quen os usa.",
+      "bookings": "Reservas",
+      "occupancy": "Ocupación media",
+      "people": "Persoas distintas",
+      "comparison": "respecto a setembro",
+      "opened": "Abriuse o detalle de «{{label}}».",
+      "chart": "Reservas por mes",
+      "conclusion": "Xuño foi o mes con máis reservas do semestre.",
+      "month": "Mes",
+      "pdfHint": "Este gráfico, para compartir",
+      "csvHint": "Os seus datos, para Excel ou LibreOffice",
+      "heat": "Ocupación por día e hora (%)",
+      "day": "Día",
+      "down": "−{{value}} p.p."
+    }
+  },
+  "site": {
+    "tagline": "Deportes municipais",
+    "mainNav": "Principal",
+    "mobileNav": "Navegación",
+    "home": "Inicio",
+    "facilities": "Instalacións",
+    "myBookings": "As miñas reservas"
+  },
+  "section": {
+    "title": "Concello",
+    "tab": {
+      "general": "Xeral",
+      "appearance": "Aparencia",
+      "service": "Servizo",
+      "legal": "Legal",
+      "staff": "Persoal",
+      "customFields": "Campos personalizados",
+      "activity": "Rexistro"
+    },
+    "unsaved": ", con cambios sen gardar",
+    "legalWarning": {
+      "missing": ", faltan datos",
+      "page": ", falta unha páxina legal"
+    },
+    "opening": {
+      "title": "Para abrir as reservas",
+      "legal": "Datos que usan os textos legais",
+      "legalNext": "completa os datos legais",
+      "complete": "Completar",
+      "facility": "Primeira instalación",
+      "facilityNext": "crea a primeira instalación",
+      "create": "Crear"
+    }
+  }
+}

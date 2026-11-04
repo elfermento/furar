@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Excepcións de Trivy (D37, D49, publicar-imaxes.sh; SEC-06). Política: HIGH e CRITICAL con
+# corrección publicada fallan. Só se ignora o que NON ten corrección dispoñible para nós,
+# cun motivo e cunha data de caducidade (despois, Trivy volve fallar e hai que revisalo).
+vulnerabilities:
+  # Caddy 2.11.7 (última, 2026-10-03; imaxe oficial reconstruída o 2026-10-21) vén compilado
+  # con Go 1.26.8. As correccións están en Go 1.26.9/1.26.10 e golang.org/x/net 0.60.0, pero
+  # non hai binario oficial de Caddy con elas. Renovate sobe a imaxe ao saír 2.11.8.
+  - id: CVE-2026-78669
+    paths: ["usr/bin/caddy"]
+    statement: "Go stdlib e x/net do binario oficial de Caddy 2.11.7; sen versión corrixida de Caddy"
+    expired_at: 2026-11-30
+  - id: CVE-2026-111943
+    paths: ["usr/bin/caddy"]
+    statement: "Go stdlib do binario oficial de Caddy 2.11.7; sen versión corrixida de Caddy"
+    expired_at: 2026-11-30
+  - id: CVE-2026-78667
+    paths: ["usr/bin/caddy"]
+    statement: "Go stdlib do binario oficial de Caddy 2.11.7; sen versión corrixida de Caddy"
+    expired_at: 2026-11-30
+  - id: CVE-2026-97031
+    paths: ["usr/bin/caddy"]
+    statement: "Go stdlib do binario oficial de Caddy 2.11.7; sen versión corrixida de Caddy"
+    expired_at: 2026-11-30
+  # go-jose v4.1.5 (DoS ao analizar JWK con claves RSA). A corrección (4.1.6, 2026-10-14) non está
+  # en ningunha versión de Caddy (2.11.7 e a rama principal fixan 4.1.5). No binario só chega por
+  # smallstep/certificates (apps pki e acme_server); o Caddyfile de Furar non carga ningunha delas
+  # (`caddy adapt` só dá a app http, tamén cun URL HTTPS) e a API de administración está pechada
+  # (admin off), así que Caddy non analiza JWK alleos. Renovate sobe a imaxe ao saír a corrección.
+  - id: CVE-2026-116587
+    paths: ["usr/bin/caddy"]
+    statement: "go-jose do binario oficial de Caddy 2.11.7, só usado polas apps pki e acme_server, que Furar non carga; sen versión corrixida de Caddy"
+    expired_at: 2026-11-27
+  # guava 33.6.0 de Keycloak 26.8.1 (DoS ao deserializar con serialización Java CompactHashMap,
+  # CompactHashSet ou MapMakerInternalMap). Corrixida en 33.7.2, pero non hai Keycloak con ela
+  # (26.8.1 é a última). Para explotala cómpre que Keycloak deserialice un fluxo Java do atacante
+  # e en Furar non hai ruta: un só nodo (KC_CACHE=local en execución; D31 comproba que non arrinca
+  # JGroups nin escoita en 7800/57800), só HTTP en 8082 e 9000, caché co marshaller ProtoStream,
+  # sen JMX nin RMI, e as únicas deserializacións Java do propio Keycloak (Kerberos e o provedor
+  # de Twitter) non están configuradas en ningún realm. Renovate sobe a imaxe ao saír a corrección.
+  - id: CVE-2026-102554
+    paths: ["opt/keycloak/lib/lib/main/com.google.guava.guava-33.6.0-jre.jar"]
+    statement: "guava de Keycloak 26.8.1 sen versión corrixida de Keycloak; sen ruta de deserialización Java alcanzable: sen JGroups (KC_CACHE=local, D31), só HTTP 8082/9000, marshaller ProtoStream, sen JMX/RMI, sen Kerberos/LDAP/Twitter nos realms"
+    expired_at: 2026-11-27

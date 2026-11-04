@@ -1,0 +1,133 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.photos.';
+<furar-dialog size="full" [heading]="name()">
+  <div class="f-photos">
+    <div class="f-photos__top">
+      @if (current(); as image) {
+        <figure class="f-photos__big" (mouseenter)="hintOpen.set(true)" (mouseleave)="hintOpen.set(false)">
+          <img [src]="image.large" [alt]="alt(image)" [width]="image.width" [height]="image.height" />
+          @if (selected() === 0) {
+            <span class="f-photos__badge" aria-hidden="true">{{ t + 'cover' | transloco }}</span>
+          }
+        </figure>
+        <div class="f-photos__card" data-photo-card>
+          @if (image.kind === 'PHOTO') {
+            @let alt = altFor(image);
+            <furar-required-note />
+            <furar-bilingual-field
+              class="f-photos__field"
+              fieldId="facility-photo-alt"
+              required
+              multiline
+              [rows]="3"
+              [maxlength]="altMax"
+              [label]="t + 'description' | transloco"
+              [help]="t + 'descriptionShared' | transloco"
+              [gl]="alt.gl"
+              [es]="alt.es"
+              [(lang)]="altLang"
+            />
+          } @else {
+            <div class="f-photos__field">
+              <p class="font-bold">{{ t + 'description' | transloco }}</p>
+              <p data-drawing-alt>{{ alt(image) }}</p>
+              <p class="text-support text-ink-soft">{{ t + 'drawingNote' | transloco }}</p>
+            </div>
+          }
+          <div class="f-photos__acts">
+            <p class="text-support text-ink-soft" data-meta>
+              @if (image.kind === 'DRAWING') {
+                {{ t + 'drawing' | transloco }}
+              } @else if (image.fresh) {
+                {{ t + 'newUpload' | transloco }}
+              } @else {
+                {{ t + 'uploadedOn' | transloco: { date: date(image.uploadedAt) } }}
+              }
+            </p>
+            <furar-delete-button
+              data-remove
+              [label]="t + 'removeLabel' | transloco"
+              [text]="t + 'remove' | transloco"
+              (pressed)="remove()"
+            />
+          </div>
+        </div>
+      }
+    </div>
+    <div class="f-photos__strip">
+      <p class="font-bold" data-count>
+        {{
+          images().length === 1 ? (t + 'countOne' | transloco) : (t + 'count' | transloco: { count: images().length })
+        }}
+      </p>
+      <div class="f-photos__row">
+        <furar-carousel
+          reorderable
+          [label]="t + 'strip' | transloco"
+          [items]="images()"
+          [key]="key"
+          [hint]="t + 'hint' | transloco"
+          [hintOpen]="hintOpen()"
+          [previousLabel]="t + 'previousPage' | transloco"
+          [nextLabel]="t + 'nextPage' | transloco"
+          (reordered)="reordered($event)"
+        >
+          <ng-template furarCarouselItem let-image let-i="index" let-hint="hintId">
+            <!-- Distintivos fóra do botón: o seu nome é o aria-label, sen texto visible que o contradiga (2.5.3). -->
+            <div class="f-photos__tile">
+              <button
+                type="button"
+                class="f-photos__thumb"
+                [attr.aria-pressed]="selected() === i"
+                [attr.aria-label]="thumbLabel(i)"
+                [attr.aria-describedby]="hint"
+                [attr.data-key]="image.key"
+                (click)="select(i)"
+              >
+                <img [src]="image.thumb" alt="" draggable="false" />
+              </button>
+              @if (i === 0) {
+                <span class="f-photos__badge f-photos__badge--sm" aria-hidden="true">{{
+                  t + 'cover' | transloco
+                }}</span>
+              }
+              <span class="f-photos__number" aria-hidden="true">{{ i + 1 }}</span>
+            </div>
+          </ng-template>
+        </furar-carousel>
+        <button
+          type="button"
+          class="f-photos__add"
+          data-add
+          [attr.aria-label]="t + 'addLabel' | transloco"
+          (click)="openLibrary()"
+        >
+          <span class="f-photos__add-icon" aria-hidden="true">
+            <furar-icon name="image" [size]="24" />
+            <span class="f-photos__add-plus"><furar-icon name="plus" /></span>
+          </span>
+          <span>{{ t + 'add' | transloco }}</span>
+        </button>
+      </div>
+    </div>
+    <furar-problem-alert [problem]="problem()" />
+    <p class="sr-only" role="status">{{ announcement() }}</p>
+  </div>
+  <span dialogStatus data-changes>
+    @if (changes()) {
+      <span class="f-photos__dot" aria-hidden="true"></span>
+      <b>{{ changes() === 1 ? (t + 'changesOne' | transloco) : (t + 'changes' | transloco: { count: changes() }) }}</b>
+    }
+  </span>
+  <ng-container dialogActions>
+    <button type="button" furarButton data-cancel (click)="close()">
+      {{ t + 'cancel' | transloco }}
+    </button>
+    <button type="button" furarButton="primary" data-save (click)="save()">
+      {{ 'facility.detail.edit.apply' | transloco }}
+    </button>
+  </ng-container>
+</furar-dialog>

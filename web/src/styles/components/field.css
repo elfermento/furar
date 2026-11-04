@@ -1,0 +1,202 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Campo (furar-field e [furarInput], docs/deseno.md P1-3): rótulo visible enriba, axuda, control e
+ * erro, nesa orde. As clases de antes (label, help, input, field-error) pintan igual.
+ */
+@layer components {
+  .f-label,
+  .label {
+    display: block;
+    margin-bottom: var(--spacing-unit);
+    font-weight: 700;
+  }
+  .f-help,
+  .help {
+    display: block;
+    margin-bottom: var(--spacing-unit);
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  /* «*» de obrigatorio (furar-required-mark): da cor do erro, pero sen negra nin tamaño de máis. */
+  .f-required {
+    color: var(--f-danger);
+    font-weight: 400;
+  }
+  .f-required-note {
+    display: block;
+    margin-bottom: var(--spacing-form);
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  /* Nun formulario en grella ou flex xa separa o oco (gap). */
+  :is(.grid, .flex, .f-use-form, .f-photos__card) > .f-required-note {
+    margin-bottom: 0;
+  }
+
+  /*
+   * Anatomía do campo: grella de catro filas (rótulo, axuda, control, erro). Cada peza vai á súa
+   * fila; o que non é rótulo, axuda nin erro é o control. Vale para furar-field (clase no host) e
+   * para un campo feito a man (`<div class="f-field">`). Sen axuda, a fila 2 queda baleira (alto 0).
+   */
+  .f-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    min-width: 0;
+  }
+  .f-field > :is(.f-label, .label) {
+    grid-row: 1;
+  }
+  .f-field > :is(.f-help, .help) {
+    grid-row: 2;
+    margin: 0 0 var(--spacing-unit);
+  }
+  .f-field > :not(.f-label, .label, .f-help, .help, .f-field-error, .field-error) {
+    grid-row: 3;
+    min-width: 0;
+  }
+  .f-field > :is(.f-field-error, .field-error) {
+    grid-row: 4;
+  }
+  /*
+   * Campos na mesma fila (código postal e número, desde e ata): cada campo colle as catro filas da
+   * fila (subgrid), así os controis quedan á mesma altura aínda que un rótulo ou unha axuda
+   * ocupen máis ou só un dos campos teña axuda (a fila da axuda mide a máis alta). As columnas, iguais e de polo menos --f-row-min; se non caben, baixan. Quen queira
+   * outras columnas pono con grid-template-columns (p. ex. sm:grid-cols-[9rem_minmax(0,1fr)]).
+   * O espazo entre filas vai no pé de cada campo e a marxe negativa da fila o compensa.
+   */
+  .f-field-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--f-row-min, 11rem)), 1fr));
+    column-gap: var(--spacing-item);
+    row-gap: 0;
+    margin-bottom: calc(-1 * var(--spacing-form));
+  }
+  .f-field-row > .f-field {
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    margin-bottom: var(--spacing-form);
+  }
+  .f-field-error,
+  .field-error {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-unit);
+    margin-top: var(--spacing-unit);
+    color: var(--f-danger);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  /* Icona do erro (non só cor, 1.4.1); texto alternativo baleiro para que non se lea. */
+  .f-field-error::before,
+  .field-error::before {
+    content: '!' / '';
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.0625rem;
+    border-radius: 50%;
+    background: var(--f-danger);
+    color: var(--f-surface);
+    font-size: 0.8125rem;
+    line-height: 1;
+  }
+
+  .f-input,
+  .input {
+    display: block;
+    width: 100%;
+    min-height: var(--f-control-h);
+    /*
+     * Bordo fino en repouso (a cor --f-line xa dá 3:1, 1.4.11) e groso no foco ou co erro. O
+     * padding resérvalle a diferenza ao bordo de estado, así o contido non salta.
+     */
+    --f-input-pad-y: 0.625rem;
+    --f-input-pad-x: 0.875rem;
+    --f-input-border: var(--f-border);
+    padding: calc(var(--f-input-pad-y) + var(--f-border-state) - var(--f-input-border))
+      calc(var(--f-input-pad-x) + var(--f-border-state) - var(--f-input-border));
+    border: var(--f-input-border) solid var(--f-line);
+    border-radius: var(--radius-field);
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font: inherit;
+    line-height: 1.5;
+    transition: border-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-input:focus-visible,
+  .input:focus-visible {
+    --f-input-border: var(--f-border-state);
+    border-color: var(--f-primary);
+  }
+  .f-input[aria-invalid='true'],
+  .input[aria-invalid='true'] {
+    --f-input-border: var(--f-border-state);
+    border-color: var(--f-danger);
+  }
+  .f-input:disabled,
+  .f-input[readonly],
+  .input:disabled,
+  .input[readonly] {
+    border-style: dashed;
+    background: var(--f-page);
+  }
+  .f-input:disabled,
+  .input:disabled {
+    cursor: not-allowed;
+  }
+  textarea.f-input,
+  textarea.input {
+    min-height: 8rem;
+    max-height: 24rem;
+    resize: vertical;
+  }
+  /* Select nativo cunha frecha debuxada con gradientes da tinta (sen imaxes). */
+  select.f-input,
+  select.input {
+    appearance: none;
+    padding-inline-end: 2.75rem;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--f-ink) 50%),
+      linear-gradient(135deg, var(--f-ink) 50%, transparent 50%);
+    background-position:
+      right 1.375rem center,
+      right 1rem center;
+    background-size: 0.375rem 0.375rem;
+    background-repeat: no-repeat;
+  }
+  @media (forced-colors: active) {
+    select.f-input,
+    select.input {
+      appearance: auto;
+      background-image: none;
+      padding-inline-end: 0.875rem;
+    }
+  }
+
+  /* Texto en dous idiomas (furar-bilingual-field): rótulo e conmutador GL/ES na mesma liña. */
+  .f-bilingual {
+    display: grid;
+    gap: var(--spacing-unit);
+  }
+  .f-bilingual__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-unit);
+  }
+  .f-bilingual__head .f-label {
+    margin: 0;
+  }
+  .f-bilingual > .f-help {
+    margin: 0;
+  }
+}

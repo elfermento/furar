@@ -1,0 +1,162 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Sección editable no sitio (furar-edit-section e furar-edit-field, D1-05b). A
+ * sección é un bloque con título e divisor por riba (como na maqueta da ficha); o
+ * valor en repouso é un botón de ancho enteiro co rótulo enriba e un lapis; ao editar, o control
+ * da feature. «Cambios sen gardar» vai en texto e cun bordo á esquerda (non só pola cor).
+ */
+@layer components {
+  .f-edit-section {
+    display: block;
+  }
+
+  .f-edit-section__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-unit) var(--spacing-item);
+    margin-bottom: var(--spacing-item);
+  }
+
+  .f-edit-section__title {
+    font-size: var(--text-head);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  /* O título recibe o foco tras gardar ou cancelar: só se ve o aro se se chegou con teclado. */
+  .f-edit-section__title:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  .f-edit-section__form {
+    display: grid;
+    gap: var(--spacing-form);
+  }
+
+  /* Aviso, accións e «Gardado» sen ocos propios: as rexións vivas baleiras non suman aire. */
+  .f-edit-section__end {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .f-edit-section__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-unit) var(--spacing-item);
+    padding: var(--spacing-unit) 0 var(--spacing-unit) var(--spacing-item);
+    border-left: var(--f-border-state) solid var(--f-primary-text);
+  }
+
+  .f-edit-section__unsaved {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-edit-section__dot {
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-primary-text);
+  }
+
+  .f-edit-section__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-unit);
+    margin-left: auto;
+  }
+
+  /* A rexión viva está sempre á vista (para que se anuncie); baleira non ocupa sitio. */
+  .f-edit-section__saved {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    align-self: flex-end;
+    margin-top: var(--spacing-unit);
+    color: var(--f-success);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-edit-section__saved:empty {
+    margin-top: 0;
+  }
+
+  .f-edit-field {
+    display: block;
+  }
+
+  .f-edit-field__trigger {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--spacing-unit);
+    width: 100%;
+    min-height: var(--f-touch);
+    padding: var(--spacing-unit) 0.75rem;
+    border: var(--f-border) solid transparent;
+    border-radius: var(--radius-field);
+    background: transparent;
+    color: var(--f-ink);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color var(--f-dur-fast) var(--ease-smooth),
+      border-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-edit-field__label {
+    grid-column: 1;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-edit-field__value {
+    grid-column: 1;
+    overflow-wrap: anywhere;
+  }
+  .f-edit-field__value[data-empty] {
+    color: var(--f-ink-soft);
+  }
+  /* Modo edición global, fóra da edición: rótulo e valor en texto, sen botón. */
+  .f-edit-field__static {
+    display: grid;
+    gap: 0.125rem;
+    padding: var(--spacing-unit) 0;
+  }
+  .f-edit-field__pencil {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    color: var(--f-ink-soft);
+  }
+
+  @media (hover: hover) {
+    .f-edit-field__trigger:hover {
+      border-color: var(--f-line);
+      background: var(--f-tint);
+    }
+    .f-edit-field__trigger:hover .f-edit-field__pencil {
+      color: var(--f-primary-text);
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .f-edit-section__footer {
+      border-left-color: var(--f-ink);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .f-edit-field__trigger {
+      border-color: ButtonText;
+    }
+    .f-edit-section__dot {
+      background: CanvasText;
+    }
+  }
+}

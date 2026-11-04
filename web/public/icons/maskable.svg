@@ -1,0 +1,7 @@
+<!-- SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar -->
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Reservas deportivas">
+  <rect width="64" height="64" fill="#0b5c8e"/>
+  <circle cx="32" cy="32" r="13" fill="none" stroke="#ffffff" stroke-width="5"/>
+  <path d="M32 19v26M19 32h26" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+</svg>

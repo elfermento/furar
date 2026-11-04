@@ -1,0 +1,44 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: CC0-1.0
+-->
+
+# ADR-0023 · Enderezos e mapa sen terceiros: CartoCiudad polo servidor e teselas por Caddy
+
+- **Estado:** aceptada · 2026-10-25 (plan do dominio 1, §1.2.10 e §1.2.11) · **revisada o 2026-11-03** (mapa por defecto: Mapa base do IGN; mapa opcional; ver «Revisión do 2026-11-03»)
+- **Valida o mantedor:** demo con CartoCiudad real e alta a man se cae (P30); teselas públicas de OSM a través de Furar na demo e servidor propio ou contratado en produción (P31). Constrúese o valor recomendado do plan. Revisión do 2026-11-03: decide o mantedor.
+
+## Contexto
+A especificación (bloque 1, «Enderezos») pide enderezo e punto no mapa en cada instalación, con suxestións de CartoCiudad (IGN) **sempre a través do servidor de Furar e substituíble**, e mapa de OpenStreetMap; e o principio «nada a terceiros». Se o navegador falase directamente con CartoCiudad ou cun servidor de teselas, a IP, o `Referer` e as cookies de quen mira (xestor hoxe, veciñanza no dominio 2) chegarían a un terceiro, e a CSP (`connect-src` e `img-src 'self'`, ADR-0007) tería que abrirse. Ademais: a política de uso das teselas de openstreetmap.org non admite tráfico de produción; OSM (ODbL) e CartoCiudad (CC BY 4.0) obrigan a atribuír; un concello pode estar detrás dun proxy corporativo ou sen saída a internet; e a CI non pode depender da rede.
+
+## Decisión
+- **O enderezo é dato da instalación, non do buscador:** vía, número, CP, localidade, código INE e coordenadas (`latitude numeric(8,6)`, `longitude numeric(9,6)`) en columnas de `facility`. Se o buscador desaparece, a ficha segue completa. Desde o 2026-11-03 (`V202611031600__facility_publication.sql`, asistente «Nova instalación»), o enderezo vai enteiro ou non vai e só é obrigatorio para publicar; as coordenadas son opcionais sempre (sen mapa no despregue non hai punto) e só van cun enderezo.
+- **Buscador detrás dun porto:** `AddressSearch` en `facility` (`suggest`, `resolve`, `reverse`) con dous adaptadores: `cartociudad` (`RestClient`, connect 2 s e read 3 s, **sen reintentos**, `limit=10`, só con 3–100 caracteres, caché LRU en memoria de 24 h, resultados filtrados polo INE do concello) e `fixed` (enderezos gardados de Narón e Ferrol). Escóllese con `FURAR_GEOCODER=cartociudad|fixed` (por defecto `cartociudad`; `fixed` en tests e e2e), variable propia e **non** atada ao perfil `demo`. Saída opcional por proxy con `FURAR_HTTP_PROXY`. Endpoints `/address-search…` só para quen ten `facility.view` (`MANAGER`, `STAFF` e, desde o 2026-11-03, `PLATFORM_ADMIN`, [ADR-0028](0028-administracion-da-plataforma-e-primeiro-acceso.md) punto 9), nunca `@PublicEndpoint`. Se CartoCiudad falla ou tarda: 503 `facility.geocoder-unavailable` e a web deixa encher os campos a man e picar no mapa. A CartoCiudad só chega o texto que escribe o persoal ou un punto, desde a IP do servidor; ningún dato da veciñanza.
+- **Mapa con Leaflet 1.9.4** (BSD-2-Clause) en `furar-map` (`shared/ui/map/`): o CSS cárgase só ao abrir o mapa (entrada `styles` con `inject: false` e `<link>` creado polo compoñente), icona propia, sen estilos en liña (Leaflet posiciona por CSSOM, que `style-src 'self'` permite). A CSP non cambia.
+- **Teselas pola mesma orixe:** Caddy serve `/tiles/{z}/{x}/{y}.png` (z 0–19, só `GET`/`HEAD`) cara a `FURAR_MAP_TILES_UPSTREAM` (esquema e host) + `FURAR_MAP_TILES_PATH` (desde o 2026-11-03, `FURAR_MAP_TILES_TEMPLATE`, ver a revisión). Cara a fóra quita `X-Forwarded-*`, `Cookie`, `Authorization` e `Referer` e manda o `User-Agent` de Furar; de volta quita `Set-Cookie` e pon caché longa no navegador. O provedor só ve a IP do servidor e as coordenadas da tesela.
+- **Atribucións sempre á vista:** «© OpenStreetMap» no mapa (desde o 2026-11-03, o recoñecemento do servidor configurado: por defecto «CC BY 4.0 scne.es»; contraste AA) e «Fonte: CartoCiudad, © IGN» no diálogo de localización.
+- **Demo e produción:** na demo, as teselas públicas de OSM a través de Furar (pouco tráfico e con atribución). En produción, servidor de teselas propio ou contratado: só cambian as dúas variables (substituído o 2026-11-03: o Mapa base do IGN en todos os perfís). Destinos saíntes, proxy e servidor de teselas documéntanse en [`instalacion.md`](../instalacion.md).
+- **Probas sen rede:** `MockRestServiceServer` con respostas gardadas para CartoCiudad, `page.route` para `/tiles` no catálogo e no e2e, e `FURAR_GEOCODER=fixed` explícito no e2e.
+
+## Revisión do 2026-11-03: Mapa base do IGN por defecto e mapa opcional
+- **Por que:** coas teselas de openstreetmap.org só para a demo, cada concello tiña que conseguir un servidor de teselas antes de instalar (`compose.prod.yaml` esixíao). O IGN publica o seu Mapa base como servizo WMTS público, sen clave e con licenza CC BY 4.0 (Orde FOM/2807/2015), con teselas PNG de 256 px en Web Mercator (`GoogleMapsCompatible`, z 0–20): vale para produción e para a demo sen configurar nada.
+- **Por defecto, en todos os perfís (local, demo, e2e e produción):** `https://www.ign.es/wmts/ign-base`, capa `IGNBaseTodo`, pedido en KVP (`TILEMATRIX={z}&TILECOL={x}&TILEROW={y}`, eixe y como XYZ). O recoñecemento é o que trae o propio servizo (`AccessConstraints` do GetCapabilities, como pide a licenza do IGN para servizos): «CC BY 4.0 scne.es», con ligazón a `https://www.scne.es`. O servidor de openstreetmap.org deixa de usarse en ningún perfil.
+- **Plantilla en vez de prefixo:** `FURAR_MAP_TILES_TEMPLATE` (camiño e query con `{z}`, `{x}` e `{y}`) substitúe a `FURAR_MAP_TILES_PATH`, porque o WMTS leva as coordenadas na query. Baleira = a do IGN (vai no `Caddyfile`). Caddy quita primeiro a query do navegador e despois pon a da plantilla; o resto das proteccións non cambia (cabeceiras fóra, só PNG, `Set-Cookie` e `Content-Disposition` fóra, CSP `sandbox`, caché, timeouts e proxy saínte). `FURAR_MAP_TILES_UPSTREAM` deixa de ser obrigatoria en produción (por defecto `https://www.ign.es`).
+- **Mapa opcional:** `FURAR_MAP=off` (por defecto `on`) quita o mapa. Caddy responde 404 en todo `/tiles` sen tocar o provedor; a web, que o sabe por `GET /api/v1/deployment-settings` (público, sen concello, como `/api/v1/privacy-notice`), non carga Leaflet: a ficha pública queda co enderezo da tarxeta (sen «Como chegar»), o listado sen a vista Mapa e a localización da xestión cos campos de latitude e lonxitude, que enche o buscador ou se escriben. Un valor que non sexa `on` ou `off` impide arrincar a API.
+- **Recoñecemento configurable:** `FURAR_MAP_ATTRIBUTION` e `FURAR_MAP_ATTRIBUTION_URL` (API) chegan á web polo mesmo endpoint e van sempre á vista ao pé do mapa; quen cambie de servidor pon o que pida a licenza dos seus datos. Nada disto vai en `environment.ts`.
+- **Descartado:** seguir esixindo un servidor propio en produción (barreira de entrada para un concello pequeno, sen ganancia de privacidade: o IGN, coma calquera provedor, só ve a IP do servidor); levar a plantilla ou a atribución ao build da web (cada despregue tería que construír a súa imaxe).
+
+## Consecuencias
+- Ningunha petición do navegador sae da orixe de Furar; o concello pode cambiar de buscador ou de teselas sen tocar a web.
+- A API ten a súa primeira dependencia de rede saínte: timeouts curtos, caché e o modo `fixed` evitan que unha caída de CartoCiudad bloquee a alta.
+- O tráfico de teselas pasa por Caddy: máis ancho de banda no servidor, compensado pola caché do navegador.
+- Un concello que poña Furar en produción non ten que conseguir un servidor de teselas (revisión do 2026-11-03; antes si): o Mapa base do IGN vale; outro servidor é opcional e vai na guía de instalación, §13. O servidor de Furar ten que poder saír a `www.ign.es:443`, ou poñer `FURAR_MAP=off`.
+
+## Alternativas descartadas
+- **Navegador contra CartoCiudad ou OSM directamente:** a IP e o `Referer` de quen mira chegan a un terceiro e a CSP tería que abrirse a dous dominios.
+- **Nominatim como buscador:** a súa política non admite autocompletado e non devolve o código INE; CartoCiudad é a fonte oficial española.
+- **Táboa propia de enderezos:** a especificación pide columnas na instalación; unha táboa só engade unha FK e un join.
+- **Reintentos e límite por IP en `address-search`:** os reintentos alongan a espera mentres se escribe (a saída é a man); a ruta pide `MANAGER`/`STAFF` e non é un proxy aberto, así que chegan a caché e o mínimo de caracteres.
+- **Caché na base:** máis código e unha táboa para datos públicos que se poden volver pedir; a caché en memoria chega para o volume dun concello.
+- **MapLibre GL ou OpenLayers:** máis peso no paquete inicial (orzamento de 500 kB, ADR-0014), WebGL e, no caso das teselas vectoriais, un servidor de estilos; Leaflet chega para unha chincheta.
+- **Imaxe estática do mapa:** non deixa arrastrar a chincheta nin picar para mover.

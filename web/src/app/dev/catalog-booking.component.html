@@ -1,0 +1,112 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<furar-card [heading]="'catalog.booking.title' | transloco" id="reservas">
+  <div class="gap-form grid">
+    <div class="gap-unit grid">
+      <h3 class="f-label">{{ 'catalog.booking.facilities' | transloco }}</h3>
+      <div class="gap-unit flex flex-wrap">
+        <button type="button" furarFilterChip [pressed]="true">{{ 'catalog.booking.court1' | transloco }}</button>
+        <button type="button" furarFilterChip>{{ 'catalog.booking.court2' | transloco }}</button>
+      </div>
+    </div>
+    <div class="gap-unit grid">
+      <h3 class="f-label">{{ 'catalog.booking.payment' | transloco }}</h3>
+      <div class="gap-unit flex flex-wrap">
+        @for (payment of payments; track payment.key) {
+          <button type="button" [furarFilterChip]="payment.tone" [pressed]="payment.pressed">
+            {{ 'catalog.booking.' + payment.key | transloco }}
+          </button>
+        }
+      </div>
+      <ul class="f-tag-list" [attr.aria-label]="'catalog.booking.tags' | transloco">
+        @for (payment of payments; track payment.key) {
+          <li>
+            <furar-tag [tone]="payment.tone">{{ 'catalog.booking.' + payment.key | transloco }}</furar-tag>
+          </li>
+          <li>
+            <furar-tag [tone]="payment.tone" look="outline">{{
+              'catalog.booking.' + payment.key | transloco
+            }}</furar-tag>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="gap-unit grid">
+      <h3 class="f-label">{{ 'catalog.booking.filterBar' | transloco }}</h3>
+      <furar-filter-bar [label]="'catalog.booking.filterBar' | transloco">
+        <furar-filter-field [label]="'catalog.booking.facilities' | transloco" controlId="catalog-filter-facility">
+          <furar-select
+            selectId="catalog-filter-facility"
+            [label]="'catalog.booking.facilities' | transloco"
+            [options]="courts()"
+            [value]="court()"
+            (changed)="court.set($event)"
+          />
+        </furar-filter-field>
+        <furar-filter-field [label]="'catalog.booking.date' | transloco" controlId="catalog-filter-date">
+          <furar-field-popover
+            #filterDate
+            look="filter"
+            triggerId="catalog-filter-date"
+            [label]="'catalog.booking.date' | transloco"
+            [value]="filterDateText()"
+            [placeholder]="'catalog.booking.anyDate' | transloco"
+          >
+            <furar-calendar [value]="filterDay()" (picked)="filterDay.set($event); filterDate.close()" />
+          </furar-field-popover>
+        </furar-filter-field>
+        <button type="button" furarFilterChip [(pressed)]="covered">{{ 'catalog.booking.covered' | transloco }}</button>
+        <button type="button" furarFilterChip="warn" [(pressed)]="pending">
+          {{ 'catalog.booking.pending' | transloco }}
+        </button>
+      </furar-filter-bar>
+    </div>
+
+    <div class="gap-unit grid">
+      <h3 class="f-label">{{ 'catalog.booking.fields' | transloco }}</h3>
+      <div class="f-field-group max-w-col">
+        <furar-field-popover
+          #what
+          [label]="'catalog.booking.what' | transloco"
+          [value]="use() ? ('catalog.booking.' + use() | transloco) : null"
+          [placeholder]="'catalog.booking.choose' | transloco"
+          [nextField]="when"
+        >
+          <div class="gap-unit flex flex-wrap" role="group" [attr.aria-label]="'catalog.booking.uses' | transloco">
+            @for (option of uses; track option) {
+              <button type="button" furarFilterChip [pressed]="use() === option" (click)="use.set(option); what.next()">
+                {{ 'catalog.booking.' + option | transloco }}
+              </button>
+            }
+          </div>
+        </furar-field-popover>
+        <furar-field-popover
+          #when
+          [label]="'catalog.booking.date' | transloco"
+          [value]="dateText()"
+          [placeholder]="'catalog.booking.choose' | transloco"
+        >
+          <furar-calendar [value]="date()" [min]="today" (picked)="date.set($event); when.close()" />
+        </furar-field-popover>
+      </div>
+    </div>
+
+    <div class="gap-unit grid">
+      <h3 class="f-label">{{ 'catalog.booking.days' | transloco }}</h3>
+      <furar-weekday-picker [formControl]="days" [label]="'catalog.booking.days' | transloco" />
+    </div>
+
+    <div class="gap-unit grid max-w-col">
+      <h3 class="f-label">{{ 'catalog.booking.values' | transloco }}</h3>
+      <furar-value-list [items]="values()" />
+    </div>
+
+    <div class="gap-unit grid justify-items-start">
+      <h3 class="f-label">{{ 'catalog.booking.qr' | transloco }}</h3>
+      <furar-qr [size]="21" [path]="qrPath" code="FUR-7K2Q" />
+    </div>
+  </div>
+</furar-card>

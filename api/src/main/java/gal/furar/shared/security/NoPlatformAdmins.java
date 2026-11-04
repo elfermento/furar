@@ -1,0 +1,17 @@
+// SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+// SPDX-License-Identifier: EUPL-1.2
+package gal.furar.shared.security;
+
+import org.jspecify.annotations.Nullable;
+
+/**
+ * {@link PlatformAdmins} sen administración: o que usa {@code JwtCurrentActor} se non hai ningunha
+ * implementación (probas dun módulo illado, {@code @ApplicationModuleTest(STANDALONE)}).
+ */
+public final class NoPlatformAdmins implements PlatformAdmins {
+
+  @Override
+  public boolean isPlatformAdmin(String subject, @Nullable String verifiedEmail) {
+    return false;
+  }
+}

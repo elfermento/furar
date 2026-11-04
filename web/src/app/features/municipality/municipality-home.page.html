@@ -1,0 +1,118 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let m = municipality.value();
+@if (m || showcase()) {
+  <div class="f-home">
+    <section class="f-hero" aria-labelledby="home-title">
+      <div class="f-hero__blobs" aria-hidden="true"><span></span><span></span></div>
+      <div class="f-wrap f-hero__grid" [attr.data-collage]="collage().length ? '' : null">
+        <div class="f-hero__main">
+          @if (m && !showcase() && configures()) {
+            @defer (on idle) {
+              <furar-opening-checklist compact />
+            }
+          }
+          <h1 id="home-title" class="f-hero__title">
+            @if (m && !showcase()) {
+              <span>{{ 'home.title.line1' | transloco }}</span
+              >{{ ' ' }}<span>{{ 'home.title.line2' | transloco }}</span
+              >{{ ' ' }}<em>{{ m.name }}</em>
+            } @else {
+              <span>{{ 'home.title.line1' | transloco }}</span
+              >{{ ' ' }}<em>{{ 'home.showcase.place' | transloco }}</em>
+            }
+          </h1>
+          @if (m && !showcase()) {
+            <furar-facility-search [facilities]="facilities()" (searched)="navigation.search(m.slug, $event)" />
+          } @else {
+            <furar-facility-search [facilities]="[]" disabled />
+          }
+        </div>
+        @if (collage().length) {
+          <div class="f-collage" aria-hidden="true">
+            @for (photo of collage(); track $index; let i = $index) {
+              <figure [attr.data-place]="i + 1">
+                <img [src]="photo.large" alt="" />
+                @if (showExamples() && i === 0) {
+                  <furar-tag class="f-collage__badge" tone="muted">{{ 'home.examples.badge' | transloco }}</furar-tag>
+                }
+              </figure>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="f-wrap f-home__section" aria-labelledby="instalacions">
+      <h2 id="instalacions" class="f-home__heading">{{ 'home.facilities.title' | transloco }}</h2>
+      @if (showExamples()) {
+        <furar-carousel
+          class="f-rail"
+          scrollFocusable
+          [label]="'home.examples.rail' | transloco"
+          [items]="examples()"
+          [key]="facilityKey"
+        >
+          <ng-template furarCarouselItem let-facility>
+            <furar-example-card [facility]="facility" />
+          </ng-template>
+        </furar-carousel>
+      } @else if (m) {
+        @switch (state()) {
+          @case ('loading') {
+            <furar-status-state
+              mode="skeleton"
+              shape="card"
+              [rows]="4"
+              [description]="'home.facilities.loading' | transloco"
+            />
+          }
+          @case ('error') {
+            <furar-status-state
+              mode="error"
+              [heading]="'home.facilities.error.title' | transloco"
+              [description]="'home.facilities.error.text' | transloco"
+            >
+              <button type="button" furarButton (click)="retry()">
+                {{ 'home.facilities.error.retry' | transloco }}
+              </button>
+            </furar-status-state>
+          }
+          @default {
+            <furar-carousel
+              class="f-rail"
+              scrollFocusable
+              [label]="'home.facilities.rail' | transloco"
+              [items]="facilities()"
+              [key]="facilityKey"
+            >
+              <ng-template furarCarouselItem let-facility>
+                <furar-facility-card
+                  [slug]="m.slug"
+                  [facility]="facility"
+                  [freeToday]="freeToday().get(facility.id) ?? 0"
+                />
+              </ng-template>
+            </furar-carousel>
+          }
+        }
+      }
+    </section>
+
+    <furar-how-it-works
+      [municipality]="m && !showcase() ? m.name : null"
+      [address]="address()"
+      [facilities]="shown()"
+    />
+
+    @if (m && !showcase() && definitions().length) {
+      <div class="f-wrap f-home__section">
+        <furar-card [heading]="'home.data' | transloco">
+          <furar-custom-fields-view [definitions]="definitions()" [values]="m.customFields" [lang]="language.lang()" />
+        </furar-card>
+      </div>
+    }
+  </div>
+}

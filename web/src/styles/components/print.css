@@ -1,0 +1,135 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Impresión e PDF dos indicadores (ADR-0026: PDF = window.print()). O alcance pono
+ * shared/print/print-scope.ts: `data-print` en <html> (panel, card ou dialog) e `data-print-target`
+ * na tarxeta. Cada gráfico vai seguido da súa táboa. Sae sempre sen o cromo (barra, pé, botóns)
+ * e coa cabeceira impresa (.f-print-header, cos filtros escritos), que en pantalla non se ve.
+ */
+@layer components {
+  .f-print-header {
+    display: none;
+  }
+  /* A imaxe dun gráfico para o papel (print-charts.ts): na pantalla segue o canvas. */
+  @media screen {
+    .f-chart__print {
+      display: none;
+    }
+  }
+}
+
+@media print {
+  html[data-print] body {
+    background: var(--f-surface);
+  }
+  html[data-print] :is(furar-site-bar, furar-offline-banner, furar-bottom-nav, .f-footer),
+  html[data-print] :is(.f-chart-card__actions, .f-export-menu, .f-stat-tile__more) {
+    display: none !important;
+  }
+  html[data-print] .f-print-header {
+    display: block;
+    margin-block-end: var(--spacing-item);
+    padding-block-end: 0.5rem;
+    border-block-end: var(--f-border) solid var(--f-divider);
+    font-size: var(--text-support);
+  }
+  /* Os filtros xa van escritos na cabeceira impresa. */
+  html[data-print] furar-indicator-filters {
+    display: none !important;
+  }
+  /* A imaxe dun gráfico (print-charts.ts) co alto que lle dea o ancho do papel, sen ocos. */
+  html[data-print] .f-chart:has(> .f-chart__print) {
+    block-size: auto;
+  }
+  html[data-print] .f-chart__print {
+    block-size: auto;
+  }
+  html[data-print] .f-chart:has(> .f-chart__print) > .f-chart__canvas {
+    display: none;
+  }
+  /* O título vai coa súa figura; a táboa pode pasar á páxina seguinte, fila a fila. */
+  html[data-print] :is(.f-chart-card__chart, .f-stat-tile, .f-data-table tr, .f-evolution__figure) {
+    break-inside: avoid;
+  }
+  html[data-print] .f-chart-card__head {
+    break-after: avoid;
+  }
+  /* No papel non hai scroll: a táboa ancha (mapa de calor) cabe con letra menor. */
+  html[data-print] .f-data-table__scroll {
+    overflow: visible;
+  }
+  html[data-print] .f-data-table__table {
+    font-size: 0.75rem;
+  }
+  html[data-print] .f-data-table__table thead th {
+    white-space: normal;
+  }
+  html[data-print] .f-stat-tile__button {
+    box-shadow: none;
+  }
+
+  /*
+   * Unha tarxeta: só ela (e os elementos que a conteñen) e a cabeceira; co gráfico e a táboa á vez.
+   */
+  html[data-print='card']
+    main
+    *:not([data-print-target], [data-print-target] *, :has([data-print-target])):not(
+      .f-print-header,
+      .f-print-header *,
+      :has(.f-print-header)
+    ) {
+    display: none !important;
+  }
+
+  /* O modal: a capa do diálogo no fluxo da páxina, sen a app de debaixo nin o fondo escuro. */
+  /* Co modal aberto o CDK fixa <html> (bloqueo do scroll): sen isto, o PDF cortaría nunha páxina. */
+  html[data-print='dialog'] {
+    position: static !important;
+    overflow: visible !important;
+  }
+  html[data-print='dialog'] body > :not(.cdk-overlay-container) {
+    display: none !important;
+  }
+  html[data-print='dialog'] .f-dialog-backdrop {
+    display: none !important;
+  }
+  html[data-print='dialog'] :is(.cdk-overlay-container, .cdk-global-overlay-wrapper, .cdk-overlay-pane) {
+    position: static !important;
+    display: block !important;
+    inline-size: auto !important;
+    max-inline-size: none !important;
+    transform: none !important;
+  }
+  html[data-print='dialog'] :is(.f-dialog__foot, .f-dialog__close) {
+    display: none !important;
+  }
+  html[data-print='dialog'] .f-dialog {
+    inline-size: auto;
+    max-inline-size: none;
+    max-block-size: none;
+    border: 0;
+    box-shadow: none;
+  }
+  html[data-print='dialog'] .f-dialog__body {
+    overflow: visible;
+  }
+}
+
+/*
+ * O que se mostra aínda que leve `hidden` (o gráfico coa táboa aberta, a táboa co gráfico á
+ * vista): na capa `print`, a primeira (styles.css), para gañar ao `!important` de `[hidden]`.
+ */
+@layer print {
+  @media print {
+    /*
+     * O panel, unha tarxeta e o modal: cada gráfico e, tras el, a súa táboa (a alternativa en
+     * texto tamén no PDF), aínda que se estivese vendo só un dos dous.
+     */
+    html[data-print='panel'] :is(.f-chart-card__chart, .f-chart-card__table),
+    html[data-print='card'] [data-print-target] :is(.f-chart-card__chart, .f-chart-card__table),
+    html[data-print='dialog'] :is(.f-evolution__chart, .f-evolution__table) {
+      display: block !important;
+    }
+  }
+}

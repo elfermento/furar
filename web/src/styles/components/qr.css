@@ -1,0 +1,31 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Código QR (furar-qr): módulos negros sobre branco cunha marxe branca arredor (zona tranquila), sempre,
+ * tamén co tema escuro ou o do concello (un lector precisa escuro sobre claro). O ancho, quen o
+ * usa (`--f-qr-size`, 12rem por defecto).
+ */
+@layer components {
+  .f-qr {
+    display: inline-block;
+    width: var(--f-qr-size, 12rem);
+    max-width: 100%;
+    padding: 0.75rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-row);
+    background: #ffffff;
+    line-height: 0;
+  }
+  .f-qr svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    fill: #000000;
+  }
+  @media (forced-colors: active) {
+    .f-qr {
+      forced-color-adjust: none;
+    }
+  }
+}

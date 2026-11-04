@@ -1,0 +1,724 @@
+{
+  "accessTokenLifespan": 300,
+  "accountTheme": "furar",
+  "adminEventsDetailsEnabled": false,
+  "adminEventsEnabled": true,
+  "attributes": {
+    "actionTokenGeneratedByUserLifespan.reset-credentials": "1800",
+    "actionTokenGeneratedByUserLifespan.verify-email": "1800",
+    "adminEventsExpiration": "7776000"
+  },
+  "authenticationFlows": [
+    {
+      "alias": "furar-registration",
+      "authenticationExecutions": [
+        {
+          "authenticator": "registration-page-form",
+          "authenticatorFlow": true,
+          "flowAlias": "furar-registration-form",
+          "priority": 10,
+          "requirement": "REQUIRED",
+          "userSetupAllowed": false
+        }
+      ],
+      "builtIn": false,
+      "description": "Rexistro de Furar: o de Keycloak co contrasinal no formulario e a invitación do persoal que verifica o correo (ADR-0027)",
+      "providerId": "basic-flow",
+      "topLevel": true
+    },
+    {
+      "alias": "furar-registration-form",
+      "authenticationExecutions": [
+        {
+          "authenticator": "registration-user-creation",
+          "authenticatorFlow": false,
+          "priority": 20,
+          "requirement": "REQUIRED",
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "registration-password-action",
+          "authenticatorConfig": "furar-password-on-form",
+          "authenticatorFlow": false,
+          "priority": 50,
+          "requirement": "REQUIRED",
+          "userSetupAllowed": false
+        },
+        {
+          "authenticator": "furar-invitation-email",
+          "authenticatorFlow": false,
+          "priority": 55,
+          "requirement": "REQUIRED",
+          "userSetupAllowed": false
+        }
+      ],
+      "builtIn": false,
+      "description": "Formulario de rexistro de Furar",
+      "providerId": "form-flow",
+      "topLevel": false
+    }
+  ],
+  "authenticatorConfig": [
+    {
+      "alias": "furar-password-on-form",
+      "config": {
+        "always_set_password_on_register_form": "true"
+      }
+    }
+  ],
+  "browserFlow": "browser",
+  "bruteForceProtected": true,
+  "bruteForceStrategy": "MULTIPLE",
+  "clients": [
+    {
+      "bearerOnly": true,
+      "clientId": "furar-api",
+      "description": "Servidor de recursos: só valida tokens. Sen roles: os permisos (administración da plataforma e persoal de cada concello) saen da base de datos de Furar (ADR-0027, ADR-0028)",
+      "directAccessGrantsEnabled": false,
+      "enabled": true,
+      "implicitFlowEnabled": false,
+      "name": "Furar (API)",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": false
+    },
+    {
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4200/##http://localhost:8080/"
+      },
+      "baseUrl": "/",
+      "clientId": "furar-web",
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email",
+        "basic"
+      ],
+      "description": "Demo: admite a web en ng serve (4200) e en compose full (8080)",
+      "directAccessGrantsEnabled": false,
+      "enabled": true,
+      "frontchannelLogout": true,
+      "fullScopeAllowed": true,
+      "implicitFlowEnabled": false,
+      "name": "Reservas deportivas",
+      "optionalClientScopes": [],
+      "protocol": "openid-connect",
+      "protocolMappers": [
+        {
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "included.client.audience": "furar-api",
+            "introspection.token.claim": "true"
+          },
+          "name": "audience-furar-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        }
+      ],
+      "publicClient": true,
+      "redirectUris": [
+        "http://localhost:4200/",
+        "http://localhost:8080/"
+      ],
+      "rootUrl": "",
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": true,
+      "webOrigins": [
+        "+"
+      ]
+    },
+    {
+      "clientId": "furar-e2e",
+      "description": "Só en dev/full: permite pedir tokens con usuario e contrasinal para D33 e o e2e. Nunca en produción.",
+      "directAccessGrantsEnabled": true,
+      "enabled": true,
+      "fullScopeAllowed": true,
+      "implicitFlowEnabled": false,
+      "name": "Furar (probas automáticas, só demo)",
+      "protocol": "openid-connect",
+      "protocolMappers": [
+        {
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "included.client.audience": "furar-api",
+            "introspection.token.claim": "true"
+          },
+          "name": "audience-furar-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper"
+        }
+      ],
+      "publicClient": true,
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": false
+    }
+  ],
+  "defaultLocale": "gl",
+  "displayName": "Reservas deportivas",
+  "duplicateEmailsAllowed": false,
+  "editUsernameAllowed": false,
+  "emailTheme": "furar",
+  "enabled": true,
+  "eventsEnabled": true,
+  "eventsExpiration": 7776000,
+  "failureFactor": 5,
+  "identityProviderMappers": [
+    {
+      "config": {
+        "attribute.name": "email",
+        "syncMode": "INHERIT",
+        "user.attribute": "email"
+      },
+      "identityProviderAlias": "clave-simulada",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "name": "email"
+    },
+    {
+      "config": {
+        "attribute.name": "firstName",
+        "syncMode": "INHERIT",
+        "user.attribute": "firstName"
+      },
+      "identityProviderAlias": "clave-simulada",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "name": "firstName"
+    },
+    {
+      "config": {
+        "attribute.name": "lastName",
+        "syncMode": "INHERIT",
+        "user.attribute": "lastName"
+      },
+      "identityProviderAlias": "clave-simulada",
+      "identityProviderMapper": "saml-user-attribute-idp-mapper",
+      "name": "lastName"
+    },
+    {
+      "config": {
+        "syncMode": "INHERIT",
+        "template": "${ALIAS}.${NAMEID}"
+      },
+      "identityProviderAlias": "clave-simulada",
+      "identityProviderMapper": "saml-username-idp-mapper",
+      "name": "username opaco"
+    }
+  ],
+  "identityProviders": [
+    {
+      "addReadTokenRoleOnCreate": false,
+      "alias": "clave-simulada",
+      "config": {
+        "allowCreate": "true",
+        "entityId": "${FURAR_PUBLIC_URL}/auth/realms/furar",
+        "forceAuthn": "false",
+        "guiOrder": "1",
+        "idpEntityId": "${FURAR_PUBLIC_URL}/auth/realms/clave-simulada",
+        "metadataDescriptorUrl": "http://localhost:8082/auth/realms/clave-simulada/protocol/saml/descriptor",
+        "nameIDPolicyFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+        "postBindingAuthnRequest": "true",
+        "postBindingLogout": "true",
+        "postBindingResponse": "true",
+        "principalType": "SUBJECT",
+        "signatureAlgorithm": "RSA_SHA256",
+        "singleLogoutServiceUrl": "${FURAR_PUBLIC_URL}/auth/realms/clave-simulada/protocol/saml",
+        "singleSignOnServiceUrl": "${FURAR_PUBLIC_URL}/auth/realms/clave-simulada/protocol/saml",
+        "syncMode": "FORCE",
+        "useMetadataDescriptorUrl": "true",
+        "validateSignature": "true",
+        "wantAssertionsEncrypted": "false",
+        "wantAssertionsSigned": "true",
+        "wantAuthnRequestsSigned": "false"
+      },
+      "displayName": "Cl@ve (simulada, só demo)",
+      "enabled": true,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "hideOnLogin": false,
+      "linkOnly": false,
+      "providerId": "saml",
+      "storeToken": false,
+      "trustEmail": true
+    }
+  ],
+  "internationalizationEnabled": true,
+  "loginTheme": "furar",
+  "loginWithEmailAllowed": true,
+  "maxDeltaTimeSeconds": 900,
+  "maxFailureWaitSeconds": 900,
+  "maxTemporaryLockouts": 0,
+  "minimumQuickLoginWaitSeconds": 0,
+  "passwordPolicy": "length(12) and notUsername and notEmail and passwordBlacklist(furar-contrasinais-comuns.txt) and maxLength(128)",
+  "permanentLockout": false,
+  "quickLoginCheckMilliSeconds": 1000,
+  "realm": "furar",
+  "refreshTokenMaxReuse": 0,
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "registrationFlow": "furar-registration",
+  "rememberMe": false,
+  "requiredActions": [
+    {
+      "alias": "TERMS_AND_CONDITIONS",
+      "config": {},
+      "defaultAction": false,
+      "enabled": false,
+      "name": "Terms and Conditions",
+      "priority": 20,
+      "providerId": "TERMS_AND_CONDITIONS"
+    },
+    {
+      "alias": "UPDATE_PROFILE",
+      "config": {},
+      "defaultAction": false,
+      "enabled": true,
+      "name": "Update Profile",
+      "priority": 40,
+      "providerId": "UPDATE_PROFILE"
+    },
+    {
+      "alias": "VERIFY_EMAIL",
+      "config": {},
+      "defaultAction": false,
+      "enabled": true,
+      "name": "Verify Email",
+      "priority": 50,
+      "providerId": "VERIFY_EMAIL"
+    },
+    {
+      "alias": "CONFIGURE_TOTP",
+      "config": {},
+      "defaultAction": false,
+      "enabled": false,
+      "name": "Configure OTP",
+      "priority": 54,
+      "providerId": "CONFIGURE_TOTP"
+    },
+    {
+      "alias": "UPDATE_PASSWORD",
+      "config": {},
+      "defaultAction": false,
+      "enabled": true,
+      "name": "Update Password",
+      "priority": 57,
+      "providerId": "UPDATE_PASSWORD"
+    },
+    {
+      "alias": "delete_account",
+      "config": {},
+      "defaultAction": false,
+      "enabled": false,
+      "name": "Delete Account",
+      "priority": 60,
+      "providerId": "delete_account"
+    },
+    {
+      "alias": "UPDATE_EMAIL",
+      "config": {},
+      "defaultAction": false,
+      "enabled": false,
+      "name": "Update Email",
+      "priority": 70,
+      "providerId": "UPDATE_EMAIL"
+    },
+    {
+      "alias": "webauthn-register",
+      "config": {},
+      "defaultAction": false,
+      "enabled": false,
+      "name": "Webauthn Register",
+      "priority": 80,
+      "providerId": "webauthn-register"
+    },
+    {
+      "alias": "webauthn-register-passwordless",
+      "config": {},
+      "defaultAction": false,
+      "enabled": false,
+      "name": "Webauthn Register Passwordless",
+      "priority": 90,
+      "providerId": "webauthn-register-passwordless"
+    },
+    {
+      "alias": "VERIFY_PROFILE",
+      "config": {},
+      "defaultAction": false,
+      "enabled": true,
+      "name": "Verify Profile",
+      "priority": 100,
+      "providerId": "VERIFY_PROFILE"
+    },
+    {
+      "alias": "delete_credential",
+      "config": {},
+      "defaultAction": false,
+      "enabled": true,
+      "name": "Delete Credential",
+      "priority": 110,
+      "providerId": "delete_credential"
+    },
+    {
+      "alias": "idp_link",
+      "config": {},
+      "defaultAction": false,
+      "enabled": true,
+      "name": "Linking Identity Provider",
+      "priority": 120,
+      "providerId": "idp_link"
+    },
+    {
+      "alias": "CONFIGURE_RECOVERY_AUTHN_CODES",
+      "config": {},
+      "defaultAction": false,
+      "enabled": false,
+      "name": "Recovery Authentication Codes",
+      "priority": 130,
+      "providerId": "CONFIGURE_RECOVERY_AUTHN_CODES"
+    },
+    {
+      "alias": "update_user_locale",
+      "config": {},
+      "defaultAction": false,
+      "enabled": true,
+      "name": "Update User Locale",
+      "priority": 1000,
+      "providerId": "update_user_locale"
+    }
+  ],
+  "resetPasswordAllowed": true,
+  "revokeRefreshToken": true,
+  "smtpServer": {
+    "auth": "${FURAR_SMTP_AUTH:false}",
+    "from": "${FURAR_SMTP_FROM:furar@localhost}",
+    "fromDisplayName": "Reservas deportivas",
+    "host": "${FURAR_SMTP_HOST:mailpit}",
+    "password": "${FURAR_SMTP_PASSWORD:}",
+    "port": "${FURAR_SMTP_PORT:1025}",
+    "ssl": "${FURAR_SMTP_SSL:false}",
+    "starttls": "${FURAR_SMTP_STARTTLS:false}",
+    "user": "${FURAR_SMTP_USER:}"
+  },
+  "sslRequired": "external",
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "supportedLocales": [
+    "gl",
+    "es"
+  ],
+  "users": [
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "admin-plataforma@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Administración",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-000000000900",
+      "lastName": "Plataforma",
+      "username": "admin-plataforma"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "xestor-naron@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Xestora",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-000000000902",
+      "lastName": "Narón",
+      "username": "xestor-naron"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "es"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "vecino-naron@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Veciño",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-000000000901",
+      "lastName": "Narón",
+      "username": "vecino-naron"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "xestor-ferrol@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Xestor",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-000000000903",
+      "lastName": "Ferrol",
+      "username": "xestor-ferrol"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "recepcion-naron@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Recepción",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-000000000904",
+      "lastName": "Narón",
+      "username": "recepcion-naron"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "ex-recepcion-naron@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Exrecepción",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-000000000905",
+      "lastName": "Narón",
+      "username": "ex-recepcion-naron"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "xestor-verin@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Xestor",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-000000000907",
+      "lastName": "Verín",
+      "username": "xestor-verin"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "xestor-vilardevos@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Xestor",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-000000000908",
+      "lastName": "Vilardevós",
+      "username": "xestor-vilardevos"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "xestor-rios@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Xestor",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-000000000909",
+      "lastName": "Riós",
+      "username": "xestor-rios"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "xestor-castrelo-do-val@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Xestor",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-00000000090a",
+      "lastName": "Castrelo do Val",
+      "username": "xestor-castrelo-do-val"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "xestor-cualedro@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Xestor",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-00000000090b",
+      "lastName": "Cualedro",
+      "username": "xestor-cualedro"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "xestor-laza@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Xestor",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-00000000090c",
+      "lastName": "Laza",
+      "username": "xestor-laza"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "xestor-monterrei@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Xestor",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-00000000090d",
+      "lastName": "Monterrei",
+      "username": "xestor-monterrei"
+    },
+    {
+      "attributes": {
+        "locale": [
+          "gl"
+        ]
+      },
+      "credentials": [
+        {
+          "temporary": false,
+          "type": "password",
+          "value": "Furar-demo-2026"
+        }
+      ],
+      "email": "xestor-oimbra@example.org",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Xestor",
+      "groups": [],
+      "id": "019a0b6e-0000-7000-8000-00000000090e",
+      "lastName": "Oímbra",
+      "username": "xestor-oimbra"
+    }
+  ],
+  "verifyEmail": true,
+  "waitIncrementSeconds": 900
+}

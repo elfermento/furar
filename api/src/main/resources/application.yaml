@@ -1,0 +1,146 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Configuración común. Os segredos chegan por variables de contorno (ADR-0007).
+spring:
+  application:
+    name: furar-api
+  threads:
+    virtual:
+      enabled: true
+  datasource:
+    url: ${FURAR_DB_URL:jdbc:postgresql://localhost:5432/furar}
+    # Rol sen superusuario e só con DML (deploy/postgres/init/05-furar.sh, ADR-0015).
+    username: ${FURAR_DB_USER:furar_app}
+    password: ${FURAR_DB_PASSWORD:furar-app-demo}
+    hikari:
+      maximum-pool-size: ${FURAR_DB_POOL_SIZE:10}
+      # Ninguén agarda un bloqueo de fila (p. ex. o da instalación, ADR-0022) máis de 5 s: pasado
+      # ese tempo, 503 common.busy en vez de ocupar a conexión ata esgotar o pool.
+      connection-init-sql: set lock_timeout = '5s'
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    # Flyway migra como dono do esquema; a API nunca ten permisos de DDL.
+    user: ${FURAR_DB_OWNER_USER:furar_owner}
+    password: ${FURAR_DB_OWNER_PASSWORD:furar-owner-demo}
+    locations: classpath:db/migration
+    # Rol da API para os REVOKE das migracións (V202610221300__platform_history_read_only.sql).
+    placeholders:
+      approle: ${spring.datasource.username}
+      # O día de hoxe (TodayProperty): as sementes de demo (db/demo) lévano nun comentario, así
+      # Flyway volve aplicalas o primeiro arrinque de cada día (application-demo.yaml).
+      demo_day: ${furar.today}
+    out-of-order: false
+    validate-on-migrate: true
+  modulith:
+    events:
+      jdbc:
+        schema-initialization:
+          enabled: false
+      republish-outstanding-events-on-restart: true
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  # Correos das reservas (ADR-0025, punto 15): servidor en SPRING_MAIL_HOST, PORT, USERNAME e
+  # PASSWORD; sen servidor non se envía nada e queda rexistrado. Un SMTP lento non colga o envío.
+  mail:
+    default-encoding: UTF-8
+    properties:
+      "[mail.smtp.connectiontimeout]": 10000
+      "[mail.smtp.timeout]": 10000
+      "[mail.smtp.writetimeout]": 10000
+  # Fotos das instalacións, a única subida multipart (plan do dominio 1, §1.2.9; ADR-0015). Caddy
+  # deixa pasar 9 MB só nesa ruta, así o 413 dunha foto grande sae daquí (facility.photo-too-large).
+  servlet:
+    multipart:
+      max-file-size: 8MB
+      max-request-size: 9MB
+
+server:
+  port: ${FURAR_API_PORT:8081}
+  shutdown: graceful
+  forward-headers-strategy: framework
+  tomcat:
+    # Tomcat le o resto dunha subida rexeitada (ata 10 MB) antes de responder: se non, pecha a
+    # conexión e o navegador non ve o 413 facility.photo-too-large (Caddy corta en 9 MB).
+    max-swallow-size: 10MB
+  error:
+    include-stacktrace: never
+    include-message: never
+
+management:
+  server:
+    port: ${FURAR_ACTUATOR_PORT:9081}
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+
+furar:
+  public-url: ${FURAR_PUBLIC_URL:http://localhost:4200}
+  # Idiomas que todo concello ten que ofrecer (ADR-0003). En Galicia, gl. Separados por comas.
+  languages:
+    required: ${FURAR_REQUIRED_LANGUAGES:gl}
+  security:
+    jwk-set-uri: ${FURAR_JWK_SET_URI:http://localhost:8082/auth/realms/furar/protocol/openid-connect/certs}
+    realm: ${FURAR_REALM:furar}
+    audience: furar-api
+    # Clientes OIDC dos que se aceptan tokens (azp): só a web. A demo engade furar-e2e.
+    clients: furar-web
+  # Busca de enderezos (ADR-0023): cartociudad (por defecto, tamén se vai baleiro; consulta
+  # www.cartociudad.es desde o servidor) ou fixed (enderezos gardados de Narón, Ferrol e a comarca de Verín, sen rede).
+  geocoder:
+    provider: ${FURAR_GEOCODER:cartociudad}
+  # Proxy saínte opcional para CartoCiudad (http://host:porto). Baleiro = saída directa.
+  http:
+    proxy: ${FURAR_HTTP_PROXY:}
+  # Mapa da web (ADR-0023, revisión do 2026-11-03). Por defecto, o Mapa base do IGN (CC BY 4.0)
+  # que Caddy serve en /tiles; FURAR_MAP=off quítao (só enderezo e coordenadas). O recoñecemento
+  # vai sempre á vista ao pé do mapa; con outro servidor de teselas, o seu.
+  base-map:
+    mode: ${FURAR_MAP:on}
+    attribution: ${FURAR_MAP_ATTRIBUTION:CC BY 4.0 scne.es}
+    attribution-url: ${FURAR_MAP_ATTRIBUTION_URL:https://www.scne.es}
+  # Remitente dos correos das reservas; o nome visible é o do concello (ADR-0025, punto 15).
+  # Un correo que non sae reinténtase unha vez, pasados retry-after, nunha revisión cada retry-every.
+  mail:
+    from: ${FURAR_SMTP_FROM:furar@localhost}
+    retry-after: PT5M
+    retry-every: PT10M
+  # Rexistro de actividade (ADR-0020, revisión do 2026-10-29; RGPD art. 5.1.e; LOPDGDD art. 32).
+  # ISO 8601. visible: canto se ve na web; despois queda bloqueado (só o exporta o xestor cun
+  # motivo). retention: cando se borra; máis ca visible e polo menos P1Y.
+  audit:
+    visible: ${FURAR_AUDIT_VISIBLE:P1Y}
+    retention: ${FURAR_AUDIT_RETENTION:P3Y}
+  # Invitación do persoal (ADR-0027, revisión do 2026-11-02): segredo compartido con Keycloak para
+  # asinar a proba de que quen abre a ligazón recibiu o correo (o rexistro dáo por verificado). O
+  # mesmo valor no keycloak (compose.yaml); o por defecto é de demo e en prod non hai.
+  invitation:
+    proof-secret: ${FURAR_INVITATION_PROOF_SECRET:furar-demo-invitation-proof-secret-not-for-production}
+  # Primeira administración da plataforma (ADR-0028): a conta co correo verificado igual a este,
+  # mentres non hai ningunha. Despois non fai nada. Nunca sae en ningunha resposta nin páxina.
+  platform:
+    admin-email: ${FURAR_ADMIN_EMAIL:}
+
+springdoc:
+  api-docs:
+    path: /api/v1/openapi.json
+    version: openapi_3_1
+  writer-with-order-by-keys: true
+  writer-with-default-pretty-printer: true
+  override-with-generic-response: false
+  default-produces-media-type: application/json
+  swagger-ui:
+    enabled: false

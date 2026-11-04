@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.png binary
+*.jpg binary
+*.woff2 binary
+# iCalendar (RFC 5545): as liñas rematan en CRLF; os ficheiros esperados dos tests compáranse byte a byte.
+*.ics text eol=crlf

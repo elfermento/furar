@@ -1,0 +1,64 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@if (hint()) {
+  <div
+    class="f-carousel__hint"
+    role="tooltip"
+    [id]="hintId"
+    [hidden]="!hintShown()"
+    (mouseenter)="showHint()"
+    (mouseleave)="hideHint()"
+  >
+    {{ hint() }}
+  </div>
+}
+<button
+  type="button"
+  class="f-carousel__arrow"
+  data-side="start"
+  [disabled]="atStart()"
+  [attr.aria-label]="previousLabel() || ('ui.carousel.previous' | transloco)"
+  (click)="page(-1)"
+>
+  <furar-icon name="chevron-left" />
+</button>
+<ul
+  #strip
+  class="f-carousel__strip"
+  [attr.aria-label]="label()"
+  [attr.tabindex]="scrollFocusable() ? 0 : null"
+  (scroll)="measure()"
+  (focusin)="focusIn()"
+  (focusout)="focusOut($event)"
+  (keydown)="keydown($event)"
+  (dragstart)="dragStart($event)"
+>
+  @if (template(); as tpl) {
+    @for (item of shown(); track key()(item); let i = $index) {
+      <li class="f-carousel__item" [attr.data-key]="key()(item)" [attr.draggable]="reorderable() ? 'true' : null">
+        <ng-container
+          [ngTemplateOutlet]="tpl.template"
+          [ngTemplateOutletContext]="{
+            $implicit: item,
+            index: i,
+            total: shown().length,
+            hintId: hint() ? hintId : null,
+          }"
+        />
+      </li>
+    }
+  }
+</ul>
+<button
+  type="button"
+  class="f-carousel__arrow"
+  data-side="end"
+  [disabled]="atEnd()"
+  [attr.aria-label]="nextLabel() || ('ui.carousel.next' | transloco)"
+  (click)="page(1)"
+>
+  <furar-icon name="chevron-right" />
+</button>
+<p class="sr-only" role="status">{{ announcement() }}</p>

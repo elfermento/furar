@@ -1,0 +1,232 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Lista de pasos (furar-checklist, maqueta 48): card co bordo da cor principal, o contador, unha
+ * barra de progreso só visual e os pasos, cada un coa súa marca e, se falta, a ligazón.
+ */
+@layer components {
+  .f-checklist {
+    display: block;
+    min-width: 0;
+    margin-bottom: var(--spacing-group);
+    padding: 1rem 1.25rem;
+    border: 2px solid var(--f-primary);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+  }
+  .f-checklist__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .f-checklist__title {
+    font-size: var(--text-head);
+    line-height: 1.25;
+  }
+  .f-checklist__count {
+    color: var(--f-ink-soft);
+    font-weight: 700;
+  }
+  .f-checklist__bar {
+    height: 0.375rem;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: var(--f-tint);
+  }
+  .f-checklist__bar > i {
+    display: block;
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--f-success-fill);
+  }
+  .f-checklist__items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-checklist__items > li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    min-height: var(--f-touch);
+    padding: 0.5rem 0;
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  .f-checklist__items > li:first-child {
+    border-top: 0;
+  }
+  .f-checklist__mark {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--f-line);
+    border-radius: 50%;
+  }
+  .f-checklist__mark > .f-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+  .f-checklist__items > li[data-done='true'] .f-checklist__mark {
+    border-color: var(--f-success-fill);
+    background: var(--f-success-fill);
+    color: var(--f-on-success);
+  }
+  .f-checklist__label {
+    flex: 1 1 12rem;
+    min-width: 0;
+    font-weight: 700;
+  }
+  .f-checklist__items > li[data-done='true'] .f-checklist__label {
+    color: var(--f-ink-soft);
+    font-weight: 400;
+  }
+  .f-checklist__go {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--f-touch);
+    margin-left: auto;
+    color: var(--f-primary-text);
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: underline;
+  }
+
+  /*
+   * Compacta (maqueta 56, a portada): unha fila pregada, en pílula, co título, o seguinte paso,
+   * «paso N de M» e «Ir»; despregada, a lista debaixo. No móbil, o seguinte paso baixa á segunda
+   * liña e saen os dous puntos e «paso».
+   */
+  .f-checklist[data-compact] {
+    max-width: 40rem;
+    margin-bottom: 2rem;
+    padding: 0.375rem 0.375rem 0.375rem 0.5rem;
+    border-width: var(--f-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-raised);
+  }
+  .f-checklist[data-compact][data-open] {
+    padding: 0.375rem 1rem 0.75rem 0.5rem;
+    border-radius: var(--radius-card);
+  }
+  .f-checklist__row {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+  }
+  .f-checklist__toggle {
+    display: flex;
+    flex: 1 1 16rem;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    min-height: var(--f-touch);
+    padding: 0.25rem 0.5rem;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--f-ink);
+    font: inherit;
+    font-size: 0.9375rem;
+    text-align: left;
+    cursor: pointer;
+  }
+  .f-checklist__toggle:hover {
+    background: var(--f-tint);
+  }
+  .f-checklist__chev {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--f-tint);
+    color: var(--f-primary-text);
+    transition: transform 0.15s;
+  }
+  .f-checklist__chev > .f-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+  .f-checklist[data-open] .f-checklist__chev {
+    transform: rotate(90deg);
+  }
+  .f-checklist__summary {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.3em;
+    min-width: 0;
+  }
+  .f-checklist__toggle .f-checklist__title {
+    font-size: inherit;
+    font-weight: 700;
+  }
+  .f-checklist__colon {
+    margin-left: -0.3em;
+    font-weight: 700;
+  }
+  .f-checklist__toggle .f-checklist__count {
+    margin-left: auto;
+    padding-left: 0.5rem;
+    font-size: var(--text-support);
+    white-space: nowrap;
+  }
+  .f-checklist__cta {
+    flex: none;
+  }
+  .f-checklist[data-compact] .f-checklist__bar {
+    margin: 0.5rem 0 0.25rem 0.5rem;
+  }
+  .f-checklist[data-compact] .f-checklist__items {
+    margin: 0.25rem 0 0 0.5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .f-checklist__chev {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .f-checklist[data-compact] {
+      border-radius: var(--radius-card);
+    }
+    .f-checklist__toggle {
+      flex-basis: auto;
+      border-radius: 1rem;
+      font-size: var(--text-support);
+      line-height: 1.35;
+    }
+    .f-checklist__next {
+      flex-basis: 100%;
+      order: 2;
+    }
+    .f-checklist__colon,
+    .f-checklist__step {
+      display: none;
+    }
+    .f-checklist__toggle .f-checklist__count {
+      margin-left: 0;
+      padding-left: 0;
+      font-size: 0.8125rem;
+    }
+    .f-checklist:not([data-open]) .f-checklist__toggle .f-checklist__count::before {
+      content: '· ';
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .f-checklist__bar {
+      outline: 1px solid var(--f-line);
+    }
+  }
+}

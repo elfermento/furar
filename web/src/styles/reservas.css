@@ -1,0 +1,28 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+/*
+ * Pezas das reservas (D2-10): folla á parte (`angular.json`, `bundleName: reservas`,
+ * `inject: false`) para que non entre na carga inicial (D27). As rutas que as usan cárgana con
+ * `bookingStylesResolver` (`core/layout/booking-styles.ts`). As capas son as de styles.css.
+ * As pestanas e as capas de diálogo tamén van en `xestion.css`: «As miñas reservas» úsaas sen
+ * cargar a folla da xestión (son as mesmas regras, así que cargar as dúas non cambia nada).
+ * O despregable, o mapa e a ficha pública tamén van aquí: toda ruta con `furar-select` ou
+ * `furar-map` (as de reservas, a xestión e o alta dun concello na plataforma) leva o mesmo
+ * resolvedor, e ningunha páxina sen el os usa.
+ */
+@import './components/select.css';
+@import './components/map.css';
+@import './components/public-facility.css';
+@import './components/filter-chip.css';
+@import './components/field-popover.css';
+@import './components/filter-bar.css';
+@import './components/qr.css';
+@import './components/public-booking.css';
+@import './components/public-list.css';
+@import './components/reserve.css';
+@import './components/value-list.css';
+@import './components/tabs.css';
+@import './components/dialog.css';
+@import './components/my-bookings.css';
+@import './components/manage-bookings.css';
+@import './components/bookings-calendar.css';

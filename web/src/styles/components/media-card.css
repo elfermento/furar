@@ -1,0 +1,129 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Tarxeta con imaxe (furar-media-card): imaxe 3:2, lugar coa icona de ubicación enriba do título,
+ * contido e accións. Con ligazón, estirada a toda a tarxeta (o foco pinta o aro na tarxeta); as
+ * accións quedan por riba dela. Ao pasar, sobe un pouco e a imaxe achégase (sen movemento
+ * reducido, nada).
+ */
+@layer components {
+  .f-media-card {
+    position: relative;
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    flex-direction: column;
+    overflow: hidden;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+    transition:
+      transform var(--f-dur-med) var(--ease-smooth),
+      box-shadow var(--f-dur-med) var(--ease-smooth);
+  }
+  .f-media-card__image {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    background: var(--f-tint);
+  }
+  .f-media-card__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--f-dur-slow) var(--ease-smooth);
+  }
+  .f-media-card__image > [cardBadge] {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+  .f-media-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--spacing-unit);
+    padding: 1rem 1.25rem 1.25rem;
+  }
+  .f-media-card__body > p {
+    margin: 0;
+  }
+  /* O lugar vese enriba do título; no DOM, o título vai primeiro. */
+  .f-media-card__place {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    order: -1;
+    min-width: 0;
+    color: var(--f-ink-soft);
+  }
+  .f-media-card__place .f-icon {
+    color: var(--f-primary-text);
+  }
+  .f-media-card__place span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .f-media-card__title {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+  .f-media-card__link {
+    color: var(--f-ink);
+    text-decoration: none;
+  }
+  .f-media-card__link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+  }
+  .f-media-card__link:focus-visible {
+    outline: none;
+  }
+  .f-media-card__link:focus-visible::before {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: 2px;
+  }
+  @media (hover: hover) {
+    .f-media-card:hover {
+      box-shadow: var(--shadow-overlay);
+      transform: translateY(-0.1875rem);
+    }
+    .f-media-card:hover .f-media-card__image img {
+      transform: scale(1.05);
+    }
+  }
+
+  .f-media-card__actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-unit);
+    margin-top: auto;
+  }
+  .f-media-card__actions:empty {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .f-media-card,
+    .f-media-card__image img {
+      transition: none;
+    }
+    .f-media-card:hover,
+    .f-media-card:hover .f-media-card__image img {
+      transform: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .f-media-card {
+      border-color: CanvasText;
+    }
+  }
+}

@@ -1,0 +1,145 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.schedule.';
+<section class="gap-item grid" aria-labelledby="facility-schedule-title">
+  <h2 id="facility-schedule-title" class="text-head font-bold" tabindex="-1">
+    {{ 'facility.detail.sections.schedule' | transloco }}
+  </h2>
+  @switch (store.state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" [rows]="3" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [headingLevel]="3"
+        [heading]="t + 'error.title' | transloco"
+        [description]="t + 'error.text' | transloco"
+      >
+        <button type="button" furarButton (click)="load()">{{ t + 'error.retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @default {
+      @if (!editing() && seasons().length) {
+        <furar-facility-schedule-gaps />
+      }
+      @if (editing()) {
+        <furar-facility-staged-failures [failures]="failures()" />
+      }
+      @if (seasons().length || editing()) {
+        <div class="gap-item grid">
+          <div furarSegmented role="group" data-seasons [attr.aria-label]="t + 'seasons.label' | transloco">
+            @for (season of seasons(); track season.key) {
+              <button
+                type="button"
+                [attr.aria-pressed]="season.key === selectedKey()"
+                [attr.data-season-id]="season.key"
+                (click)="chosen.set(season.key)"
+              >
+                {{ season.name }}
+                @if (season.key === currentKey()) {
+                  <furar-tag class="ms-1" tone="primary" data-season-now>{{ t + 'seasons.now' | transloco }}</furar-tag>
+                }
+              </button>
+            }
+            @if (editing()) {
+              <button type="button" data-season-add [attr.aria-label]="t + 'seasons.add' | transloco" (click)="add()">
+                <furar-icon name="plus" />
+              </button>
+            }
+          </div>
+
+          @if (selected(); as season) {
+            @if (editing() && drafts.get(season.key); as draft) {
+              <div class="gap-form grid" [formGroup]="draft.form" data-season-fields>
+                <furar-required-note />
+                <furar-field
+                  [fieldId]="'facility-season-name-' + season.key"
+                  [label]="t + 'seasonDialog.name' | transloco"
+                  [required]="true"
+                  [error]="errorOf(draft, 'name')"
+                >
+                  <input
+                    furarInput
+                    formControlName="name"
+                    aria-required="true"
+                    autocomplete="off"
+                    [id]="'facility-season-name-' + season.key"
+                    [attr.aria-invalid]="errorOf(draft, 'name') ? 'true' : null"
+                    [attr.aria-describedby]="
+                      errorOf(draft, 'name') ? 'facility-season-name-' + season.key + '-error' : null
+                    "
+                  />
+                </furar-field>
+                <div class="f-field-row sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                  <furar-field
+                    [fieldId]="'facility-season-start-' + season.key"
+                    [label]="t + 'seasonDialog.from' | transloco"
+                    [required]="true"
+                    [error]="errorOf(draft, 'startDate')"
+                  >
+                    <furar-date-field
+                      required
+                      formControlName="startDate"
+                      [buttonId]="'facility-season-start-' + season.key"
+                      [label]="t + 'seasonDialog.from' | transloco"
+                      [invalid]="!!errorOf(draft, 'startDate')"
+                      [describedBy]="
+                        errorOf(draft, 'startDate') ? 'facility-season-start-' + season.key + '-error' : null
+                      "
+                    />
+                  </furar-field>
+                  <div class="gap-unit grid content-start">
+                    <furar-field
+                      [fieldId]="'facility-season-end-' + season.key"
+                      [label]="t + 'seasonDialog.to' | transloco"
+                      [required]="!draft.form.controls.noEnd.value"
+                      [error]="errorOf(draft, 'endDate')"
+                    >
+                      <furar-date-field
+                        required
+                        formControlName="endDate"
+                        [buttonId]="'facility-season-end-' + season.key"
+                        [label]="t + 'seasonDialog.to' | transloco"
+                        [min]="draft.form.controls.startDate.value"
+                        [invalid]="!!errorOf(draft, 'endDate')"
+                        [describedBy]="
+                          errorOf(draft, 'endDate') ? 'facility-season-end-' + season.key + '-error' : null
+                        "
+                      />
+                    </furar-field>
+                    <label class="gap-unit flex min-h-11 cursor-pointer items-center">
+                      <input type="checkbox" class="size-5 flex-none" formControlName="noEnd" data-season-no-end />
+                      {{ t + 'seasonDialog.noEnd' | transloco }}
+                    </label>
+                  </div>
+                  <!-- Sen rótulo: o botón vai na fila dos controis, á altura das datas. -->
+                  <div class="f-field">
+                    <furar-delete-button
+                      data-season-delete
+                      [text]="t + 'delete.action' | transloco"
+                      [label]="t + 'delete.label' | transloco: { name: season.name }"
+                      (pressed)="remove(season.key)"
+                    />
+                  </div>
+                </div>
+              </div>
+              <furar-facility-week-rows editable [season]="season.name" [week]="draft.form.controls.week" />
+            } @else {
+              <p class="gap-unit flex items-center" data-season-range>
+                <furar-icon name="calendar" class="text-primary-text" />
+                <span class="tabular-nums">{{ season.range }}</span>
+              </p>
+              <furar-facility-week-rows [season]="season.name" [hours]="season.week" />
+            }
+          }
+        </div>
+      } @else {
+        <p class="text-ink-soft" data-schedule-empty>{{ t + 'empty.title' | transloco }}</p>
+      }
+      <furar-facility-exception-list />
+    }
+  }
+</section>

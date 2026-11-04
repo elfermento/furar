@@ -1,0 +1,130 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.wizard.';
+<div class="f-wizard">
+  <a furarButton="quiet" size="sm" class="justify-self-start" data-wizard-back [routerLink]="listLink">
+    <furar-icon name="arrow-left" />
+    {{ 'facility.list.title' | transloco }}
+  </a>
+
+  @switch (store.state()) {
+    @case ('loading') {
+      <furar-status-state
+        mode="skeleton"
+        shape="card"
+        [rows]="3"
+        [description]="'facility.detail.loading' | transloco"
+      />
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [headingLevel]="1"
+        [heading]="'facility.detail.loadError.title' | transloco"
+        [description]="'facility.detail.loadError.text' | transloco"
+      >
+        <button type="button" furarButton (click)="reload()">
+          {{ 'facility.detail.loadError.retry' | transloco }}
+        </button>
+      </furar-status-state>
+    }
+    @default {
+      <furar-page-header
+        class="mb-0"
+        [heading]="heading()"
+        [intro]="store.savedAt() ? (t + 'savedAt' | transloco: { time: store.savedAt() }) : ''"
+      />
+
+      <furar-stepper
+        [steps]="steps()"
+        [current]="store.step()"
+        [label]="t + 'stepsLabel' | transloco"
+        (go)="go($event)"
+      />
+
+      <section
+        class="f-card f-wizard__card"
+        data-wizard-step
+        [attr.data-step-key]="stepKey()"
+        aria-labelledby="wizard-step-title"
+      >
+        <h2 id="wizard-step-title" class="sr-only" tabindex="-1">{{ stepName() }}</h2>
+        <furar-problem-alert [problem]="store.problem()" />
+        @switch (stepKey()) {
+          @case ('data') {
+            <furar-wizard-data-step />
+          }
+          @case ('location') {
+            <furar-wizard-location-step />
+          }
+          @case ('contact') {
+            <furar-wizard-contact-step />
+          }
+          @case ('photos') {
+            <furar-wizard-photos-step />
+          }
+          @case ('uses') {
+            <furar-wizard-uses-step />
+          }
+          @case ('schedule') {
+            <furar-wizard-schedule-step />
+          }
+          @case ('rules') {
+            <furar-wizard-rules-step />
+          }
+          @case ('review') {
+            <furar-wizard-review-step (edit)="go($event)" />
+          }
+        }
+      </section>
+
+      <furar-action-bar class="f-wizard__bar" [label]="t + 'actions' | transloco">
+        <span actionBarStatus class="gap-unit flex flex-wrap">
+          @if (store.step() > 0) {
+            <button type="button" furarButton data-previous (click)="previous()">
+              <furar-icon name="arrow-left" />
+              {{ t + 'previous' | transloco }}
+            </button>
+          }
+          <button type="button" furarButton="quiet" data-draft [busy]="store.busy()" (click)="saveDraft()">
+            {{ t + 'saveDraft' | transloco }}
+          </button>
+        </span>
+        @if (store.step() < review) {
+          @if (store.max() === review) {
+            <button type="button" furarButton data-back-to-review (click)="go(review)">
+              {{ t + 'backToReview' | transloco }}
+            </button>
+          }
+          @if (optional()) {
+            <button type="button" furarButton="quiet" data-skip (click)="skip()">{{ t + 'skip' | transloco }}</button>
+          }
+          <button type="button" furarButton="primary" data-next [busy]="store.busy()" (click)="next()">
+            {{ t + 'next' | transloco }}
+            <furar-icon name="arrow-right" />
+          </button>
+        } @else {
+          @let missing = store.missing().length;
+          @if (missing) {
+            <span class="text-ink-soft" id="wizard-publish-why">
+              {{ missing === 1 ? (t + 'missingOne' | transloco) : (t + 'missingMany' | transloco: { count: missing }) }}
+            </span>
+          }
+          <button
+            type="button"
+            furarButton="primary"
+            data-publish
+            [busy]="store.busy()"
+            [attr.aria-disabled]="missing ? 'true' : null"
+            [attr.aria-describedby]="missing ? 'wizard-publish-why' : null"
+            (click)="publish()"
+          >
+            {{ t + 'publish' | transloco }}
+          </button>
+        }
+      </furar-action-bar>
+    }
+  }
+</div>

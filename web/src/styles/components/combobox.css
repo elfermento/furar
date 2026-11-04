@@ -1,0 +1,178 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Campo con suxestións (furar-combobox, D1-05d): o campo é un furarInput de 48 px e as
+ * suxestións saen nunha capa (CDK Overlay) co mesmo ancho. A activa leva tinte e unha barra
+ * de marca á esquerda (non só cor, 1.4.1); «Crear» vai separada por unha liña.
+ */
+@layer components {
+  .f-combobox {
+    display: block;
+  }
+  .f-combobox__field {
+    position: relative;
+  }
+
+  /* O panel do CDK é flex: o panel enche o ancho que lle dá (o do campo). */
+  .f-combobox__panel {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-height: min(20rem, 60vh);
+    padding: 0.25rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+    z-index: var(--f-z-popover);
+  }
+
+  .f-combobox__state {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    min-height: var(--f-touch);
+    margin: 0;
+    padding: 0 0.75rem;
+    color: var(--f-ink-soft);
+  }
+  .f-combobox__state[data-tone='danger'] {
+    color: var(--f-danger);
+  }
+
+  .f-combobox__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-combobox__option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: var(--f-touch);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-field);
+    box-shadow: inset 0 0 0 transparent;
+    cursor: pointer;
+  }
+  .f-combobox__option[aria-selected='true'] {
+    background: var(--f-tint);
+    box-shadow: inset var(--f-border-state) 0 0 var(--f-primary);
+  }
+  .f-combobox__option[data-kind='create'] {
+    color: var(--f-primary-text);
+    font-weight: 700;
+  }
+  .f-combobox__option[data-kind='create']:not(:first-child) {
+    margin-top: 0.25rem;
+    border-top: var(--f-border) solid var(--f-line);
+    border-radius: 0 0 var(--radius-field) var(--radius-field);
+  }
+  .f-combobox__label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+    overflow-wrap: anywhere;
+  }
+  .f-combobox__detail {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    overflow-wrap: anywhere;
+  }
+  .f-combobox__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+  /* Os anacos da coincidencia van seguidos: bloque, non flex (o flex comería os espazos). */
+  .f-combobox__text .f-combobox__label {
+    display: block;
+  }
+  .f-combobox__label mark {
+    background: none;
+    color: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Miniatura (foto) ou icona nun cadro co tinte: decorativas, o nome vai no texto. */
+  .f-combobox__thumb {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-field);
+    background: var(--f-tint);
+    color: var(--f-primary-text);
+    object-fit: cover;
+  }
+
+  /* Grupos (APG): título en ink-soft; as opcións debaixo. */
+  .f-combobox__group {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-combobox__group-label {
+    padding: 0.5rem 0.75rem 0.25rem;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+
+  /* Dentro dunha barra de busca (look="pill"): o campo sen marco e a capa máis ampla. */
+  .f-combobox[data-look='pill'] .f-combobox__input {
+    width: 100%;
+    min-width: 0;
+    min-height: var(--f-touch);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--f-ink);
+    font: inherit;
+    outline: none;
+  }
+  .f-combobox__panel[data-look='pill'] {
+    max-height: min(24rem, 60vh);
+    padding: 0.5rem;
+    border-color: var(--f-divider);
+    border-radius: var(--radius-sheet);
+  }
+  .f-combobox__panel[data-look='pill'] .f-combobox__option {
+    min-height: var(--f-control-h);
+    border-radius: var(--radius-row);
+  }
+  @media (hover: hover) {
+    .f-combobox__option:hover {
+      background: var(--f-tint);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .f-combobox__panel {
+      animation: f-combobox-in var(--f-dur-fast) var(--ease-smooth);
+    }
+    .f-combobox__spinner {
+      animation: f-spin 0.8s linear infinite;
+    }
+  }
+  @keyframes f-combobox-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .f-combobox__option[aria-selected='true'] {
+      background: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+  }
+}

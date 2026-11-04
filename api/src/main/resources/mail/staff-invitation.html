@@ -1,0 +1,93 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+
+Correo da invitación ao persoal dun concello (plan do dominio 4, D4-06; ADR-0027, punto 6), co
+estilo dos correos das reservas (booking.html). Seguro para clientes de correo: táboas, estilos en
+liña, ancho 600, sen fontes web nin SVG. {{valor}} sae sempre escapado; {{#valor}}…{{/valor}} só se
+o valor non está baleiro (MailTemplate). A ligazón leva o token no fragmento: nunca se garda.
+Os textos curtos (a frase, as liñas baixo o botón e o pé) van centrados (maqueta 51).
+-->
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<meta name="referrer" content="no-referrer">
+<title>{{subject}}</title>
+<style>
+@media (max-width: 540px) {
+  .card { padding: 24px 16px !important; }
+  .big { font-size: 22px !important; }
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f7fa;-webkit-text-size-adjust:100%;">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">{{preheader}}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f7fa;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1a1a1a;">
+<tr>
+<td align="center" bgcolor="{{primary}}" style="background-color:{{primary}};padding:16px 24px 8px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+<tr>
+<td valign="middle" style="padding:0 12px 0 0;"><img src="cid:shield" width="32" height="32" alt="" style="display:block;border:0;width:32px;height:32px;"></td>
+<td valign="middle" style="font-size:17px;line-height:22px;font-weight:700;color:{{onPrimary}};">{{municipality}}</td>
+<td valign="middle" style="padding:0 12px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td width="1" height="18" bgcolor="{{separator}}" style="width:1px;height:18px;background-color:{{separator}};font-size:0;line-height:0;">&nbsp;</td></tr></table></td>
+<td valign="middle" style="font-size:15px;line-height:22px;color:{{onPrimarySoft}};">{{service}}</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td align="center" style="padding:0 16px;background-color:#f4f7fa;background-image:linear-gradient({{primary}},{{primary}} 32px,#f4f7fa 32px,#f4f7fa);">
+<!--[if mso]><table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td><![endif]-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;margin:8px auto 0;">
+<tr>
+<td class="card" bgcolor="#ffffff" style="background-color:#ffffff;border-radius:16px;padding:28px 24px;box-shadow:0 2px 10px rgba(0,0,0,0.08);">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td align="center" style="padding:0 0 20px;border-bottom:1px solid #dde3e8;">
+<p class="big" style="margin:0;font-size:26px;line-height:32px;font-weight:800;color:#1a1a1a;">{{title}}</p>
+</td>
+</tr>
+<tr>
+<td align="center" style="padding:20px 0 0;font-size:15px;line-height:22px;color:#55595e;text-align:center;">{{lead}}</td>
+</tr>
+<tr>
+<td style="padding:20px 0 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td align="center" bgcolor="{{primary}}" style="background-color:{{primary}};border-radius:999px;">
+<a href="{{link}}" rel="noreferrer" style="display:block;padding:13px 16px;font-size:15px;line-height:20px;font-weight:700;color:{{onPrimary}};text-decoration:none;border-radius:999px;">{{button}}</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td align="center" style="padding:12px 0 0;font-size:13px;line-height:18px;color:#55595e;text-align:center;">{{copy}}<br><a href="{{link}}" rel="noreferrer" style="color:{{primary}};word-break:break-all;">{{link}}</a></td>
+</tr>
+<tr>
+<td align="center" style="padding:16px 0 0;font-size:15px;line-height:22px;text-align:center;">{{use}}</td>
+</tr>
+<tr>
+<td align="center" style="padding:12px 0 0;font-size:15px;line-height:22px;color:#55595e;text-align:center;">{{ignore}}</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td align="center" style="padding:16px 8px 32px;font-size:13px;line-height:20px;color:#55595e;">
+{{#footerBlock}}<p style="margin:0 0 12px;">{{#footerAddress}}{{footerAddress}}{{/footerAddress}}{{#footerBreak}}<br>{{/footerBreak}}{{#footerContact}}{{#footerPhone}}{{footerPhone}}{{/footerPhone}}{{#footerSeparator}} · {{/footerSeparator}}{{#footerEmail}}<a href="mailto:{{footerEmail}}" style="color:{{primary}};">{{footerEmail}}</a>{{/footerEmail}}{{/footerContact}}</p>{{/footerBlock}}
+<p style="margin:0 0 8px;">{{why}}</p>
+<p style="margin:0;">{{privacyNote}}{{#privacyLink}} <a href="{{privacyUrl}}" style="color:{{primary}};">{{privacy}}</a>{{/privacyLink}}</p>
+</td>
+</tr>
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td>
+</tr>
+</table>
+</body>
+</html>

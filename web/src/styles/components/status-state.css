@@ -1,0 +1,121 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/* Baleiro, cargando ou erro no sitio do contido (furar-status-state, docs/deseno.md P1-8). */
+@layer components {
+  .f-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-item);
+    padding: var(--spacing-section) var(--spacing-item);
+    text-align: center;
+  }
+  .f-status__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.75rem;
+    height: 3.75rem;
+    border-radius: 50%;
+    background: var(--f-tint);
+    color: var(--f-primary-text);
+  }
+  /* Erro: o círculo co tinte do propio ton (3:1 coa icona, theme-tokens.spec.ts). */
+  .f-status[data-mode='error'] .f-status__badge {
+    background: color-mix(in srgb, var(--f-danger) 12%, var(--f-surface));
+    color: var(--f-danger);
+  }
+  .f-status__title {
+    font-size: var(--text-head);
+  }
+  .f-status[data-heading-level='1'] .f-status__title {
+    font-size: var(--text-title);
+  }
+  .f-status__text {
+    max-width: var(--container-col);
+    color: var(--f-ink-soft);
+  }
+  .f-status__action {
+    margin-top: var(--spacing-item);
+  }
+  .f-status__action:empty {
+    display: none;
+  }
+  .f-status[data-mode='loading'] :where(.f-status__badge .f-icon) {
+    animation: f-spin 1.2s linear infinite;
+  }
+  @media (forced-colors: active) {
+    .f-status__badge {
+      border: 1px solid CanvasText;
+    }
+  }
+}
+
+/*
+ * Modo `skeleton` (D1-05d): bloques coa forma do contido que vén, co tinte da marca e un brillo
+ * lento só se o sistema non pide movemento reducido. Decorativos (aria-hidden).
+ */
+@layer components {
+  .f-status[data-mode='skeleton'] {
+    align-items: stretch;
+    padding: 0;
+    text-align: start;
+  }
+  .f-status__skeleton {
+    display: grid;
+    gap: var(--spacing-unit);
+  }
+  .f-status[data-shape='card'] .f-status__skeleton {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--spacing-item);
+  }
+  .f-status__bone {
+    display: grid;
+    align-content: center;
+    gap: 0.5rem;
+    min-height: 3.25rem;
+    padding: 0.75rem var(--spacing-item);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+  }
+  .f-status[data-shape='card'] .f-status__bone {
+    min-height: 8rem;
+    align-content: start;
+  }
+  .f-status__bar {
+    display: block;
+    width: 60%;
+    height: 0.875rem;
+    border-radius: 0.25rem;
+    background: var(--f-tint);
+  }
+  .f-status__bar[data-size='short'] {
+    width: 35%;
+  }
+  .f-status__bar[data-size='pill'] {
+    width: 5rem;
+    height: 1.5rem;
+    margin-top: auto;
+    border-radius: 999px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .f-status__bar {
+      animation: f-status-pulse 1.6s ease-in-out infinite;
+    }
+  }
+  @keyframes f-status-pulse {
+    50% {
+      opacity: 0.45;
+    }
+  }
+  @media (forced-colors: active) {
+    .f-status__bone {
+      border: 1px solid CanvasText;
+    }
+    .f-status__bar {
+      border: 1px solid GrayText;
+    }
+  }
+}

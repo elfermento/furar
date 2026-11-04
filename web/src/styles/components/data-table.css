@@ -1,0 +1,51 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Táboa de datos (furar-data-table, D3-07): título no caption, cabeceiras en ink-soft, cifras á
+ * dereita con números tabulares. Se non cabe, móvese dentro da súa rexión (sen scroll de páxina a
+ * 320 px); o compoñente dálle entón nome e tabindex, e o aro de foco é o común.
+ */
+@layer components {
+  .f-data-table {
+    display: block;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+  .f-data-table__scroll {
+    max-inline-size: 100%;
+    overflow-x: auto;
+    border-radius: var(--radius-field);
+  }
+  .f-data-table__table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .f-data-table__caption {
+    caption-side: top;
+    padding-block-end: 0.5rem;
+    font-weight: 700;
+    text-align: start;
+  }
+  .f-data-table__table th,
+  .f-data-table__table td {
+    padding: 0.375rem 0.5rem;
+    border-block-end: var(--f-border) solid var(--f-divider);
+    text-align: start;
+  }
+  .f-data-table__table thead th {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+    vertical-align: bottom;
+  }
+  .f-data-table__table tbody th {
+    font-weight: 400;
+  }
+  .f-data-table__table .f-data-table__num {
+    text-align: end;
+    white-space: nowrap;
+  }
+}

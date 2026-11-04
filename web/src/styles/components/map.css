@@ -1,0 +1,140 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Mapa (furar-map, D1-07; ADR-0023). Leaflet pon a estrutura (styles/vendor/leaflet.css, capa
+ * base, cargada polo compoñente); aquí vai o aspecto de Furar: marco coa forma das cards, botóns
+ * de zoom de 44 px con tokens, chincheta propia en CSS (sen imaxes de Leaflet) e atribución sobre
+ * fondo sólido para o contraste AA.
+ */
+@layer components {
+  .f-map {
+    display: grid;
+    gap: var(--spacing-unit);
+  }
+
+  .f-map__frame {
+    position: relative;
+    height: var(--f-map-height, 18rem);
+    overflow: hidden;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-tint);
+    isolation: isolate;
+  }
+  @media (max-width: 40rem) {
+    .f-map__frame {
+      height: var(--f-map-height-sm, 14rem);
+    }
+  }
+
+  .f-map__canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: var(--f-tint);
+    font: inherit;
+  }
+  .f-map--editable .f-map__canvas {
+    cursor: crosshair;
+  }
+
+  .f-map__zoom {
+    position: absolute;
+    top: var(--spacing-unit);
+    inset-inline-end: var(--spacing-unit);
+    z-index: 1;
+    display: grid;
+    gap: var(--spacing-unit);
+  }
+  .f-map__zoom-button {
+    display: grid;
+    place-items: center;
+    width: var(--f-touch);
+    height: var(--f-touch);
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-field);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+    color: var(--f-ink);
+    cursor: pointer;
+  }
+  .f-map__zoom-button:hover:not(:disabled) {
+    background: var(--f-tint);
+  }
+  .f-map__zoom-button:disabled {
+    color: var(--f-ink-soft);
+    border-style: dashed;
+    cursor: not-allowed;
+  }
+
+  .f-map__attribution {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    z-index: 1;
+    margin: 0;
+    padding: 0.125rem 0.5rem;
+    border-start-start-radius: var(--radius-field);
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font-size: var(--text-support);
+    line-height: var(--text-support--line-height);
+  }
+  .f-map__attribution a {
+    color: var(--f-primary-text);
+    text-decoration: underline;
+  }
+
+  /* Contedor da chincheta (divIcon de Leaflet): 44 × 44 transparente, co pico abaixo no medio. */
+  .f-map__marker {
+    display: grid;
+    place-items: end center;
+    border-radius: var(--radius-pill);
+    background: none;
+  }
+  .f-map__marker:focus-visible {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: 2px;
+  }
+  .f-map__pin {
+    display: block;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-block-end: 0.375rem;
+    border: 3px solid var(--f-on-primary);
+    border-radius: 50% 50% 50% 0;
+    background: var(--f-primary);
+    box-shadow: var(--shadow-overlay);
+    transform: rotate(-45deg);
+  }
+  .f-map__pin::after {
+    content: '';
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin: calc(50% - 0.25rem) auto 0;
+    border-radius: 50%;
+    background: var(--f-on-primary);
+  }
+  .f-map--editable .f-map__marker {
+    cursor: grab;
+  }
+
+  .f-map__coords {
+    display: grid;
+    gap: var(--spacing-item);
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  }
+
+  @media (forced-colors: active) {
+    .f-map__pin {
+      border-color: Canvas;
+      background: CanvasText;
+      forced-color-adjust: none;
+    }
+    .f-map__attribution {
+      border: 1px solid CanvasText;
+    }
+  }
+}

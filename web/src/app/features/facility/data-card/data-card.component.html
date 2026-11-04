@@ -1,0 +1,150 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.data.';
+<furar-edit-section
+  class="f-card lg:top-item lg:sticky lg:max-h-[calc(100dvh-2rem)] lg:overflow-y-auto"
+  [formGroup]="form"
+  [heading]="t + 'title' | transloco"
+  [save]="save"
+  [controlFor]="controlFor"
+>
+  <div class="grid">
+    @if (session?.editing()) {
+      <furar-required-note />
+      <furar-field
+        fieldId="facility-data-name"
+        [label]="t + 'name.label' | transloco"
+        [required]="true"
+        [error]="errors().name"
+      >
+        <input
+          furarInput
+          id="facility-data-name"
+          type="text"
+          autocomplete="off"
+          aria-required="true"
+          formControlName="name"
+          [attr.aria-invalid]="errors().name ? 'true' : null"
+          [attr.aria-describedby]="describedBy('facility-data-name', false, errors().name)"
+        />
+      </furar-field>
+    }
+    <furar-edit-field
+      [label]="t + 'sports.label' | transloco"
+      [value]="shown().sports"
+      [control]="form.controls.sports"
+    >
+      <furar-facility-sports-field [control]="form.controls.sports" [lang]="lang()" />
+    </furar-edit-field>
+
+    <furar-edit-field [label]="t + 'type.label' | transloco" [value]="shown().type" [control]="form.controls.type">
+      <furar-field fieldId="facility-data-type" [label]="t + 'type.label' | transloco">
+        <furar-select
+          selectId="facility-data-type"
+          formControlName="type"
+          [label]="t + 'type.label' | transloco"
+          [options]="
+            [{ value: '', label: (t + 'type.none' | transloco) }].concat(types | furarOptions: t + 'type.' : lang())
+          "
+        />
+      </furar-field>
+    </furar-edit-field>
+
+    @for (text of texts; track text.name) {
+      <furar-edit-field
+        [label]="t + text.name + '.label' | transloco"
+        [value]="shown()[text.name]"
+        [control]="form.controls[text.name]"
+      >
+        <furar-field
+          [fieldId]="'facility-data-' + text.name"
+          [label]="t + text.name + '.label' | transloco"
+          [help]="t + text.name + '.help' | transloco: { max: text.max }"
+          [error]="errors()[text.name]"
+        >
+          <input
+            furarInput
+            [id]="'facility-data-' + text.name"
+            [type]="text.type"
+            [attr.autocomplete]="text.autocomplete"
+            [attr.inputmode]="text.inputmode"
+            [formControlName]="text.name"
+            [attr.aria-invalid]="errors()[text.name] ? 'true' : null"
+            [attr.aria-describedby]="describedBy('facility-data-' + text.name, true, errors()[text.name])"
+          />
+        </furar-field>
+      </furar-edit-field>
+    }
+
+    @switch (definitionsState()) {
+      @case ('loading') {
+        <furar-status-state mode="skeleton" [rows]="2" [description]="t + 'ownFields.loading' | transloco" />
+      }
+      @case ('error') {
+        <furar-callout tone="warn" [heading]="t + 'ownFields.error' | transloco">
+          <button type="button" furarButton size="sm" class="mt-unit" (click)="loadDefinitions()">
+            {{ t + 'ownFields.retry' | transloco }}
+          </button>
+        </furar-callout>
+      }
+      @default {
+        @for (field of customFields(); track field.definition.code) {
+          <furar-edit-field [label]="field.label" [value]="field.value" [control]="field.control">
+            <furar-custom-field
+              idPrefix="facility-data-cf"
+              [definition]="field.definition"
+              [control]="field.control"
+              [lang]="lang()"
+            />
+          </furar-edit-field>
+        }
+      }
+    }
+
+    <furar-edit-field
+      [label]="t + 'onlineBooking.label' | transloco"
+      [value]="shown().onlineBooking"
+      [control]="form.controls.onlineBooking"
+    >
+      <furar-switch
+        switchId="facility-data-online"
+        formControlName="onlineBooking"
+        [label]="t + 'onlineBooking.label' | transloco"
+        describedBy="facility-data-online-help"
+      />
+      <p id="facility-data-online-help" class="f-help">{{ t + 'onlineBooking.help' | transloco }}</p>
+    </furar-edit-field>
+
+    @if (!onlineBooking()) {
+      <furar-edit-field
+        [label]="t + 'showFreeSlots.label' | transloco"
+        [value]="shown().showFreeSlots"
+        [control]="form.controls.showFreeSlots"
+      >
+        <furar-switch
+          switchId="facility-data-free-slots"
+          formControlName="showFreeSlots"
+          [label]="t + 'showFreeSlots.label' | transloco"
+          describedBy="facility-data-free-slots-help"
+        />
+        <p id="facility-data-free-slots-help" class="f-help">{{ t + 'showFreeSlots.help' | transloco }}</p>
+      </furar-edit-field>
+    }
+
+    <furar-edit-field
+      [label]="t + 'covered.label' | transloco"
+      [value]="shown().covered"
+      [control]="form.controls.covered"
+    >
+      <div class="gap-unit grid">
+        <span class="f-label" id="facility-data-covered">{{ t + 'covered.label' | transloco }}</span>
+        <div furarSegmented mode="radio" formControlName="covered" aria-labelledby="facility-data-covered">
+          <button type="button" [furarSegmentedOption]="true">{{ 'common.yes' | transloco }}</button>
+          <button type="button" [furarSegmentedOption]="false">{{ 'common.no' | transloco }}</button>
+        </div>
+      </div>
+    </furar-edit-field>
+  </div>
+</furar-edit-section>

@@ -1,0 +1,15 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+/*
+ * Pezas dos indicadores (D3-07, ADR-0026): folla á parte (`angular.json`, `bundleName: indicadores`,
+ * `inject: false`) para que non entre na carga inicial (D27). As rutas que as usan cárgana con
+ * `indicatorStylesResolver` (`core/layout/indicator-styles.ts`). As capas son as de styles.css.
+ */
+@import './components/chart.css';
+@import './components/stat-tile.css';
+@import './components/chart-card.css';
+@import './components/export-menu.css';
+@import './components/data-table.css';
+@import './components/view-transition.css';
+@import './components/print.css';
+@import './components/indicators.css';

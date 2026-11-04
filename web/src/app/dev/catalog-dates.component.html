@@ -1,0 +1,45 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<furar-card [heading]="'catalog.dates' | transloco" id="calendario">
+  <div class="gap-form grid sm:grid-cols-2" [formGroup]="dates">
+    <furar-field
+      fieldId="catalog-date-from"
+      [label]="'catalog.sample.dateFrom' | transloco"
+      [help]="'catalog.sample.dateHelp' | transloco"
+    >
+      <furar-date-field
+        buttonId="catalog-date-from"
+        formControlName="from"
+        describedBy="catalog-date-from-help"
+        [label]="'catalog.sample.dateFrom' | transloco"
+        [min]="today"
+        [max]="dates.controls.to.value ?? inOneYear"
+        [dateDisabled]="isSunday"
+      />
+    </furar-field>
+    <furar-field fieldId="catalog-date-to" [label]="'catalog.sample.dateTo' | transloco">
+      <furar-date-field
+        buttonId="catalog-date-to"
+        formControlName="to"
+        [label]="'catalog.sample.dateTo' | transloco"
+        [min]="dates.controls.from.value ?? today"
+        [max]="inOneYear"
+        [dateDisabled]="isSunday"
+      />
+    </furar-field>
+    <furar-field fieldId="catalog-date-closed" [label]="'catalog.sample.dateDisabled' | transloco">
+      <furar-date-field
+        buttonId="catalog-date-closed"
+        formControlName="closed"
+        [label]="'catalog.sample.dateDisabled' | transloco"
+      />
+    </furar-field>
+    <div>
+      <p class="f-label">{{ 'catalog.sample.calendar' | transloco }}</p>
+      <furar-calendar [(value)]="looseDate" [min]="today" />
+      <p class="f-help" role="status">{{ 'catalog.sample.calendarValue' | transloco: { date: looseDate() } }}</p>
+    </div>
+  </div>
+</furar-card>

@@ -1,0 +1,141 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.reserve.';
+<furar-required-note />
+<div class="f-field-group">
+  <furar-field-popover
+    #whatField
+    required
+    [label]="t + 'what' | transloco"
+    [value]="store.use()?.name ?? null"
+    [placeholder]="t + 'choose' | transloco"
+    [nextField]="whenField"
+    data-reserve-field="what"
+  >
+    <div class="f-reserve__uses" role="group" [attr.aria-label]="t + 'what' | transloco">
+      @for (use of store.facility()?.uses ?? []; track use.id) {
+        <button
+          type="button"
+          class="f-reserve__use"
+          [attr.aria-pressed]="use.id === store.use()?.id"
+          (click)="pickUse(use.id, whatField)"
+        >
+          <span class="f-reserve__radio" aria-hidden="true"></span>
+          <span class="f-reserve__use-text">
+            <b>{{ use.name }}</b>
+            <span>{{ useDetail(use) }}</span>
+          </span>
+          @if (usePrice(use); as price) {
+            <span class="f-reserve__use-price">{{ price }}</span>
+          }
+        </button>
+      }
+    </div>
+  </furar-field-popover>
+
+  <furar-field-popover
+    #whenField
+    required
+    [label]="t + 'date' | transloco"
+    [value]="dateText()"
+    [placeholder]="t + 'choose' | transloco"
+    [nextField]="hourField"
+    (opened)="focusCalendar()"
+    data-reserve-field="date"
+  >
+    <furar-calendar
+      [value]="store.date()"
+      [min]="today()"
+      [max]="maxDate()"
+      [today]="today()"
+      [dateDisabled]="closedDay()"
+      (picked)="pickDate($event, whenField)"
+    />
+  </furar-field-popover>
+
+  <furar-field-popover
+    #hourField
+    required
+    [label]="t + 'time' | transloco"
+    [value]="timeText()"
+    [placeholder]="t + 'choose' | transloco"
+    [nextField]="partPopover() ?? null"
+    data-reserve-field="time"
+  >
+    <div class="f-reserve__hours">
+      @if (store.durations().length > 1) {
+        <div
+          furarSegmented
+          mode="radio"
+          [value]="store.slots()"
+          (valueChange)="pickDuration($event)"
+          [attr.aria-label]="t + 'duration' | transloco"
+        >
+          @for (option of store.durations(); track option) {
+            <button type="button" [furarSegmentedOption]="option">{{ durationText(option) }}</button>
+          }
+        </div>
+      }
+      @if (store.availabilityState() === 'loading' && !store.availability()) {
+        <p class="f-reserve__hint">{{ t + 'slotsLoading' | transloco }}</p>
+      } @else if (store.availabilityState() === 'error') {
+        <p class="f-reserve__hint">{{ t + 'slotsError' | transloco }}</p>
+      } @else if (!store.offered().length) {
+        <p class="f-reserve__hint" data-reserve-no-slots>{{ t + 'noSlots' | transloco }}</p>
+      } @else {
+        <div class="f-reserve__slots" role="group" [attr.aria-label]="t + 'times' | transloco">
+          @for (slot of store.offered(); track slot.slot.start) {
+            <button
+              type="button"
+              class="f-reserve__slot"
+              data-reserve-slot
+              [attr.aria-pressed]="slot.time === store.chosen()?.time"
+              (click)="pickTime(slot.time, hourField)"
+            >
+              <b>{{ slot.time }}</b>
+              @if (slotNote(slot); as note) {
+                <small>{{ note }}</small>
+              }
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </furar-field-popover>
+
+  @if (store.use()?.rentalMode === 'PARTS') {
+    <furar-field-popover
+      #partField
+      required
+      [label]="t + 'part' | transloco"
+      [value]="partText()"
+      data-reserve-field="part"
+    >
+      <div class="f-reserve__parts" role="group" [attr.aria-label]="t + 'part' | transloco">
+        @for (part of store.use()?.parts ?? []; track part.id) {
+          <button
+            type="button"
+            class="f-reserve__part"
+            [disabled]="!partFree(part.id)"
+            [attr.aria-pressed]="store.partId() === part.id"
+            (click)="pickPart(part.id, partField)"
+          >
+            <span class="f-reserve__radio" aria-hidden="true"></span>
+            {{ part.name }}
+          </button>
+        }
+        <button
+          type="button"
+          class="f-reserve__part"
+          [attr.aria-pressed]="store.partId() === null"
+          (click)="pickPart(null, partField)"
+        >
+          <span class="f-reserve__radio" aria-hidden="true"></span>
+          {{ t + 'anyPart' | transloco }}
+        </button>
+      </div>
+    </furar-field-popover>
+  }
+</div>

@@ -1,0 +1,24 @@
+// SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+// SPDX-License-Identifier: EUPL-1.2
+package gal.furar.@module@.application.service;
+
+import gal.furar.shared.domain.CustomFieldTarget;
+import gal.furar.shared.domain.CustomFieldTargetProvider;
+import java.util.Set;
+import org.springframework.stereotype.Component;
+
+/** @Name@ admite campos personalizados (ADR-0011, ADR-0005 ARQ3-2): rexistra o destino @TARGET@. */
+@Component
+class @Name@CustomFieldTarget implements CustomFieldTargetProvider {
+
+  @Override
+  public CustomFieldTarget target() {
+    return @Name@Service.TARGET;
+  }
+
+  /** Columnas núcleo da táboa: un campo personalizado non pode usar ese código. */
+  @Override
+  public Set<String> coreFields() {
+    return Set.of("name");
+  }
+}

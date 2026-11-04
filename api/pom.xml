@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>4.1.1</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>gal.furar</groupId>
+  <artifactId>furar-api</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <name>Furar API</name>
+  <description>API de Furar: xestión e reserva de instalacións deportivas municipais</description>
+  <url>https://furar.gal</url>
+
+  <licenses>
+    <license>
+      <name>EUPL-1.2</name>
+      <url>https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12</url>
+    </license>
+  </licenses>
+
+  <properties>
+    <java.version>25</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- ADR-0004: versións exactas -->
+    <spring-modulith.version>2.1.1</spring-modulith.version>
+    <springdoc.version>3.1.1</springdoc.version>
+    <archunit.version>1.4.2</archunit.version>
+    <!-- QR do código da reserva (ADR-0025, punto 13): Apache-2.0, sen dependencias; 3.5.3 é de 2024-01 -->
+    <zxing.version>3.5.3</zxing.version>
+    <!-- Saneado do texto propio das páxinas legais (ADR-0017 punto 8): MIT, sen dependencias; 1.23.2 é de 2026-08 -->
+    <jsoup.version>1.23.2</jsoup.version>
+    <json-schema-validator.version>3.0.8</json-schema-validator.version>
+    <spotless.version>3.10.4</spotless.version>
+    <!-- 1.37.0 falla con spotless 3.10.4 (InvocationTargetException en todos os ficheiros); 1.36.1 é a última compatible --><google-java-format.version>1.36.1</google-java-format.version>
+    <jacoco.version>0.8.15</jacoco.version>
+    <license-maven-plugin.version>2.7.1</license-maven-plugin.version>
+    <!-- D03 revisa tamén test; a imaxe (api/Dockerfile, LIC-17) só leva execución: system,test,provided -->
+    <furar.license.excludedScopes>system</furar.license.excludedScopes>
+    <!-- Boot 4.1.1 trae Tomcat 11.0.24, con CVE CRITICAL corrixidos en 11.0.25 (CVE-2026-65182,
+         CVE-2026-65905, CVE-2026-68525; D37). 11.0.27 (2026-10-06) cumpre os 14 días. Quitar ao subir Boot. -->
+    <tomcat.version>11.0.27</tomcat.version>
+    <!-- Boot 4.1.1 trae Jackson 3.1.5 e 2.21.5, con CVE HIGH corrixidos en 3.1.7 e 2.21.7
+         (CVE-2026-68497, CVE-2026-89407, CVE-2026-89425, CVE-2026-91776, CVE-2026-91777; D37, D49).
+         Ambas de 2026-09-21: cumpren os 14 días. Boot 4.1.2 xa as trae (2026-10-22, aínda sen 14 días).
+         Quitar ao subir Boot. -->
+    <jackson-bom.version>3.1.7</jackson-bom.version>
+    <jackson-2-bom.version>2.21.7</jackson-2-bom.version>
+    <!-- argLine baleiro por defecto; JaCoCo enche o seu con -Pcoverage -->
+    <argLine/>
+    <surefire.argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar} -Xshare:off</surefire.argLine>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.modulith</groupId>
+        <artifactId>spring-modulith-bom</artifactId>
+        <version>${spring-modulith.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-flyway</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aspectj</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.modulith</groupId>
+      <artifactId>spring-modulith-starter-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.modulith</groupId>
+      <artifactId>spring-modulith-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jspecify</groupId>
+      <artifactId>jspecify</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>core</artifactId>
+      <version>${zxing.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>${jsoup.version}</version>
+    </dependency>
+    <!-- Correos das reservas (ADR-0025, punto 15): Jakarta Mail e Angus Mail, versión do BOM -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+
+    <!-- Tests (ADR-0013) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-data-jpa-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-testcontainers</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.modulith</groupId>
+      <artifactId>spring-modulith-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.modulith</groupId>
+      <artifactId>spring-modulith-docs</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5</artifactId>
+      <version>${archunit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.networknt</groupId>
+      <artifactId>json-schema-validator</artifactId>
+      <version>${json-schema-validator.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <finalName>furar-api</finalName>
+        </configuration>
+      </plugin>
+
+      <!-- Expón ${org.mockito:mockito-core:jar} para cargar Mockito como javaagent da JVM (ADR-0013) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>properties</id>
+            <goals>
+              <goal>properties</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>${surefire.argLine}</argLine>
+          <forkCount>1</forkCount>
+          <reuseForks>true</reuseForks>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/*IT.java</exclude>
+            <exclude>**/architecture/violations/**</exclude>
+          </excludes>
+          <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <argLine>${surefire.argLine}</argLine>
+          <forkCount>1</forkCount>
+          <reuseForks>true</reuseForks>
+          <includes>
+            <include>**/*IT.java</include>
+          </includes>
+          <!-- Fixtures da autoproba de ArchUnit (A8b): compílanse pero non se executan -->
+          <excludes>
+            <exclude>archviolations/**</exclude>
+          </excludes>
+          <systemPropertyVariables>
+            <spring.test.context.cache.maxSize>4</spring.test.context.cache.maxSize>
+          </systemPropertyVariables>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>[25,26)</version>
+                </requireJavaVersion>
+                <requireMavenVersion>
+                  <version>[3.9,)</version>
+                </requireMavenVersion>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>org.projectlombok:*</exclude>
+                    <exclude>com.h2database:*</exclude>
+                    <exclude>org.hsqldb:*</exclude>
+                    <exclude>org.apache.derby:*</exclude>
+                    <exclude>org.liquibase:*</exclude>
+                  </excludes>
+                </bannedDependencies>
+                <dependencyConvergence/>
+                <requirePluginVersions>
+                  <banLatest>true</banLatest>
+                  <banRelease>true</banRelease>
+                  <banSnapshots>true</banSnapshots>
+                </requirePluginVersions>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Formato Java: falla en CI (D10) -->
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${spotless.version}</version>
+        <configuration>
+          <java>
+            <includes>
+              <include>src/main/java/**/*.java</include>
+              <include>src/test/java/**/*.java</include>
+            </includes>
+            <googleJavaFormat>
+              <version>${google-java-format.version}</version>
+            </googleJavaFormat>
+            <removeUnusedImports/>
+            <licenseHeader>
+              <content>// SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+// SPDX-License-Identifier: EUPL-1.2
+</content>
+            </licenseHeader>
+          </java>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <configuration>
+          <outputName>bom</outputName>
+          <outputFormat>json</outputFormat>
+        </configuration>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.21.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <!-- D11: cobertura con umbral só baixo -Pcoverage (ADR-0013) -->
+    <profile>
+      <id>coverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco.version}</version>
+            <executions>
+              <execution>
+                <id>prepare-unit</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>prepare-it</id>
+                <goals>
+                  <goal>prepare-agent-integration</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>merge</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>merge</goal>
+                </goals>
+                <configuration>
+                  <fileSets>
+                    <fileSet>
+                      <directory>${project.build.directory}</directory>
+                      <includes>
+                        <include>jacoco.exec</include>
+                        <include>jacoco-it.exec</include>
+                      </includes>
+                    </fileSet>
+                  </fileSets>
+                  <destFile>${project.build.directory}/jacoco-merged.exec</destFile>
+                </configuration>
+              </execution>
+              <execution>
+                <id>report</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+                <configuration>
+                  <dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
+                </configuration>
+              </execution>
+              <execution>
+                <id>check</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <configuration>
+                  <dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
+                  <rules>
+                    <rule>
+                      <element>PACKAGE</element>
+                      <includes>
+                        <include>gal.furar.*.domain*</include>
+                        <include>gal.furar.*.application*</include>
+                      </includes>
+                      <limits>
+                        <limit>
+                          <counter>LINE</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>0.80</minimum>
+                        </limit>
+                      </limits>
+                    </rule>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- D03: licenzas de terceiros só OSI/FSF (lista en ../scripts/allowed-licenses.txt) -->
+    <profile>
+      <id>licenses</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <version>${license-maven-plugin.version}</version>
+            <configuration>
+              <!-- force: sen el, un THIRD-PARTY.txt en caché salta a avaliación e D03 pasa aínda que cambie a lista -->
+              <force>true</force>
+              <failOnMissing>true</failOnMissing>
+              <failOnBlacklist>true</failOnBlacklist>
+              <includedLicenses>file://${project.basedir}/../scripts/allowed-licenses.txt</includedLicenses>
+              <!-- Nomes dos POM → identificador SPDX de scripts/allowed-licenses.txt -->
+              <licenseMerges>
+                <licenseMerge>Apache-2.0|Apache License, Version 2.0|The Apache Software License, Version 2.0|The Apache License, Version 2.0|Apache License 2.0|Apache License Version 2.0|Apache 2.0</licenseMerge>
+                <licenseMerge>MIT|The MIT License|MIT License</licenseMerge>
+                <licenseMerge>EPL-2.0|Eclipse Public License v2.0|EPL 2.0|Eclipse Public License v. 2.0|Eclipse Public License - v 2.0</licenseMerge>
+                <licenseMerge>BSD-3-Clause|Eclipse Distribution License - v 1.0|Eclipse Distribution License v. 1.0|EDL 1.0</licenseMerge>
+                <licenseMerge>GPL-2.0-only WITH Classpath-exception-2.0|GPL2 w/ CPE</licenseMerge>
+                <licenseMerge>CC0-1.0|Public Domain, per Creative Commons CC0</licenseMerge>
+              </licenseMerges>
+              <excludedScopes>${furar.license.excludedScopes}</excludedScopes>
+              <excludedGroups>^gal\.furar</excludedGroups>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

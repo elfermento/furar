@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Produción: sen valores por defecto para os segredos; ProdProfileGuard négase a arrincar con
+# credenciais de demo ou URL de localhost.
+spring:
+  datasource:
+    url: ${FURAR_DB_URL}
+    username: ${FURAR_DB_USER}
+    password: ${FURAR_DB_PASSWORD}
+  # A API non migra en produción nin ten o contrasinal do dono (SEC2-03): migra o servizo
+  # `migrate` (a mesma imaxe co argumento migrate, FurarMigration), que activa Flyway e le
+  # FURAR_DB_OWNER_PASSWORD. ProdProfileGuard négase a arrincar a API se o ve.
+  flyway:
+    enabled: false
+  # SMTP do concello: SPRING_MAIL_HOST, PORT, USERNAME e PASSWORD (compose.prod.yaml); STARTTLS e
+  # autenticación activados salvo que .env diga o contrario. FURAR_SMTP_SSL=true: TLS desde o
+  # principio (porto 465), co STARTTLS en false (instalar.sh pon os dous).
+  mail:
+    properties:
+      "[mail.smtp.auth]": ${FURAR_SMTP_AUTH:true}
+      "[mail.smtp.starttls.enable]": ${FURAR_SMTP_STARTTLS:true}
+      "[mail.smtp.starttls.required]": ${FURAR_SMTP_STARTTLS:true}
+      "[mail.smtp.ssl.enable]": ${FURAR_SMTP_SSL:false}
+furar:
+  public-url: ${FURAR_PUBLIC_URL}
+  security:
+    jwk-set-uri: ${FURAR_JWK_SET_URI}
+  # Segredo da proba da invitación, o mesmo ca o de Keycloak (ADR-0027); sen valor non arrinca.
+  invitation:
+    proof-secret: ${FURAR_INVITATION_PROOF_SECRET}
+springdoc:
+  swagger-ui:
+    enabled: false
+# Rexistros en JSON ECS (un evento por liña, con http.request.id) para calquera recolector (OPS-8).
+logging:
+  structured:
+    format:
+      console: ecs
+# Métricas só no porto interno 9081 (Caddy non o publica nunca): /actuator/metrics.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics

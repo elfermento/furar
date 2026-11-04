@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Datos de demostración (CC0): concellos de exemplo, campos personalizados e instalacións.
+# Sen fotos: as instalacións mostran o seu debuxo de Furar suxerido (drawings/, CC0).
+#
+# As sementes calculan as datas sobre current_date. Cada repetible leva o placeholder demo_day (o
+# día de hoxe, en application.yaml) nun comentario: o seu checksum cambia cada día e o primeiro
+# arrinque do día volve aplicalas (son idempotentes). Así a historia de reservas chega ata onte.
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/demo
+furar:
+  security:
+    # A demo acepta tamén os tokens do cliente das probas automáticas (D33, e2e), que só existe
+    # no realm de demo. En prod, ProdProfileGuard non o deixa (R5).
+    clients: furar-web,furar-e2e

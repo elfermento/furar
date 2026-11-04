@@ -1,0 +1,59 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<div class="max-w-col mx-auto">
+  <furar-page-header [heading]="'platform.createTitle' | transloco" [intro]="'platform.createIntro' | transloco" />
+  <furar-problem-alert [problem]="problem()" />
+  <form #createForm [formGroup]="form" novalidate (ngSubmit)="create()">
+    <furar-form-errors-summary [count]="submitted() ? errorCount() : 0" />
+    <furar-required-note />
+    <furar-card class="mb-group">
+      @let nameError = fieldError(form.controls.name, submitted());
+      <furar-field
+        class="mb-form"
+        fieldId="create-name"
+        [label]="'settings.name' | transloco"
+        [help]="'settings.nameHelp' | transloco"
+        [required]="true"
+        [error]="nameError"
+      >
+        <input
+          id="create-name"
+          furarInput
+          formControlName="name"
+          aria-required="true"
+          [attr.aria-invalid]="nameError ? 'true' : null"
+          [attr.aria-describedby]="describedBy('create-name', true, nameError)"
+        />
+      </furar-field>
+      @let slugError = fieldError(form.controls.slug, submitted());
+      <furar-field
+        fieldId="create-slug"
+        [label]="'platform.slug' | transloco"
+        [help]="'platform.slugHelp' | transloco"
+        [required]="true"
+        [error]="slugError"
+      >
+        <input
+          id="create-slug"
+          furarInput
+          class="font-mono"
+          formControlName="slug"
+          aria-required="true"
+          autocomplete="off"
+          spellcheck="false"
+          (input)="slugEdited()"
+          [attr.aria-invalid]="slugError ? 'true' : null"
+          [attr.aria-describedby]="describedBy('create-slug', true, slugError)"
+        />
+      </furar-field>
+    </furar-card>
+    <furar-languages-fieldset [form]="form.controls.languages" [submitted]="submitted()" idPrefix="create" />
+    <div class="flex justify-end">
+      <button type="submit" furarButton="primary" block [busy]="saving()">
+        {{ (saving() ? 'common.saving' : 'platform.create') | transloco }}
+      </button>
+    </div>
+  </form>
+</div>

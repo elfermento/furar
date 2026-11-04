@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: CC0-1.0
+#
+# Metadatos estándar para catálogos de software público (publiccode.yml, versión «0» = a última, hoxe 0.7; Developers Italia,
+# usado na UE). Valídase con publiccode-parser-go (X11 en scripts/verificar.sh, sen rede).
+# softwareVersion e releaseDate escríbeos scripts/preparar-release.sh no commit de cada versión,
+# coa data do día en que se etiqueta (docs/adr/0016-ci-e-verificacion.md).
+publiccodeYmlVersion: "0"
+
+name: Furar
+url: "https://github.com/elfermento/furar"
+softwareVersion: "0.1.0"
+releaseDate: "2026-11-04"
+platforms:
+  - web
+categories:
+  - online-booking
+  - facility-management
+developmentStatus: development
+softwareType: standalone/web
+
+description:
+  gl:
+    shortDescription: >-
+      Xestión e reserva en liña das instalacións deportivas municipais, para un ou varios
+      concellos.
+    longDescription: >-
+      Furar permite que a veciñanza consulte e reserve en liña as instalacións deportivas
+      municipais (pistas, pavillóns, ximnasios, piscinas), con reservas exclusivas ou por prazas,
+      e que o persoal do concello as dea de alta e manteña horarios, normas, prezos e peches.
+      Unha mesma instalación serve a varios concellos (por exemplo, nunha Deputación) con datos
+      illados. Está en galego e castelán, ten como obxectivo WCAG 2.1 AA (declaración: parcialmente
+      conforme, coa revisión con lector de pantalla pendente), autentica con OpenID Connect
+      (Keycloak) e instálase cun só comando con Docker Compose. Cada concello pode engadir campos
+      propios aos formularios sen tocar código.
+    features:
+      - Reserva en liña exclusiva ou por prazas, sen solapamentos garantidos na base de datos
+      - Varios concellos nunha instalación, con datos illados
+      - Campos personalizados por concello
+      - Galego e castelán; obxectivo WCAG 2.1 AA e EN 301 549 (parcialmente conforme)
+      - Instalación con Docker Compose e imaxes verificadas
+  es:
+    shortDescription: >-
+      Gestión y reserva en línea de las instalaciones deportivas municipales, para uno o varios
+      ayuntamientos.
+    longDescription: >-
+      Furar permite que la vecindad consulte y reserve en línea las instalaciones deportivas
+      municipales (pistas, pabellones, gimnasios, piscinas), con reservas exclusivas o por plazas,
+      y que el personal del ayuntamiento las dé de alta y mantenga horarios, normas, precios y
+      cierres. Una misma instalación sirve a varios ayuntamientos (por ejemplo, en una Diputación)
+      con datos aislados. Está en gallego y castellano, tiene como objetivo WCAG 2.1 AA (declaración:
+      parcialmente conforme, con la revisión con lector de pantalla pendiente), autentica con OpenID
+      Connect (Keycloak) y se instala con un solo comando con Docker Compose. Cada ayuntamiento
+      puede añadir campos propios a los formularios sin tocar código.
+    features:
+      - Reserva en línea exclusiva o por plazas, sin solapamientos garantizados en la base de datos
+      - Varios ayuntamientos en una instalación, con datos aislados
+      - Campos personalizados por ayuntamiento
+      - Gallego y castellano; objetivo WCAG 2.1 AA y EN 301 549 (parcialmente conforme)
+      - Instalación con Docker Compose e imágenes verificadas
+
+legal:
+  license: EUPL-1.2
+  mainCopyrightOwner: Santiago Herrero Padín e colaboradores de Furar
+
+maintenance:
+  type: internal
+  contacts:
+    - name: Santiago Herrero Padín
+
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - gl
+    - es
+
+dependsOn:
+  open:
+    - name: PostgreSQL
+      versionMin: "18"
+    - name: Keycloak
+    - name: Docker

@@ -1,0 +1,65 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<a
+  href="#contido"
+  class="sr-only-focusable bg-surface text-primary-text rounded-field top-unit left-unit px-item py-unit absolute z-60 font-bold"
+  (click)="skipToContent($event)"
+  >{{ 'app.skipToContent' | transloco }}</a
+>
+<furar-site-bar />
+<furar-offline-banner />
+<main id="contido" #main tabindex="-1" class="f-main" furarActionScope [attr.data-layout]="layout()">
+  @if (lastSignIn(); as date) {
+    <p class="text-support text-ink-soft mb-group" data-last-sign-in>
+      {{ 'session.lastSignIn' | transloco: { date } }}
+    </p>
+  }
+  <router-outlet />
+</main>
+<!-- Pé: tarxeta de cristal coma a barra superior, sempre abaixo (site.css). -->
+<footer class="f-footer">
+  <div class="f-footer__bar f-glass">
+    <!-- Marca xenérica (sen «Furar»): leva á sección «Software» do aviso legal, onde vai a atribución. -->
+    <p class="f-footer__brand">
+      @if (brandRoute(); as route) {
+        <a class="f-footer__brand-link" [routerLink]="route" fragment="software">{{ 'app.footer' | transloco }}</a>
+      } @else {
+        <a class="f-footer__brand-link" href="/codigo-fonte">{{ 'app.footer' | transloco }}</a>
+      }
+    </p>
+    <nav [attr.aria-label]="'footer.nav' | transloco">
+      <ul class="f-footer__links">
+        @if (municipality.slug(); as slug) {
+          <!-- Páxinas legais (ADR-0017 punto 8): a do concello, se a publica na súa web. -->
+          @for (link of legalLinks(); track link.page) {
+            <li>
+              @if (link.external; as url) {
+                <a class="f-footer__link" [furarExternalHref]="url" rel="noopener noreferrer"
+                  >{{ link.label | transloco }}<furar-icon name="open-in-new" /><span class="sr-only">{{
+                    'footer.external' | transloco
+                  }}</span></a
+                >
+              } @else {
+                <a class="f-footer__link" [routerLink]="['/', slug, link.path]">{{ link.label | transloco }}</a>
+              }
+            </li>
+          }
+        }
+        <!-- Ficheiros servidos por Caddy (web/Dockerfile e Caddyfile), non rutas da SPA. -->
+        <li>
+          <a class="f-footer__link" href="/codigo-fonte">{{ 'footer.source' | transloco }}</a>
+        </li>
+        <li>
+          <a class="f-footer__link" href="/LICENSE.txt">{{ 'footer.license' | transloco }}</a>
+        </li>
+        <li>
+          <a class="f-footer__link" href="/3rdpartylicenses.txt">{{ 'footer.thirdParty' | transloco }}</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+<furar-bottom-nav />
+<furar-toast />

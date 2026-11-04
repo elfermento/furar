@@ -1,0 +1,74 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Días da semana (furar-weekday-picker, D2-10; maqueta 21): atallos en cápsula (o que coincide,
+ * co bordo en `primary`) e sete círculos de 44 px; o día marcado, recheo `primary` (o mesmo ca o
+ * día escollido do calendario). A 320 px os días baixan de liña se non caben.
+ */
+@layer components {
+  .f-weekdays {
+    display: grid;
+    gap: 0.625rem;
+    justify-items: start;
+  }
+  .f-weekdays__shortcuts,
+  .f-weekdays__days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+  .f-weekdays__shortcut {
+    min-height: 2.5rem;
+    padding: 0 0.875rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-primary-text);
+    font: inherit;
+    font-size: var(--text-support);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .f-weekdays__shortcut[aria-pressed='true'] {
+    border-color: var(--f-primary);
+    box-shadow: inset 0 0 0 1px var(--f-primary);
+  }
+  .f-weekdays__day {
+    width: var(--f-touch);
+    height: var(--f-touch);
+    border: var(--f-border) solid var(--f-line);
+    border-radius: 50%;
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .f-weekdays__day[aria-checked='true'] {
+    border-color: var(--f-primary);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+  .f-weekdays__day[aria-checked='true']:focus-visible {
+    outline-offset: 2px;
+  }
+  :is(.f-weekdays__shortcut, .f-weekdays__day):disabled {
+    border-style: dashed;
+    cursor: not-allowed;
+  }
+  @media (hover: hover) {
+    :is(.f-weekdays__shortcut, .f-weekdays__day):not(:disabled):hover {
+      border-color: var(--f-primary);
+    }
+  }
+  @media (forced-colors: active) {
+    .f-weekdays__day[aria-checked='true'],
+    .f-weekdays__shortcut[aria-pressed='true'] {
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+  }
+}

@@ -1,0 +1,53 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Aviso (furar-callout, docs/deseno.md P1-6): aspecto A (2026-10-24), tinte suave do ton
+ * sen barra lateral. O texto vai sempre na tinta e o ton só no fondo, no bordo e na icona; a
+ * mestura (--f-soft-mix) bórdase para que a tinta siga a 4,5:1 e a icona a 3:1 (theme-tokens.ts).
+ */
+@layer components {
+  .f-callout {
+    --f-callout-tone: var(--f-info);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border: var(--f-border) solid color-mix(in srgb, var(--f-callout-tone) 28%, var(--f-surface));
+    border-radius: var(--radius-row);
+    background: color-mix(in srgb, var(--f-callout-tone) var(--f-soft-mix), var(--f-surface));
+  }
+  .f-callout[data-tone='warn'] {
+    --f-callout-tone: var(--f-warn);
+  }
+  .f-callout[data-tone='danger'] {
+    --f-callout-tone: var(--f-danger);
+  }
+  .f-callout[data-tone='success'] {
+    --f-callout-tone: var(--f-success);
+  }
+  .f-callout__icon {
+    margin-top: 0.125rem;
+    color: var(--f-callout-tone);
+  }
+  .f-callout__body {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .f-callout__title {
+    color: var(--f-ink);
+    font-weight: 700;
+  }
+  .f-callout__body .text-muted {
+    font-size: var(--text-support);
+  }
+
+  @media (forced-colors: active) {
+    .f-callout {
+      border-color: CanvasText;
+    }
+  }
+}

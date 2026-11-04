@@ -1,0 +1,69 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!-- «Para abrir as reservas» (maqueta 48): á parte, fóra da carga da pestana. -->
+@defer (on idle) {
+  <furar-opening-checklist />
+}
+<furar-problem-alert [problem]="saver.problem()" />
+@if (saver.problem()?.code === 'common.stale-version') {
+  <p class="mb-group">
+    <button type="button" furarButton (click)="reload()">{{ 'settings.reload' | transloco }}</button>
+  </p>
+}
+@if (tab.form(); as f) {
+  <form #formElement [formGroup]="f" novalidate (ngSubmit)="save()">
+    <furar-form-errors-summary [count]="saver.submitted() ? saver.errorCount() : 0" />
+    <furar-required-note />
+    @let nameError = fieldError(f.controls.name, saver.submitted());
+    <furar-card class="mb-group">
+      <furar-field
+        fieldId="settings-name"
+        [label]="'settings.name' | transloco"
+        [help]="'settings.nameHelp' | transloco"
+        [required]="true"
+        [error]="nameError"
+      >
+        <input
+          id="settings-name"
+          furarInput
+          formControlName="name"
+          aria-required="true"
+          autocomplete="organization"
+          [attr.aria-invalid]="nameError ? 'true' : null"
+          [attr.aria-describedby]="describedBy('settings-name', true, nameError)"
+        />
+      </furar-field>
+    </furar-card>
+
+    <furar-languages-fieldset [form]="f.controls.languages" [submitted]="saver.submitted()" idPrefix="settings" />
+
+    <furar-card class="mb-group" [heading]="'settings.customFields' | transloco">
+      <p class="f-help mb-form">
+        {{ 'settings.customFieldsHelp' | transloco }}
+        <a routerLink="../campos">{{ 'settings.manageFields' | transloco }}</a>
+      </p>
+      @if (definitions().length) {
+        <furar-custom-fields-form
+          [definitions]="definitions()"
+          [form]="f.controls.customFields"
+          [lang]="language.lang()"
+          idPrefix="settings-cf"
+          [showErrors]="saver.submitted()"
+        />
+      } @else {
+        <p>{{ 'settings.noCustomFields' | transloco }}</p>
+      }
+    </furar-card>
+
+    <div class="f-save-actions">
+      <p class="f-save-status" role="status" data-save-status></p>
+      <button type="submit" furarButton="primary" block [busy]="saver.saving()">
+        {{ (saver.saving() ? 'common.saving' : 'common.save') | transloco }}
+      </button>
+    </div>
+  </form>
+} @else if (!saver.problem()) {
+  <furar-status-state mode="loading" />
+}

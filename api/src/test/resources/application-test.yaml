@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+furar:
+  public-url: http://localhost:8080
+  # Ningún test sae á rede: enderezos gardados (ADR-0023).
+  geocoder:
+    provider: fixed
+  # Os IT piden desde 127.0.0.1 moito máis rápido ca unha persoa: sen límite por IP
+  # (RateLimitFilterTest próbao).
+  rate-limit:
+    requests-per-minute: 0
+    writes-per-minute: 0
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 5
+  test:
+    context:
+      cache:
+        maxSize: 4
+management:
+  server:
+    port: 0
+logging:
+  level:
+    root: WARN
+    gal.furar: INFO
+    org.springframework.boot.test: WARN

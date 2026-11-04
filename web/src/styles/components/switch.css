@@ -1,0 +1,130 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Interruptor (furar-switch, D1-05a): carril de 50×30 dentro dun botón de 44 px de
+ * alto e rótulo ao lado. Apagado: carril na liña (≥ 3:1) e bóla na superficie á esquerda.
+ * Acendido: carril primary e bóla on-primary á dereita cun ✓. O estado vai pola posición e o ✓,
+ * non só pola cor (1.4.1).
+ */
+@layer components {
+  .f-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 100%;
+  }
+
+  .f-switch__control {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    width: 3.125rem;
+    min-height: var(--f-touch);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  /* O carril. */
+  .f-switch__control::before {
+    content: '';
+    width: 100%;
+    height: 1.875rem;
+    border: var(--f-border-state) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-line);
+    transition:
+      background-color var(--f-dur-fast) var(--ease-smooth),
+      border-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-switch__thumb {
+    position: absolute;
+    top: 50%;
+    left: 0.25rem;
+    display: grid;
+    place-items: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+    color: var(--f-primary-text);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    transform: translateY(-50%);
+    transition: transform var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-switch__control[aria-checked='true']::before {
+    border-color: var(--f-primary);
+    background: var(--f-primary);
+  }
+  .f-switch__control[aria-checked='true'] .f-switch__thumb {
+    background: var(--f-on-primary);
+    color: var(--f-primary);
+    transform: translate(1.25rem, -50%);
+  }
+  .f-switch__control[aria-checked='true'] .f-switch__thumb::before {
+    content: '✓' / '';
+  }
+  .f-switch__control:focus-visible {
+    outline: none;
+  }
+  .f-switch__control:focus-visible::before {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: 2px;
+  }
+
+  .f-switch__label {
+    min-width: 0;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+  }
+
+  /* Desactivado: carril de bordo descontinuo sobre a páxina, sen opacidade (§3.1). */
+  .f-switch[data-disabled] .f-switch__control {
+    cursor: not-allowed;
+  }
+  .f-switch[data-disabled] .f-switch__control::before {
+    border-style: dashed;
+    border-color: var(--f-line);
+    background: var(--f-page);
+  }
+  .f-switch[data-disabled] .f-switch__control[aria-checked='true'] .f-switch__thumb {
+    background: var(--f-line);
+    color: var(--f-surface);
+  }
+  .f-switch[data-disabled] .f-switch__label {
+    cursor: not-allowed;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .f-switch__thumb {
+      transition: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .f-switch__control::before {
+      border-color: ButtonText;
+      background: Canvas;
+    }
+    .f-switch__control[aria-checked='true']::before {
+      border-color: Highlight;
+      background: Highlight;
+    }
+    .f-switch__thumb {
+      background: ButtonText;
+      forced-color-adjust: none;
+    }
+    .f-switch__control[aria-checked='true'] .f-switch__thumb {
+      background: HighlightText;
+      color: Highlight;
+    }
+    .f-switch__control:focus-visible::before {
+      outline-color: Highlight;
+    }
+  }
+}

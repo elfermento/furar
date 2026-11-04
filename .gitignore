@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+
+# Segredos e copias locais
+.env
+.env.*
+!.env.example
+# Ficheiro da release (rexistro, versión e digests) que se descarga para instalar.
+/furar-*.env
+copias/
+
+# Build
+target/
+node_modules/
+dist/
+.angular/
+coverage/
+web/src/app/api/
+web/bom.json
+web/playwright-report/
+web/test-results/
+web/test-results-json/
+.verificar/
+.novo-modulo/
+
+# Editores e sistema
+.idea/
+.vscode/
+*.iml
+.DS_Store

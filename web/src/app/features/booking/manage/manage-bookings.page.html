@@ -1,0 +1,198 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.manage.';
+<div class="f-manage">
+  <h1>{{ t + 'title' | transloco }}</h1>
+  <furar-bookings-toolbar
+    [slug]="slug()"
+    [q]="q()"
+    [filterCount]="filterCount()"
+    (searched)="search($event)"
+    (openFilters)="openFilters()"
+  />
+
+  @if (origin() === null) {
+    <div class="f-manage__home" [attr.data-detail]="inlineDetail() ? chosen() : null">
+      <div class="f-manage__secs">
+        @if (!inlineDetail() || chosen() === 'latest') {
+          <section
+            #latestSection
+            class="f-card f-manage__sec"
+            data-section="latest"
+            [attr.aria-labelledby]="ids.latest"
+          >
+            <h2 [id]="ids.latest">{{ t + 'latest' | transloco }}</h2>
+            @let latest = store.overview()?.latest ?? [];
+            @if (latest.length) {
+              <furar-booking-rows
+                [items]="latest"
+                [today]="today"
+                [showMade]="true"
+                [selectedId]="chosen() === 'latest' ? selectedId() : null"
+                (picked)="select($event, 'latest')"
+              />
+              <button
+                type="button"
+                furarButton
+                size="sm"
+                class="f-manage__more"
+                data-more="latest"
+                (click)="openList('latest')"
+              >
+                {{ t + 'more' | transloco }}
+              </button>
+            } @else if (store.overviewState() === 'ready') {
+              <p class="f-manage__empty">{{ t + 'empty.latest' | transloco }}</p>
+            } @else if (store.overviewState() === 'error') {
+              <furar-status-state mode="error" [heading]="t + 'loadError' | transloco">
+                <button type="button" furarButton (click)="retry()">{{ t + 'retry' | transloco }}</button>
+              </furar-status-state>
+            } @else {
+              <furar-status-state mode="skeleton" [rows]="3" [description]="t + 'loading' | transloco" />
+            }
+          </section>
+        }
+        @if (store.overview(); as overview) {
+          @if (!inlineDetail() || chosen() === 'payments') {
+            <section
+              #paymentsSection
+              class="f-card f-manage__sec"
+              data-section="payments"
+              [attr.aria-labelledby]="ids.payments"
+            >
+              <h2 [id]="ids.payments">{{ t + 'payments' | transloco }}</h2>
+              <furar-tabs class="f-manage__tabs" [label]="t + 'payments' | transloco" [(selected)]="tab">
+                @for (key of tabs; track key) {
+                  <button type="button" [furarTab]="key" [attr.data-tab]="key">
+                    {{ t + 'tab.' + key | transloco }}
+                    <span class="f-manage__n">{{ overview[key].count }}</span>
+                  </button>
+                }
+                @if (overview[tab()].items.length) {
+                  <furar-booking-rows
+                    [items]="overview[tab()].items"
+                    [today]="today"
+                    [selectedId]="chosen() === 'payments' ? selectedId() : null"
+                    (picked)="select($event, 'payments')"
+                  />
+                } @else {
+                  <p class="f-manage__empty">{{ t + 'empty.' + tab() | transloco }}</p>
+                }
+              </furar-tabs>
+              @if (overview[tab()].count > 0) {
+                <button
+                  type="button"
+                  furarButton
+                  size="sm"
+                  class="f-manage__more"
+                  data-more="payments"
+                  (click)="openList(tab())"
+                >
+                  {{ t + 'more' | transloco }}
+                </button>
+              }
+            </section>
+          }
+        }
+      </div>
+      @if (inlineDetail()) {
+        <aside
+          #detailCard
+          class="f-card f-manage__detail"
+          data-detail-card
+          [attr.aria-label]="t + 'detail.title' | transloco"
+        >
+          <furar-managed-booking-detail [closable]="true" [facility]="selectedFacility()" (closed)="closeDetail()" />
+        </aside>
+      }
+    </div>
+  } @else {
+    <div class="f-manage__two">
+      <section class="f-card f-manage__list" [attr.aria-labelledby]="ids.list">
+        <div class="f-manage__back">
+          <button
+            type="button"
+            furarButton
+            round
+            data-manage-back
+            [attr.aria-label]="t + 'back' | transloco"
+            (click)="goHome()"
+          >
+            <furar-icon name="arrow-left" />
+          </button>
+          <h2 [id]="ids.list">{{ t + 'list.' + origin() | transloco }}</h2>
+        </div>
+        @if (activeChips().length) {
+          <ul class="f-manage__active" [attr.aria-label]="t + 'filters.active' | transloco">
+            @for (chip of activeChips(); track chip.id) {
+              <li class="f-manage__achip" [attr.data-active]="chip.id">
+                {{ chip.label }}
+                <button
+                  type="button"
+                  [attr.aria-label]="t + 'filters.remove' | transloco: { name: chip.label }"
+                  (click)="removeFilter(chip.id)"
+                >
+                  <furar-icon name="close" />
+                </button>
+              </li>
+            }
+          </ul>
+        }
+        @let list = store.list();
+        <p class="f-manage__total" role="status" data-manage-count>
+          @if (list.state === 'ready') {
+            {{ t + (list.total === 1 ? 'countOne' : 'countOther') | transloco: { count: list.total } }}
+          }
+        </p>
+        @if (list.state === 'ready') {
+          @if (list.items.length) {
+            <furar-booking-rows
+              [items]="list.items"
+              [today]="today"
+              [showMade]="true"
+              [selectedId]="selectedId()"
+              (picked)="select($event, 'list')"
+            />
+            @if (list.items.length < list.total) {
+              <button
+                type="button"
+                furarButton
+                size="sm"
+                class="f-manage__more"
+                data-list-more
+                [busy]="list.loadingMore"
+                (click)="more()"
+              >
+                {{ t + 'more' | transloco }}
+              </button>
+            }
+          } @else {
+            <furar-status-state mode="empty" [heading]="t + 'empty.list' | transloco" />
+          }
+        } @else if (list.state === 'error') {
+          <furar-status-state mode="error" [heading]="t + 'loadError' | transloco">
+            <button type="button" furarButton (click)="refreshList()">{{ t + 'retry' | transloco }}</button>
+          </furar-status-state>
+        } @else {
+          <furar-status-state mode="skeleton" [rows]="4" [description]="t + 'loading' | transloco" />
+        }
+      </section>
+      @if (desktop()) {
+        <aside
+          #detailCard
+          class="f-card f-manage__detail"
+          data-detail-card
+          [attr.aria-label]="t + 'detail.title' | transloco"
+        >
+          @if (store.detail()) {
+            <furar-managed-booking-detail [closable]="true" [facility]="selectedFacility()" (closed)="closeDetail()" />
+          } @else {
+            <p class="f-manage__pick">{{ t + 'detail.pick' | transloco }}</p>
+          }
+        </aside>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,72 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<furar-problem-alert [problem]="saver.problem()" />
+@if (saver.problem()?.code === 'common.stale-version') {
+  <p class="mb-group">
+    <button type="button" furarButton (click)="reload()">{{ 'settings.reload' | transloco }}</button>
+  </p>
+}
+@if (tab.form(); as f) {
+  <form #formElement [formGroup]="f" novalidate (ngSubmit)="save()">
+    <furar-form-errors-summary [count]="saver.submitted() ? saver.errorCount() : 0" />
+    <div class="f-appearance" [attr.data-detail]="open() ? '' : null">
+      <div #colours class="f-appearance__colours">
+        <furar-theme-editor #editor [form]="f">
+          <p themeEditorAfter class="f-appearance__toggle">
+            <button
+              #toggle
+              type="button"
+              furarButton
+              size="sm"
+              data-preview-toggle
+              aria-controls="theme-preview"
+              [attr.aria-expanded]="open()"
+              (click)="open() ? close() : show()"
+            >
+              <furar-icon name="visibility" />
+              {{ (open() ? 'theme.preview.hide' : 'theme.preview.show') | transloco }}
+            </button>
+          </p>
+        </furar-theme-editor>
+        @let themeError = fieldError(f, saver.submitted());
+        @if (themeError; as e) {
+          <p class="f-field-error mb-group">{{ e.key | transloco: e.params }}</p>
+        }
+      </div>
+      @if (open()) {
+        <aside
+          #panel
+          id="theme-preview"
+          class="f-card f-appearance__detail"
+          data-preview
+          aria-labelledby="theme-preview-title"
+        >
+          <div class="f-appearance__head">
+            <h2 id="theme-preview-title">{{ 'theme.preview.title' | transloco }}</h2>
+            <button
+              #closer
+              type="button"
+              class="f-appearance__close"
+              data-preview-close
+              [attr.aria-label]="'theme.preview.close' | transloco"
+              (click)="close()"
+            >
+              <furar-icon name="close" />
+            </button>
+          </div>
+          <furar-theme-preview [colors]="editor.colors()" [name]="current.name() ?? ''" />
+        </aside>
+      }
+    </div>
+    <div class="f-save-actions">
+      <p class="f-save-status" role="status" data-save-status></p>
+      <button type="submit" furarButton="primary" block [busy]="saver.saving()">
+        {{ (saver.saving() ? 'common.saving' : 'common.save') | transloco }}
+      </button>
+    </div>
+  </form>
+} @else if (!saver.problem()) {
+  <furar-status-state mode="loading" />
+}

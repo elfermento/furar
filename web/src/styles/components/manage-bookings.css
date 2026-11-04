@@ -1,0 +1,560 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Reservas do concello (D2-15, maqueta 26): busca en cápsula, «Filtros» e «Calendario»; portada
+ * con «Últimas reservas» e «Cobros» en dúas columnas (desde 1100 px) e, coa reserva aberta, a súa
+ * sección aos 2/3 e o detalle ao 1/3 (fixo ao baixar, entra dende a dereita); a lista (2/3) co
+ * detalle sempre ao lado no escritorio. Filas, detalle (o deseño da tarxeta da reserva), diálogo
+ * de filtros (datas en panel con atallos e calendario de rango) e canles ao cancelar. Por debaixo
+ * de 1024 px, unha columna e o detalle en diálogo. Folla `reservas.css`: a ruta leva
+ * `bookingStylesResolver`.
+ */
+@layer components {
+  .f-manage {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+  }
+  .f-manage > h1 {
+    margin: 0 0 0.25rem;
+    font-size: 2rem;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  /* Barra: busca que estira, Filtros e Calendario. */
+  .f-manage__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .f-manage__search {
+    display: flex;
+    flex: 1 1 18rem;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0 1rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-ink-soft);
+    cursor: text;
+  }
+  .f-manage__search:focus-within {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: 2px;
+  }
+  .f-manage__search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: none;
+    color: var(--f-ink);
+    font: inherit;
+    outline: none;
+  }
+  .f-manage__tool.f-button {
+    min-height: 3rem;
+  }
+  .f-manage__count {
+    min-width: 1.25rem;
+    padding: 0 0.4375rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-size: 0.8125rem;
+    text-align: center;
+  }
+
+  /* Portada: as dúas seccións; coa reserva aberta, a escollida (2/3) e o detalle (1/3). */
+  .f-manage__home,
+  .f-manage__secs,
+  .f-manage__two {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (min-width: 68.75rem) {
+    .f-manage__secs {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .f-manage__home[data-detail],
+    .f-manage__two {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+    .f-manage__home[data-detail] .f-manage__secs {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .f-manage__sec,
+  .f-manage__list {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+  }
+  .f-manage__sec > h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.125rem;
+  }
+  .f-manage__rows {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-manage__more.f-button {
+    align-self: center;
+    margin-top: 0.75rem;
+  }
+  .f-manage__empty,
+  .f-manage__pick {
+    margin: 0;
+    padding: 1rem 0.75rem;
+    color: var(--f-ink-soft);
+  }
+  .f-manage__pick {
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+
+  /* «Cobros»: as pestanas como selector de opcións (carril tinguido, a escollida en branco). */
+  .f-manage__tabs .f-tabs__bar {
+    margin-bottom: 0.75rem;
+  }
+  /* Carril: radio de fila (non de cápsula) para que, se baixa de liña, siga sendo un bloque limpo. */
+  .f-manage__tabs .f-tabs__list {
+    gap: 0;
+    padding: 4px;
+    border-radius: calc(var(--radius-row) + 4px);
+    background: var(--f-tint);
+  }
+  .f-manage__tabs .f-tabs__tab {
+    min-height: 2.5rem;
+    padding: 0 0.75rem;
+    border-color: transparent;
+    background: transparent;
+    color: var(--f-ink-soft);
+    font-size: 0.9375rem;
+    font-weight: 700;
+  }
+  .f-manage__tabs .f-tabs__tab[aria-selected='true'] {
+    border-color: transparent;
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+    color: var(--f-ink);
+  }
+  .f-manage__n {
+    min-width: 1.25rem;
+    padding: 0 0.375rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font-size: 0.75rem;
+    text-align: center;
+  }
+  .f-manage__tabs .f-tabs__tab[aria-selected='true'] .f-manage__n {
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+
+  /* Unha reserva: botón coa persoa e o cando á esquerda e o importe e a etiqueta á dereita. */
+  .f-mrow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.25rem 1rem;
+    align-items: center;
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border: 0;
+    border-radius: var(--radius-row);
+    background: transparent;
+    color: var(--f-ink);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition: background-color var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-mrow[aria-pressed='true'] {
+    background: var(--f-page);
+    box-shadow: inset 3px 0 0 var(--f-primary);
+  }
+  @media (hover: hover) {
+    .f-mrow:hover {
+      background: var(--f-page);
+    }
+  }
+  .f-mrow__main {
+    display: grid;
+    min-width: 0;
+  }
+  .f-mrow__name,
+  .f-mrow__meta {
+    overflow-wrap: anywhere;
+  }
+  .f-mrow__meta,
+  .f-mrow__made {
+    color: var(--f-ink-soft);
+  }
+  .f-mrow__made {
+    font-size: 0.8125rem;
+  }
+  .f-mrow__when {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.125rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .f-mrow__when > .f-icon {
+    color: var(--f-primary);
+  }
+  .f-mrow__end {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem 0.75rem;
+  }
+  .f-mrow__amount {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  @media (max-width: 30rem) {
+    .f-mrow {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .f-mrow__end {
+      justify-content: flex-start;
+    }
+  }
+
+  /* Lista: volver, título, filtros postos e conta. */
+  .f-manage__back {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .f-manage__back h2 {
+    margin: 0;
+    font-size: 1.375rem;
+  }
+  .f-manage__active {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
+  }
+  .f-manage__achip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.25rem 0.125rem 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-tint);
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+  .f-manage__achip button {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--f-ink);
+    cursor: pointer;
+  }
+  .f-manage__total {
+    margin: 0 0 0.75rem;
+    color: var(--f-ink-soft);
+  }
+  .f-manage__total:empty {
+    display: none;
+  }
+
+  /* Detalle ao lado: fixo ao baixar e, se é alto, co seu propio desprazamento. */
+  .f-manage__detail {
+    position: sticky;
+    top: calc(var(--f-topbar-h, 4.5rem) + 1rem);
+    max-height: calc(100vh - var(--f-topbar-h, 4.5rem) - 2rem);
+    overflow: auto;
+    padding: 1.5rem;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .f-manage__home[data-detail] > .f-manage__detail {
+      animation: f-manage-in 0.35s var(--ease-smooth);
+    }
+  }
+  @keyframes f-manage-in {
+    from {
+      opacity: 0;
+      transform: translateX(1rem);
+    }
+  }
+
+  .f-mdetail {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .f-mdetail__close {
+    display: grid;
+    place-items: center;
+    justify-self: end;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: -0.5rem -0.5rem -1.25rem 0;
+    border: var(--f-border) solid transparent;
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--f-ink);
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .f-mdetail__close:hover {
+      background: var(--f-tint);
+    }
+  }
+  .f-mdetail__contact {
+    margin: 0;
+    padding-bottom: 1.25rem;
+    border-bottom: var(--f-border) solid var(--f-divider);
+  }
+  .f-mdetail__contact a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: var(--f-touch);
+    color: var(--f-primary-text);
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .f-mdetail__contact a:hover {
+    text-decoration: underline;
+  }
+  .f-mdetail__total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0;
+  }
+  .f-mdetail__money {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.625rem;
+  }
+  .f-mdetail__money b {
+    font-size: 1.375rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .f-mdetail__live:empty {
+    display: none;
+  }
+  .f-mdetail__acts {
+    display: grid;
+    gap: 0.5rem;
+  }
+  .f-mdetail__acts .f-button {
+    width: 100%;
+  }
+
+  /* Diálogo de filtros: títulos en negra e opcións con aire. */
+  .f-mfilters {
+    display: grid;
+    gap: 1.75rem;
+  }
+  .f-mfilters__label {
+    margin: 0 0 0.75rem;
+    font-weight: 700;
+  }
+  .f-mfilters__chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .f-mfilters__all {
+    min-height: 2.5rem;
+    padding: 0 0.5rem;
+    border: 0;
+    background: none;
+    color: var(--f-primary-text);
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  /* Datas: ligazón «Seleccionar data» ou chip co rango; panel cos atallos e o calendario. */
+  .f-mdate {
+    display: block;
+  }
+  .f-mdate__row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .f-mdate__add {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: var(--f-touch);
+    padding: 0 0.25rem;
+    border: 0;
+    background: none;
+    color: var(--f-primary-text);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .f-mdate__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-weight: 700;
+  }
+  .f-mdate__chip-open,
+  .f-mdate__chip-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.25rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  .f-mdate__chip-open {
+    padding: 0 0.5rem;
+  }
+  .f-mdate__chip-clear {
+    justify-content: center;
+    width: 2.25rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--f-on-primary) 18%, transparent);
+  }
+  .f-mdate__chip :focus-visible {
+    outline-color: var(--f-on-primary);
+  }
+  .f-mdate__panel {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-sheet);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+  }
+  .f-mdate__presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-bottom: 0.75rem;
+  }
+  .f-mdate__preset {
+    min-height: 2.5rem;
+    padding: 0 0.875rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-primary-text);
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .f-mdate__preset[aria-pressed='true'] {
+    border-color: var(--f-primary);
+    box-shadow: inset 0 0 0 1px var(--f-primary);
+    font-weight: 700;
+  }
+  .f-mdate__ok {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+  }
+  /* Calendario de rango (`rangeEnd`): os días do medio en tinte, os extremos en recheo. */
+  .f-calendar__day[data-in-range] {
+    border-color: transparent;
+    border-radius: 0;
+    background: var(--f-tint);
+    color: var(--f-ink);
+    font-weight: 400;
+  }
+
+  /* Cancelar: as canles en cápsulas con caixa. */
+  .f-mcancel__channels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    border: 0;
+  }
+  .f-mcancel__channels legend {
+    margin-bottom: 0.5rem;
+    padding: 0;
+    font-weight: 700;
+  }
+  .f-mcancel__channel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: var(--f-touch);
+    padding: 0 1rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+  }
+  .f-mcancel__channel:has(:checked) {
+    border-color: var(--f-primary);
+    background: var(--f-tint);
+  }
+  .f-mcancel__channel input {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  @media (forced-colors: active) {
+    .f-mrow[aria-pressed='true'] {
+      outline: var(--f-border-state) solid Highlight;
+    }
+    .f-manage__tabs .f-tabs__tab[aria-selected='true'] {
+      background: Highlight;
+      color: HighlightText;
+    }
+    .f-calendar__day[data-in-range] {
+      background: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+    .f-mdate__chip,
+    .f-mdate__panel {
+      border: var(--f-border) solid CanvasText;
+    }
+  }
+}

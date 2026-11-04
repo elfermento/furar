@@ -1,0 +1,84 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@if (editable()) {
+  <p class="f-help" [id]="idPrefix() + '-hint'">
+    {{
+      (deployment.map()?.enabled === false ? 'ui.map.hintNoMap' : value() ? 'ui.map.hint' : 'ui.map.hintEmpty')
+        | transloco
+    }}
+  </p>
+}
+@if (settings(); as map) {
+  <div class="f-map__frame" [attr.role]="editable() ? 'group' : null" [attr.aria-label]="editable() ? label() : null">
+    <div #canvas class="f-map__canvas" [attr.aria-hidden]="editable() ? null : 'true'"></div>
+    <!-- Só lectura: os botóns serven ao rato pero non son parada de tabulador (o enderezo é a alternativa). -->
+    <div class="f-map__zoom" [attr.aria-hidden]="editable() ? null : 'true'">
+      <button
+        type="button"
+        class="f-map__zoom-button"
+        [attr.tabindex]="editable() ? null : -1"
+        [attr.aria-label]="'ui.map.zoomIn' | transloco"
+        [disabled]="!canZoomIn()"
+        (click)="zoomBy(1)"
+      >
+        <furar-icon name="plus" />
+      </button>
+      <button
+        type="button"
+        class="f-map__zoom-button"
+        [attr.tabindex]="editable() ? null : -1"
+        [attr.aria-label]="'ui.map.zoomOut' | transloco"
+        [disabled]="!canZoomOut()"
+        (click)="zoomBy(-1)"
+      >
+        <furar-icon name="minus" />
+      </button>
+    </div>
+    <!-- Recoñecemento do servidor de teselas (FURAR_MAP_ATTRIBUTION), sempre á vista. -->
+    <p class="f-map__attribution">
+      @if (map.attributionUrl; as url) {
+        <a [href]="url" target="_blank" rel="noopener noreferrer">
+          {{ map.attribution }}
+          <span class="cdk-visually-hidden">{{ 'ui.map.newWindow' | transloco }}</span>
+        </a>
+      } @else {
+        {{ map.attribution }}
+      }
+    </p>
+  </div>
+}
+@if (editable()) {
+  <!-- Sen mapa, os campos levan o nome do punto (o grupo do mapa non existe). -->
+  <div
+    class="f-map__coords"
+    [attr.role]="settings() ? null : 'group'"
+    [attr.aria-label]="settings() ? null : label() || null"
+  >
+    @for (axis of axes; track axis) {
+      @let error = errors()[axis];
+      <furar-field
+        [fieldId]="idPrefix() + '-' + axis"
+        [label]="'ui.map.' + axis | transloco"
+        [error]="error ? { key: error, params: {} } : null"
+      >
+        <input
+          furarInput
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          spellcheck="false"
+          [id]="idPrefix() + '-' + axis"
+          [value]="coordinates()[axis]"
+          [disabled]="isDisabled()"
+          [attr.aria-invalid]="error ? 'true' : null"
+          [attr.aria-describedby]="error ? idPrefix() + '-' + axis + '-error' : null"
+          (change)="onCoordinate(axis, $event)"
+          (blur)="onTouched()"
+        />
+      </furar-field>
+    }
+  </div>
+  <p class="cdk-visually-hidden" role="status">{{ announcement() }}</p>
+}

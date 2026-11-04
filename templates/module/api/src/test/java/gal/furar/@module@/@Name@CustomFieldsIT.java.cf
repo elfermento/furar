@@ -1,0 +1,92 @@
+// SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+// SPDX-License-Identifier: EUPL-1.2
+package gal.furar.@module@;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import gal.furar.testsupport.AbstractIT;
+import gal.furar.testsupport.Api;
+import gal.furar.testsupport.TestTokens;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Campos personalizados de @Name@ (target @TARGET@, ADR-0011) por HTTP e con PostgreSQL real:
+ * validación no caso de uso, visibilidade ao ler e definicións doutro concello sen efecto.
+ */
+class @Name@CustomFieldsIT extends AbstractIT {
+
+  /** Definición usada só en @TARGET@ (especificación 1b: obrigatorio e visibilidade por uso). */
+  private static Map<String, Object> definition(String code, String type, String visibility) {
+    return Map.of(
+        "code",
+        code,
+        "type",
+        type,
+        "label",
+        Map.of("gl", "Etiqueta " + code, "es", "Etiqueta " + code),
+        "usages",
+        List.of(Map.of("target", "@TARGET@", "visibility", visibility, "required", false)));
+  }
+
+  private Api.Response create(String slug, Map<String, Object> customFields) {
+    return api()
+        .post(
+            "/api/v1/municipalities/" + slug + "/@names@",
+            Map.of("name", "Con campos", "customFields", customFields))
+        .token(TestTokens.manager(slug))
+        .send();
+  }
+
+  @Test
+  void valuesAreValidatedAndOnlyVisibleOnesAreRead() {
+    String slug = uniqueSlug("@names@-cf");
+    createMunicipality(slug);
+    createField(slug, definition("public_note", "TEXT", "PUBLIC"));
+    createField(slug, definition("internal_code", "TEXT", "STAFF"));
+
+    Api.Response created =
+        create(slug, Map.of("public_note", "Aberto", "internal_code", "X-1"));
+    assertThat(created.status()).as(created.toString()).isEqualTo(201);
+    assertThat(created.json().get("customFields").get("internal_code").asString())
+        .isEqualTo("X-1");
+
+    Api.Response anonymous =
+        api().get("/api/v1/municipalities/" + slug + "/@names@/" + id(created.json())).send();
+    assertThat(anonymous.json().get("customFields").get("public_note").asString())
+        .isEqualTo("Aberto");
+    assertThat(anonymous.json().get("customFields").has("internal_code")).isFalse();
+
+    Api.Response list = api().get("/api/v1/municipalities/" + slug + "/@names@").send();
+    assertThat(list.json().get("items").get(0).get("customFields").has("internal_code"))
+        .isFalse();
+  }
+
+  @Test
+  void unknownOrInvalidValuesAreRejectedWithTheFieldCode() {
+    String slug = uniqueSlug("@names@-cf");
+    createMunicipality(slug);
+    createField(slug, definition("seats", "NUMBER", "PUBLIC"));
+
+    Api.Response unknown = create(slug, Map.of("not_defined", "x"));
+    assertThat(unknown.status()).isEqualTo(400);
+    assertThat(unknown.contentType()).startsWith("application/problem+json");
+
+    Api.Response invalid = create(slug, Map.of("seats", "moitas"));
+    assertThat(invalid.status()).isEqualTo(400);
+    assertThat(invalid.json().get("code").asString()).isEqualTo("validation.failed");
+  }
+
+  @Test
+  void definitionsOfAnotherMunicipalityDoNotApply() {
+    String a = uniqueSlug("@names@-a");
+    String b = uniqueSlug("@names@-b");
+    createMunicipality(a);
+    createMunicipality(b);
+    createField(b, definition("only_in_b", "TEXT", "PUBLIC"));
+
+    assertThat(create(a, Map.of("only_in_b", "x")).status()).isEqualTo(400);
+    assertThat(create(b, Map.of("only_in_b", "x")).status()).isEqualTo(201);
+  }
+}

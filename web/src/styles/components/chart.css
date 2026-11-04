@@ -1,0 +1,38 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Gráfico (furar-chart, ADR-0026): un bloque co alto do tamaño (`data-size`) ou o de
+ * `--f-chart-height`, que o compoñente pon por CSSOM. ECharts debuxa no canvas de dentro e mide
+ * este bloque; `min-width: 0` deixa que encolla nunha grella.
+ */
+@layer components {
+  .f-chart {
+    display: block;
+    position: relative;
+    inline-size: 100%;
+    min-inline-size: 0;
+    block-size: var(--f-chart-height, 16rem);
+  }
+  .f-chart[data-size='spark'] {
+    block-size: var(--f-chart-height, 2.5rem);
+  }
+  .f-chart[data-size='sm'] {
+    block-size: var(--f-chart-height, 10rem);
+  }
+  .f-chart[data-size='lg'] {
+    block-size: var(--f-chart-height, 22rem);
+  }
+  .f-chart__canvas {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+  /* A imaxe que substitúe o canvas ao imprimir (print-charts.ts), co mesmo sitio. */
+  .f-chart__print {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+    object-position: left top;
+  }
+}

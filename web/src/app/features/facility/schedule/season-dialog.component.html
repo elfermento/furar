@@ -1,0 +1,95 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.schedule.seasonDialog.';
+<furar-dialog [heading]="t + 'addTitle' | transloco" [busy]="busy()">
+  <form
+    class="gap-form grid"
+    novalidate
+    [id]="id"
+    [formGroup]="form"
+    [attr.inert]="busy() ? '' : null"
+    (submit)="submit($event)"
+  >
+    <furar-required-note />
+    <furar-field
+      [fieldId]="id + '-name'"
+      [label]="t + 'name' | transloco"
+      [required]="true"
+      [help]="t + 'nameHelp' | transloco"
+      [error]="errors().name"
+    >
+      <input
+        furarInput
+        formControlName="name"
+        aria-required="true"
+        autocomplete="off"
+        [id]="id + '-name'"
+        [attr.aria-invalid]="errors().name ? 'true' : null"
+        [attr.aria-describedby]="describedBy(id + '-name', true, errors().name)"
+      />
+    </furar-field>
+
+    <div class="f-field-row">
+      <furar-field
+        [fieldId]="id + '-start'"
+        [label]="t + 'from' | transloco"
+        [required]="true"
+        [error]="errors().startDate"
+      >
+        <furar-date-field
+          required
+          formControlName="startDate"
+          [buttonId]="id + '-start'"
+          [label]="t + 'from' | transloco"
+          [invalid]="!!errors().startDate"
+          [describedBy]="errors().startDate ? id + '-start-error' : null"
+        />
+      </furar-field>
+      <div class="gap-unit grid content-start">
+        <furar-field
+          [fieldId]="id + '-end'"
+          [label]="t + 'to' | transloco"
+          [required]="!noEnd()"
+          [error]="errors().endDate"
+        >
+          <furar-date-field
+            required
+            formControlName="endDate"
+            [buttonId]="id + '-end'"
+            [label]="t + 'to' | transloco"
+            [min]="start()"
+            [invalid]="!!errors().endDate"
+            [describedBy]="errors().endDate ? id + '-end-error' : null"
+          />
+        </furar-field>
+        <label class="gap-unit flex min-h-11 cursor-pointer items-center">
+          <input type="checkbox" class="size-5 flex-none" formControlName="noEnd" data-season-no-end />
+          {{ t + 'noEnd' | transloco }}
+        </label>
+      </div>
+    </div>
+
+    <furar-field [fieldId]="id + '-copy'" [label]="t + 'copyFrom' | transloco" [error]="errors().copyFrom">
+      <furar-select
+        formControlName="copyFrom"
+        [selectId]="id + '-copy'"
+        [label]="t + 'copyFrom' | transloco"
+        [options]="seasonOptions.concat([{ value: '', label: (t + 'copyNone' | transloco) }])"
+        [invalid]="!!errors().copyFrom"
+        [describedBy]="errors().copyFrom ? id + '-copy-error' : null"
+      />
+    </furar-field>
+
+    <furar-problem-alert [problem]="problem()" />
+  </form>
+  <ng-container dialogActions>
+    <button type="button" furarButton="quiet" data-cancel (click)="ref.close()">
+      {{ t + 'cancel' | transloco }}
+    </button>
+    <button type="submit" furarButton="primary" data-save [attr.form]="id" [busy]="busy()">
+      {{ 'facility.detail.edit.apply' | transloco }}
+    </button>
+  </ng-container>
+</furar-dialog>

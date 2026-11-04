@@ -1,0 +1,159 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let def = definition();
+@let ctl = control();
+@switch (def.type) {
+  @case ('BOOLEAN') {
+    <fieldset [attr.aria-describedby]="describedBy()" [attr.aria-invalid]="error() ? 'true' : null">
+      <legend class="label">
+        {{ label() }}
+        @if (def.required) {
+          <furar-required-mark />
+        }
+      </legend>
+      @if (help()) {
+        <span class="help" [id]="helpId()">{{ help() }}</span>
+      }
+      <div class="gap-item flex flex-wrap">
+        <label class="inline-flex min-h-11 items-center gap-unit">
+          <input
+            type="radio"
+            class="size-5"
+            [formControl]="ctl"
+            [value]="true"
+            [name]="id()"
+            [attr.name]="id()"
+            [id]="id()"
+          />
+          {{ 'common.yes' | transloco }}
+        </label>
+        <label class="inline-flex min-h-11 items-center gap-unit">
+          <input type="radio" class="size-5" [formControl]="ctl" [value]="false" [name]="id()" [attr.name]="id()" />
+          {{ 'common.no' | transloco }}
+        </label>
+      </div>
+      @if (error(); as e) {
+        <span class="field-error" [id]="errorId()">{{ e.key | transloco: e.params }}</span>
+      }
+    </fieldset>
+  }
+  @case ('MULTI_SELECT') {
+    <fieldset [attr.aria-describedby]="describedBy()" [attr.aria-invalid]="error() ? 'true' : null">
+      <legend class="label">
+        {{ label() }}
+        @if (def.required) {
+          <furar-required-mark />
+        }
+      </legend>
+      @if (help()) {
+        <span class="help" [id]="helpId()">{{ help() }}</span>
+      }
+      <div class="flex flex-col">
+        @for (option of options(); track option.code; let first = $first) {
+          <label class="inline-flex min-h-11 items-center gap-unit">
+            <input
+              type="checkbox"
+              class="size-5"
+              [id]="first ? id() : id() + '-' + option.code"
+              [checked]="isChecked(option.code)"
+              (change)="toggle(option.code, $event)"
+            />
+            {{ option.label }}
+          </label>
+        }
+      </div>
+      @if (error(); as e) {
+        <span class="field-error" [id]="errorId()">{{ e.key | transloco: e.params }}</span>
+      }
+    </fieldset>
+  }
+  @default {
+    <label class="label" [for]="id()">
+      {{ label() }}
+      @if (def.required) {
+        <furar-required-mark />
+      }
+    </label>
+    @if (help()) {
+      <span class="help" [id]="helpId()">{{ help() }}</span>
+    }
+    @switch (def.type) {
+      @case ('LONG_TEXT') {
+        <textarea
+          class="input min-h-32"
+          [id]="id()"
+          [formControl]="ctl"
+          [attr.aria-describedby]="describedBy()"
+          [attr.aria-invalid]="error() ? 'true' : null"
+          [attr.aria-required]="def.required"
+          [attr.maxlength]="def.rules.maxLength ?? 5000"
+        ></textarea>
+      }
+      @case ('NUMBER') {
+        <input
+          type="number"
+          class="input"
+          [id]="id()"
+          [formControl]="ctl"
+          [step]="step()"
+          [attr.min]="def.rules.min ?? null"
+          [attr.max]="def.rules.max ?? null"
+          [attr.aria-describedby]="describedBy()"
+          [attr.aria-invalid]="error() ? 'true' : null"
+          [attr.aria-required]="def.required"
+        />
+      }
+      @case ('DATE') {
+        <input
+          type="date"
+          class="input"
+          [id]="id()"
+          [formControl]="ctl"
+          [attr.min]="def.rules.minDate ?? null"
+          [attr.max]="def.rules.maxDate ?? null"
+          [attr.aria-describedby]="describedBy()"
+          [attr.aria-invalid]="error() ? 'true' : null"
+          [attr.aria-required]="def.required"
+        />
+      }
+      @case ('SELECT') {
+        <!-- O botón non admite aria-required: «(obrigatorio)» vai no nome accesible (required). -->
+        <furar-select
+          [selectId]="id()"
+          [formControl]="ctl"
+          [label]="label()"
+          [required]="def.required"
+          [options]="selectOptions()"
+          [invalid]="!!error()"
+          [describedBy]="describedBy()"
+        />
+      }
+      @default {
+        <input
+          class="input"
+          [type]="
+            def.rules.format === 'EMAIL'
+              ? 'email'
+              : def.rules.format === 'PHONE'
+                ? 'tel'
+                : def.rules.format === 'URL'
+                  ? 'url'
+                  : 'text'
+          "
+          [attr.autocomplete]="def.rules.format === 'EMAIL' ? 'email' : def.rules.format === 'PHONE' ? 'tel' : 'off'"
+          [id]="id()"
+          [formControl]="ctl"
+          [attr.aria-describedby]="describedBy()"
+          [attr.aria-invalid]="error() ? 'true' : null"
+          [attr.aria-required]="def.required"
+          [attr.maxlength]="def.rules.maxLength ?? 500"
+        />
+      }
+    }
+    @if (error(); as e) {
+      <span class="field-error" [id]="errorId()">{{ e.key | transloco: e.params }}</span>
+    }
+  }
+}

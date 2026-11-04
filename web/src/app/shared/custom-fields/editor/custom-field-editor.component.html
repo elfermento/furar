@@ -1,0 +1,134 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<div class="gap-group grid items-start lg:grid-cols-[minmax(0,1fr)_20rem]">
+  <form #editorForm [formGroup]="form" novalidate (ngSubmit)="submit()">
+    <furar-problem-alert [problem]="problem()" />
+    <furar-form-errors-summary [count]="submitted() ? errorCount() : 0" />
+    <furar-required-note />
+
+    <furar-place-editor
+      [form]="form"
+      [target]="target()"
+      [personalData]="personalData()"
+      [locked]="placeLocked()"
+      [personalPublic]="personalPublic()"
+      [serverError]="visibilityError()"
+    />
+
+    <furar-card class="mb-group">
+      <div class="f-field-row grid-cols-1 sm:grid-cols-2">
+        @for (name of ['labelGl', 'labelEs', 'helpGl', 'helpEs']; track name) {
+          @let control = form.get(name);
+          @let error = fieldError(control, submitted());
+          @let id = 'def-' + name;
+          <div class="f-field" [attr.lang]="name.endsWith('Gl') ? 'gl' : 'es'">
+            <label class="label" [for]="id">
+              {{ 'customFields.editor.' + name | transloco }}
+              @if (name.startsWith('label')) {
+                <furar-required-mark />
+              }
+            </label>
+            <input
+              class="input"
+              [id]="id"
+              [formControlName]="name"
+              [attr.aria-required]="name.startsWith('label') || null"
+              [attr.aria-invalid]="error ? 'true' : null"
+              [attr.aria-describedby]="describedBy(id, false, error)"
+            />
+            @if (error; as e) {
+              <span class="field-error" [id]="id + '-error'">{{ e.key | transloco: e.params }}</span>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="mt-form f-field-row grid-cols-1 sm:grid-cols-2">
+        @let codeError = fieldError(form.controls.code, submitted());
+        <div class="f-field">
+          <label class="label" for="def-code">
+            {{ 'customFields.editor.code' | transloco }}
+            <furar-required-mark />
+          </label>
+          <span class="help" id="def-code-help">{{
+            (definition() ? 'customFields.editor.codeLocked' : 'customFields.editor.codeHelp') | transloco
+          }}</span>
+          <input
+            id="def-code"
+            class="input font-mono"
+            formControlName="code"
+            autocomplete="off"
+            spellcheck="false"
+            aria-required="true"
+            [attr.aria-invalid]="codeError ? 'true' : null"
+            [attr.aria-describedby]="describedBy('def-code', true, codeError)"
+          />
+          @if (codeError; as e) {
+            <span class="field-error" id="def-code-error">{{ e.key | transloco: e.params }}</span>
+          }
+        </div>
+        <div class="f-field">
+          <label class="label" for="def-type">{{ 'customFields.editor.type' | transloco }}</label>
+          @if (definition()) {
+            <span class="help" id="def-type-help">{{ 'customFields.editor.typeLocked' | transloco }}</span>
+          }
+          <furar-select
+            selectId="def-type"
+            formControlName="type"
+            [label]="'customFields.editor.type' | transloco"
+            [options]="types | furarOptions: 'customFields.type.' : lang()"
+            [describedBy]="definition() ? 'def-type-help' : null"
+          />
+        </div>
+      </div>
+
+      <div class="mt-form gap-unit flex flex-col">
+        <label class="inline-flex min-h-11 items-center gap-unit">
+          <input
+            id="def-personalData"
+            type="checkbox"
+            class="size-5"
+            formControlName="personalData"
+            aria-describedby="def-personal-help def-personal-warning"
+          />
+          {{ 'customFields.editor.personalData' | transloco }}
+        </label>
+        <span class="help" id="def-personal-help">{{ 'customFields.editor.personalDataHelp' | transloco }}</span>
+        <!-- Sempre no DOM: aria-live anuncia o aviso ao marcar a caixa. -->
+        <div id="def-personal-warning" aria-live="polite">
+          @if (personalData()) {
+            <furar-callout tone="warn">
+              <p>
+                <strong>{{ 'customFields.editor.personalDataWarningTitle' | transloco }}</strong>
+                {{ 'customFields.editor.personalDataWarning' | transloco }}
+              </p>
+            </furar-callout>
+          }
+        </div>
+      </div>
+    </furar-card>
+
+    <furar-rules-editor [form]="form.controls.rules" [type]="type()" />
+    @if (choice()) {
+      <furar-options-editor [options]="form.controls.options" [submitted]="submitted()" [lang]="lang()" />
+    }
+
+    @for (error of formErrors(); track error.key) {
+      @if (submitted()) {
+        <p class="field-error mb-item">{{ error.key | transloco: error.params }}</p>
+      }
+    }
+
+    <div class="gap-item flex flex-wrap">
+      <button type="submit" furarButton="primary" [busy]="saving()">
+        {{ 'common.save' | transloco }}
+      </button>
+      <button type="button" furarButton (click)="cancelled.emit()">{{ 'common.cancel' | transloco }}</button>
+    </div>
+  </form>
+  <aside class="lg:top-item lg:sticky">
+    <furar-custom-field-preview [definition]="preview()" />
+  </aside>
+</div>
