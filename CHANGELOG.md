@@ -9,6 +9,14 @@ Formato [Keep a Changelog](https://keepachangelog.com/gl/1.1.0/) e versións [Se
 
 ## [Sen publicar]
 
+## [0.1.3] - 2026-11-05
+
+### Engadido
+- `instalar.sh` comproba o DNS e os portos antes de descargar nada, só co resolvedor e as interfaces do servidor (sen servizos de fóra). Se o nome non resolve, para e di que rexistro pedir a quen leva o dominio (nome, tipo A/AAAA e a IP do servidor); `--sen-comprobar-dns` sáltao. Se resolve a outra IP, só avisa (NAT ou firewall que reenvía os portos). Se outro programa usa o 80 ou o 443 (non a web de Furar xa en marcha), para. `--comprobar-rede` fai só esta comprobación. `docs/instalacion.md` §1 trae o texto para pedir o rexistro DNS.
+
+### Cambiado
+- `compose.prod.yaml` declara `restart: unless-stopped` en postgres, keycloak, api e web (e `restart: "no"` en migrate). Ata agora herdábao de `compose.yaml`; explícito, a produción non depende del. Tras un reinicio do servidor Furar volve só se Docker arrinca co sistema (`systemctl enable docker`, `docs/instalacion.md` §1 e §8).
+
 ## [0.1.2] - 2026-11-05
 
 ### Corrixido

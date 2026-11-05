@@ -6,6 +6,8 @@
 # Non compila nada: imaxes publicadas pola CI no rexistro da forxa ($FURAR_REGISTRY, sen valor por defecto), fixadas por versión e digest.
 # Esixe os segredos en .env (sen eles, `config` falla: D39). Realm sen usuarios.
 # Arrinca postgres, migrate (sae ao rematar), keycloak, api e web sen --profile; Mailpit non.
+# Os catro servizos que quedan en marcha levan restart: unless-stopped aquí, sen depender de
+# compose.yaml: tras un reinicio do servidor volven sós (co Docker activado no arranque); migrate non.
 # Volume propio (pgdata-prod, SEC-09): unha base creada antes co perfil full (realm de demo,
 # usuarios con contrasinal público, cliente furar-e2e) nunca se reutiliza en produción.
 # Administración de Keycloak: pechada en Caddy por defecto; só por túnel SSH a 127.0.0.1:8082.
@@ -17,6 +19,7 @@ name: furar
 services:
   postgres:
     profiles: !reset []
+    restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en .env}
       FURAR_DB_OWNER_PASSWORD: ${FURAR_DB_OWNER_PASSWORD:?Define FURAR_DB_OWNER_PASSWORD en .env}
@@ -28,6 +31,7 @@ services:
 
   keycloak:
     profiles: !reset []
+    restart: unless-stopped
     image: ${FURAR_REGISTRY:?Define FURAR_REGISTRY en .env (furar-<versión>.env da release)}/furar-keycloak:${FURAR_VERSION:?Define FURAR_VERSION en .env}@sha256:${FURAR_KEYCLOAK_DIGEST:?Define FURAR_KEYCLOAK_DIGEST en .env}
     build: !reset null
     pull_policy: missing
@@ -58,6 +62,8 @@ services:
   # Mesma imaxe ca a API, co argumento migrate: o único proceso co contrasinal do dono (SEC2-03).
   migrate:
     profiles: !reset []
+    # Sae con 0 ao rematar: reiniciala repetiría as migracións en bucle.
+    restart: "no"
     image: ${FURAR_REGISTRY:?Define FURAR_REGISTRY en .env (furar-<versión>.env da release)}/furar-api:${FURAR_VERSION:?Define FURAR_VERSION en .env}@sha256:${FURAR_API_DIGEST:?Define FURAR_API_DIGEST en .env}
     pull_policy: missing
     environment:
@@ -66,6 +72,7 @@ services:
 
   api:
     profiles: !reset []
+    restart: unless-stopped
     image: ${FURAR_REGISTRY:?Define FURAR_REGISTRY en .env (furar-<versión>.env da release)}/furar-api:${FURAR_VERSION:?Define FURAR_VERSION en .env}@sha256:${FURAR_API_DIGEST:?Define FURAR_API_DIGEST en .env}
     build: !reset null
     pull_policy: missing
@@ -97,6 +104,7 @@ services:
 
   web:
     profiles: !reset []
+    restart: unless-stopped
     image: ${FURAR_REGISTRY:?Define FURAR_REGISTRY en .env (furar-<versión>.env da release)}/furar-web:${FURAR_VERSION:?Define FURAR_VERSION en .env}@sha256:${FURAR_WEB_DIGEST:?Define FURAR_WEB_DIGEST en .env}
     build: !reset null
     pull_policy: missing

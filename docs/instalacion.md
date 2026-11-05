@@ -12,8 +12,14 @@ A instalación de produción próbase en cada verificación (D48, `scripts/proba
 ## 1. Que fai falta
 
 - [ ] **Servidor** Linux x86-64 (amd64) ou ARM64 (arm64) con 4 GB de RAM, 2 vCPU e 20 GB de disco. Mellor aloxado na UE (RGPD). As imaxes publícanse para as dúas arquitecturas e Docker descarga a do servidor; v0.1.0 só para amd64 (§11).
-- [ ] **Docker** Engine 24 ou posterior con Docker Compose 2.24.4 ou posterior (`docker compose version`), `git` e `openssl`.
+- [ ] **Docker** Engine 24 ou posterior con Docker Compose 2.24.4 ou posterior (`docker compose version`), `git` e `openssl`, e que arrinque co sistema (`sudo systemctl enable docker`): así Furar volve só despois dun reinicio (§8).
 - [ ] **Un nome DNS** (p. ex. `reservas.concello.gal`) que apunte á IP do servidor.
+
+  Créao o concello (ou quen leva o seu dominio ou o aloxamento), non Furar. Texto para pedilo:
+
+  > Para o servizo de reservas deportivas, creade no dominio `concello.gal` un rexistro DNS de tipo **A** co nome `reservas` (`reservas.concello.gal`) que apunte á IP `203.0.113.10`; se o servidor ten IPv6, tamén un **AAAA** coa súa IPv6. E abride desde Internet os portos **80 e 443** (TCP) cara a ese servidor: o 80 fai falta para o certificado HTTPS.
+
+  Pon o nome e a IP pública do servidor (detrás dun NAT, a do router). Para saber se xa resolve: `scripts/instalar.sh --comprobar-rede --dominio reservas.concello.gal`.
 - [ ] **Portos 80 e 443** abertos desde Internet. O resto, pechado. Saída a Internet (directa ou por proxy) só cara aos destinos do §13.
 - [ ] **Correo saínte (SMTP)** do concello: servidor, porto e cifrado, usuario, contrasinal e o enderezo que envía (§2, «Correo saínte»). Serve para os correos das contas e das reservas.
 - [ ] **Datos legais do concello** (para despois da instalación, na web), revisados co DPD: denominación, NIF, domicilio, correo xeral, correo e teléfono do DPD e, se outra entidade aloxa o servizo, o encargado.
@@ -68,18 +74,19 @@ O mesmo servidor envía os correos das contas (Keycloak: verificación e contras
 **Que fai**, por orde:
 
 1. Comproba que Docker está en marcha e que está o ficheiro da release.
-2. Xera todos os contrasinais e segredos con `openssl`: non hai que inventar ningún.
-3. Escribe `.env` en modo produción e con permisos 600. Se xa hai un `.env`, pregunta antes; se o substitúe, garda unha copia e conserva os contrasinais (a base xa creada só coñece eses).
-4. Pasa `scripts/preflight.sh` (Docker, Compose, memoria e `.env` completo).
-5. Descarga as imaxes (`docker compose pull`) e envía o correo de proba («Correo saínte»).
-6. Arrinca (`docker compose up -d --wait`) e comproba `https://…/healthz`: distingue se aínda non responde ou se responde cun certificado que este equipo aínda non dá por bo (normal uns minutos, mentres Let's Encrypt o emite, ou cunha CA interna).
-7. Di o enderezo que tes que abrir.
+2. Comproba, sen preguntar a ningún servizo de fóra, que o nome resolve e que os portos 80 e 443 están libres. Se o nome non resolve, para e di que pedir (§1); se resolve a unha IP que non é deste equipo, só avisa (normal detrás dun NAT ou dun firewall que reenvía os portos). Se outro programa (p. ex. outro servidor web) usa o 80 ou o 443, para.
+3. Xera todos os contrasinais e segredos con `openssl`: non hai que inventar ningún.
+4. Escribe `.env` en modo produción e con permisos 600. Se xa hai un `.env`, pregunta antes; se o substitúe, garda unha copia e conserva os contrasinais (a base xa creada só coñece eses).
+5. Pasa `scripts/preflight.sh` (Docker, Compose, memoria e `.env` completo).
+6. Descarga as imaxes (`docker compose pull`) e envía o correo de proba («Correo saínte»).
+7. Arrinca (`docker compose up -d --wait`) e comproba `https://…/healthz`: distingue se aínda non responde ou se responde cun certificado que este equipo aínda non dá por bo (normal uns minutos, mentres Let's Encrypt o emite, ou cunha CA interna).
+8. Di o enderezo que tes que abrir.
 
 O primeiro arranque tarda uns 2 minutos: PostgreSQL crea as bases, Keycloak importa o realm `furar`, o servizo `migrate` aplica as migracións e sae (`Exited (0)` en `docker compose ps -a` é o normal) e arrinca a API. Caddy pide o certificado HTTPS a Let's Encrypt: o DNS e o porto 80 teñen que estar xa listos.
 
 Comprobación: `curl -fsS https://reservas.concello.gal/healthz` responde `ok` e `docker compose ps` mostra os catro servizos `healthy`.
 
-**Sen preguntas** (automatización): `scripts/instalar.sh --si --dominio … --correo-admin … --smtp-servidor … --smtp-cifrado starttls|ssl|ningun`, ou cos mesmos datos en variables de contorno (`FURAR_SMTP_PASSWORD` para o contrasinal, mellor ca nunha opción). Se o correo de proba falla, para; `--sen-correo-de-proba` sáltao. `--so-configurar` escribe o `.env` sen arrincar; `--axuda` lista todas as opcións.
+**Sen preguntas** (automatización): `scripts/instalar.sh --si --dominio … --correo-admin … --smtp-servidor … --smtp-cifrado starttls|ssl|ningun`, ou cos mesmos datos en variables de contorno (`FURAR_SMTP_PASSWORD` para o contrasinal, mellor ca nunha opción). Se o correo de proba falla, para; `--sen-correo-de-proba` sáltao. Se o nome non resolve, tamén para; `--sen-comprobar-dns` sáltao (p. ex. un nome só da rede interna). `--so-configurar` escribe o `.env` sen arrincar; `--axuda` lista todas as opcións.
 
 Os datos de produción van nun volume propio (`pgdata-prod`): se antes probaches o perfil `full` no mesmo servidor (§10), os seus usuarios de demo **non** pasan a produción.
 
@@ -200,6 +207,7 @@ O realm de Keycloak só se importa na primeira instalación: os cambios de realm
 | Buscar unha petición | Os rexistros da API son JSON ECS: `docker compose logs api \| grep '<X-Request-Id>'` (a cabeceira vén en cada resposta) |
 | Métricas | `docker compose exec api wget -qO- http://127.0.0.1:9081/actuator/metrics/http.server.requests` (porto interno, non publicado) |
 | Reiniciar | `docker compose restart api` |
+| Reinicio do servidor | Os servizos volven sós (`restart: unless-stopped`) se Docker arrinca co sistema (`sudo systemctl enable docker`). Os parados a man (`docker compose stop` ou `down`) non: `docker compose up -d --wait` |
 | Parar sen perder datos | `docker compose down` (nunca `down -v`: borra a base de datos) |
 | Memoria | `docker stats --no-stream` |
 | Levar os datos dun concello a outra instalación | Xestión: `GET /api/v1/municipalities/<slug>/export` (ficheiro `furar-export-<slug>-<data>.json`); na nova, a plataforma: `POST /api/v1/municipality-imports` co ficheiro ([ADR-0018](adr/0018-portabilidade.md)) |
@@ -225,6 +233,8 @@ A base nova nace cos contrasinais do `.env` (`--substituir` consérvaos); a cont
 | Síntoma | Causa habitual |
 |---|---|
 | `instalar.sh` di «Falta o ficheiro furar-<versión>.env» | Descárgao de *Releases*, da mesma versión ca o código, e déixao no cartafol de Furar (§2). |
+| `instalar.sh` di «non resolve no DNS» | Aínda non existe o rexistro do nome ou non se propagou (unhas horas): pídeo co texto do §1. `scripts/instalar.sh --comprobar-rede` repite a comprobación. |
+| `instalar.sh` di «Portos ocupados por outro programa» | Outro servidor web (nginx, apache2) ou outro proxecto usa o 80 ou o 443: `sudo ss -ltnp \| grep -E ':(80\|443) '` di cal; páralo e desactívao (`sudo systemctl disable --now nginx`). |
 | `instalar.sh` di «xa hai unha base doutra instalación» | Hai un volume `furar_pgdata-prod` dunha instalación anterior e o `.env` é novo, con outros contrasinais: recupera o `.env` anterior ou borra a base (§8, «Empezar de cero»). |
 | `required variable … is missing a value` | Falta ese valor en `.env`: `scripts/instalar.sh --substituir` volve preguntar os datos e conserva os contrasinais. |
 | A API reinicia e o rexistro di `Refusing to start with profile 'prod'` | Contrasinal curto ou de demo, ou `FURAR_PUBLIC_URL` sen `https`. |

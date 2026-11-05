@@ -5,7 +5,7 @@
 # Instalación nun servidor do concello (docs/instalacion.md §2). Pregunta só o imprescindible
 # (dominio, correo de quen administra e SMTP), xera todos os segredos,
 # toma as imaxes do ficheiro furar-<versión>.env da release, escribe .env (chmod 600, modo
-# produción), pasa scripts/preflight.sh, descarga as imaxes, envía un correo de proba polo SMTP
+# produción), comproba o DNS do nome e os portos 80 e 443, pasa scripts/preflight.sh, descarga as imaxes, envía un correo de proba polo SMTP
 # (antes do primeiro arranque: Keycloak só le o SMTP nese momento) e arrinca con `up -d --wait`
 # (se Keycloak segue arrincando cando Compose rende, agarda ata 15 minutos máis e volve).
 # O resto do .env queda cos valores por defecto (docs/instalacion.md §4). Os datos de privacidade
@@ -37,6 +37,9 @@ variable de contorno (entre parénteses) ou do .env que xa exista; en modo --si 
   --probar-correo           só envía o correo de proba co .env actual (a --correo-admin ou a
                             FURAR_ADMIN_EMAIL) e di se o servidor SMTP o aceptou
   --sen-correo-de-proba     instala sen o correo de proba (non recomendado)
+  --comprobar-rede          só comproba o DNS do nome (--dominio ou o do .env) e que os
+                            portos 80 e 443 están libres, e para
+  --sen-comprobar-dns       non para se o nome non resolve (p. ex. un nome só da rede interna)
   --autoproba               proba o script nun cartafol temporal, sen Docker
   --axuda                   esta axuda
 AXUDA
@@ -44,6 +47,7 @@ AXUDA
 
 # --- Opcións ----------------------------------------------------------------------------------
 si=0 substituir=0 so_configurar=0 release="" so_probar_correo=0 sen_proba=0
+so_comprobar_rede=0 sen_dns=0 rede_comprobada=0
 op_dominio="" op_correo="" op_host="" op_porto="" op_usuario="" op_contrasinal="" op_remitente=""
 op_cifrado=""
 # Respostas: as enche preguntar() con printf -v.
@@ -58,6 +62,8 @@ while (($#)); do
     --autoproba) autoproba=1 ;;
     --probar-correo) so_probar_correo=1 ;;
     --sen-correo-de-proba) sen_proba=1 ;;
+    --comprobar-rede) so_comprobar_rede=1 ;;
+    --sen-comprobar-dns) sen_dns=1 ;;
     --dominio | --correo-admin | --smtp-servidor | --smtp-cifrado | --smtp-porto | --smtp-usuario | \
       --smtp-contrasinal | --smtp-remitente | --release)
       (($# >= 2)) || falla "$1 precisa un valor (--axuda)"
@@ -159,6 +165,48 @@ DOCKER
   grep -q 'segredo' <<<"$saida" && falla "a saída leva o contrasinal SMTP"
   esperar "destinatario de --correo-admin" "$(tail -1 "$log" | awk '{print $NF}')" x@proba.gal
   ok "correo de proba: aceptado, rexeitado co motivo e sen segredos"
+  # DNS e portos (--comprobar-rede) cun resolvedor, interfaces, ss e docker simulados.
+  mkdir -p "$t/rede"
+  cat >"$t/rede/getent" <<'FALSO'
+#!/usr/bin/env bash
+[[ $1 == ahosts && -n ${FAKE_DNS:-} ]] || exit 2
+for a in $FAKE_DNS; do printf '%s       STREAM %s\n' "$a" "$2"; done
+FALSO
+  cat >"$t/rede/ip" <<'FALSO'
+#!/usr/bin/env bash
+printf '1: lo    inet 127.0.0.1/8 scope host lo\n'
+for a in ${FAKE_IPS:-}; do printf '2: eth0    inet %s/24 brd 192.0.2.255 scope global eth0\n' "$a"; done
+FALSO
+  cat >"$t/rede/ss" <<'FALSO'
+#!/usr/bin/env bash
+for p in ${FAKE_OCUPADOS:-}; do printf 'LISTEN 0 511 0.0.0.0:%s 0.0.0.0:* users:(("nginx",pid=9,fd=6))\n' "$p"; done
+FALSO
+  cat >"$t/rede/docker" <<'FALSO'
+#!/usr/bin/env bash
+case $1 in
+  ps) [[ -z ${FAKE_WEB:-} ]] || echo c0ffee ;;
+  port) for p in ${FAKE_WEB:-}; do echo "8080/tcp -> 0.0.0.0:$p"; done ;;
+esac
+FALSO
+  chmod +x "$t/rede/"*
+  rede() { limpo PATH="$t/rede:$PATH" FAKE_IPS=192.0.2.10 "$@" "$i" --comprobar-rede --dominio reservas.proba.gal 2>&1; }
+  saida=$(rede FAKE_DNS=192.0.2.10) || falla "DNS a este servidor: $saida"
+  grep -q 'resolve a 192.0.2.10 (este servidor)' <<<"$saida" || falla "sen «este servidor»: $saida"
+  grep -q 'porto 443 libre' <<<"$saida" || falla "sen «porto 443 libre»: $saida"
+  saida=$(rede FAKE_DNS=) && falla "un nome que non resolve non para"
+  for s in 'nome:  reservas.proba.gal' 'tipo:  A' 'IPs deste equipo: 192.0.2.10' '--sen-comprobar-dns'; do
+    grep -qF -- "$s" <<<"$saida" || falla "sen DNS, a mensaxe non leva «$s»: $saida"
+  done
+  saida=$(limpo PATH="$t/rede:$PATH" FAKE_IPS=192.0.2.10 "$i" --comprobar-rede --sen-comprobar-dns --dominio reservas.proba.gal 2>&1) \
+    || falla "--sen-comprobar-dns segue parando: $saida"
+  saida=$(rede FAKE_DNS='203.0.113.7 192.0.2.10') || falla "outra IP non debe parar: $saida"
+  grep -q 'resolve a 203.0.113.7, pero este equipo ten 192.0.2.10' <<<"$saida" || falla "sen aviso de outra IP: $saida"
+  saida=$(rede FAKE_DNS=127.0.1.1) || falla "loopback non debe parar: $saida"
+  grep -q 'resolve só a enderezos locais' <<<"$saida" || falla "sen aviso de loopback: $saida"
+  saida=$(rede FAKE_DNS=192.0.2.10 FAKE_OCUPADOS=80) && falla "o porto 80 ocupado non para"
+  grep -q 'Portos ocupados por outro programa: 80 (nginx)' <<<"$saida" || falla "sen «porto 80 (nginx)»: $saida"
+  saida=$(rede FAKE_DNS=192.0.2.10 FAKE_OCUPADOS='80 443' FAKE_WEB='80 443') || falla "os portos da web de Furar paran: $saida"
+  ok "DNS e portos: para sen DNS (co texto do rexistro) ou co porto doutro programa; outra IP e loopback só avisan"
   # 3. Entradas incorrectas e falta de release.
   rm -f "$e"
   limpo "$i" --si --so-configurar --dominio 'non vale' >/dev/null 2>&1 && falla "acepta un dominio incorrecto"
@@ -285,6 +333,124 @@ para_env() {
   if [[ $1 =~ ^[A-Za-z0-9._:/@+=,-]*$ ]]; then printf %s "$1"; else printf "'%s'" "$1"; fi
 }
 
+# --- DNS e portos (antes de descargar nada) ----------------------------------------------------
+# Sen preguntar a ningún servizo de fóra: só o resolvedor do sistema e as interfaces deste equipo.
+# Se o nome non resolve, para; se resolve a outra IP, só avisa (NAT ou firewall que reenvía os
+# portos). Un porto 80 ou 443 doutro programa (non o contedor web de Furar) para.
+resolvedor() {
+  local r
+  for r in getent dscacheutil host; do command -v "$r" >/dev/null && { echo "$r"; return; }; done
+  return 0
+}
+ips_do_nome() { # nome → unha IP por liña; baleiro se non resolve
+  case $(resolvedor) in
+    getent) getent ahosts "$1" 2>/dev/null | awk '{print $1}' || true ;;
+    # macOS, tamén os nomes .local (mDNS).
+    dscacheutil) dscacheutil -q host -a name "$1" 2>/dev/null | awk '/^ip(v6)?_address:/ {print $2}' || true ;;
+    host) host "$1" 2>/dev/null | awk '/has (IPv6 )?address/ {print $NF}' || true ;;
+  esac | sed 's/%.*//' | minusculas | sort -u
+}
+ips_propias() { # IPs das interfaces deste equipo, sen as de loopback nin as de ligazón local
+  if command -v ip >/dev/null; then
+    ip -o addr show 2>/dev/null | awk '{print $4}' || true
+  elif command -v ifconfig >/dev/null; then
+    ifconfig 2>/dev/null | awk '$1 == "inet" || $1 == "inet6" {print $2}' || true
+  fi | sed -E 's#^addr:##; s#/.*##; s/%.*//' | minusculas | grep -vE "$re_so_local" | sort -u || true
+}
+# Loopback e ligazón local (fe80::/10): non serven para chegar desde Internet.
+re_so_local='^(127\.|::1$|fe[89ab][0-9a-f]:)'
+lista() { grep . | paste -sd , - | sed 's/,/, /g' || true; }
+# Quen escoita nun porto TCP: código 0 se está ocupado (imprime o programa, se se sabe), 1 se está
+# libre e 2 se non hai con que miralo.
+quen_escoita() { # porto
+  local p=$1 linas
+  if command -v ss >/dev/null; then
+    linas=$(ss -Hltnp 2>/dev/null | awk -v p=":$p" 'substr($4, length($4) - length(p) + 1) == p' || true)
+    [[ -n $linas ]] || return 1
+    sed -nE 's/.*users:\(\("([^"]+)".*/\1/p' <<<"$linas" | sort -u | lista
+  elif command -v netstat >/dev/null; then
+    # Linux «0.0.0.0:80»; macOS «*.80».
+    linas=$(netstat -an 2>/dev/null | awk -v p="$p" '/LISTEN/ && $4 ~ ("[.:]" p "$")' || true)
+    [[ -n $linas ]] || return 1
+    if command -v lsof >/dev/null; then
+      lsof -nP -iTCP:"$p" -sTCP:LISTEN -Fc 2>/dev/null | sed -n 's/^c//p' | sort -u | lista || true
+    fi
+  else
+    return 2
+  fi
+  return 0
+}
+# Portos do equipo que publica o contedor web de Furar (deste proxecto), se está en marcha:
+# nunha reinstalación ou actualización o 80 e o 443 xa son seus.
+portos_de_furar() {
+  local proxecto id
+  proxecto=${COMPOSE_PROJECT_NAME:-$(do_env COMPOSE_PROJECT_NAME)}
+  id=$(docker ps -q --filter "label=com.docker.compose.project=${proxecto:-furar}" \
+    --filter label=com.docker.compose.service=web 2>/dev/null | head -1 || true)
+  [[ -n $id ]] || return 0
+  docker port "$id" 2>/dev/null | sed -nE 's/.*:([0-9]+)$/\1/p' | sort -u || true
+}
+comprobar_rede() { # nome
+  local nome=$1 ips propias alleas ip quen codigo p furar ocupados=()
+  titulo "DNS e portos"
+  propias=$(ips_propias)
+  if ((sen_dns)); then
+    aviso "sen comprobar o DNS (--sen-comprobar-dns)"
+  elif [[ -z $(resolvedor) ]]; then
+    aviso "non podo comprobar o DNS de $nome (falta getent): comproba ti que resolve á IP deste servidor"
+  else
+    ips=$(ips_do_nome "$nome")
+    if [[ -z $ips ]]; then
+      cat >&2 <<FIN
+  ✗ $nome non resolve no DNS: sen el non hai certificado HTTPS nin se chega á web.
+    Pide a quen xestiona o dominio do concello (ou o aloxamento) que cree este rexistro:
+      nome:  $nome
+      tipo:  A (e AAAA, se o servidor ten IPv6)
+      valor: a IP pública deste servidor (IPs deste equipo: $(lista <<<"${propias:-descoñecidas}"); detrás dun NAT, a pública)
+    e que os portos 80 e 443 cheguen desde Internet a este servidor. Texto para enviar:
+    docs/instalacion.md §1. Cando resolva (pode tardar unhas horas), volve executar o instalador.
+    Para seguir sen esta comprobación (p. ex. un nome só da rede interna): --sen-comprobar-dns.
+FIN
+      exit 1
+    fi
+    alleas=""
+    while IFS= read -r ip; do
+      grep -qE "$re_so_local" <<<"$ip" && continue
+      grep -qxF "$ip" <<<"$propias" || alleas+="$ip"$'\n'
+    done <<<"$ips"
+    if [[ -z $(grep -vE "$re_so_local" <<<"$ips" || true) ]]; then
+      aviso "$nome resolve só a enderezos locais ($(lista <<<"$ips"); /etc/hosts ou mDNS): comproba noutro equipo que resolve á IP pública do servidor"
+    elif [[ -z $propias ]]; then
+      aviso "$nome resolve a $(lista <<<"$ips"), pero non sei as IPs deste equipo: comproba que é a do servidor"
+    elif [[ -n $alleas ]]; then
+      aviso "$nome resolve a $(lista <<<"$alleas"), pero este equipo ten $(lista <<<"$propias"). É normal se o servidor está detrás dun NAT ou dun firewall que lle reenvía os portos 80 e 443; se non, pide que o rexistro apunte á IP deste servidor"
+    else
+      ok "$nome resolve a $(lista <<<"$ips") (este servidor)"
+    fi
+  fi
+  furar=$(portos_de_furar)
+  for p in "${FURAR_HTTP_PORT:-$(do_env FURAR_HTTP_PORT | grep . || echo 80)}" \
+    "${FURAR_HTTPS_PORT:-$(do_env FURAR_HTTPS_PORT | grep . || echo 443)}"; do
+    if grep -qxF "$p" <<<"$furar"; then ok "porto $p: é o da web de Furar, xa en marcha"; continue; fi
+    codigo=0
+    quen=$(quen_escoita "$p") || codigo=$?
+    case $codigo in
+      0) ocupados+=("$p${quen:+ ($quen)}") ;;
+      1) ok "porto $p libre" ;;
+      *) aviso "non podo comprobar se o porto $p está libre (falta ss): compróbao ti" ;;
+    esac
+  done
+  if ((${#ocupados[@]})); then
+    cat >&2 <<FIN
+  ✗ Portos ocupados por outro programa: $(printf '%s\n' "${ocupados[@]}" | lista).
+    Furar precisa o 80 e o 443 para a web e o certificado HTTPS. Para ese programa e que non
+    arrinque co sistema (p. ex. un servidor web: sudo systemctl disable --now nginx ou apache2)
+    ou instala Furar noutro servidor. Para ver quen é: sudo ss -ltnp | grep -E ':(80|443) '.
+FIN
+    exit 1
+  fi
+}
+
 # --- Só o correo de proba (--probar-correo) -------------------------------------------------------
 if ((so_probar_correo)); then
   [[ -f $env_file ]] || falla "non hai .env en $FURAR_RAIZ: instala primeiro (scripts/instalar.sh)"
@@ -292,6 +458,15 @@ if ((so_probar_correo)); then
   [[ $para =~ $re_correo ]] || falla "falta o destinatario: --correo-admin CORREO"
   probar_correo "$para"
   exit
+fi
+
+# --- Só o DNS e os portos (--comprobar-rede) -----------------------------------------------------
+if ((so_comprobar_rede)); then
+  nome=${op_dominio:-${FURAR_PUBLIC_URL:-$(do_env FURAR_PUBLIC_URL)}}
+  [[ -n $nome ]] || falla "falta o nome do servidor: --dominio NOME"
+  nome=$(validar_dominio "$nome") || falla "$nome"
+  comprobar_rede "$nome"
+  exit 0
 fi
 
 # --- Ficheiro da release ------------------------------------------------------------------------
@@ -358,6 +533,8 @@ if ((escribir)); then
   url_vella=$(do_env FURAR_PUBLIC_URL)
   preguntar dominio "Nome do servidor (o enderezo da web, p. ex. reservas.concello.gal)" dominio \
     "${op_dominio:-${FURAR_PUBLIC_URL:-$url_vella}}"
+  # Antes do resto das preguntas: sen DNS non paga a pena seguir.
+  if ((!so_configurar)); then comprobar_rede "$dominio"; rede_comprobada=1; fi
   preguntar correo_admin "Correo de quen creará a conta de administración" correo \
     "${op_correo:-${FURAR_ADMIN_EMAIL:-$(do_env FURAR_ADMIN_EMAIL)}}"
   echo "  Correo saínte (SMTP) do concello, para os avisos e as contas:"
@@ -485,9 +662,7 @@ fi
 
 # --- Comprobar e arrincar -------------------------------------------------------------------------
 dominio=$(do_env FURAR_PUBLIC_URL | sed -E 's#^https?://##')
-if command -v getent >/dev/null && ! getent hosts "$dominio" >/dev/null; then
-  aviso "$dominio aínda non resolve no DNS: o certificado HTTPS non chegará ata que apunte a este servidor"
-fi
+((rede_comprobada)) || comprobar_rede "$dominio"
 cd "$FURAR_RAIZ"
 if ((!env_previo)); then
   proxecto=$(docker compose config 2>/dev/null | sed -n 's/^name: //p' | head -1)

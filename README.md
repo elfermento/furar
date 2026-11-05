@@ -25,7 +25,7 @@ Abre http://localhost:8080/naron (só desde este equipo: os contrasinais de demo
 
 **Cl@ve e Chave365.** Listo: o acceso por un provedor de identidade SAML 2.0 en Keycloak, probado de punta a punta coa «Cl@ve simulada» da demo (sen importar o NIF), e a guía de alta ([ADR-0019](docs/adr/0019-autenticacion-publica-clave.md)). Para a pasarela real, o organismo (o concello ou a Deputación) solicita a adhesión (Cl@ve ao SGAD; Chave365 á Amtega), achega o seu certificado, intercambia os metadatos e dá de alta o provedor en Keycloak ([`docs/instalacion.md` §12](docs/instalacion.md#12-clve-e-chave365)). Falta, e queda como débeda, a extensión de Keycloak que envía os atributos eIDAS e o nivel de garantía que pide Cl@ve; faise co contorno de probas da pasarela.
 
-Instalación nun concello, coas imaxes publicadas e sen compilar: `scripts/instalar.sh` pregunta o dominio, o correo de administración e o SMTP (servidor, cifrado, porto, usuario e remitente), xera os segredos, envía un correo de proba e arrinca. Guía en [`docs/instalacion.md`](docs/instalacion.md).
+Instalación nun concello, coas imaxes publicadas e sen compilar: `scripts/instalar.sh` pregunta o dominio, o correo de administración e o SMTP (servidor, cifrado, porto, usuario e remitente), xera os segredos, comproba o DNS e os portos 80 e 443, envía un correo de proba e arrinca. Guía en [`docs/instalacion.md`](docs/instalacion.md).
 
 ## Que hai dentro
 
