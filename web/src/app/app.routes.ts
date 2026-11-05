@@ -92,6 +92,22 @@ export const routes: Routes = [
         resolve: { styles: managementStylesResolver, booking: bookingStylesResolver },
         loadComponent: () => import('./features/booking/manage/manage-bookings.page').then((m) => m.ManageBookingsPage),
       },
+      // Reservar no nome doutra persoa e cambiar unha reserva (maqueta 58): o mesmo formulario ca
+      // a veciñanza; os mesmos permisos ca «Reservas» (xestión e Recepción).
+      {
+        path: 'xestion/reservas/nova',
+        title: 'titles.bookFor',
+        canActivate: [bookingsGuard],
+        resolve: { styles: managementStylesResolver, booking: bookingStylesResolver },
+        loadComponent: () => import('./features/booking/manage/book-for.page').then((m) => m.BookForPage),
+      },
+      {
+        path: 'xestion/reservas/:id/cambiar',
+        title: 'titles.changeBooking',
+        canActivate: [bookingsGuard],
+        resolve: { styles: managementStylesResolver, booking: bookingStylesResolver },
+        loadComponent: () => import('./features/booking/manage/book-for.page').then((m) => m.BookForPage),
+      },
       // Calendario das reservas (maqueta 27): os mesmos permisos ca «Reservas».
       {
         path: 'xestion/calendario',

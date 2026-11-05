@@ -13,7 +13,7 @@ const DEFS: CustomFieldDefinition[] = [
   definition({ code: 'phone', required: true, rules: { format: 'PHONE' } }),
   definition({ code: 'notes', type: 'LONG_TEXT', help: undefined }),
   definition({ code: 'courts', type: 'NUMBER', rules: { min: 0, decimals: 0 } }),
-  definition({ code: 'opened', type: 'DATE' }),
+  definition({ code: 'opened', type: 'DATE', rules: { minDate: '2026-06-10' } }),
   definition({
     code: 'defib',
     type: 'BOOLEAN',
@@ -54,7 +54,9 @@ describe('CustomFieldsFormComponent', () => {
     expect(el.querySelector('textarea#cf-notes')).not.toBeNull();
     expect(el.querySelector('#cf-courts')?.getAttribute('type')).toBe('number');
     expect(el.querySelector('#cf-courts')?.getAttribute('step')).toBe('1');
-    expect(el.querySelector('#cf-opened')?.getAttribute('type')).toBe('date');
+    expect(el.querySelector('furar-date-field button#cf-opened')).not.toBeNull();
+    expect(el.querySelector('label[for="cf-opened"]')).not.toBeNull();
+    expect(el.querySelector('input[type="date"]')).toBeNull();
     expect(el.querySelectorAll('input[type="radio"][name="cf-defib"]')).toHaveLength(2);
     expect(el.querySelector('furar-select button#cf-main')).not.toBeNull();
     expect(el.querySelectorAll('input[type="checkbox"]')).toHaveLength(2);
@@ -133,6 +135,22 @@ describe('CustomFieldsFormComponent', () => {
     expect(host.form.controls['main']?.value).toBeNull();
   });
 
+  it('a data escóllese no calendario propio, en ISO e dentro dos límites', async () => {
+    const { fixture, host, el } = await render();
+    host.form.controls['opened']?.setValue('2026-06-15');
+    await fixture.whenStable();
+    const opened = el.querySelector<HTMLButtonElement>('#cf-opened')!;
+    expect(opened.textContent?.trim()).toBe('15/06/2026');
+    opened.click();
+    await fixture.whenStable();
+    expect(document.querySelector('td[data-date="2026-06-09"]')?.getAttribute('aria-disabled')).toBe('true');
+    document.querySelector<HTMLElement>('td[data-date="2026-06-20"]')!.click();
+    await fixture.whenStable();
+    expect(host.form.controls['opened']?.value).toBe('2026-06-20');
+    expect(host.form.controls['opened']?.touched).toBe(true);
+    expect(document.activeElement).toBe(opened);
+  });
+
   it('cambia de idioma as etiquetas', async () => {
     const { fixture, host, el } = await render();
     host.lang.set('es');
@@ -177,7 +195,7 @@ describe.each(TYPES)('CustomFieldsFormComponent, tipo %s', (type) => {
     expect(owner, `${type}: elemento con aria`).not.toBeNull();
     expect(owner?.getAttribute('aria-describedby')).toBe('cf-x-help');
     expect(owner?.getAttribute('aria-invalid')).toBeNull();
-    if (type === 'SELECT') {
+    if (type === 'SELECT' || type === 'DATE') {
       // O botón non admite aria-required: o «(obrigatorio)» vai no nome, coma no rótulo.
       expect(control.getAttribute('aria-label')).toContain('(obrigatorio)');
     }

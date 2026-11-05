@@ -42,7 +42,7 @@ if grep -qE '^COMPOSE_FILE=.*compose\.prod\.yaml' "$env_file" \
   && [[ -z $(desde_env FURAR_ADMIN_EMAIL | sed -E "s/^'(.*)'$/\1/") ]]; then
   proxecto=$(dc config 2>/dev/null | sed -n 's/^name: //p' | head -1)
   if [[ -z $(docker volume ls -q --filter "label=com.docker.compose.project=$proxecto" \
-    --filter label=com.docker.compose.volume=pgdata) ]]; then
+    --filter label=com.docker.compose.volume=pgdata-prod) ]]; then
     falla "FURAR_ADMIN_EMAIL baleiro nunha instalación nova: ponlle o correo de quen administrará a plataforma (scripts/instalar.sh --correo-admin)"
   fi
   aviso "FURAR_ADMIN_EMAIL baleiro: se aínda non hai administración da plataforma, ponlle un correo e reinicia a API (docker compose up -d api), ou engádea como dono da base (insert into platform_admin, docs/instalacion.md)"

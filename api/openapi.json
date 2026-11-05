@@ -542,6 +542,63 @@
         "required" : [ "from", "items", "to" ],
         "type" : "object"
       },
+      "BookForRequest" : {
+        "properties" : {
+          "customFields" : {
+            "additionalProperties" : { },
+            "description" : "Valores dos campos propios da reserva, por código",
+            "type" : "object"
+          },
+          "facilityId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "holder" : {
+            "$ref" : "#/components/schemas/BookingHolderRequest"
+          },
+          "language" : {
+            "enum" : [ "gl", "es" ],
+            "pattern" : "^(gl|es)$",
+            "type" : "string"
+          },
+          "paid" : {
+            "type" : "boolean"
+          },
+          "partId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "slots" : {
+            "format" : "int32",
+            "maximum" : 16,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "start" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "useId" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        },
+        "required" : [ "facilityId", "holder", "slots", "start", "useId" ],
+        "type" : "object"
+      },
+      "BookedByResponse" : {
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "role" : {
+            "enum" : [ "MANAGER", "STAFF" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "role" ],
+        "type" : "object"
+      },
       "BookingCalendarResponse" : {
         "properties" : {
           "blocks" : {
@@ -622,6 +679,29 @@
         "required" : [ "action", "bookingId" ],
         "type" : "object"
       },
+      "BookingHolderRequest" : {
+        "properties" : {
+          "email" : {
+            "format" : "email",
+            "maxLength" : 254,
+            "minLength" : 3,
+            "type" : "string"
+          },
+          "name" : {
+            "maxLength" : 200,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "phone" : {
+            "maxLength" : 30,
+            "minLength" : 3,
+            "pattern" : "^[0-9+() .-]+$",
+            "type" : "string"
+          }
+        },
+        "required" : [ "name" ],
+        "type" : "object"
+      },
       "BookingHourCountResponse" : {
         "properties" : {
           "count" : {
@@ -638,6 +718,20 @@
           }
         },
         "required" : [ "count", "date", "hour" ],
+        "type" : "object"
+      },
+      "BookingMailResponse" : {
+        "properties" : {
+          "kind" : {
+            "enum" : [ "CONFIRMED", "CHANGED", "CANCELLED_BY_PERSON", "CANCELLED_BY_MUNICIPALITY" ],
+            "type" : "string"
+          },
+          "sentAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          }
+        },
+        "required" : [ "kind", "sentAt" ],
         "type" : "object"
       },
       "BookingOpeningResponse" : {
@@ -735,6 +829,44 @@
           }
         },
         "required" : [ "status" ],
+        "type" : "object"
+      },
+      "ChangeBookingRequest" : {
+        "properties" : {
+          "customFields" : {
+            "additionalProperties" : { },
+            "description" : "Valores dos campos propios da reserva, por código",
+            "type" : "object"
+          },
+          "holder" : {
+            "$ref" : "#/components/schemas/BookingHolderRequest"
+          },
+          "notifyPerson" : {
+            "type" : "boolean"
+          },
+          "paid" : {
+            "type" : "boolean"
+          },
+          "partId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "slots" : {
+            "format" : "int32",
+            "maximum" : 16,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "start" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "useId" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        },
+        "required" : [ "slots", "start", "useId" ],
         "type" : "object"
       },
       "ChangeFacilityStatusRequest" : {
@@ -1601,7 +1733,7 @@
       "FieldError" : {
         "properties" : {
           "code" : {
-            "enum" : [ "audit.export-not-blocked", "audit.export-reference-invalid", "audit.export-too-large", "audit.range-invalid", "auth.email-not-verified", "auth.forbidden", "auth.unauthenticated", "booking.affected-needs-manager", "booking.cancel-deadline-passed", "booking.cap-reached", "booking.change-other-facility", "booking.change-price-paid", "booking.facility-not-bookable", "booking.idempotency-key-invalid", "booking.idempotency-key-missing", "booking.idempotency-key-reused", "booking.not-cancellable", "booking.not-found", "booking.part-taken", "booking.payment-transition-invalid", "booking.seat-taken-by-you", "booking.slot-invalid", "booking.slot-taken", "booking.staff-account", "booking.too-far", "booking.too-long", "booking.too-soon", "booking.use-not-available", "common.busy", "common.internal", "common.invalid-parameter", "common.malformed-json", "common.method-not-allowed", "common.not-acceptable", "common.not-found", "common.precondition-required", "common.rate-limited", "common.stale-version", "common.unsupported-media-type", "customfield.above-max", "customfield.below-min", "customfield.code-invalid", "customfield.code-reserved", "customfield.code-taken", "customfield.date-too-early", "customfield.date-too-late", "customfield.definition-not-found", "customfield.duplicate-option", "customfield.has-values", "customfield.inactive-field", "customfield.invalid-date", "customfield.invalid-definition", "customfield.invalid-format", "customfield.invalid-option", "customfield.invalid-type", "customfield.limit-exceeded", "customfield.option-has-values", "customfield.personal-data-public", "customfield.required", "customfield.single-usage", "customfield.target-has-values", "customfield.too-few-options", "customfield.too-long", "customfield.too-many-decimals", "customfield.too-many-options", "customfield.too-short", "customfield.unknown-field", "customfield.visibility-not-allowed", "facility.address-invalid", "facility.address-not-found", "facility.address-required", "facility.affected-bookings", "facility.block-invalid", "facility.block-invalid-period", "facility.block-not-found", "facility.block-overlap", "facility.booking-mode-invalid", "facility.decision-invalid", "facility.description-invalid", "facility.details-invalid", "facility.exception-date-taken", "facility.exception-invalid", "facility.exception-not-found", "facility.exclusive-use-overlap", "facility.geocoder-unavailable", "facility.has-bookings", "facility.holiday-year-invalid", "facility.house-rules-invalid", "facility.images-invalid", "facility.interval-invalid", "facility.interval-overlap", "facility.name-invalid", "facility.name-taken", "facility.not-found", "facility.not-publishable", "facility.photo-alt-invalid", "facility.photo-limit", "facility.photo-not-found", "facility.photo-not-pending", "facility.photo-too-large", "facility.photo-too-many-pixels", "facility.photo-unreadable", "facility.photo-unsupported-type", "facility.season-invalid", "facility.season-not-found", "facility.season-overlap", "facility.sport-duplicated", "facility.sport-name-invalid", "facility.sport-name-taken", "facility.sport-unknown", "facility.use-archived", "facility.use-blocks-others-needs-dates", "facility.use-capacity-required", "facility.use-dates-required", "facility.use-has-bookings", "facility.use-invalid", "facility.use-name-taken", "facility.use-not-found", "facility.use-part-name-taken", "facility.use-parts-required", "facility.use-period-overlap", "facility.use-price-invalid", "facility.use-rule-invalid", "facility.use-weekdays-invalid", "indicators.filter-invalid", "indicators.period-invalid", "municipality.language-required", "municipality.languages-invalid", "municipality.name-invalid", "municipality.not-found", "municipality.slug-invalid", "municipality.slug-reserved", "municipality.slug-taken", "municipality.theme-color-invalid", "municipality.theme-low-contrast", "portability.conflict", "portability.invalid-file", "staff.already-member", "staff.anonymised", "staff.email-invalid", "staff.invitation-email-mismatch", "staff.invitation-expired", "staff.invitation-invalid", "staff.invitation-own", "staff.invitation-personal-account", "staff.invitation-platform-account", "staff.invitation-rate-limited", "staff.last-manager", "staff.not-found", "staff.personal-account", "staff.transition-invalid", "validation.failed", "validation.invalid", "validation.pattern", "validation.range", "validation.required", "validation.size" ],
+            "enum" : [ "audit.export-not-blocked", "audit.export-reference-invalid", "audit.export-too-large", "audit.range-invalid", "auth.email-not-verified", "auth.forbidden", "auth.unauthenticated", "booking.affected-needs-manager", "booking.cancel-deadline-passed", "booking.cap-reached", "booking.change-other-facility", "booking.change-price-paid", "booking.export-range-too-long", "booking.facility-not-bookable", "booking.holder-not-editable", "booking.idempotency-key-invalid", "booking.idempotency-key-missing", "booking.idempotency-key-reused", "booking.not-cancellable", "booking.not-found", "booking.part-taken", "booking.payment-transition-invalid", "booking.seat-taken-by-you", "booking.slot-invalid", "booking.slot-taken", "booking.staff-account", "booking.too-far", "booking.too-long", "booking.too-soon", "booking.use-not-available", "common.busy", "common.internal", "common.invalid-parameter", "common.malformed-json", "common.method-not-allowed", "common.not-acceptable", "common.not-found", "common.precondition-required", "common.rate-limited", "common.stale-version", "common.unsupported-media-type", "customfield.above-max", "customfield.below-min", "customfield.code-invalid", "customfield.code-reserved", "customfield.code-taken", "customfield.date-too-early", "customfield.date-too-late", "customfield.definition-not-found", "customfield.duplicate-option", "customfield.has-values", "customfield.inactive-field", "customfield.invalid-date", "customfield.invalid-definition", "customfield.invalid-format", "customfield.invalid-option", "customfield.invalid-type", "customfield.limit-exceeded", "customfield.option-has-values", "customfield.personal-data-public", "customfield.required", "customfield.single-usage", "customfield.target-has-values", "customfield.too-few-options", "customfield.too-long", "customfield.too-many-decimals", "customfield.too-many-options", "customfield.too-short", "customfield.unknown-field", "customfield.visibility-not-allowed", "facility.address-invalid", "facility.address-not-found", "facility.address-required", "facility.affected-bookings", "facility.block-invalid", "facility.block-invalid-period", "facility.block-not-found", "facility.block-overlap", "facility.booking-mode-invalid", "facility.decision-invalid", "facility.description-invalid", "facility.details-invalid", "facility.exception-date-taken", "facility.exception-invalid", "facility.exception-not-found", "facility.exclusive-use-overlap", "facility.geocoder-unavailable", "facility.has-bookings", "facility.holiday-year-invalid", "facility.house-rules-invalid", "facility.images-invalid", "facility.interval-invalid", "facility.interval-overlap", "facility.name-invalid", "facility.name-taken", "facility.not-found", "facility.not-publishable", "facility.photo-alt-invalid", "facility.photo-limit", "facility.photo-not-found", "facility.photo-not-pending", "facility.photo-too-large", "facility.photo-too-many-pixels", "facility.photo-unreadable", "facility.photo-unsupported-type", "facility.season-invalid", "facility.season-not-found", "facility.season-overlap", "facility.sport-duplicated", "facility.sport-name-invalid", "facility.sport-name-taken", "facility.sport-unknown", "facility.use-archived", "facility.use-blocks-others-needs-dates", "facility.use-capacity-required", "facility.use-dates-required", "facility.use-has-bookings", "facility.use-invalid", "facility.use-name-taken", "facility.use-not-found", "facility.use-part-name-taken", "facility.use-parts-required", "facility.use-period-overlap", "facility.use-price-invalid", "facility.use-rule-invalid", "facility.use-weekdays-invalid", "indicators.filter-invalid", "indicators.period-invalid", "municipality.language-required", "municipality.languages-invalid", "municipality.name-invalid", "municipality.not-found", "municipality.slug-invalid", "municipality.slug-reserved", "municipality.slug-taken", "municipality.theme-color-invalid", "municipality.theme-low-contrast", "portability.conflict", "portability.invalid-file", "staff.already-member", "staff.anonymised", "staff.email-invalid", "staff.invitation-email-mismatch", "staff.invitation-expired", "staff.invitation-invalid", "staff.invitation-own", "staff.invitation-personal-account", "staff.invitation-platform-account", "staff.invitation-rate-limited", "staff.last-manager", "staff.not-found", "staff.personal-account", "staff.transition-invalid", "validation.failed", "validation.invalid", "validation.pattern", "validation.range", "validation.required", "validation.size" ],
             "type" : "string"
           },
           "field" : {
@@ -2710,6 +2842,9 @@
       },
       "ManagedBookingDetailResponse" : {
         "properties" : {
+          "bookedBy" : {
+            "$ref" : "#/components/schemas/BookedByResponse"
+          },
           "cancelChannels" : {
             "items" : {
               "enum" : [ "EMAIL", "WEB" ],
@@ -2753,15 +2888,24 @@
           "facilityName" : {
             "type" : "string"
           },
+          "holderAccount" : {
+            "type" : "boolean"
+          },
           "holderEmail" : {
             "type" : "string"
           },
           "holderName" : {
             "type" : "string"
           },
+          "holderPhone" : {
+            "type" : "string"
+          },
           "id" : {
             "format" : "uuid",
             "type" : "string"
+          },
+          "lastMail" : {
+            "$ref" : "#/components/schemas/BookingMailResponse"
           },
           "partId" : {
             "format" : "uuid",
@@ -2816,11 +2960,14 @@
             "type" : "integer"
           }
         },
-        "required" : [ "cancelChannels", "cancelUntil", "cancellable", "code", "customFields", "done", "end", "facilityId", "facilityName", "id", "paymentStatus", "paymentTargets", "price", "rentalMode", "reservedAt", "slots", "start", "status", "useId", "useName", "version" ],
+        "required" : [ "cancelChannels", "cancelUntil", "cancellable", "code", "customFields", "done", "end", "facilityId", "facilityName", "holderAccount", "id", "paymentStatus", "paymentTargets", "price", "rentalMode", "reservedAt", "slots", "start", "status", "useId", "useName", "version" ],
         "type" : "object"
       },
       "ManagedBookingResponse" : {
         "properties" : {
+          "bookedBy" : {
+            "$ref" : "#/components/schemas/BookedByResponse"
+          },
           "cancelledAt" : {
             "format" : "date-time",
             "type" : "string"
@@ -3551,7 +3698,7 @@
       "Problem" : {
         "properties" : {
           "code" : {
-            "enum" : [ "audit.export-not-blocked", "audit.export-reference-invalid", "audit.export-too-large", "audit.range-invalid", "auth.email-not-verified", "auth.forbidden", "auth.unauthenticated", "booking.affected-needs-manager", "booking.cancel-deadline-passed", "booking.cap-reached", "booking.change-other-facility", "booking.change-price-paid", "booking.facility-not-bookable", "booking.idempotency-key-invalid", "booking.idempotency-key-missing", "booking.idempotency-key-reused", "booking.not-cancellable", "booking.not-found", "booking.part-taken", "booking.payment-transition-invalid", "booking.seat-taken-by-you", "booking.slot-invalid", "booking.slot-taken", "booking.staff-account", "booking.too-far", "booking.too-long", "booking.too-soon", "booking.use-not-available", "common.busy", "common.internal", "common.invalid-parameter", "common.malformed-json", "common.method-not-allowed", "common.not-acceptable", "common.not-found", "common.precondition-required", "common.rate-limited", "common.stale-version", "common.unsupported-media-type", "customfield.above-max", "customfield.below-min", "customfield.code-invalid", "customfield.code-reserved", "customfield.code-taken", "customfield.date-too-early", "customfield.date-too-late", "customfield.definition-not-found", "customfield.duplicate-option", "customfield.has-values", "customfield.inactive-field", "customfield.invalid-date", "customfield.invalid-definition", "customfield.invalid-format", "customfield.invalid-option", "customfield.invalid-type", "customfield.limit-exceeded", "customfield.option-has-values", "customfield.personal-data-public", "customfield.required", "customfield.single-usage", "customfield.target-has-values", "customfield.too-few-options", "customfield.too-long", "customfield.too-many-decimals", "customfield.too-many-options", "customfield.too-short", "customfield.unknown-field", "customfield.visibility-not-allowed", "facility.address-invalid", "facility.address-not-found", "facility.address-required", "facility.affected-bookings", "facility.block-invalid", "facility.block-invalid-period", "facility.block-not-found", "facility.block-overlap", "facility.booking-mode-invalid", "facility.decision-invalid", "facility.description-invalid", "facility.details-invalid", "facility.exception-date-taken", "facility.exception-invalid", "facility.exception-not-found", "facility.exclusive-use-overlap", "facility.geocoder-unavailable", "facility.has-bookings", "facility.holiday-year-invalid", "facility.house-rules-invalid", "facility.images-invalid", "facility.interval-invalid", "facility.interval-overlap", "facility.name-invalid", "facility.name-taken", "facility.not-found", "facility.not-publishable", "facility.photo-alt-invalid", "facility.photo-limit", "facility.photo-not-found", "facility.photo-not-pending", "facility.photo-too-large", "facility.photo-too-many-pixels", "facility.photo-unreadable", "facility.photo-unsupported-type", "facility.season-invalid", "facility.season-not-found", "facility.season-overlap", "facility.sport-duplicated", "facility.sport-name-invalid", "facility.sport-name-taken", "facility.sport-unknown", "facility.use-archived", "facility.use-blocks-others-needs-dates", "facility.use-capacity-required", "facility.use-dates-required", "facility.use-has-bookings", "facility.use-invalid", "facility.use-name-taken", "facility.use-not-found", "facility.use-part-name-taken", "facility.use-parts-required", "facility.use-period-overlap", "facility.use-price-invalid", "facility.use-rule-invalid", "facility.use-weekdays-invalid", "indicators.filter-invalid", "indicators.period-invalid", "municipality.language-required", "municipality.languages-invalid", "municipality.name-invalid", "municipality.not-found", "municipality.slug-invalid", "municipality.slug-reserved", "municipality.slug-taken", "municipality.theme-color-invalid", "municipality.theme-low-contrast", "portability.conflict", "portability.invalid-file", "staff.already-member", "staff.anonymised", "staff.email-invalid", "staff.invitation-email-mismatch", "staff.invitation-expired", "staff.invitation-invalid", "staff.invitation-own", "staff.invitation-personal-account", "staff.invitation-platform-account", "staff.invitation-rate-limited", "staff.last-manager", "staff.not-found", "staff.personal-account", "staff.transition-invalid", "validation.failed", "validation.invalid", "validation.pattern", "validation.range", "validation.required", "validation.size" ],
+            "enum" : [ "audit.export-not-blocked", "audit.export-reference-invalid", "audit.export-too-large", "audit.range-invalid", "auth.email-not-verified", "auth.forbidden", "auth.unauthenticated", "booking.affected-needs-manager", "booking.cancel-deadline-passed", "booking.cap-reached", "booking.change-other-facility", "booking.change-price-paid", "booking.export-range-too-long", "booking.facility-not-bookable", "booking.holder-not-editable", "booking.idempotency-key-invalid", "booking.idempotency-key-missing", "booking.idempotency-key-reused", "booking.not-cancellable", "booking.not-found", "booking.part-taken", "booking.payment-transition-invalid", "booking.seat-taken-by-you", "booking.slot-invalid", "booking.slot-taken", "booking.staff-account", "booking.too-far", "booking.too-long", "booking.too-soon", "booking.use-not-available", "common.busy", "common.internal", "common.invalid-parameter", "common.malformed-json", "common.method-not-allowed", "common.not-acceptable", "common.not-found", "common.precondition-required", "common.rate-limited", "common.stale-version", "common.unsupported-media-type", "customfield.above-max", "customfield.below-min", "customfield.code-invalid", "customfield.code-reserved", "customfield.code-taken", "customfield.date-too-early", "customfield.date-too-late", "customfield.definition-not-found", "customfield.duplicate-option", "customfield.has-values", "customfield.inactive-field", "customfield.invalid-date", "customfield.invalid-definition", "customfield.invalid-format", "customfield.invalid-option", "customfield.invalid-type", "customfield.limit-exceeded", "customfield.option-has-values", "customfield.personal-data-public", "customfield.required", "customfield.single-usage", "customfield.target-has-values", "customfield.too-few-options", "customfield.too-long", "customfield.too-many-decimals", "customfield.too-many-options", "customfield.too-short", "customfield.unknown-field", "customfield.visibility-not-allowed", "facility.address-invalid", "facility.address-not-found", "facility.address-required", "facility.affected-bookings", "facility.block-invalid", "facility.block-invalid-period", "facility.block-not-found", "facility.block-overlap", "facility.booking-mode-invalid", "facility.decision-invalid", "facility.description-invalid", "facility.details-invalid", "facility.exception-date-taken", "facility.exception-invalid", "facility.exception-not-found", "facility.exclusive-use-overlap", "facility.geocoder-unavailable", "facility.has-bookings", "facility.holiday-year-invalid", "facility.house-rules-invalid", "facility.images-invalid", "facility.interval-invalid", "facility.interval-overlap", "facility.name-invalid", "facility.name-taken", "facility.not-found", "facility.not-publishable", "facility.photo-alt-invalid", "facility.photo-limit", "facility.photo-not-found", "facility.photo-not-pending", "facility.photo-too-large", "facility.photo-too-many-pixels", "facility.photo-unreadable", "facility.photo-unsupported-type", "facility.season-invalid", "facility.season-not-found", "facility.season-overlap", "facility.sport-duplicated", "facility.sport-name-invalid", "facility.sport-name-taken", "facility.sport-unknown", "facility.use-archived", "facility.use-blocks-others-needs-dates", "facility.use-capacity-required", "facility.use-dates-required", "facility.use-has-bookings", "facility.use-invalid", "facility.use-name-taken", "facility.use-not-found", "facility.use-part-name-taken", "facility.use-parts-required", "facility.use-period-overlap", "facility.use-price-invalid", "facility.use-rule-invalid", "facility.use-weekdays-invalid", "indicators.filter-invalid", "indicators.period-invalid", "municipality.language-required", "municipality.languages-invalid", "municipality.name-invalid", "municipality.not-found", "municipality.slug-invalid", "municipality.slug-reserved", "municipality.slug-taken", "municipality.theme-color-invalid", "municipality.theme-low-contrast", "portability.conflict", "portability.invalid-file", "staff.already-member", "staff.anonymised", "staff.email-invalid", "staff.invitation-email-mismatch", "staff.invitation-expired", "staff.invitation-invalid", "staff.invitation-own", "staff.invitation-personal-account", "staff.invitation-platform-account", "staff.invitation-rate-limited", "staff.last-manager", "staff.not-found", "staff.personal-account", "staff.transition-invalid", "validation.failed", "validation.invalid", "validation.pattern", "validation.range", "validation.required", "validation.size" ],
             "type" : "string"
           },
           "detail" : {
@@ -5756,6 +5903,102 @@
         } ],
         "summary" : "Lista de xestión: filtros por días (Europe/Madrid, incluídos, sobre o inicio), instalación, cobro e estado; busca por nome sen acentos ou por código; as máis recentes primeiro ou por día e hora",
         "tags" : [ "bookings" ]
+      },
+      "post" : {
+        "operationId" : "createBooking",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "slug",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "Clave opaca por intención de reservar (un UUID)",
+          "in" : "header",
+          "name" : "Idempotency-Key",
+          "required" : true,
+          "schema" : {
+            "maxLength" : 255,
+            "minLength" : 1,
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BookForRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ManagedBookingDetailResponse"
+                }
+              }
+            },
+            "description" : "Reservada, ou xa reservada antes con esta clave e esta petición",
+            "headers" : {
+              "ETag" : {
+                "description" : "Versión do recurso; mándaa en If-Match ao cambialo",
+                "required" : true,
+                "schema" : {
+                  "example" : "\"3\"",
+                  "type" : "string"
+                }
+              },
+              "Location" : {
+                "description" : "URL do recurso creado",
+                "required" : true,
+                "schema" : {
+                  "format" : "uri-reference",
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "409" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SlotTakenProblemResponse"
+                }
+              }
+            },
+            "description" : "booking.slot-taken coas alternativas; booking.part-taken"
+          },
+          "422" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "booking.idempotency-key-reused; as normas (booking.too-soon, booking.too-far, booking.too-long…)"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Erro RFC 9457"
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ],
+        "summary" : "O persoal reserva no nome dunha persoa sen conta (mostrador ou teléfono): o mesmo oco ca ao reservar a persoa, o nome e, se os dá, o correo (para a confirmación) e o teléfono; se xa pagou, queda pagada. Idempotente coa cabeceira Idempotency-Key",
+        "tags" : [ "bookings" ]
       }
     },
     "/api/v1/municipalities/{slug}/bookings/calendar" : {
@@ -5820,6 +6063,87 @@
           "bearer" : [ ]
         } ],
         "summary" : "Calendario das reservas confirmadas: día e semana dunha instalación, cos bloques; semana de todas, contas por día e hora; mes, contas por día",
+        "tags" : [ "bookings" ]
+      }
+    },
+    "/api/v1/municipalities/{slug}/bookings/export" : {
+      "get" : {
+        "operationId" : "exportBookings",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "slug",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "from",
+          "required" : true,
+          "schema" : {
+            "format" : "date",
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "to",
+          "required" : true,
+          "schema" : {
+            "format" : "date",
+            "type" : "string"
+          }
+        }, {
+          "description" : "Instalacións (baleiro: todas)",
+          "in" : "query",
+          "name" : "facilityId",
+          "required" : false,
+          "schema" : {
+            "items" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "type" : "array"
+          }
+        }, {
+          "description" : "Estados da reserva (baleiro: todos)",
+          "in" : "query",
+          "name" : "status",
+          "required" : false,
+          "schema" : {
+            "items" : {
+              "enum" : [ "CONFIRMED", "CANCELLED_BY_PERSON", "CANCELLED_BY_MUNICIPALITY" ],
+              "type" : "string"
+            },
+            "type" : "array"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "text/csv" : {
+                "schema" : {
+                  "format" : "binary",
+                  "type" : "string"
+                }
+              }
+            },
+            "description" : "CSV"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Erro RFC 9457"
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ],
+        "summary" : "Descargar en CSV as reservas que empezan entre dous días (Europe/Madrid, incluídos; como moito 12 meses, se non 422 booking.export-range-too-long), por instalación e estado: UTF-8 con BOM, «;», coma decimal e as cabeceiras no idioma da petición",
         "tags" : [ "bookings" ]
       }
     },
@@ -5929,6 +6253,89 @@
           "bearer" : [ ]
         } ],
         "summary" : "O detalle dunha reserva do concello",
+        "tags" : [ "bookings" ]
+      },
+      "put" : {
+        "operationId" : "changeBooking",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "slug",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        }, {
+          "in" : "header",
+          "name" : "If-Match",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ChangeBookingRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ManagedBookingDetailResponse"
+                }
+              }
+            },
+            "description" : "Cambiada",
+            "headers" : {
+              "ETag" : {
+                "description" : "Versión do recurso; mándaa en If-Match ao cambialo",
+                "required" : true,
+                "schema" : {
+                  "example" : "\"3\"",
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "409" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SlotTakenProblemResponse"
+                }
+              }
+            },
+            "description" : "booking.slot-taken coas alternativas; booking.part-taken; booking.not-cancellable"
+          },
+          "default" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Erro RFC 9457"
+          }
+        },
+        "security" : [ {
+          "bearer" : [ ]
+        } ],
+        "summary" : "O persoal cambia a reserva co mesmo formulario (If-Match): outro oco da mesma instalación (sen o prazo da persoa), para quen é (só nas que fixo o persoal), o pago e os campos propios; se se marca, avísase á persoa por correo",
         "tags" : [ "bookings" ]
       }
     },

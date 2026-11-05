@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: EUPL-1.2
 package gal.furar.booking.application.port.in;
 
+import gal.furar.booking.BookingMailLog;
+import gal.furar.booking.StaffAccounts;
 import gal.furar.booking.domain.Booking;
 import gal.furar.booking.domain.PaymentStatus;
 import gal.furar.shared.domain.CustomFieldValues;
@@ -18,6 +20,8 @@ import org.jspecify.annotations.Nullable;
  * @param done «Realizada»: confirmada e xa rematada
  * @param paymentTargets os cobros que se poden marcar agora (§1.2.12, P13)
  * @param customFields os campos propios da reserva (o persoal ve todos)
+ * @param bookedBy quen do persoal a fixo no nome da persoa; nulo se a fixo ela (ou xa non se sabe)
+ * @param lastMail o último correo que saíu (só no detalle dunha reserva)
  */
 public record ManagedBooking(
     Booking booking,
@@ -27,7 +31,9 @@ public record ManagedBooking(
     @Nullable String partName,
     boolean done,
     Set<PaymentStatus> paymentTargets,
-    CustomFieldValues customFields) {
+    CustomFieldValues customFields,
+    StaffAccounts.@Nullable Member bookedBy,
+    BookingMailLog.@Nullable SentMail lastMail) {
 
   public ManagedBooking {
     Objects.requireNonNull(booking, "booking");

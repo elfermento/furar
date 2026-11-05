@@ -9,9 +9,24 @@ Formato [Keep a Changelog](https://keepachangelog.com/gl/1.1.0/) e versións [Se
 
 ## [Sen publicar]
 
+## [0.1.1] - 2026-11-05
+
+### Engadido
+- Imaxes para `linux/amd64` e `linux/arm64`: cada versión publícase en GHCR como índice multiarquitectura e o mesmo `furar-VERSIÓN.env` (digest do índice) vale nun servidor x86-64 e nun ARM64 (VPS ARM, Mac con Apple Silicon); Docker descarga a imaxe da súa arquitectura. Na etiqueta, o e2e corre tamén nun runner arm64 nativo e publícase en cada arquitectura a imaxe que pasou o seu e2e, sen emulación; cada unha co seu escaneo de Trivy, SBOM CycloneDX (`furar-*-VERSIÓN-amd64.cdx.json` e `-arm64`) e sinatura cosign (o índice e cada imaxe). v0.1.0 só ten `linux/amd64`: en ARM64 corre emulada e moi lenta.
+
+### Corrixido
+- `instalar.sh` xa non para se Keycloak tarda en arrincar a primeira vez (importa o realm): cando Compose rende co servizo aínda en marcha («unhealthy» ou «starting»), avisa, agarda ata 15 minutos máis a que quede san e volve a `up -d --wait`. Antes fallaba con «dependency failed to start: container furar-keycloak-1 is unhealthy» nun servidor lento ou coa imaxe emulada, aínda que despois arrincase ben.
+- Produción e o perfil de proba (`dev`/`full`) xa non comparten o proxecto de Compose no mesmo equipo: `compose.yaml` chámase `furar-local` e `compose.prod.yaml` segue en `furar`. Antes, un `docker compose down -v` nun borraba os volumes do outro (`furar_pgdata-prod`, `furar_caddydata`). `instalar.sh` sen `.env` anterior para se xa hai unha base `pgdata-prod` (os contrasinais novos non valerían) e `docs/instalacion.md` §8 explica como empezar de cero sen `down -v`. `preflight.sh` busca o volume `pgdata-prod` para saber se a instalación é nova.
+
+### Para actualizar
+- Produción: nada; segue no proxecto `furar` cos mesmos contedores e volumes.
+- Equipos de desenvolvemento ou proba: os contedores e a base de demo pasan a `furar-local`. Unha vez, antes de levantalo outra vez, baixa os vellos: `docker compose -p furar --profile dev --profile full down -v`. **Non** o fagas nun equipo cunha instalación de produción (tamén é `furar`): alí borra só os contedores vellos de proba polo nome (`docker ps -a --filter name=furar-` mostra cales son).
+
 ## [0.1.0] - 2026-11-04
 
 ### Engadido
+- «Descargar CSV» das reservas (maqueta 60), só Xestión: diálogo co período (como moito 12 meses; `booking.export-range-too-long`), as instalacións e os estados, cubertos cos filtros da lista. O CSV faino a API por tandas (`GET …/bookings/export`): UTF-8 con BOM, «;», coma decimal, horas de Europe/Madrid, cabeceiras en galego ou castelán, o teléfono e quen do persoal a fixo («Reservada por») e unha columna por campo da reserva. Cada descarga queda no rexistro de actividade («Descargar as reservas en CSV»).
+- Reserva por outra persoa (maqueta 58): «Nova reserva» en «Reservas» (xestión e Recepción, tamén no móbil) abre o mesmo formulario ca o da veciñanza coa instalación, «Para quen?» (nome, correo para a confirmación, teléfono e os campos da reserva) e o pago se ten prezo. O detalle di quen a fixo, o teléfono e o último correo que saíu; «Cambiar» abre o formulario relleno e, se se marca, avisa por correo. API: `POST …/bookings` (con `Idempotency-Key`) e `PUT …/bookings/{id}` (`If-Match`), permiso `booking.book-for` e rexistro `booking.book-for` e `booking.change`. Migración `V202611042230`. Os correos a quen non ten conta non levan «Ver a miña reserva» nin as outras ligazóns a «as miñas reservas»: queda o código co QR.
 - Conservación das reservas (RGPD; decisión do 2026-11-04): unha tarefa diaria anonimiza en cada concello as reservas rematadas hai máis de 2 anos (as de pago, 5) e sen cambios desde entón: sen conta, nome nin correo, sen os valores dos seus campos marcados como dato persoal e con «furar:anonymized» onde actuou a persoa; quedan para os indicadores e na xestión saen como «Persoa anonimizada». Cada lote queda no rexistro de actividade («Anonimizar as reservas que pasaron o prazo de conservación»). Migración `V202611041300`.
 - Límite de peticións á API por enderezo IP: 3000 por minuto e, delas, 300 que escriben; pasado, 429 `common.rate-limited` co tempo de espera (`furar.rate-limit.*`). As pantallas de Keycloak seguen só co bloqueo por conta (`docs/ens.md`, R15).
 - Campos personalizados (maqueta 57): campos da reserva. A veciñanza enche os activos no mesmo paso, antes de «Confirmar reserva» (valídaos a API ao reservar, na mesma transacción); o persoal ve as respostas no detalle da reserva e quen reservou, as súas na confirmación. «Quen o ve» só ten «A persoa que reserva e o persoal» e «Só o persoal». Eliminar un campo ou unha opción sen datos gardados (`DELETE …/custom-fields/{id}`; con datos, `customfield.has-values` ou `customfield.option-has-values` e o diálogo ofrece desactivar) e activar de novo un desactivado.

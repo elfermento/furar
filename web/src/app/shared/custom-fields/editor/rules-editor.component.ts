@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map } from 'rxjs';
 import { FieldsetDirective } from '../../ui/card/fieldset.directive';
+import { DateFieldComponent } from '../../ui/date-field/date-field.component';
 import type { SelectOption } from '../../ui/select/select.component';
 import { SelectComponent } from '../../ui/select/select.component';
 import type { CustomFieldFormat, CustomFieldRules, CustomFieldType } from '../custom-field.types';
@@ -16,7 +17,7 @@ import { rulesFor } from './editor-form';
 /** Regras de validación que ten cada tipo (sen regex libre: ADR-0011). */
 @Component({
   selector: 'furar-rules-editor',
-  imports: [ReactiveFormsModule, TranslocoPipe, FieldsetDirective, SelectComponent],
+  imports: [ReactiveFormsModule, TranslocoPipe, FieldsetDirective, SelectComponent, DateFieldComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (rules().length) {
@@ -34,7 +35,13 @@ import { rulesFor } from './editor-form';
                   [options]="formatOptions()"
                 />
               } @else if (rule === 'minDate' || rule === 'maxDate') {
-                <input type="date" class="input" [id]="'rule-' + rule" [formControlName]="rule" />
+                <furar-date-field
+                  [buttonId]="'rule-' + rule"
+                  [formControlName]="rule"
+                  [label]="'customFields.rules.' + rule | transloco"
+                  [min]="rule === 'maxDate' ? form().controls.minDate.value : null"
+                  [max]="rule === 'minDate' ? form().controls.maxDate.value : null"
+                />
               } @else {
                 <input type="number" class="input" [id]="'rule-' + rule" [formControlName]="rule" [step]="step(rule)" />
               }

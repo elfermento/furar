@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: EUPL-1.2
 package gal.furar.customfields.application.service;
 
+import gal.furar.customfields.CustomFieldColumn;
+import gal.furar.customfields.CustomFieldColumns;
 import gal.furar.customfields.CustomFieldProjector;
 import gal.furar.customfields.CustomFieldValidator;
 import gal.furar.customfields.CustomFieldValueStore;
@@ -9,6 +11,7 @@ import gal.furar.customfields.ValidationContext;
 import gal.furar.customfields.application.port.out.CustomFieldDefinitionRepository;
 import gal.furar.customfields.application.port.out.CustomFieldValueRepository;
 import gal.furar.customfields.domain.CustomFieldDefinition;
+import gal.furar.customfields.domain.FieldOption;
 import gal.furar.customfields.domain.ValueProjector;
 import gal.furar.customfields.domain.ValuesValidator;
 import gal.furar.shared.domain.Audience;
@@ -35,7 +38,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class CustomFieldValuesService
-    implements CustomFieldValidator, CustomFieldProjector, CustomFieldValueStore {
+    implements CustomFieldValidator,
+        CustomFieldProjector,
+        CustomFieldValueStore,
+        CustomFieldColumns {
 
   private final CustomFieldDefinitionRepository definitions;
   private final CustomFieldValueRepository values;
@@ -100,6 +106,21 @@ public class CustomFieldValuesService
                 v.isEmpty()
                     ? v
                     : CustomFieldValues.trusted(ValueProjector.project(target, used, v, viewer)))
+        .toList();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<CustomFieldColumn> columns(CustomFieldTarget target, Audience viewer) {
+    return definitions.findByTarget(target).stream()
+        .filter(d -> d.usage(target).map(u -> u.visibility().visibleTo(viewer)).orElse(false))
+        .map(
+            d ->
+                new CustomFieldColumn(
+                    d.code(),
+                    d.label(),
+                    d.spec().options().stream()
+                        .collect(Collectors.toMap(FieldOption::code, FieldOption::label))))
         .toList();
   }
 

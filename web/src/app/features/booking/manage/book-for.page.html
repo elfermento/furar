@@ -1,0 +1,144 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.bookFor.';
+<div class="f-reserve">
+  <div class="f-reserve__title">
+    <a
+      furarButton="secondary"
+      round
+      [routerLink]="['/', slug(), 'xestion', 'reservas']"
+      [queryParams]="back()"
+      [attr.aria-label]="t + 'back' | transloco"
+      data-book-for-back
+    >
+      <furar-icon name="arrow-left" />
+    </a>
+    <h1>{{ (changing() ? t + 'changeTitle' : t + 'title') | transloco }}</h1>
+  </div>
+
+  @switch (state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="card" [rows]="4" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state mode="error" [heading]="t + 'loadError' | transloco">
+        <button type="button" furarButton (click)="load()">{{ t + 'retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @case ('ready') {
+      @if (!facilityOptions().length) {
+        <furar-status-state mode="empty" [heading]="t + 'noFacilities' | transloco" />
+      } @else {
+        <form class="f-card f-reserve__card" novalidate (submit)="$event.preventDefault(); submit()">
+          <furar-field [fieldId]="ids + '-facility'" [label]="t + 'facility' | transloco" [required]="true">
+            <furar-select
+              data-book-for-facility
+              [selectId]="ids + '-facility'"
+              [label]="t + 'facility' | transloco"
+              [options]="facilityOptions()"
+              [value]="facilityId() ?? undefined"
+              [required]="true"
+              (changed)="pickFacility($event)"
+            />
+          </furar-field>
+
+          <div role="status" class="f-reserve__live" data-book-for-status>
+            @if (reserve.taken(); as taken) {
+              <furar-callout tone="warn" [heading]="'booking.reserve.taken.title' | transloco: { time: taken.time }">
+                @if (taken.alternatives.length) {
+                  <p>{{ 'booking.reserve.taken.choose' | transloco }}</p>
+                  <div class="f-reserve__alts">
+                    @for (time of taken.alternatives; track time) {
+                      <button type="button" class="f-reserve__alt" (click)="reserve.selectTime(time)">
+                        {{ time }}
+                      </button>
+                    }
+                  </div>
+                } @else {
+                  <p>{{ 'booking.reserve.taken.none' | transloco }}</p>
+                }
+              </furar-callout>
+            }
+          </div>
+          @if (reserve.facility(); as f) {
+            @if (!f.bookable) {
+              <furar-callout tone="info">{{ 'booking.reserve.notBookable' | transloco }}</furar-callout>
+            }
+          }
+
+          @if (reserve.state() === 'ready') {
+            <furar-reserve-fields />
+          } @else if (reserve.state() === 'error') {
+            <furar-callout tone="danger">{{ t + 'loadError' | transloco }}</furar-callout>
+          }
+          @if (beforeText(); as before) {
+            <p class="f-reserve__hint" data-book-for-before>{{ before }}</p>
+          }
+
+          <furar-book-for-who
+            [form]="holder"
+            [ids]="ids"
+            [submitted]="submitted()"
+            [account]="account() ? store.original() : null"
+          />
+
+          @if (priced()) {
+            <fieldset class="f-book-for__pay" data-book-for-payment>
+              <legend class="f-label">{{ t + 'payment' | transloco }}</legend>
+              <div
+                furarSegmented
+                mode="radio"
+                [value]="paid()"
+                (valueChange)="pickPayment($event)"
+                [attr.aria-label]="t + 'payment' | transloco"
+              >
+                <button type="button" [furarSegmentedOption]="false" data-book-for-pending>
+                  {{ 'booking.manage.filters.paymentOption.PENDING' | transloco }}
+                </button>
+                <button type="button" [furarSegmentedOption]="true" data-book-for-paid>
+                  {{ 'booking.manage.filters.paymentOption.PAID' | transloco }}
+                </button>
+              </div>
+            </fieldset>
+          }
+
+          @if (totalText(); as total) {
+            <div class="f-reserve__total">
+              <span>{{ 'booking.reserve.total' | transloco }}</span>
+              <b data-book-for-total>{{ total }}</b>
+            </div>
+          }
+
+          @if (canNotify()) {
+            <label class="gap-unit flex min-h-11 cursor-pointer items-center">
+              <input
+                type="checkbox"
+                class="size-5 flex-none"
+                data-book-for-notify
+                [checked]="notify()"
+                (change)="toggleNotify($event)"
+              />
+              {{ t + 'notify' | transloco: { name: notifyName() } }}
+            </label>
+          }
+
+          @if (problem(); as p) {
+            <furar-callout tone="danger" live="alert" data-book-for-error>{{ p.translated }}</furar-callout>
+          }
+          <button
+            type="submit"
+            furarButton="primary"
+            class="f-reserve__go"
+            data-book-for-go
+            [disabled]="!canSave() || reserve.facility()?.bookable === false"
+            [busy]="submitting()"
+          >
+            {{ goText() }}
+          </button>
+        </form>
+      }
+    }
+  }
+</div>

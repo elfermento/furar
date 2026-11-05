@@ -3,36 +3,52 @@
 package gal.furar.booking.adapter.in.web;
 
 import gal.furar.booking.BookingCancelled;
+import gal.furar.booking.adapter.in.web.dto.BookForRequest;
 import gal.furar.booking.adapter.in.web.dto.BookingCalendarResponse;
+import gal.furar.booking.adapter.in.web.dto.BookingHolderRequest;
 import gal.furar.booking.adapter.in.web.dto.BookingSortValue;
 import gal.furar.booking.adapter.in.web.dto.BookingStatusValue;
 import gal.furar.booking.adapter.in.web.dto.BookingsOverviewResponse;
 import gal.furar.booking.adapter.in.web.dto.CalendarViewValue;
 import gal.furar.booking.adapter.in.web.dto.CancelBookingRequest;
 import gal.furar.booking.adapter.in.web.dto.ChangeBookingPaymentRequest;
+import gal.furar.booking.adapter.in.web.dto.ChangeBookingRequest;
 import gal.furar.booking.adapter.in.web.dto.ManagedBookingDetailResponse;
 import gal.furar.booking.adapter.in.web.dto.ManagedBookingResponse;
 import gal.furar.booking.adapter.in.web.dto.PaymentStatusValue;
+import gal.furar.booking.adapter.in.web.dto.SlotTakenProblemResponse;
+import gal.furar.booking.application.port.in.BookForUseCase;
 import gal.furar.booking.application.port.in.BookingSearch;
 import gal.furar.booking.application.port.in.BookingSort;
 import gal.furar.booking.application.port.in.CalendarView;
+import gal.furar.booking.application.port.in.ChangeBookingByStaffCommand;
 import gal.furar.booking.application.port.in.ManageBookingUseCase;
 import gal.furar.booking.application.port.in.ManageBookingsUseCase;
 import gal.furar.booking.application.port.in.ManagedBooking;
+import gal.furar.booking.application.port.in.ReserveForCommand;
 import gal.furar.booking.domain.BookingId;
 import gal.furar.booking.domain.BookingStatus;
+import gal.furar.booking.domain.Holder;
+import gal.furar.booking.domain.IdempotencyKey;
 import gal.furar.booking.domain.PaymentStatus;
+import gal.furar.shared.domain.Language;
 import gal.furar.shared.web.ETags;
+import gal.furar.shared.web.Locales;
 import gal.furar.shared.web.PageResponse;
 import gal.furar.shared.web.VersionedResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -54,20 +70,136 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * As reservas do concello para o persoal (plan do dominio 2, §2.2; maquetas 26 e 27): lista,
- * portada, detalle, calendario, cobro e cancelación. Ver e cobrar: xestión e persoal; cancelar: só
- * xestión. Unha reserva doutro concello non existe (404).
+ * portada, detalle, calendario, cobro e cancelación, e reservar no nome doutra persoa e cambiar
+ * (maqueta 58). Ver, cobrar, reservar e cambiar: xestión e persoal; cancelar: só xestión. Unha
+ * reserva doutro concello non existe (404).
  */
 @RestController
 @RequestMapping("/api/v1/municipalities/{slug}/bookings")
 @Tag(name = "bookings", description = "Reservas")
 class ManageBookingsController {
 
+  private static final String PROBLEM = "#/components/schemas/Problem";
+
   private final ManageBookingsUseCase bookings;
   private final ManageBookingUseCase manage;
+  private final BookForUseCase bookFor;
 
-  ManageBookingsController(ManageBookingsUseCase bookings, ManageBookingUseCase manage) {
+  ManageBookingsController(
+      ManageBookingsUseCase bookings, ManageBookingUseCase manage, BookForUseCase bookFor) {
     this.bookings = bookings;
     this.manage = manage;
+    this.bookFor = bookFor;
+  }
+
+  @PostMapping
+  @Operation(
+      operationId = "createBooking",
+      summary =
+          "O persoal reserva no nome dunha persoa sen conta (mostrador ou teléfono): o mesmo oco"
+              + " ca ao reservar a persoa, o nome e, se os dá, o correo (para a confirmación) e o"
+              + " teléfono; se xa pagou, queda pagada. Idempotente coa cabeceira Idempotency-Key")
+  @ApiResponse(
+      responseCode = "201",
+      description = "Reservada, ou xa reservada antes con esta clave e esta petición",
+      useReturnTypeSchema = true)
+  @ApiResponse(
+      responseCode = "409",
+      description = "booking.slot-taken coas alternativas; booking.part-taken",
+      content =
+          @Content(
+              mediaType = "application/problem+json",
+              schema = @Schema(implementation = SlotTakenProblemResponse.class)))
+  @ApiResponse(
+      responseCode = "422",
+      description =
+          "booking.idempotency-key-reused; as normas (booking.too-soon, booking.too-far,"
+              + " booking.too-long…)",
+      content = @Content(mediaType = "application/problem+json", schema = @Schema(ref = PROBLEM)))
+  @VersionedResource
+  ResponseEntity<ManagedBookingDetailResponse> create(
+      @PathVariable String slug,
+      @Parameter(
+              name = IdempotencyKey.HEADER,
+              in = ParameterIn.HEADER,
+              required = true,
+              description = "Clave opaca por intención de reservar (un UUID)",
+              schema =
+                  @Schema(type = "string", minLength = 1, maxLength = IdempotencyKey.MAX_LENGTH))
+          @RequestHeader(name = IdempotencyKey.HEADER, required = false)
+          @Nullable String idempotencyKey,
+      @Valid @RequestBody BookForRequest request,
+      HttpServletRequest http) {
+    IdempotencyKey key = IdempotencyKey.parse(idempotencyKey);
+    Language language =
+        request.language() == null
+            ? Locales.language(http)
+            : Language.fromCode(request.language()).orElseThrow();
+    BookingHolderRequest h = request.holder();
+    ManagedBooking created =
+        bookFor.reserveFor(
+            new ReserveForCommand(
+                request.facilityId(),
+                request.useId(),
+                request.start(),
+                request.slots(),
+                request.partId(),
+                Holder.walkIn(h.name().strip(), blank(h.email()), blank(h.phone()), language),
+                Boolean.TRUE.equals(request.paid()),
+                key,
+                request.customFields()));
+    URI location =
+        URI.create(
+            "/api/v1/municipalities/" + slug + "/bookings/" + created.booking().id().value());
+    return ResponseEntity.created(location)
+        .eTag(ETags.of(BookingWebMapper.version(created.booking())))
+        .body(BookingWebMapper.detail(created));
+  }
+
+  @PutMapping("/{id}")
+  @Operation(
+      operationId = "changeBooking",
+      summary =
+          "O persoal cambia a reserva co mesmo formulario (If-Match): outro oco da mesma"
+              + " instalación (sen o prazo da persoa), para quen é (só nas que fixo o persoal), o"
+              + " pago e os campos propios; se se marca, avísase á persoa por correo")
+  @ApiResponse(responseCode = "200", description = "Cambiada", useReturnTypeSchema = true)
+  @ApiResponse(
+      responseCode = "409",
+      description =
+          "booking.slot-taken coas alternativas; booking.part-taken; booking.not-cancellable",
+      content =
+          @Content(
+              mediaType = "application/problem+json",
+              schema = @Schema(implementation = SlotTakenProblemResponse.class)))
+  @VersionedResource
+  ResponseEntity<ManagedBookingDetailResponse> change(
+      @PathVariable String slug,
+      @PathVariable UUID id,
+      @RequestHeader(HttpHeaders.IF_MATCH) String ifMatch,
+      @Valid @RequestBody ChangeBookingRequest request) {
+    BookingHolderRequest h = request.holder();
+    return detail(
+        bookFor.change(
+            new ChangeBookingByStaffCommand(
+                new BookingId(id),
+                ETags.parseIfMatch(ifMatch),
+                request.useId(),
+                request.start(),
+                request.slots(),
+                request.partId(),
+                h == null
+                    ? null
+                    : new ChangeBookingByStaffCommand.Contact(
+                        h.name().strip(), blank(h.email()), blank(h.phone())),
+                request.paid(),
+                !Boolean.FALSE.equals(request.notifyPerson()),
+                request.customFields())));
+  }
+
+  /** Un texto baleiro vale o mesmo que non mandalo. */
+  private static @Nullable String blank(@Nullable String value) {
+    return value == null || value.isBlank() ? null : value.strip();
   }
 
   @GetMapping

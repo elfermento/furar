@@ -11,7 +11,7 @@ A instalación de produción próbase en cada verificación (D48, `scripts/proba
 
 ## 1. Que fai falta
 
-- [ ] **Servidor** Linux x86-64 (amd64) con 4 GB de RAM, 2 vCPU e 20 GB de disco. Mellor aloxado na UE (RGPD). Servidor ARM64: §11.
+- [ ] **Servidor** Linux x86-64 (amd64) ou ARM64 (arm64) con 4 GB de RAM, 2 vCPU e 20 GB de disco. Mellor aloxado na UE (RGPD). As imaxes publícanse para as dúas arquitecturas e Docker descarga a do servidor; v0.1.0 só para amd64 (§11).
 - [ ] **Docker** Engine 24 ou posterior con Docker Compose 2.24.4 ou posterior (`docker compose version`), `git` e `openssl`.
 - [ ] **Un nome DNS** (p. ex. `reservas.concello.gal`) que apunte á IP do servidor.
 - [ ] **Portos 80 e 443** abertos desde Internet. O resto, pechado. Saída a Internet (directa ou por proxy) só cara aos destinos do §13.
@@ -26,9 +26,8 @@ Furar usa como máximo 2,7 GB de memoria (PostgreSQL 512 MB, Keycloak 1 GB, API 
 **Descarga** o código da versión:
 
 ```sh
-git clone https://github.com/elfermento/furar.git /opt/furar
+git clone --branch v0.1.0 https://github.com/elfermento/furar.git /opt/furar   # a versión que vas instalar
 cd /opt/furar
-git checkout v0.1.0                          # a versión que vas instalar
 curl -fsSLO https://github.com/elfermento/furar/releases/download/v0.1.0/furar-v0.1.0.env
 ```
 
@@ -207,11 +206,26 @@ O realm de Keycloak só se importa na primeira instalación: os cambios de realm
 
 Seguridade: mantén o sistema e Docker actualizados, deixa abertos só os portos 80 e 443, administra Keycloak polo túnel SSH (`FURAR_ADMIN_IPS=127.0.0.1/32`), protexe `.env` (`chmod 600`) e revisa os eventos de Keycloak. Medidas do ENS e o que queda pendente: [ens.md](ens.md). Vulnerabilidades: [SECURITY.md](../SECURITY.md).
 
+### Empezar de cero
+
+`docker compose down -v` borra **todos** os volumes do proxecto: a base de datos e os certificados. Non o uses sen máis: fai antes unha copia (`scripts/copia.sh`) e comproba que proxecto é (`docker compose config | sed -n 's/^name: //p'`: produción é `furar`; o perfil de proba do §10, `furar-local`). Para borrar só a base desta instalación e conservar os certificados:
+
+```sh
+cd /opt/furar
+docker compose down
+docker volume ls --filter label=com.docker.compose.project=furar   # mira que é o que vas borrar
+docker volume rm furar_pgdata-prod
+scripts/instalar.sh --substituir
+```
+
+A base nova nace cos contrasinais do `.env` (`--substituir` consérvaos); a conta de administración e os concellos hai que crealos outra vez (§3).
+
 ## 9. Problemas frecuentes
 
 | Síntoma | Causa habitual |
 |---|---|
 | `instalar.sh` di «Falta o ficheiro furar-<versión>.env» | Descárgao de *Releases*, da mesma versión ca o código, e déixao no cartafol de Furar (§2). |
+| `instalar.sh` di «xa hai unha base doutra instalación» | Hai un volume `furar_pgdata-prod` dunha instalación anterior e o `.env` é novo, con outros contrasinais: recupera o `.env` anterior ou borra a base (§8, «Empezar de cero»). |
 | `required variable … is missing a value` | Falta ese valor en `.env`: `scripts/instalar.sh --substituir` volve preguntar os datos e conserva os contrasinais. |
 | A API reinicia e o rexistro di `Refusing to start with profile 'prod'` | Contrasinal curto ou de demo, ou `FURAR_PUBLIC_URL` sen `https`. |
 | O navegador avisa do certificado (ou o instalador di que responde cun certificado que aínda non é de confianza) | O DNS aínda non apunta ao servidor ou o porto 80 está pechado (Let's Encrypt valida por el); os primeiros minutos é normal. Mira `docker compose logs web`. |
@@ -221,6 +235,7 @@ Seguridade: mantén o sistema e Docker actualizados, deixa abertos só os portos
 | `/auth/admin` dá 403 | É o esperado: usa o túnel SSH (§5). |
 | Entrei co correo de `FURAR_ADMIN_EMAIL` e non vexo «Novo concello» | O correo ten que estar verificado (a ligazón de «Verifica o teu correo») e ser o mesmo ca `FURAR_ADMIN_EMAIL`; se xa había unha administración, ese correo non dá nada (§3). |
 | Unha persoa do persoal perdeu o acceso ao seu correo | Na pantalla **Persoal**, desactívaa e invita o correo novo; a conta vella queda sen acceso á xestión. Se só esqueceu o contrasinal, «Esqueciches o contrasinal?» na pantalla de acceso. |
+| `instalar.sh` di «aínda arrincando: keycloak … Agardo ata 15 minutos máis» | Normal no primeiro arranque dun servidor lento: Keycloak importa o realm e pasa do prazo do seu healthcheck, e Compose rende («dependency failed to start: container …-keycloak-1 is unhealthy»). O instalador agarda e segue só. Se aínda así falla, `docker compose logs --tail 50 keycloak`; se só tardaba, `docker compose up -d --wait` remata o arranque. Nun ARM64 con v0.1.0 (só amd64, emulada) tarda moito máis: usa unha versión con arm64 ou §11. |
 | `preflight.sh` di que Compose é vello | Actualiza o paquete `docker-compose-plugin` (2.24.4 ou posterior). |
 | O mapa sae gris (as teselas dan 502 ou 504) | Caddy non chega ao servidor de teselas (por defecto `www.ign.es`): proba `curl -I https://reservas.concello.gal/tiles/14/7905/5878.png` e mira `docker compose logs web`. Detrás dun proxy, `FURAR_HTTP_PROXY` (§13). Se o servidor non pode saír a Internet, `FURAR_MAP=off`. |
 | Ao dar de alta unha instalación non saen suxestións de enderezo | A API non chega a CartoCiudad (aviso «enchelo a man» na web): saída a `www.cartociudad.es:443` ou `FURAR_HTTP_PROXY` (§13). |
@@ -237,13 +252,15 @@ docker compose --profile full up -d --wait
 
 Abre http://localhost:8080/naron. Usuarios de demo en [`deploy/keycloak/README.md`](../deploy/keycloak/README.md).
 
-Os datos de demo teñen as datas relativas ao día en que se aplican. O primeiro arrinque de cada día volve aplicar as sementes (`api/src/main/resources/db/demo`, placeholder `demo_day`), e a historia de reservas dos indicadores chega ata hoxe e ás reservas xa feitas da semana seguinte. As reservas de exemplo de «As miñas reservas» e da xestión quedan, en cambio, nas datas do primeiro arrinque: antes de ensinar a demo despois de varios días, recrea a base con `docker compose --profile full down -v` (borra o volume `pgdata`, só o deste perfil) e volve levantala.
+Os datos de demo teñen as datas relativas ao día en que se aplican. O primeiro arrinque de cada día volve aplicar as sementes (`api/src/main/resources/db/demo`, placeholder `demo_day`), e a historia de reservas dos indicadores chega ata hoxe e ás reservas xa feitas da semana seguinte. As reservas de exemplo de «As miñas reservas» e da xestión quedan, en cambio, nas datas do primeiro arrinque: antes de ensinar a demo despois de varios días, recrea a base con `docker compose --profile full down -v` (borra o volume `furar-local_pgdata`, só o deste perfil; os de produción son doutro proxecto, `furar`) e volve levantala.
 
-Este perfil é só para probar: usa contrasinais públicos de demo (tamén o administrador de Keycloak). Por iso só escoita en `127.0.0.1`: noutro equipo da rede non se ve. Para probalo nun servidor, entra cun túnel (`ssh -L 8080:127.0.0.1:8080 servidor` e abre http://localhost:8080/naron) en vez de abrilo á rede (`FURAR_HTTP_BIND`, ver `.env.example`). En produción úsase sempre `compose.prod.yaml`, cun volume distinto.
+Este perfil é só para probar: usa contrasinais públicos de demo (tamén o administrador de Keycloak). Por iso só escoita en `127.0.0.1`: noutro equipo da rede non se ve. Para probalo nun servidor, entra cun túnel (`ssh -L 8080:127.0.0.1:8080 servidor` e abre http://localhost:8080/naron) en vez de abrilo á rede (`FURAR_HTTP_BIND`, ver `.env.example`). En produción úsase sempre `compose.prod.yaml`, con outro proxecto de Compose (`furar`, fronte ao `furar-local` deste perfil): contedores e volumes distintos, así que probar e instalar no mesmo equipo non se pisan.
 
 ## 11. Servidor ARM64 ou rexistro propio
 
-As imaxes publicadas son `linux/amd64` (as que pasan o e2e da CI). Nun servidor ARM64, constrúe as túas desde a mesma etiqueta e súbeas ao rexistro do concello; todas as imaxes base son multiarquitectura:
+As imaxes publicadas son para `linux/amd64` e `linux/arm64`: cada arquitectura pasa o e2e da CI no seu propio runner e a release publica un índice das dúas, así que un servidor ARM64 instálase igual (§2). A excepción é v0.1.0, só `linux/amd64`: nun ARM64 Docker emúlaa e todo vai moi lento (Keycloak pode tardar máis de 5 minutos en arrincar).
+
+Para usar un rexistro do concello (ou v0.1.0 nun ARM64), constrúe as imaxes desde a mesma etiqueta no propio servidor (sae a súa arquitectura) e súbeas; todas as imaxes base son multiarquitectura:
 
 ```sh
 git checkout v0.1.0

@@ -26,9 +26,10 @@ import org.springframework.stereotype.Component;
  * saen de {@code date_trunc} sobre a hora local. Os filtros opcionais van como {@code (:all or …)}
  * e as categorías con {@code count(*) filter (where …)}, así o nivel 0 é unha conxunción co
  * concello (A8b, {@code BookingStatsSqlTenantIT}). Só saen contas, minutos e céntimos: {@code
- * holder_subject} aparece só dentro de {@code count(distinct …)}. Os minutos son a duración real do
- * intervalo ({@code upper − lower}), tamén nos días do cambio de hora. Cada sentenza vai enteira
- * nun literal (A8b); usa o índice {@code booking_start_idx}.
+ * holder_subject} aparece só dentro de {@code count(distinct …)}; unha reserva que fixo o persoal
+ * para unha persoa sen conta conta como unha persoa. Os minutos son a duración real do intervalo
+ * ({@code upper − lower}), tamén nos días do cambio de hora. Cada sentenza vai enteira nun literal
+ * (A8b); usa o índice {@code booking_start_idx}.
  */
 @Component
 @NativeSql(scope = NativeSql.Scope.MUNICIPALITY)
@@ -163,7 +164,9 @@ class BookingStatsSql {
                 """
                 select date_trunc(:unit, lower(period) at time zone 'Europe/Madrid')::date
                          as bucket_start,
-                       count(distinct holder_subject) as people
+                       count(distinct coalesce(
+                         holder_subject, case when anonymized_at is null then id::text end))
+                         as people
                 from booking
                 where status = 'CONFIRMED'
                   and lower(period) >= :since and lower(period) < :until
@@ -188,7 +191,8 @@ class BookingStatsSql {
     return filtered(
             jdbc.sql(
                 """
-                select count(distinct holder_subject)
+                select count(distinct coalesce(
+                         holder_subject, case when anonymized_at is null then id::text end))
                 from booking
                 where status = 'CONFIRMED'
                   and lower(period) >= :since and lower(period) < :until

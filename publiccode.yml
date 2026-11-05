@@ -9,8 +9,8 @@ publiccodeYmlVersion: "0"
 
 name: Furar
 url: "https://github.com/elfermento/furar"
-softwareVersion: "0.1.0"
-releaseDate: "2026-11-04"
+softwareVersion: "0.1.1"
+releaseDate: "2026-11-05"
 platforms:
   - web
 categories:

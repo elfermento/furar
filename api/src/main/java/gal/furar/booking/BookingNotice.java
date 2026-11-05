@@ -17,6 +17,8 @@ import org.jspecify.annotations.Nullable;
  * @param partName nome da parte, só nos usos por partes
  * @param amountCents total en céntimos, só se é de pago
  * @param holderLanguage idioma dos correos, {@code gl} ou {@code es}
+ * @param holderHasAccount se a persoa reservou coa súa conta; sen ela (reservou o persoal no seu
+ *     nome), non ten «as miñas reservas» onde vela
  * @param qrPng o QR do código en PNG, coa súa zona tranquila
  * @param calendar o {@code .ics} da reserva ({@code METHOD:CANCEL} se está cancelada)
  */
@@ -39,6 +41,7 @@ public record BookingNotice(
     String holderName,
     String holderEmail,
     String holderLanguage,
+    boolean holderHasAccount,
     byte[] qrPng,
     String calendar) {
 

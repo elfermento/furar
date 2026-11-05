@@ -50,9 +50,17 @@ export function toCsv(rows: readonly CsvRow[]): string {
  * reservas. `fileName` leva a extensión (`indicadores-naron-2026-10.csv`).
  */
 export function downloadCsv(document: Document, fileName: string, rows: readonly CsvRow[]): void {
+  downloadBlob(document, fileName, new Blob([toCsv(rows)], { type: 'text/csv;charset=utf-8' }));
+}
+
+/**
+ * Garda no navegador un ficheiro xa feito (un CSV que xera a API, p. ex.): un `<a download>` cun
+ * URL do `Blob` que se solta despois.
+ */
+export function downloadBlob(document: Document, fileName: string, blob: Blob): void {
   const view = document.defaultView;
   if (!view) return;
-  const url = view.URL.createObjectURL(new Blob([toCsv(rows)], { type: 'text/csv;charset=utf-8' }));
+  const url = view.URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
   link.download = fileName;

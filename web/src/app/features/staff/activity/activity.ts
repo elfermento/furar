@@ -33,7 +33,7 @@ export const MAX_RANGE_DAYS = 365;
  */
 const ACTIONS_BY_AREA: Readonly<Record<string, readonly string[]>> = {
   audit: ['export-blocked'],
-  booking: ['cancel', 'payment', 'anonymize'],
+  booking: ['book-for', 'change', 'cancel', 'payment', 'anonymize', 'export'],
   customfield: ['create', 'update', 'deactivate', 'activate', 'delete'],
   facility: [
     'create',

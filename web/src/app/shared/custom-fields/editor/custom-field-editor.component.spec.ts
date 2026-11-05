@@ -86,6 +86,23 @@ describe('CustomFieldEditorComponent', () => {
     expect(el.querySelectorAll('furar-custom-field-preview input[type="radio"]').length).toBe(4);
   });
 
+  it('as regras de data escóllense no calendario propio e a máxima non pode ir antes da mínima', async () => {
+    const { el, pick, fixture } = await render();
+    await pick('def-type', 'Data');
+    expect(el.querySelector('input[type="date"]')).toBeNull();
+    expect(el.querySelector('label[for="rule-minDate"]')?.textContent).toContain('Data mínima');
+    const rules = fixture.componentInstance['form'].controls.rules.controls;
+    rules.minDate.setValue('2026-06-10');
+    rules.maxDate.setValue('2026-06-15');
+    await fixture.whenStable();
+    el.querySelector<HTMLButtonElement>('furar-date-field button#rule-maxDate')!.click();
+    await fixture.whenStable();
+    expect(document.querySelector('td[data-date="2026-06-09"]')?.getAttribute('aria-disabled')).toBe('true');
+    document.querySelector<HTMLElement>('td[data-date="2026-06-20"]')!.click();
+    await fixture.whenStable();
+    expect(rules.maxDate.value).toBe('2026-06-20');
+  });
+
   it('envía o borrador válido; as opcións aparecen para as seleccións', async () => {
     const { el, saved, type, pick, submit, fixture, place } = await render();
     await place('Instalación');

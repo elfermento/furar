@@ -9,6 +9,10 @@
 # Volume propio (pgdata-prod, SEC-09): unha base creada antes co perfil full (realm de demo,
 # usuarios con contrasinal público, cliente furar-e2e) nunca se reutiliza en produción.
 # Administración de Keycloak: pechada en Caddy por defecto; só por túnel SSH a 127.0.0.1:8082.
+# Proxecto furar (o de sempre: as instalacións existentes conservan contedores e volumes), distinto
+# do furar-local de compose.yaml; COMPOSE_PROJECT_NAME no .env cámbiao.
+
+name: furar
 
 services:
   postgres:

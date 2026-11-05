@@ -41,6 +41,15 @@ class BookingMailComposerTest {
 
   static BookingNotice booking(
       String facility, String holder, String language, BookingSummary.Status status) {
+    return booking(facility, holder, language, status, true);
+  }
+
+  static BookingNotice booking(
+      String facility,
+      String holder,
+      String language,
+      BookingSummary.Status status,
+      boolean account) {
     return new BookingNotice(
         UUID.fromString("019a0b6e-0000-7000-8000-00000000b001"),
         "FUR-7K2Q",
@@ -60,6 +69,7 @@ class BookingMailComposerTest {
         holder,
         "ana@example.org",
         language,
+        account,
         QR,
         "BEGIN:VCALENDAR\r\nMETHOD:"
             + (status == BookingSummary.Status.CONFIRMED ? "PUBLISH" : "CANCEL")
@@ -198,6 +208,49 @@ class BookingMailComposerTest {
         .contains(">Antes</td>", "luns 26 de outubro, 09:00–10:00")
         .contains("src=\"cid:qr\"", "Podes cancelala de balde");
     assertThat(mail.text()).contains("Antes: luns 26 de outubro, 09:00–10:00");
+  }
+
+  @Test
+  void withoutAnAccountTheMailHasNoLinkToTheirBookingsButKeepsTheCode() {
+    BookingNotice walkIn =
+        booking("Campo de fútbol 1", "Ana Rey", "gl", BookingSummary.Status.CONFIRMED, false);
+    for (MailKind kind : List.of(MailKind.CONFIRMED, MailKind.CHANGED)) {
+      OutgoingMail mail = compose(kind, Language.GL, walkIn);
+
+      assertThat(mail.html())
+          .as(kind.name())
+          .contains("src=\"cid:qr\"", "FUR-7K2Q", "Ensínao ao chegar")
+          .contains("Tamén a tes no arquivo adxunto para o calendario.")
+          .doesNotContain("Ver a miña reserva", "Engadir ao calendario", "/naron/reservas\"")
+          .doesNotContain("{{", "}}");
+      assertThat(mail.text())
+          .as(kind.name())
+          .contains("Código: FUR-7K2Q", "Ensínao ao chegar")
+          .doesNotContain("Ver a miña reserva", "Engadir ao calendario", "/naron/reservas");
+      assertThat(mail.attachments()).hasSize(1);
+    }
+
+    OutgoingMail es =
+        compose(
+            MailKind.CONFIRMED,
+            Language.ES,
+            booking("Campo de fútbol 1", "Ana Rey", "es", BookingSummary.Status.CONFIRMED, false));
+    assertThat(es.html()).contains("FUR-7K2Q").doesNotContain("Ver mi reserva", "/naron/reservas");
+
+    OutgoingMail cancelled =
+        compose(
+            MailKind.CANCELLED_BY_MUNICIPALITY,
+            Language.GL,
+            booking(
+                "Campo de fútbol 1",
+                "Ana Rey",
+                "gl",
+                BookingSummary.Status.CANCELLED_BY_MUNICIPALITY,
+                false));
+    assertThat(cancelled.html())
+        .contains(">Código</td>", "FUR-7K2Q", ">Elixir outra hora</a>")
+        .doesNotContain("Ver as miñas reservas");
+    assertThat(cancelled.text()).doesNotContain("Ver as miñas reservas");
   }
 
   @Test

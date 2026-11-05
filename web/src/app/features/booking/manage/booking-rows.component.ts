@@ -93,6 +93,8 @@ export class BookingRowsComponent {
     const parts = [
       this.transloco.translate('booking.manage.reserved', { ago: agoText(b.reservedAt, this.language.lang()) }),
     ];
+    // Reserva por outra persoa (maqueta 58): quen do persoal a fixo.
+    if (b.bookedBy?.name) parts.push(this.transloco.translate('booking.manage.by', { name: b.bookedBy.name }));
     if (b.status === 'CANCELLED_BY_MUNICIPALITY')
       parts.push(this.transloco.translate('booking.mine.cancelledByMunicipality'));
     if (b.status === 'CANCELLED_BY_PERSON') parts.push(this.transloco.translate('booking.mine.cancelledByPerson'));

@@ -36,6 +36,12 @@ class DeliveryLogPersistenceAdapter extends TenantScopedPersistenceAdapter imple
   }
 
   @Override
+  @Transactional(readOnly = true)
+  public Optional<Sent> lastSent(UUID bookingId) {
+    return sql.lastSent(tenant().id(), bookingId).map(d -> new Sent(d.kind(), d.at()));
+  }
+
+  @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void record(Delivery delivery) {
     UUID municipality = tenant().id();

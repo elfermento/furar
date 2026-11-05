@@ -53,6 +53,9 @@ class BookingMailListener {
   @Async
   @TransactionalEventListener
   void on(BookingChanged event) {
+    if (event.silent()) {
+      return;
+    }
     send(
         new BookingMailCommand(
             event.bookingId(),

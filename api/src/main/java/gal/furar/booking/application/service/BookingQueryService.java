@@ -63,8 +63,11 @@ class BookingQueryService implements BookingQueries {
   @Override
   @Transactional(readOnly = true)
   public Optional<BookingNotice> notice(UUID id) {
-    // Unha anonimizada xa non ten a quen avisar.
-    return repository.findById(new BookingId(id)).filter(b -> !b.isAnonymised()).map(this::notice);
+    // Unha anonimizada xa non ten a quen avisar; unha do persoal sen correo, tampouco.
+    return repository
+        .findById(new BookingId(id))
+        .filter(b -> !b.isAnonymised() && b.requireHolder().email() != null)
+        .map(this::notice);
   }
 
   @Override
@@ -92,8 +95,9 @@ class BookingQueryService implements BookingQueries {
         booking.price().amountCents(),
         booking.cancelUntil(),
         holder.name(),
-        holder.email(),
+        Objects.requireNonNull(holder.email(), "email"),
         holder.language().code(),
+        holder.hasAccount(),
         qr.png(booking.code().value(), QR_MODULE_PIXELS, QR_QUIET_MODULES),
         calendar.of(
             booking, view.facilityName(), view.facilityAddress(), view.useName(), view.partName()));

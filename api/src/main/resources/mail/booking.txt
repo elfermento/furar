@@ -23,8 +23,8 @@
 {{/deadline}}{{#deadlinePassed}}
 {{deadlinePassed}}
 {{/deadlinePassed}}
-{{button1}}: {{link1}}
-{{#link2}}{{button2}}: {{link2}}
+{{#link1}}{{button1}}: {{link1}}
+{{/link1}}{{#link2}}{{button2}}: {{link2}}
 {{/link2}}
 {{note}}
 

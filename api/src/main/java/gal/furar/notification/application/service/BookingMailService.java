@@ -72,7 +72,8 @@ public class BookingMailService implements SendBookingMail {
     }
     Optional<BookingNotice> found = bookings.notice(command.bookingId());
     if (found.isEmpty()) {
-      LOG.warn("Booking {} not found: no {} mail", command.bookingId(), command.kind());
+      LOG.info(
+          "Booking {} not found or without email: no {} mail", command.bookingId(), command.kind());
       return;
     }
     BookingNotice booking = found.get();

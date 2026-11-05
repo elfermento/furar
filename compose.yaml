@@ -10,8 +10,10 @@
 #   docker compose --profile full up -d --wait
 # Os valores por defecto son de demo. Produción: compose.prod.yaml (esixe os segredos).
 # postgres e keycloak teñen unha variante -dev (portos e URL distintos); comparten volume.
+# Proxecto furar-local: contedores e volumes (furar-local_pgdata) distintos dos de produción
+# (compose.prod.yaml volve a furar), así que un `down -v` aquí non toca unha instalación do mesmo equipo.
 
-name: furar
+name: furar-local
 
 x-logging: &logging
   driver: json-file

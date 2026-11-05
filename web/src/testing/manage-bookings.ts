@@ -58,6 +58,7 @@ export function detail(overrides: Partial<ManagedBookingDetailResponse> = {}): M
     cancellable: true,
     cancelChannels: ['EMAIL', 'WEB'],
     customFields: {},
+    holderAccount: true,
     ...overrides,
   };
 }

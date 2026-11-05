@@ -27,6 +27,8 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     // O service worker probaríase coa caché entre probas; a PWA compróbase á parte.
     serviceWorkers: 'block',
+    // Como unha persoa de aquí, sexa cal sexa a zona da máquina: os días son os de Europe/Madrid.
+    timezoneId: 'Europe/Madrid',
   },
   projects: [
     { name: 'gl', use: { ...devices['Desktop Chrome'], locale: 'gl-ES' } },

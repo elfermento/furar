@@ -58,6 +58,31 @@ class NotificationDeliverySql {
         .optional();
   }
 
+  /** O último correo da reserva que saíu (SENT): o tipo e cando. */
+  Optional<SentDelivery> lastSent(UUID municipality, UUID booking) {
+    return jdbc.sql(
+            """
+            select kind, sent_at
+              from notification_delivery
+             where booking_id = :booking and status = 'SENT' and kind <> :invitation
+               and municipality_id = :tenant
+             order by sent_at desc
+             limit 1
+            """)
+        .param("booking", booking)
+        .param("invitation", STAFF_INVITATION)
+        .param("tenant", municipality)
+        .query(
+            (rs, n) ->
+                new SentDelivery(
+                    MailKind.valueOf(rs.getString("kind")),
+                    rs.getObject("sent_at", OffsetDateTime.class).toInstant()))
+        .optional();
+  }
+
+  /** Un correo dunha reserva que saíu. */
+  record SentDelivery(MailKind kind, Instant at) {}
+
   void insert(UUID municipality, Delivery d, Instant now) {
     jdbc.sql(
             """

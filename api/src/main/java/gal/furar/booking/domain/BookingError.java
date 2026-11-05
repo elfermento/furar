@@ -46,7 +46,11 @@ public enum BookingError implements ErrorCode {
   /** A cabeceira {@code Idempotency-Key} non ten a forma de {@link IdempotencyKey}. */
   IDEMPOTENCY_KEY_INVALID("booking.idempotency-key-invalid", 400),
   /** A mesma persoa xa usou esta clave para reservar outra cousa. */
-  IDEMPOTENCY_KEY_REUSED("booking.idempotency-key-reused", 422);
+  IDEMPOTENCY_KEY_REUSED("booking.idempotency-key-reused", 422),
+  /** A descarga en CSV abarca como moito {@code months} meses seguidos. */
+  EXPORT_RANGE_TOO_LONG("booking.export-range-too-long", 422),
+  /** Os datos dunha reserva feita coa conta da persoa son os da conta: non se corrixen. */
+  HOLDER_NOT_EDITABLE("booking.holder-not-editable", 422);
 
   private final String code;
   private final int status;

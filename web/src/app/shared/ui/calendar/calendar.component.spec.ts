@@ -32,6 +32,16 @@ class HostComponent {
   readonly disabled = (date: IsoDate) => date === '2026-12-25';
 }
 
+/** Sen `today`: o calendario colle o día de Madrid. */
+@Component({
+  imports: [CalendarComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<furar-calendar [(value)]="value" />`,
+})
+class NoTodayHostComponent {
+  readonly value = signal<IsoDate | null>(null);
+}
+
 describe('furar-calendar', () => {
   async function render(lang: 'gl' | 'es' = 'gl') {
     TestBed.configureTestingModule({ providers: [provideTestI18n(lang)] });
@@ -229,5 +239,22 @@ describe('furar-calendar en modo rango', () => {
     expect(fixture.componentInstance.picked).toEqual(['2026-10-31']);
     expect(cell('2026-10-31').getAttribute('aria-selected')).toBe('false');
     await expectNoAxeViolations(host);
+  });
+
+  describe('sen «today»', () => {
+    afterEach(() => vi.useRealTimers());
+
+    it('hoxe é o día de Madrid, non o do reloxo UTC (23:30 UTC xa é o día seguinte alí)', async () => {
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date('2026-10-25T23:30:00Z'));
+      TestBed.configureTestingModule({ providers: [provideTestI18n('gl')] });
+      const fixture = TestBed.createComponent(NoTodayHostComponent);
+      await TestBed.inject(LanguageService).use('gl');
+      await fixture.whenStable();
+      const host = fixture.nativeElement as HTMLElement;
+
+      expect(host.querySelector('td[aria-current="date"]')?.getAttribute('data-date')).toBe('2026-10-26');
+      expect(host.querySelector('td[tabindex="0"]')?.getAttribute('data-date')).toBe('2026-10-26');
+    });
   });
 });

@@ -149,4 +149,13 @@ public interface BookingRepository {
    * @throws DomainException {@code common.stale-version} se outra escritura chegou antes
    */
   void changePayment(Booking before, Booking after, String actorSubject);
+
+  /**
+   * Garda unha corrección dos datos da reserva sen cambiar o oco nin o cobro (para quen é, nas que
+   * fixo o persoal): a fila {@code booking} (versión + 1). Sen fila na historia: queda no rexistro
+   * de actividade.
+   *
+   * @throws DomainException {@code common.stale-version} se outra escritura chegou antes
+   */
+  void correct(Booking before, Booking after);
 }

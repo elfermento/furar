@@ -18,13 +18,13 @@ import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { LanguageService } from '../../../core/i18n/language.service';
 import { IconComponent } from '../icon/icon.component';
 import type { IsoDate } from './local-date';
+import { madridToday } from './madrid-time';
 import {
   addDays,
   addMonths,
   clamp,
   formatLong,
   formatMonth,
-  localToday,
   monthGrid,
   startOfMonth,
   startOfWeek,
@@ -166,13 +166,13 @@ export class CalendarComponent {
   readonly rangeEnd = input<IsoDate | null>(null);
   /** Un día do mes que se ve mentres non hai `value` (sen el, o de hoxe). */
   readonly month = input<IsoDate | null>(null);
-  /** «Hoxe» que manda a API (`today`, Europe/Madrid); se falta, o do navegador. */
+  /** «Hoxe» que manda a API (`today`, Europe/Madrid); se falta, o de Madrid co reloxo do navegador. */
   readonly today = input<IsoDate | null>(null);
   /** Escolleuse un día (clic, Intro ou Espazo), aínda que xa fose o escollido. */
   readonly picked = output<IsoDate>();
 
   protected readonly titleId = `furar-calendar-${nextId++}-title`;
-  protected readonly todayDate = computed(() => this.today() ?? localToday());
+  protected readonly todayDate = computed(() => this.today() ?? madridToday());
   /** Día co foco itinerante; volve ao escollido (ou a hoxe) se cambian o valor ou os límites. */
   readonly focused = linkedSignal(() =>
     clamp(this.value() ?? this.month() ?? this.todayDate(), this.min(), this.max()),

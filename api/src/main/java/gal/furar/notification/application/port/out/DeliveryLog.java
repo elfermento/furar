@@ -16,6 +16,17 @@ public interface DeliveryLog {
 
   Optional<Delivery> find(UUID bookingId, MailKind kind, String eventId);
 
+  /** O último correo da reserva que saíu, se saíu algún. */
+  Optional<Sent> lastSent(UUID bookingId);
+
+  /**
+   * Un correo dunha reserva que saíu.
+   *
+   * @param kind que correo
+   * @param at cando saíu
+   */
+  record Sent(MailKind kind, Instant at) {}
+
   /**
    * Garda o resultado dun intento nunha transacción propia: queda aínda que quen chama desfaga a
    * súa (o fallo que se lanza para reintentar).

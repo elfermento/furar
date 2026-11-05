@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: EUPL-1.2
 package gal.furar.booking.adapter.out.customfields;
 
+import gal.furar.booking.application.port.in.BookingFieldColumn;
 import gal.furar.booking.application.port.out.BookingCustomFields;
 import gal.furar.booking.domain.BookingId;
+import gal.furar.customfields.CustomFieldColumns;
 import gal.furar.customfields.CustomFieldProjector;
 import gal.furar.customfields.CustomFieldValidator;
 import gal.furar.customfields.CustomFieldValueStore;
@@ -21,8 +23,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * Campos propios da reserva pola API pública de {@code customfields} (A19). Quen reserva escribe
- * como titular; nas lecturas, a audiencia vén do caso de uso (as reservas propias, titular; as do
- * concello, persoal). Unha páxina de reservas custa dúas consultas, nunca unha por reserva.
+ * como titular e o persoal, no nome dunha persoa, como persoal; nas lecturas, a audiencia vén do
+ * caso de uso (as reservas propias, titular; as do concello, persoal). Unha páxina de reservas
+ * custa dúas consultas, nunca unha por reserva.
  */
 @Component
 class BookingCustomFieldsAdapter implements BookingCustomFields {
@@ -30,12 +33,17 @@ class BookingCustomFieldsAdapter implements BookingCustomFields {
   private final CustomFieldValidator validator;
   private final CustomFieldProjector projector;
   private final CustomFieldValueStore store;
+  private final CustomFieldColumns columns;
 
   BookingCustomFieldsAdapter(
-      CustomFieldValidator validator, CustomFieldProjector projector, CustomFieldValueStore store) {
+      CustomFieldValidator validator,
+      CustomFieldProjector projector,
+      CustomFieldValueStore store,
+      CustomFieldColumns columns) {
     this.validator = validator;
     this.projector = projector;
     this.store = store;
+    this.columns = columns;
   }
 
   @Override
@@ -45,6 +53,20 @@ class BookingCustomFieldsAdapter implements BookingCustomFields {
         raw == null ? Map.of() : raw,
         CustomFieldValues.empty(),
         ValidationContext.of(Audience.OWNER));
+  }
+
+  @Override
+  public CustomFieldValues validateByStaff(Map<String, ?> raw, CustomFieldValues previous) {
+    return validator.validate(
+        CustomFieldTarget.BOOKING,
+        raw == null ? Map.of() : raw,
+        previous,
+        ValidationContext.of(Audience.STAFF));
+  }
+
+  @Override
+  public CustomFieldValues stored(BookingId id) {
+    return store.load(CustomFieldTarget.BOOKING, id.value());
   }
 
   @Override
@@ -60,6 +82,13 @@ class BookingCustomFieldsAdapter implements BookingCustomFields {
   @Override
   public Map<UUID, CustomFieldValues> forStaff(Collection<UUID> bookingIds) {
     return visible(bookingIds, Audience.STAFF);
+  }
+
+  @Override
+  public List<BookingFieldColumn> staffColumns() {
+    return columns.columns(CustomFieldTarget.BOOKING, Audience.STAFF).stream()
+        .map(c -> new BookingFieldColumn(c.code(), c.label(), c.options()))
+        .toList();
   }
 
   @Override

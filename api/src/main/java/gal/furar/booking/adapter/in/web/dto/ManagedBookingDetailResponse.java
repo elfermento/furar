@@ -21,6 +21,10 @@ import org.jspecify.annotations.Nullable;
  * @param cancellable se o concello aínda a pode cancelar (está confirmada)
  * @param cancelChannels as canles que se poden marcar ao cancelar (P12): correo e aviso na web
  * @param customFields campos propios da reserva (todos), por código
+ * @param holderPhone teléfono, só nas que fixo o persoal e se o deu
+ * @param holderAccount se a persoa reservou coa súa conta (os seus datos non se corrixen)
+ * @param bookedBy quen do persoal a fixo no nome da persoa; nulo se a fixo ela
+ * @param lastMail o último correo que saíu da reserva; nulo se aínda non saíu ningún
  */
 public record ManagedBookingDetailResponse(
     UUID id,
@@ -49,4 +53,8 @@ public record ManagedBookingDetailResponse(
     boolean cancellable,
     List<CancelChannelValue> cancelChannels,
     @Schema(description = "Campos propios da reserva, por código") Map<String, Object> customFields,
+    @Nullable String holderPhone,
+    boolean holderAccount,
+    @Nullable BookedByResponse bookedBy,
+    @Nullable BookingMailResponse lastMail,
     long version) {}

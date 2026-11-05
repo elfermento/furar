@@ -9,7 +9,7 @@ import {
   buildCustomFieldsForm,
   customFieldValuesOf,
 } from '../../../shared/custom-fields/custom-field-controls';
-import type { CustomFieldDefinition } from '../../../shared/custom-fields/custom-field.types';
+import type { CustomFieldDefinition, CustomFieldValues } from '../../../shared/custom-fields/custom-field.types';
 import { BookingFieldsStore } from '../booking-fields.store';
 
 /**
@@ -32,6 +32,12 @@ export class ReserveCustomFields {
     const list = await this.store.load(slug);
     this.definitions.set(list);
     this.form.set(buildCustomFieldsForm(list));
+  }
+
+  /** Enche o formulario cos valores gardados (cambiar unha reserva desde a xestión). */
+  fill(values: CustomFieldValues | undefined): void {
+    this.form.set(buildCustomFieldsForm(this.definitions(), values ?? {}));
+    this.showErrors.set(false);
   }
 
   /** Se se pode enviar; se non, amosa os erros. */

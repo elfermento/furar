@@ -1,0 +1,96 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.manage.detail.';
+@if (closable()) {
+  <button
+    type="button"
+    class="f-mdetail__close"
+    data-detail-close
+    [attr.aria-label]="t + 'close' | transloco"
+    (click)="closed.emit()"
+  >
+    <furar-icon name="close" />
+  </button>
+}
+@let current = store.detail();
+@if (current?.detail; as d) {
+  <div class="f-reserve__facility" data-detail-facility>
+    @if (facility()?.cover; as cover) {
+      <img [src]="cover.thumb" [width]="cover.width" [height]="cover.height" alt="" />
+    }
+    <div>
+      <b>{{ d.facilityName }}</b>
+      @if (d.facilityAddress) {
+        {{ ' ' }}<span>{{ d.facilityAddress }}</span>
+      }
+    </div>
+  </div>
+  <furar-value-list [items]="rows()" />
+  <furar-booking-contact [detail]="d" />
+  @if (amount() || chip()) {
+    <p class="f-mdetail__total" data-detail-total>
+      <span>{{ t + 'total' | transloco }}</span
+      >{{ ' ' }}
+      <span class="f-mdetail__money">
+        @if (amount(); as value) {
+          <b>{{ value }}</b
+          >{{ ' ' }}
+        }
+        @if (chip(); as c) {
+          <furar-tag [tone]="c.tone" [look]="c.look" [attr.data-chip]="c.key">{{
+            'booking.mine.status.' + c.key | transloco
+          }}</furar-tag>
+        }
+      </span>
+    </p>
+  }
+  <div role="status" class="f-mdetail__live" data-detail-status>
+    @if (stale()) {
+      <furar-callout tone="warn" data-detail-stale>
+        <p>{{ t + 'stale' | transloco }}</p>
+        <button type="button" furarButton size="sm" class="mt-unit" data-detail-reload (click)="reload()">
+          {{ t + 'reload' | transloco }}
+        </button>
+      </furar-callout>
+    }
+  </div>
+  @if (problem(); as p) {
+    <furar-callout tone="danger" live="alert" data-detail-error>{{ p.translated }}</furar-callout>
+  }
+  @if (actions().length || canChange() || canCancel()) {
+    <div class="f-mdetail__acts">
+      @for (action of actions(); track action.target) {
+        <button
+          type="button"
+          [furarButton]="action.undo ? 'quiet' : 'primary'"
+          [attr.data-payment]="action.target"
+          [busy]="busy() === action.target"
+          (click)="setPayment(d, action.target)"
+        >
+          <furar-icon [name]="paymentIcon(action.target)" />
+          {{ t + paymentKey(action.target) | transloco }}
+        </button>
+      }
+      @if (canChange()) {
+        <a furarButton data-detail-change [routerLink]="['/', slug(), 'xestion', 'reservas', d.id, 'cambiar']">
+          <furar-icon name="edit-calendar" />
+          {{ t + 'change' | transloco }}
+        </a>
+      }
+      @if (canCancel()) {
+        <button type="button" furarButton="danger" data-detail-cancel (click)="cancel(d)">
+          <furar-icon name="event-busy" />
+          {{ t + 'cancel' | transloco }}
+        </button>
+      }
+    </div>
+  }
+} @else if (current?.state === 'error') {
+  <furar-status-state mode="error" [heading]="t + 'loadError' | transloco">
+    <button type="button" furarButton (click)="reload()">{{ t + 'retry' | transloco }}</button>
+  </furar-status-state>
+} @else {
+  <furar-status-state mode="skeleton" shape="card" [rows]="1" [description]="t + 'loading' | transloco" />
+}

@@ -33,9 +33,10 @@ import org.springframework.stereotype.Component;
 /**
  * Escribe o correo dunha reserva (maqueta 29, «C · en unha liña»): banda co nome do concello na súa
  * cor, tarxeta co título e o día e a hora, saúdo, instalación e enderezo, uso, parte, prezo coa
- * nota de pago do concello, QR co código, prazo exacto para cancelar de balde, botóns e pé co
- * contacto e «Privacidade». Textos en {@code mail/notification_{gl,es}.properties}, no idioma da
- * reserva; horas en Europe/Madrid. QR e escudo incrustados ({@code cid:}), {@code .ics} adxunto.
+ * nota de pago do concello, QR co código, prazo exacto para cancelar de balde, botóns (sen os de
+ * «as miñas reservas» se a persoa non ten conta) e pé co contacto e «Privacidade». Textos en {@code
+ * mail/notification_{gl,es}.properties}, no idioma da reserva; horas en Europe/Madrid. QR e escudo
+ * incrustados ({@code cid:}), {@code .ics} adxunto.
  */
 @Component
 class BookingMailComposer implements MailComposer {
@@ -121,26 +122,35 @@ class BookingMailComposer implements MailComposer {
     String base = publicUrl + "/" + m.slug();
     String mine = base + "/reservas";
     String reserve = base + "/instalacions/" + b.facilityId() + "/reservar";
+    // Sen conta (reservou o persoal no seu nome) non hai «as miñas reservas»: fóra as ligazóns a
+    // elas; o código, co QR, é o que lle queda para entrar.
+    boolean account = b.holderHasAccount();
     switch (kind) {
       case CONFIRMED, CHANGED -> {
-        v.put("button1", t.get("button.view"));
-        v.put("link1", mine);
-        v.put("button2", t.get("button.calendar"));
-        v.put("link2", mine);
+        if (account) {
+          v.put("button1", t.get("button.view"));
+          v.put("link1", mine);
+          v.put("button2", t.get("button.calendar"));
+          v.put("link2", mine);
+        }
         v.put("note", t.get("note.attached"));
       }
       case CANCELLED_BY_PERSON -> {
         v.put("button1", t.get("button.rebook"));
         v.put("link1", reserve);
-        v.put("button2", t.get("button.mine"));
-        v.put("link2", mine);
+        if (account) {
+          v.put("button2", t.get("button.mine"));
+          v.put("link2", mine);
+        }
         v.put("note", t.get("note.cancelled"));
       }
       case CANCELLED_BY_MUNICIPALITY -> {
         v.put("button1", t.get("button.choose"));
         v.put("link1", reserve);
-        v.put("button2", t.get("button.mine"));
-        v.put("link2", mine);
+        if (account) {
+          v.put("button2", t.get("button.mine"));
+          v.put("link2", mine);
+        }
         v.put("note", t.get("note.cancelled"));
       }
     }

@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: EUPL-1.2
 package gal.furar.booking.application.service;
 
+import gal.furar.booking.BookingMailLog;
+import gal.furar.booking.NoBookingMailLog;
+import gal.furar.booking.NoStaffAccounts;
+import gal.furar.booking.StaffAccounts;
 import gal.furar.booking.application.port.in.ManagedBooking;
 import gal.furar.booking.application.port.in.MyBooking;
 import gal.furar.booking.application.port.out.BookingCustomFields;
@@ -15,10 +19,12 @@ import gal.furar.shared.domain.CustomFieldValues;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,11 +39,21 @@ class BookingViews {
   private final FacilityQueries facilities;
   private final QrEncoder qr;
   private final BookingCustomFields customFields;
+  private final StaffAccounts staff;
+  private final BookingMailLog mails;
 
-  BookingViews(FacilityQueries facilities, QrEncoder qr, BookingCustomFields customFields) {
+  BookingViews(
+      FacilityQueries facilities,
+      QrEncoder qr,
+      BookingCustomFields customFields,
+      ObjectProvider<StaffAccounts> staff,
+      ObjectProvider<BookingMailLog> mails) {
     this.facilities = facilities;
     this.qr = qr;
     this.customFields = customFields;
+    // Un só bean de cada SPI (ADR-0005): sen ningún, as implementacións baleiras.
+    this.staff = staff.getIfAvailable(NoStaffAccounts::new);
+    this.mails = mails.getIfAvailable(NoBookingMailLog::new);
   }
 
   MyBooking view(Booking booking, Instant now) {
@@ -87,16 +103,24 @@ class BookingViews {
         .toList();
   }
 
+  /** O detalle dunha reserva: tamén o último correo que saíu. */
   ManagedBooking managed(Booking booking, Instant now) {
-    return managed(List.of(booking), now).getFirst();
+    return managed(List.of(booking), now, true).getFirst();
   }
 
   List<ManagedBooking> managed(List<Booking> bookings, Instant now) {
+    return managed(bookings, now, false);
+  }
+
+  private List<ManagedBooking> managed(List<Booking> bookings, Instant now, boolean withMail) {
     if (bookings.isEmpty()) {
       return List.of();
     }
     Names names = names(bookings);
     Map<UUID, CustomFieldValues> fields = customFields.forStaff(ids(bookings));
+    Map<String, StaffAccounts.Member> members =
+        staff.members(
+            bookings.stream().map(Booking::bookedBy).filter(Objects::nonNull).distinct().toList());
     return bookings.stream()
         .map(
             b ->
@@ -108,7 +132,9 @@ class BookingViews {
                     names.part(b),
                     b.isDone(now),
                     b.paymentTargets(),
-                    fields.getOrDefault(b.id().value(), CustomFieldValues.empty())))
+                    fields.getOrDefault(b.id().value(), CustomFieldValues.empty()),
+                    b.bookedBy() == null ? null : members.get(b.bookedBy()),
+                    withMail ? mails.lastSent(b.id().value()).orElse(null) : null))
         .toList();
   }
 

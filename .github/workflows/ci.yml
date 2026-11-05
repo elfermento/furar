@@ -6,6 +6,8 @@
 # Check obrigatorio de main: só `ci-ok`. Actions fixadas por SHA (Renovate as actualiza).
 # Etiqueta vX.Y.Z → corre todo, publica as imaxes que pasaron e2e con esa versión, asínaas
 # (cosign, sen chaves) e crea a GitHub Release con furar-vX.Y.Z.env e os SBOM (OPS-2).
+# Nese caso o e2e corre tamén nun runner arm64 nativo e cada versión publícase como índice
+# linux/amd64 + linux/arm64: cada arquitectura é a imaxe que pasou o seu e2e (ADR-0015).
 # Imaxes, sinatura e release SÓ no repositorio público (OPS-R4-2): no privado unha etiqueta
 # corre compliance, api, web e e2e e nada máis (sen GHCR nin entrada en Rekor).
 # Cada día ás 03:00 UTC, e2e sobre main se houbo commits nas últimas 25 h (OPS-R4-3).
@@ -183,7 +185,7 @@ jobs:
           retention-days: 14
 
   e2e:
-    name: E2E (compose full + Playwright + axe)
+    name: E2E (compose full + Playwright + axe, ${{ matrix.arch }})
     needs: [changes, api, web]
     # OPS-R3-1: mentres o repositorio é privado, o e2e non corre en cada push a main (minutos de
     # Actions); corre nos PR, nas etiquetas, a man e cada noite sobre main se houbo commits
@@ -195,7 +197,13 @@ jobs:
       && (needs.changes.outputs.api == 'true' || needs.changes.outputs.web == 'true' || needs.changes.outputs.deploy == 'true' || needs.changes.outputs.diario == 'true')
       && !contains(needs.*.result, 'failure')
       && !contains(needs.*.result, 'cancelled')
-    runs-on: ubuntu-24.04
+    # Cando se publican imaxes (repo público: etiqueta ou a man), tamén en arm64 nativo: cada
+    # arquitectura publica as imaxes que pasaron o seu e2e, sen emulación (ADR-0015).
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ${{ fromJSON(github.event.repository.visibility == 'public' && (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch') && '["amd64","arm64"]' || '["amd64"]') }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     timeout-minutes: 60
     env:
       # Enderezos sen rede (Narón e Ferrol gardados): o e2e non chama a CartoCiudad (ADR-0023, D1-25).
@@ -209,30 +217,35 @@ jobs:
           node-version-file: web/.nvmrc
           cache: npm
           cache-dependency-path: web/package-lock.json
-      # age (BSD-3-Clause): D41 proba tamén as copias cifradas (OPS-7).
+      # age (BSD-3-Clause): D41 proba tamén as copias cifradas (OPS-7); zstd, para gardar as imaxes.
       # Coa lista de apt da imaxe do runner, o install pode dar 404 (OPS-R3-5).
-      - name: Instalar age
-        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends age
+      - name: Instalar age e zstd
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends age zstd
       - name: Versión das imaxes (etiquetas OCI)
         run: |
           if [[ $GITHUB_REF_TYPE == tag ]]; then v=$GITHUB_REF_NAME; else v="main-${GITHUB_SHA::12}"; fi
           { echo "FURAR_VERSION=$v"; echo "FURAR_REVISION=$GITHUB_SHA"; } >>"$GITHUB_ENV"
       - run: scripts/verificar.sh --parte e2e
       # As imaxes que pasaron e2e son as que se publican (OPS-5): non se reconstrúen.
+      # Co sufixo da arquitectura: o traballo images carga as dúas no mesmo Docker.
       - name: Gardar as imaxes verificadas
         if: success() && github.event.repository.visibility == 'public' && (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch')
-        run: docker save furar-api:local furar-web:local furar-keycloak:local | zstd -T0 -3 -o imaxes-verificadas.tar.zst
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: |
+          for s in api web keycloak; do docker tag "furar-$s:local" "furar-$s:local-$ARCH"; done
+          docker save "furar-api:local-$ARCH" "furar-web:local-$ARCH" "furar-keycloak:local-$ARCH" | zstd -T0 -3 -o "imaxes-verificadas-$ARCH.tar.zst"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: success() && github.event.repository.visibility == 'public' && (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch')
         with:
-          name: imaxes-verificadas
-          path: imaxes-verificadas.tar.zst
+          name: imaxes-verificadas-${{ matrix.arch }}
+          path: imaxes-verificadas-${{ matrix.arch }}.tar.zst
           compression-level: 0
           retention-days: 3
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
-          name: e2e
+          name: e2e-${{ matrix.arch }}
           path: |
             .verificar/
             web/playwright-report/
@@ -255,7 +268,7 @@ jobs:
       && needs.web.result == 'success'
       && needs.e2e.result == 'success'
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 60
     permissions:
       contents: read
       packages: write
@@ -268,9 +281,15 @@ jobs:
           persist-credentials: false
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: imaxes-verificadas
-      - name: Cargar as imaxes que pasaron e2e
-        run: zstd -dc imaxes-verificadas.tar.zst | docker load && rm imaxes-verificadas.tar.zst
+          pattern: imaxes-verificadas-*
+          merge-multiple: true
+      # furar-*:local-amd64 e furar-*:local-arm64; Docker garda e sobe a imaxe arm64 sen executala.
+      - name: Cargar as imaxes que pasaron e2e (amd64 e arm64)
+        run: |
+          for a in amd64 arm64; do
+            zstd -dc "imaxes-verificadas-$a.tar.zst" | docker load
+            rm "imaxes-verificadas-$a.tar.zst"
+          done
       - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
         with:
           cosign-release: v3.1.4
@@ -287,7 +306,7 @@ jobs:
           FURAR_VERSION: ${{ steps.version.outputs.version }}
         run: |
           export FURAR_REGISTRY="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}"
-          scripts/publicar-imaxes.sh "$FURAR_VERSION" --publicar --sen-construir --asinar
+          scripts/publicar-imaxes.sh "$FURAR_VERSION" --publicar --sen-construir --asinar --arquitecturas=amd64,arm64
           cat .verificar/imaxes/furar-*.env >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

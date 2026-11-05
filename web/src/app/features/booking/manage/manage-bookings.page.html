@@ -4,11 +4,13 @@ SPDX-License-Identifier: EUPL-1.2
 -->
 @let t = 'booking.manage.';
 <div class="f-manage">
-  <h1>{{ t + 'title' | transloco }}</h1>
+  <furar-manage-heading [slug]="slug()" />
   <furar-bookings-toolbar
     [slug]="slug()"
     [q]="q()"
     [filterCount]="filterCount()"
+    [filters]="filters()"
+    [facilities]="store.facilities()"
     (searched)="search($event)"
     (openFilters)="openFilters()"
   />

@@ -164,7 +164,7 @@ export class DateFieldComponent implements ControlValueAccessor {
   readonly max = input<IsoDate | null>(null);
   /** Outros días que non se poden escoller. */
   readonly dateDisabled = input<(date: IsoDate) => boolean>(() => false);
-  /** «Hoxe» da API (`today`); se falta, o do navegador. */
+  /** «Hoxe» da API (`today`); se falta, o de Madrid co reloxo do navegador (o calendario). */
   readonly today = input<IsoDate | null>(null);
   /** Marca o botón como inválido (aria-invalid e bordo de erro); o texto do erro é de quen chama. */
   /** Campo obrigatorio: o nome do botón leva «(obrigatorio)» (un botón non admite `aria-required`). */

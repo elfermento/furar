@@ -90,12 +90,13 @@ class BookingRetentionSql {
         .update();
   }
 
-  /** A persoa: conta, nome e correo a nulo, coa data. O idioma queda (non identifica). */
+  /** A persoa: conta, nome, correo e teléfono a nulo, coa data. O idioma queda (non identifica). */
   int forgetHolder(UUID municipality, Collection<UUID> ids, Instant now) {
     return jdbc.sql(
             """
             update booking
             set holder_subject = null, holder_name = null, holder_email = null,
+                holder_phone = null,
                 anonymized_at = :now, updated_at = :now, version = version + 1
             where id in (:ids) and anonymized_at is null
               and municipality_id = :tenant

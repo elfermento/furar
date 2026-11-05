@@ -59,7 +59,8 @@ class BookingSql {
                    upper(period) as end_at, slots, status, payment_status, price_kind,
                    amount_cents, cancel_until, rule_min_advance_hours, rule_max_advance_days,
                    rule_max_slots, rule_cap_count, rule_cap_period, rule_cancel_hours,
-                   holder_subject, holder_name, holder_email, holder_language, cancelled_at,
+                   holder_subject, holder_name, holder_email, holder_phone, holder_language,
+                   booked_by, cancelled_at,
                    cancelled_by, created_at, updated_at, version
             from booking
             where id = :id and municipality_id = :tenant
@@ -78,7 +79,8 @@ class BookingSql {
                    upper(period) as end_at, slots, status, payment_status, price_kind,
                    amount_cents, cancel_until, rule_min_advance_hours, rule_max_advance_days,
                    rule_max_slots, rule_cap_count, rule_cap_period, rule_cancel_hours,
-                   holder_subject, holder_name, holder_email, holder_language, cancelled_at,
+                   holder_subject, holder_name, holder_email, holder_phone, holder_language,
+                   booked_by, cancelled_at,
                    cancelled_by, created_at, updated_at, version
             from booking
             where id = :id and holder_subject = :subject and municipality_id = :tenant
@@ -100,7 +102,8 @@ class BookingSql {
                    upper(period) as end_at, slots, status, payment_status, price_kind,
                    amount_cents, cancel_until, rule_min_advance_hours, rule_max_advance_days,
                    rule_max_slots, rule_cap_count, rule_cap_period, rule_cancel_hours,
-                   holder_subject, holder_name, holder_email, holder_language, cancelled_at,
+                   holder_subject, holder_name, holder_email, holder_phone, holder_language,
+                   booked_by, cancelled_at,
                    cancelled_by, created_at, updated_at, version
             from booking
             where holder_subject = :subject and status = 'CONFIRMED' and upper(period) > :now
@@ -139,7 +142,8 @@ class BookingSql {
                    upper(period) as end_at, slots, status, payment_status, price_kind,
                    amount_cents, cancel_until, rule_min_advance_hours, rule_max_advance_days,
                    rule_max_slots, rule_cap_count, rule_cap_period, rule_cancel_hours,
-                   holder_subject, holder_name, holder_email, holder_language, cancelled_at,
+                   holder_subject, holder_name, holder_email, holder_phone, holder_language,
+                   booked_by, cancelled_at,
                    cancelled_by, created_at, updated_at, version
             from booking
             where holder_subject = :subject
@@ -189,7 +193,8 @@ class BookingSql {
                    upper(period) as end_at, slots, status, payment_status, price_kind,
                    amount_cents, cancel_until, rule_min_advance_hours, rule_max_advance_days,
                    rule_max_slots, rule_cap_count, rule_cap_period, rule_cancel_hours,
-                   holder_subject, holder_name, holder_email, holder_language, cancelled_at,
+                   holder_subject, holder_name, holder_email, holder_phone, holder_language,
+                   booked_by, cancelled_at,
                    cancelled_by, created_at, updated_at, version
             from booking
             where facility_id = :facility and status = 'CONFIRMED' and upper(period) > :now
@@ -298,13 +303,13 @@ class BookingSql {
                    slots, status, payment_status, price_kind, amount_cents, cancel_until,
                    rule_min_advance_hours, rule_max_advance_days, rule_max_slots, rule_cap_count,
                    rule_cap_period, rule_cancel_hours, holder_subject, holder_name, holder_email,
-                   holder_language, created_at, updated_at, version)
+                   holder_phone, holder_language, booked_by, created_at, updated_at, version)
                 values
                   (:id, :tenant, :code, :facility, :use, :part, :mode,
                    tstzrange(:since, :until, '[)'), :slots, :status, :payment, :priceKind,
                    :amount, :cancelUntil, :minAdvance, :maxAdvance, :maxSlots, :capCount,
-                   :capPeriod, :cancelHours, :subject, :name, :email, :language, :createdAt,
-                   :updatedAt, 0)
+                   :capPeriod, :cancelHours, :subject, :name, :email, :phone, :language,
+                   :bookedBy, :createdAt, :updatedAt, 0)
                 on conflict (municipality_id, code) do nothing
                 """)
             .param("id", b.id().value())
@@ -331,10 +336,12 @@ class BookingSql {
                 rules.capPeriod() == null ? null : rules.capPeriod().name(),
                 Types.VARCHAR)
             .param("cancelHours", rules.cancelHours(), Types.INTEGER)
-            .param("subject", b.requireHolder().subject())
+            .param("subject", b.requireHolder().subject(), Types.VARCHAR)
             .param("name", b.requireHolder().name())
-            .param("email", b.requireHolder().email())
+            .param("email", b.requireHolder().email(), Types.VARCHAR)
+            .param("phone", b.requireHolder().phone(), Types.VARCHAR)
             .param("language", b.requireHolder().language().code())
+            .param("bookedBy", b.bookedBy(), Types.VARCHAR)
             .param("createdAt", utc(b.createdAt()))
             .param("updatedAt", utc(b.updatedAt()))
             .update()
@@ -442,6 +449,27 @@ class BookingSql {
             .param("updatedAt", utc(b.updatedAt()))
             .update()
         == 1;
+  }
+
+  /**
+   * Corrixe para quen é unha reserva que fixo o persoal (nome, correo, teléfono); a dunha conta non
+   * se toca. Vai despois de {@link #updateBooking}, que xa subiu a versión.
+   *
+   * @return 1 se a cambiou; 0 se non é do persoal ou xa está anonimizada
+   */
+  int updateHolder(UUID municipality, UUID bookingId, Holder holder) {
+    return jdbc.sql(
+            """
+            update booking set holder_name = :name, holder_email = :email, holder_phone = :phone
+            where id = :id and booked_by is not null and anonymized_at is null
+              and municipality_id = :tenant
+            """)
+        .param("name", holder.name())
+        .param("email", holder.email(), Types.VARCHAR)
+        .param("phone", holder.phone(), Types.VARCHAR)
+        .param("id", bookingId)
+        .param("tenant", municipality)
+        .update();
   }
 
   /** Deixa a ocupación da reserva inactiva (ao cancelar ou cambiar): o oco queda libre. */
@@ -604,15 +632,16 @@ class BookingSql {
             integer(rs, "rule_cap_count"),
             capPeriod == null ? null : CapPeriod.valueOf(capPeriod),
             integer(rs, "rule_cancel_hours"));
-    // Anonimizada (conservación): sen persoa.
-    String subject = rs.getString("holder_subject");
+    // Anonimizada (conservación): sen persoa. Sen conta, a que reservou o persoal.
+    String name = rs.getString("holder_name");
     Holder holder =
-        subject == null
+        name == null
             ? null
             : new Holder(
-                subject,
-                rs.getString("holder_name"),
+                rs.getString("holder_subject"),
+                name,
                 rs.getString("holder_email"),
+                rs.getString("holder_phone"),
                 Language.fromCode(rs.getString("holder_language")).orElseThrow());
     return Booking.rehydrate(
         new BookingId(rs.getObject("id", UUID.class)),
@@ -624,6 +653,7 @@ class BookingSql {
         rules,
         instant(rs, "cancel_until"),
         holder,
+        rs.getString("booked_by"),
         nullableInstant(rs, "cancelled_at"),
         rs.getString("cancelled_by"),
         rs.getLong("version"),

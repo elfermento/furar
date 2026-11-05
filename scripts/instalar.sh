@@ -6,7 +6,8 @@
 # (dominio, correo de quen administra e SMTP), xera todos os segredos,
 # toma as imaxes do ficheiro furar-<versión>.env da release, escribe .env (chmod 600, modo
 # produción), pasa scripts/preflight.sh, descarga as imaxes, envía un correo de proba polo SMTP
-# (antes do primeiro arranque: Keycloak só le o SMTP nese momento) e arrinca con `up -d --wait`.
+# (antes do primeiro arranque: Keycloak só le o SMTP nese momento) e arrinca con `up -d --wait`
+# (se Keycloak segue arrincando cando Compose rende, agarda ata 15 minutos máis e volve).
 # O resto do .env queda cos valores por defecto (docs/instalacion.md §4). Os datos de privacidade
 # non se preguntan: son datos legais de cada concello, na web (ADR-0017, revisión do 2026-11-03).
 # Ver --axuda.
@@ -335,6 +336,10 @@ fi
 titulo "Instalar Furar $rel_version"
 
 # --- .env existente -------------------------------------------------------------------------------
+# Sen .env os contrasinais son novos: unha base que xa exista (outra instalación anterior) non os
+# coñece e a API e Keycloak non conectarían (compróbase antes de arrincar).
+env_previo=0
+[[ -f $env_file ]] && env_previo=1
 escribir=1
 if [[ -f $env_file ]] && ((!substituir)); then
   if ((si)); then
@@ -484,6 +489,12 @@ if command -v getent >/dev/null && ! getent hosts "$dominio" >/dev/null; then
   aviso "$dominio aínda non resolve no DNS: o certificado HTTPS non chegará ata que apunte a este servidor"
 fi
 cd "$FURAR_RAIZ"
+if ((!env_previo)); then
+  proxecto=$(docker compose config 2>/dev/null | sed -n 's/^name: //p' | head -1)
+  vella=$(docker volume ls -q --filter "label=com.docker.compose.project=${proxecto:-furar}" \
+    --filter label=com.docker.compose.volume=pgdata-prod | head -1)
+  [[ -z $vella ]] || falla "xa hai unha base doutra instalación (volume $vella) cos contrasinais do seu .env, non cos novos: recupera ese .env ou, para empezar de cero, borra a base (docs/instalacion.md §8, «Empezar de cero») e volve executar scripts/instalar.sh"
+fi
 scripts/preflight.sh
 titulo "Descargando as imaxes (uns minutos)"
 docker compose pull
@@ -500,11 +511,50 @@ elif ! probar_correo "$correo_admin"; then
   [[ $(printf %s "${r:-n}" | minusculas) == s* ]] \
     || falla "sen arrincar: corrixe o SMTP (scripts/instalar.sh, substituíndo o .env) e volve executalo"
 fi
-titulo "Arrincando (o primeiro arranque tarda uns 2 minutos)"
-docker compose up -d --wait --wait-timeout 600 || {
+# Servizos en marcha que aínda non están sans («starting» ou xa «unhealthy»): poden estar só
+# lentos. Os que pararon ou reinician non saen aquí.
+servizos_lentos() {
+  local c
+  for c in $(docker compose ps -q); do
+    docker inspect -f '{{.State.Status}} {{if .State.Health}}{{.State.Health.Status}}{{end}} {{index .Config.Labels "com.docker.compose.service"}}' "$c"
+  done | awk '$1 == "running" && ($2 == "starting" || $2 == "unhealthy") {print $3}'
+}
+# Agarda ata que eses servizos estean sans; falla se pasa o tempo ou algún deixa de estar en marcha.
+agardar_saude() { # segundos servizo...
+  local fin_espera=$((SECONDS + $1)) s estado pendente
+  shift
+  while ((SECONDS < fin_espera)); do
+    pendente=0
+    for s in "$@"; do
+      estado=$(docker inspect -f '{{.State.Status}} {{if .State.Health}}{{.State.Health.Status}}{{end}}' \
+        "$(docker compose ps -q "$s")" 2>/dev/null || echo parado)
+      case $estado in
+        "running healthy") ;;
+        "running starting" | "running unhealthy") pendente=1 ;;
+        *) return 1 ;;
+      esac
+    done
+    ((pendente)) || return 0
+    sleep 10
+  done
+  return 1
+}
+non_san() {
   docker compose ps
   falla "algún servizo non quedou san: docker compose logs --tail 50 (docs/instalacion.md §9)"
 }
+titulo "Arrincando (o primeiro arranque tarda uns 2 minutos)"
+if ! docker compose up -d --wait --wait-timeout 600; then
+  # Compose rende en canto unha dependencia queda «unhealthy», aínda que siga arrincando: Keycloak
+  # importa o realm no primeiro arranque e, nun servidor lento, pasa do prazo do healthcheck.
+  lentos=$(servizos_lentos | tr '\n' ' ')
+  [[ -n ${lentos// /} ]] || non_san
+  aviso "aínda arrincando: ${lentos% }. Keycloak tarda en arrincar a primeira vez (importa o realm); nun servidor lento pode pasar de 5 minutos. Agardo ata 15 minutos máis…"
+  # shellcheck disable=SC2086 # lista de servizos, un por palabra
+  agardar_saude 900 $lentos || non_san
+  ok "xa están sans: ${lentos% }"
+  docker compose up -d --wait --wait-timeout 600 || non_san
+fi
 ok "os servizos están en marcha"
 if ! command -v curl >/dev/null; then
   aviso "sen curl: comproba ti https://$dominio/healthz"

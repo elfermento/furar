@@ -284,6 +284,12 @@ export class ReserveStore {
 
   private navigate(change: Partial<ReserveSelection>): Promise<boolean> {
     const queryParams = selectionParams({ ...this.selection(), ...change, booking: null });
-    return this.router.navigate([], { relativeTo: this.route, queryParams, replaceUrl: true });
+    // `merge`: os parámetros doutros (a instalación da reserva por outra persoa) quedan.
+    return this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 }

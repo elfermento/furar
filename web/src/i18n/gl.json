@@ -86,6 +86,8 @@
     "reserve": "Reservar",
     "myBookings": "As miñas reservas",
     "manageBookings": "Reservas",
+    "bookFor": "Nova reserva",
+    "changeBooking": "Cambiar reserva",
     "bookingsCalendar": "Calendario",
     "indicators": "Indicadores",
     "staff": "Persoal",
@@ -1505,6 +1507,7 @@
     },
     "manage": {
       "title": "Reservas",
+      "new": "Nova reserva",
       "anonymized": "Persoa anonimizada",
       "search": "Buscar reservas",
       "searchPlaceholder": "Buscar por nome, correo ou código",
@@ -1531,6 +1534,7 @@
       "today": "hoxe",
       "tomorrow": "mañá",
       "reserved": "Reservada {{ago}}",
+      "by": "por {{name}}",
       "loading": "Cargando as reservas",
       "loadError": "Non se puideron cargar as reservas",
       "retry": "Tentar de novo",
@@ -1587,6 +1591,16 @@
           "since": "Desde o {{day}}"
         }
       },
+      "export": {
+        "title": "Descargar CSV",
+        "cancel": "Cancelar",
+        "download": "Descargar",
+        "done": "Descargado {{file}}",
+        "error": {
+          "required": "Escolle o primeiro e o último día.",
+          "tooLong": "Como moito, {{months}} meses. Escolle un período máis curto."
+        }
+      },
       "detail": {
         "title": "Reserva",
         "pick": "Escolle unha reserva para ver os seus datos.",
@@ -1600,11 +1614,20 @@
         "day": "Día",
         "time": "Hora",
         "code": "Código",
+        "bookedBy": "Reservada por",
         "total": "Total",
+        "noEmail": "Sen correo: dálle o código {{code}}.",
+        "mail": {
+          "CONFIRMED": "Confirmación enviada o {{at}}",
+          "CHANGED": "Aviso do cambio enviado o {{at}}",
+          "CANCELLED_BY_PERSON": "Aviso da cancelación enviado o {{at}}",
+          "CANCELLED_BY_MUNICIPALITY": "Aviso da cancelación enviado o {{at}}"
+        },
         "markPaid": "Marcar como pagada",
         "markRefunded": "Marcar como devolta",
         "undoPaid": "Desfacer: volver a pendente",
         "undoRefunded": "Desfacer: volver a «A devolver»",
+        "change": "Cambiar",
         "cancel": "Cancelar reserva",
         "stale": "Esta reserva cambiou noutro sitio. Recarga para ver como está agora.",
         "reload": "Recargar",
@@ -1627,6 +1650,33 @@
         "keep": "Manter",
         "confirm": "Cancelar reserva",
         "busy": "Cancelando…"
+      }
+    },
+    "bookFor": {
+      "title": "Nova reserva",
+      "changeTitle": "Cambiar reserva",
+      "back": "Volver ás reservas",
+      "loading": "Cargando o formulario",
+      "loadError": "Non se puido cargar o formulario",
+      "retry": "Tentar de novo",
+      "noFacilities": "Non hai instalacións que se poidan reservar.",
+      "facility": "Instalación",
+      "who": "Para quen?",
+      "name": "Nome e apelidos",
+      "email": "Correo electrónico",
+      "emailHelp": "Chégalle a confirmación co código.",
+      "phone": "Teléfono",
+      "payment": "Pago",
+      "notify": "Avisar a {{name}} por correo",
+      "confirm": "Reservar",
+      "confirmFor": "Reservar para {{name}}",
+      "save": "Gardar o cambio",
+      "before": "Antes: {{when}}",
+      "done": {
+        "sent": "Reserva feita. Confirmación enviada a {{email}}",
+        "code": "Reserva feita · código {{code}}",
+        "changed": "Reserva cambiada",
+        "changedSent": "Reserva cambiada ás {{time}}. Aviso enviado a {{name}}"
       }
     },
     "calendar": {
@@ -2111,9 +2161,12 @@
     },
     "actions": {
       "booking": {
+        "book-for": "Reservar no nome doutra persoa",
+        "change": "Cambiar unha reserva",
         "cancel": "Cancelar unha reserva",
         "payment": "Cambiar o cobro dunha reserva",
-        "anonymize": "Anonimizar as reservas que pasaron o prazo de conservación"
+        "anonymize": "Anonimizar as reservas que pasaron o prazo de conservación",
+        "export": "Descargar as reservas en CSV"
       },
       "customfield": {
         "create": "Crear un campo personalizado",
@@ -2248,7 +2301,9 @@
       "affected-needs-manager": "Este cambio afecta a {{count}} reservas futuras. Só a xestión do concello pode decidir que facer con elas.",
       "idempotency-key-missing": "Non se puido enviar a reserva. Volve tentalo.",
       "idempotency-key-invalid": "Non se puido enviar a reserva. Volve tentalo.",
-      "idempotency-key-reused": "Esta petición xa se usou para outra reserva. Volve escoller a hora e confirma de novo."
+      "idempotency-key-reused": "Esta petición xa se usou para outra reserva. Volve escoller a hora e confirma de novo.",
+      "export-range-too-long": "Como moito, {{months}} meses. Escolle un período máis curto.",
+      "holder-not-editable": "Esta reserva fíxose coa conta da persoa: o nome e o correo son os da conta e non se cambian aquí."
     },
     "common": {
       "busy": "Outra persoa está a cambiar o mesmo agora. Agarda uns segundos e volve tentalo.",

@@ -74,6 +74,8 @@ Na táboa `audit_event` da API ([ADR-0020](adr/0020-rexistro-de-actividade.md)).
 | `municipality.export`, `municipality.import` | Exportar ou importar un concello (furar-export) | seccións e filas, código de erro | feito |
 | `facility.*` | Cada escritura da ficha, usos, horario, excepcións, bloqueos e fotos | id e código de erro | feito |
 | `booking.payment`, `booking.cancel` | Cobro (e desfacelo) e cancelación desde a xestión ou por un cambio da instalación | id da reserva, estado do cobro, canles do aviso, código de erro | feito |
+| `booking.export` | «Descargar CSV» das reservas (antes da primeira fila; tamén os intentos fallidos) | período, número de instalacións, estados, filas, código de erro | feito |
+| `booking.book-for`, `booking.change` | Reserva no nome doutra persoa e cambio desde a xestión | id da reserva, instalación e uso, se cambiou o oco, se se corrixiu para quen é, o cobro e se se avisou, código de erro | feito |
 | `staff.invite`, `staff.invite-resend` | Invitar e reenviar | `memberId`, `role`, código de erro | feito |
 | `staff.role-change` | Cambiar o rol | `memberId`, `fromRole`, `toRole` | feito |
 | `staff.deactivate` (a web le tamén `staff.revoke`, o nome dos eventos gardados antes do 2026-10-30) | Desactivar (tamén a tarefa de conservación, razón `retention`) | `memberId`, `role`, código de erro | feito |

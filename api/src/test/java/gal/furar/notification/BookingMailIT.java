@@ -159,6 +159,37 @@ class BookingMailIT extends AbstractBookingIT {
   }
 
   @Test
+  void aBookingMadeByTheStaffForAPersonWithoutAccountHasNoLinkToTheirBookings() throws Exception {
+    Facility f = facility("correo-sen-conta", true);
+    UUID use = whole(f, Map.of());
+    String email = "sen-conta-" + UUID.randomUUID() + "@example.org";
+    Map<String, Object> body = new LinkedHashMap<>();
+    body.put("facilityId", f.id());
+    body.put("useId", use);
+    body.put("start", at(tomorrow(), 600).toString());
+    body.put("slots", 1);
+    body.put("holder", Map.of("name", "Carme Souto", "email", email));
+    body.put("language", "gl");
+    Api.Response booked =
+        api()
+            .post("/api/v1/municipalities/" + f.slug() + "/bookings", body)
+            .header("Idempotency-Key", UUID.randomUUID().toString())
+            .token(TestTokens.staff(f.slug()))
+            .send();
+    assertThat(booked.status()).as(booked.toString()).isEqualTo(201);
+    String code = booked.json().get("code").asString();
+
+    Mail mail = awaitMail(email, 1);
+    assertThat(mail.subject()).startsWith("Reserva confirmada: ");
+    assertThat(mail.html())
+        .contains("Ola, Carme:", code, "Ensínao ao chegar")
+        .doesNotContain("Ver a miña reserva", "Engadir ao calendario", "/reservas\"");
+    assertThat(mail.text()).contains("Código: " + code).doesNotContain("Ver a miña reserva");
+    assertThat(mail.inlineIds()).hasSize(2);
+    assertThat(mail.attachments()).hasSize(1);
+  }
+
+  @Test
   void aDownSmtpKeepsTheBookingAndTheRetrySendsOnce() throws Exception {
     Facility f = facility("correo-caido", true);
     UUID use = whole(f, Map.of());

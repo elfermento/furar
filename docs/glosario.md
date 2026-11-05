@@ -154,6 +154,7 @@ Termo de dominio → nome en código ([ADR-0003](adr/0003-idioma.md)). Un termo 
 | Dobre factor | Doble factor | — | Retirado o 2026-11-02 (decisión do mantedor): ningunha conta o usa. Ata entón, OTP ou código de recuperación por autenticación escalonada (`acr_values=furar-2fa`, `auth.step-up-required`) para o persoal e en cada acceso para a plataforma (ADR-0007, ADR-0027) |
 | Copia cifrada | Copia cifrada | `FURAR_COPIAS_AGE_DESTINATARIO` | age; a chave privada, fóra do servidor |
 | Volume de produción | Volumen de producción | `pgdata-prod` | Distinto do de `full`: a demo nunca pasa a produción |
+| Proxecto de Compose | Proyecto de Compose | `furar` · `furar-local` | Produción (`compose.prod.yaml`) e o perfil de proba (`compose.yaml`) en proxectos distintos: no mesmo equipo non comparten contedores nin volumes |
 | Consulta entre módulos | Consulta entre módulos | `XxxQueries` · `XxxSummary` | API pública síncrona dun módulo, con records (ADR-0005, A19) |
 | Seguridade a nivel de fila | Seguridad a nivel de fila | Row Level Security · `furar.municipality_id` | Política por concello en PostgreSQL (ADR-0006) |
 | Responsable / encargado do tratamento | Responsable / encargado del tratamiento | — | RGPD arts. 4, 26 e 28 (ADR-0017) |

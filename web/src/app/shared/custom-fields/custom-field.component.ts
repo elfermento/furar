@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoPipe, TranslocoService } from '@jsverse/transloco';
 import { map, merge, of, switchMap } from 'rxjs';
 import type { SelectOption } from '../ui/select/select.component';
+import { DateFieldComponent } from '../ui/date-field/date-field.component';
 import { RequiredMarkComponent } from '../ui/required/required.component';
 import { SelectComponent } from '../ui/select/select.component';
 import { firstError, present } from './custom-field-controls';
@@ -19,7 +20,7 @@ import { localized } from './localized';
  */
 @Component({
   selector: 'furar-custom-field',
-  imports: [ReactiveFormsModule, RequiredMarkComponent, TranslocoPipe, SelectComponent],
+  imports: [ReactiveFormsModule, RequiredMarkComponent, TranslocoPipe, SelectComponent, DateFieldComponent],
   host: { class: 'f-field' },
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './custom-field.component.html',

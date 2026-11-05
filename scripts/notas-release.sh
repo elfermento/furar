@@ -11,6 +11,9 @@ dir=${2:?uso: notas-release.sh VERSIÓN DIRECTORIO}
 env_file="$dir/furar-$version.env"
 [[ -s $env_file ]] || { echo "falta $env_file" >&2; exit 1; }
 rexistro=$(awk -F= '/^FURAR_REGISTRY=/{print $2}' "$env_file")
+# publicar-imaxes.sh escribe as plataformas no comentario «# Arquitecturas: …» (antes só amd64).
+arquitecturas=$(sed -n 's/^# Arquitecturas: //p' "$env_file")
+arquitecturas=${arquitecturas:-linux/amd64}
 repo=${GITHUB_REPOSITORY:?define GITHUB_REPOSITORY=propietario/repo (na CI de GitHub xa vén)}
 
 # Realm (OPS-R2-3, ADR-0015): Keycloak só o importa na primeira instalación. Se cambiou desde a
@@ -33,8 +36,9 @@ grep -q '[^[:space:]]' <<<"$cambios" || { echo "CHANGELOG.md non ten a sección 
 base_de() { # Dockerfile → imaxe do último FROM (a de execución)
   awk '/^FROM /{b=$2} END{print b}' "$1"
 }
-so_de() { # servizo → «nome versión» do sistema operativo segundo o SBOM
+so_de() { # servizo → «nome versión» do sistema operativo segundo o SBOM (o de amd64, se hai un por arquitectura)
   local f="$dir/furar-$1-$version.cdx.json"
+  [[ -s $f ]] || f="$dir/furar-$1-$version-amd64.cdx.json"
   [[ -s $f ]] || { echo "? ?"; return; }
   jq -r '[.components[]? | select(.type == "operating-system")][0] | "\(.name // "?") \(.version // "?")"' "$f"
 }
@@ -66,7 +70,7 @@ As imaxes levan software libre de terceiros con licenzas copyleft (GPL e LGPL: b
 | \`furar-web\` | \`$web\` | $(fonte_alpine web). Caddy: [caddyserver/caddy $caddy_v](https://github.com/caddyserver/caddy/tree/$caddy_v). |
 | \`furar-keycloak\` | \`$kc\` | Keycloak: [keycloak/keycloak $kc_v](https://github.com/keycloak/keycloak/tree/$kc_v). Paquetes de UBI 9: SRPM en [BaseOS](https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/baseos/source/SRPMS/) e [AppStream](https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi9/9/x86_64/appstream/source/SRPMS/); a capa base rexese pola UBI EULA ([ADR-0002](https://github.com/$repo/blob/$version/docs/adr/0002-monorepo-licenzas-reuse.md)). |
 
-O SBOM CycloneDX adxunto (\`furar-*-$version.cdx.json\`) lista cada paquete coa súa versión e licenza. A etiqueta \`org.opencontainers.image.licenses\` das tres imaxes é a de Furar (EUPL-1.2); o resto da imaxe, segundo o SBOM.
+O SBOM CycloneDX adxunto (\`furar-*-$version*.cdx.json\`, un por imaxe e arquitectura) lista cada paquete coa súa versión e licenza. A etiqueta \`org.opencontainers.image.licenses\` das tres imaxes é a de Furar (EUPL-1.2); o resto da imaxe, segundo o SBOM.
 
 **Oferta escrita (GPL-2.0 §3.b):** durante tres anos desde esta release, calquera persoa pode pedir ao mantedor de Furar (contacto en \`publiccode.yml\` ou unha *issue* na forxa) unha copia en soporte electrónico do código fonte correspondente aos binarios GPL e LGPL destas imaxes, sen máis custo ca o da entrega.
 BASES
@@ -88,13 +92,13 @@ Tamén no ficheiro adxunto \`furar-$version.env\`:
 $(grep -v '^#' "$env_file")
 \`\`\`
 
-As imaxes son exactamente as que pasaron a CI desta etiqueta (tests, e2e, Trivy HIGH/CRITICAL). Arquitectura: linux/amd64.
+As imaxes son exactamente as que pasaron a CI desta etiqueta (tests, e2e, Trivy HIGH/CRITICAL), cada arquitectura no seu propio runner. Arquitecturas: $arquitecturas (o mesmo digest vale en todas: Docker descarga a do servidor).
 $realm_notas
 $(fonte_bases)
 
 ## Comprobar a sinatura (opcional)
 
-Imaxes asinadas con [cosign](https://docs.sigstore.dev/) sen chaves desde a CI de GitHub; o SBOM CycloneDX vai como atestación e adxunto.
+Imaxes asinadas con [cosign](https://docs.sigstore.dev/) sen chaves desde a CI de GitHub (o índice e a imaxe de cada arquitectura); o SBOM CycloneDX vai como atestación da imaxe de cada arquitectura e como adxunto.
 
 \`\`\`sh
 $(for s in api web keycloak; do

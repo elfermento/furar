@@ -50,20 +50,23 @@ const CHECKED: readonly CancelChannel[] = ['EMAIL'];
           </p>
         }
       </div>
-      <fieldset class="f-mcancel__channels" [disabled]="busy()">
-        <legend>{{ t + 'channels' | transloco }}</legend>
-        @for (channel of offered(); track channel) {
-          <label class="f-mcancel__channel">
-            <input
-              type="checkbox"
-              [attr.data-channel]="channel"
-              [checked]="checked().includes(channel)"
-              (change)="toggle(channel)"
-            />
-            {{ t + 'channel.' + channel | transloco }}
-          </label>
-        }
-      </fieldset>
+      <!-- Sen correo nin conta (reserva do persoal), non hai por onde avisar. -->
+      @if (offered().length) {
+        <fieldset class="f-mcancel__channels" [disabled]="busy()">
+          <legend>{{ t + 'channels' | transloco }}</legend>
+          @for (channel of offered(); track channel) {
+            <label class="f-mcancel__channel">
+              <input
+                type="checkbox"
+                [attr.data-channel]="channel"
+                [checked]="checked().includes(channel)"
+                (change)="toggle(channel)"
+              />
+              {{ t + 'channel.' + channel | transloco }}
+            </label>
+          }
+        </fieldset>
+      }
       <ng-container dialogActions>
         <button type="button" furarButton data-cancel-keep (click)="ref.close(false)">
           {{ t + 'keep' | transloco }}

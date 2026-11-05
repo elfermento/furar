@@ -21,8 +21,10 @@ import type { ValueListItem } from '../../../shared/ui/value-list/value-list.com
 import { ValueListComponent } from '../../../shared/ui/value-list/value-list.component';
 import { bookingFieldRows } from '../booking-fields';
 import { bookingChip } from '../mine/my-bookings';
+import { RouterLink } from '@angular/router';
 import { inMadrid } from '../../../shared/ui/calendar/madrid-time';
 import { formatDay } from '../reserve/reserve';
+import { BookingContactComponent } from './booking-contact.component';
 import type { CancelBookingData } from './cancel-booking-dialog.component';
 import { CancelBookingDialogComponent } from './cancel-booking-dialog.component';
 import type { ManagedBookingDetailResponse, PaymentStatus } from './manage-bookings';
@@ -52,9 +54,11 @@ const PAYMENT_ACTION: Record<PaymentStatus, { key: string; icon: 'payments' | 'u
 @Component({
   selector: 'furar-managed-booking-detail',
   imports: [
+    BookingContactComponent,
     ButtonDirective,
     CalloutComponent,
     IconComponent,
+    RouterLink,
     StatusStateComponent,
     TagComponent,
     TranslocoPipe,
@@ -62,101 +66,7 @@ const PAYMENT_ACTION: Record<PaymentStatus, { key: string; icon: 'payments' | 'u
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'f-mdetail', '[attr.data-booking-detail]': 'store.detail()?.id ?? null' },
-  template: `
-    @let t = 'booking.manage.detail.';
-    @if (closable()) {
-      <button
-        type="button"
-        class="f-mdetail__close"
-        data-detail-close
-        [attr.aria-label]="t + 'close' | transloco"
-        (click)="closed.emit()"
-      >
-        <furar-icon name="close" />
-      </button>
-    }
-    @let current = store.detail();
-    @if (current?.detail; as d) {
-      <div class="f-reserve__facility" data-detail-facility>
-        @if (facility()?.cover; as cover) {
-          <img [src]="cover.thumb" [width]="cover.width" [height]="cover.height" alt="" />
-        }
-        <div>
-          <b>{{ d.facilityName }}</b>
-          @if (d.facilityAddress) {
-            {{ ' ' }}<span>{{ d.facilityAddress }}</span>
-          }
-        </div>
-      </div>
-      <furar-value-list [items]="rows()" />
-      @if (d.holderEmail; as email) {
-        <p class="f-mdetail__contact">
-          <a [href]="'mailto:' + email" data-detail-email>
-            <furar-icon name="email" />
-            <span>{{ email }}</span>
-          </a>
-        </p>
-      }
-      @if (amount() || chip()) {
-        <p class="f-mdetail__total" data-detail-total>
-          <span>{{ t + 'total' | transloco }}</span
-          >{{ ' ' }}
-          <span class="f-mdetail__money">
-            @if (amount(); as value) {
-              <b>{{ value }}</b
-              >{{ ' ' }}
-            }
-            @if (chip(); as c) {
-              <furar-tag [tone]="c.tone" [look]="c.look" [attr.data-chip]="c.key">{{
-                'booking.mine.status.' + c.key | transloco
-              }}</furar-tag>
-            }
-          </span>
-        </p>
-      }
-      <div role="status" class="f-mdetail__live" data-detail-status>
-        @if (stale()) {
-          <furar-callout tone="warn" data-detail-stale>
-            <p>{{ t + 'stale' | transloco }}</p>
-            <button type="button" furarButton size="sm" class="mt-unit" data-detail-reload (click)="reload()">
-              {{ t + 'reload' | transloco }}
-            </button>
-          </furar-callout>
-        }
-      </div>
-      @if (problem(); as p) {
-        <furar-callout tone="danger" live="alert" data-detail-error>{{ p.translated }}</furar-callout>
-      }
-      @if (actions().length || canCancel()) {
-        <div class="f-mdetail__acts">
-          @for (action of actions(); track action.target) {
-            <button
-              type="button"
-              [furarButton]="action.undo ? 'quiet' : 'primary'"
-              [attr.data-payment]="action.target"
-              [busy]="busy() === action.target"
-              (click)="setPayment(d, action.target)"
-            >
-              <furar-icon [name]="paymentIcon(action.target)" />
-              {{ t + paymentKey(action.target) | transloco }}
-            </button>
-          }
-          @if (canCancel()) {
-            <button type="button" furarButton="danger" data-detail-cancel (click)="cancel(d)">
-              <furar-icon name="event-busy" />
-              {{ t + 'cancel' | transloco }}
-            </button>
-          }
-        </div>
-      }
-    } @else if (current?.state === 'error') {
-      <furar-status-state mode="error" [heading]="t + 'loadError' | transloco">
-        <button type="button" furarButton (click)="reload()">{{ t + 'retry' | transloco }}</button>
-      </furar-status-state>
-    } @else {
-      <furar-status-state mode="skeleton" shape="card" [rows]="1" [description]="t + 'loading' | transloco" />
-    }
-  `,
+  templateUrl: './booking-detail.component.html',
 })
 export class ManagedBookingDetailComponent {
   /** A instalación da reserva (miniatura); sen ela, só o nome e o enderezo. */
@@ -180,7 +90,7 @@ export class ManagedBookingDetailComponent {
   /** O cobro que se está a marcar (ou `null`). */
   protected readonly busy = signal<PaymentStatus | null>(null);
 
-  private readonly slug = computed(() => this.municipality.slug() ?? '');
+  protected readonly slug = computed(() => this.municipality.slug() ?? '');
   private readonly detail = computed(() => this.store.detail()?.detail ?? null);
 
   protected readonly rows = computed<ValueListItem[]>(() => {
@@ -204,6 +114,15 @@ export class ManagedBookingDetailComponent {
       { id: 'time', label: t('time'), value: `${start.time}–${end.time}` },
       { id: 'code', label: t('code'), value: d.code },
     );
+    // Reserva por outra persoa (maqueta 58): quen do persoal a fixo e o seu rol de agora.
+    if (d.bookedBy) {
+      const role = this.transloco.translate(`session.role.${d.bookedBy.role}`);
+      rows.push({
+        id: 'bookedBy',
+        label: t('bookedBy'),
+        value: d.bookedBy.name ? `${d.bookedBy.name} · ${role}` : role,
+      });
+    }
     // Os campos propios da reserva (maqueta 57): o persoal ve todos os que teñen valor.
     const translate = (key: string) => this.transloco.translate(key);
     rows.push(...bookingFieldRows(this.store.fields(), d.customFields, this.language.lang(), translate));
@@ -220,6 +139,11 @@ export class ManagedBookingDetailComponent {
   protected readonly actions = computed(() => {
     const d = this.detail();
     return d ? paymentActions(d) : [];
+  });
+  /** «Cambiar» (o mesmo formulario, relleno): quen ve as reservas, mentres está confirmada e por vir. */
+  protected readonly canChange = computed(() => {
+    const d = this.detail();
+    return this.staff.canViewBookings() && !!d?.cancellable && !d.done;
   });
   /** «Cancelar reserva»: só a xestión (STAFF non cancela) e se aínda está confirmada. */
   protected readonly canCancel = computed(() => this.staff.canManage() && (this.detail()?.cancellable ?? false));

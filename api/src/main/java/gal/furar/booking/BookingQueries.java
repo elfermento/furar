@@ -16,7 +16,10 @@ public interface BookingQueries {
   /** A reserva do concello actual, se existe. */
   Optional<BookingSummary> find(UUID id);
 
-  /** A reserva do concello actual para contala nun correo, se existe. */
+  /**
+   * A reserva do concello actual para contala nun correo, se existe e ten a quen escribir (nin
+   * anonimizada nin do persoal sen correo).
+   */
   Optional<BookingNotice> notice(UUID id);
 
   /**

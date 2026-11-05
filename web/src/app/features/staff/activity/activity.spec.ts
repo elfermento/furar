@@ -85,7 +85,7 @@ describe('rexistro de actividade: datas en Europe/Madrid', () => {
 
 describe('rexistro de actividade: textos', () => {
   it('todos os códigos de hoxe teñen texto en gl e es', () => {
-    expect(KNOWN_ACTIONS).toHaveLength(53);
+    expect(KNOWN_ACTIONS).toHaveLength(56);
     for (const code of KNOWN_ACTIONS) {
       const key = actionKey(code);
       expect(key, code).toBe(`activity.actions.${code}`);

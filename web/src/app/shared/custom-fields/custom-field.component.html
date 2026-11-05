@@ -106,16 +106,16 @@ SPDX-License-Identifier: EUPL-1.2
         />
       }
       @case ('DATE') {
-        <input
-          type="date"
-          class="input"
-          [id]="id()"
+        <!-- O botón non admite aria-required: «(obrigatorio)» vai no nome accesible (required). -->
+        <furar-date-field
+          [buttonId]="id()"
           [formControl]="ctl"
-          [attr.min]="def.rules.minDate ?? null"
-          [attr.max]="def.rules.maxDate ?? null"
-          [attr.aria-describedby]="describedBy()"
-          [attr.aria-invalid]="error() ? 'true' : null"
-          [attr.aria-required]="def.required"
+          [label]="label()"
+          [required]="def.required"
+          [min]="def.rules.minDate ?? null"
+          [max]="def.rules.maxDate ?? null"
+          [invalid]="!!error()"
+          [describedBy]="describedBy()"
         />
       }
       @case ('SELECT') {

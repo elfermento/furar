@@ -27,6 +27,7 @@ public final class Booking {
   private final BookingRules rules;
   private final Instant cancelUntil;
   private final @Nullable Holder holder;
+  private final @Nullable String bookedBy;
   private final @Nullable Instant cancelledAt;
   private final @Nullable String cancelledBy;
   private final @Nullable Long version;
@@ -43,6 +44,7 @@ public final class Booking {
       BookingRules rules,
       Instant cancelUntil,
       @Nullable Holder holder,
+      @Nullable String bookedBy,
       @Nullable Instant cancelledAt,
       @Nullable String cancelledBy,
       @Nullable Long version,
@@ -57,6 +59,7 @@ public final class Booking {
     this.rules = Objects.requireNonNull(rules, "rules");
     this.cancelUntil = Objects.requireNonNull(cancelUntil, "cancelUntil");
     this.holder = holder;
+    this.bookedBy = bookedBy;
     this.cancelledAt = cancelledAt;
     this.cancelledBy = cancelledBy;
     this.version = version;
@@ -76,6 +79,10 @@ public final class Booking {
     }
     if (cancelUntil.isAfter(slot.start())) {
       throw new IllegalStateException("cancelUntil after the start");
+    }
+    // Coa conta reserva a persoa; sen conta, sempre o persoal.
+    if (holder != null && holder.hasAccount() != (bookedBy == null)) {
+      throw new IllegalStateException("A booking without account is always made by the staff");
     }
   }
 
@@ -97,6 +104,45 @@ public final class Booking {
       BookingRules rules,
       Holder holder,
       Instant now) {
+    return create(id, code, slot, unitPrice, rules, holder, null, now);
+  }
+
+  /**
+   * Reserva nova que fai o persoal para unha persoa sen conta (mostrador ou teléfono): as mesmas
+   * comprobacións ca {@link #create(BookingId, BookingCode, BookedSlot, Price, BookingRules,
+   * Holder, Instant)}; queda quen a fixo.
+   *
+   * @param bookedBy {@code sub} de quen a fixo
+   */
+  public static Booking createFor(
+      BookingId id,
+      BookingCode code,
+      BookedSlot slot,
+      Price unitPrice,
+      BookingRules rules,
+      Holder holder,
+      String bookedBy,
+      Instant now) {
+    return create(
+        id,
+        code,
+        slot,
+        unitPrice,
+        rules,
+        holder,
+        Objects.requireNonNull(bookedBy, "bookedBy"),
+        now);
+  }
+
+  private static Booking create(
+      BookingId id,
+      BookingCode code,
+      BookedSlot slot,
+      Price unitPrice,
+      BookingRules rules,
+      Holder holder,
+      @Nullable String bookedBy,
+      Instant now) {
     Objects.requireNonNull(holder, "holder");
     rules.checkSlot(slot.start(), slot.slots(), now);
     Price total = unitPrice.forSlots(slot.slots());
@@ -110,6 +156,7 @@ public final class Booking {
         rules,
         rules.cancelUntil(slot.start()),
         holder,
+        bookedBy,
         null,
         null,
         null,
@@ -138,6 +185,41 @@ public final class Booking {
       long version,
       Instant createdAt,
       Instant updatedAt) {
+    return rehydrate(
+        id,
+        code,
+        slot,
+        status,
+        paymentStatus,
+        price,
+        rules,
+        cancelUntil,
+        holder,
+        null,
+        cancelledAt,
+        cancelledBy,
+        version,
+        createdAt,
+        updatedAt);
+  }
+
+  /** Desde a base, tal como se gardou, con quen a fixo se foi o persoal. */
+  public static Booking rehydrate(
+      BookingId id,
+      BookingCode code,
+      BookedSlot slot,
+      BookingStatus status,
+      PaymentStatus paymentStatus,
+      Price price,
+      BookingRules rules,
+      Instant cancelUntil,
+      @Nullable Holder holder,
+      @Nullable String bookedBy,
+      @Nullable Instant cancelledAt,
+      @Nullable String cancelledBy,
+      long version,
+      Instant createdAt,
+      Instant updatedAt) {
     return new Booking(
         id,
         code,
@@ -148,6 +230,7 @@ public final class Booking {
         rules,
         cancelUntil,
         holder,
+        bookedBy,
         cancelledAt,
         cancelledBy,
         version,
@@ -206,6 +289,55 @@ public final class Booking {
   public Booking reschedule(BookedSlot to, Price unitPrice, BookingRules newRules, Instant now) {
     requireConfirmed();
     requireBeforeDeadline(now);
+    return moved(to, unitPrice, newRules, now);
+  }
+
+  /**
+   * O persoal cambia a reserva a outro oco da mesma instalación (o mesmo formulario, relleno): coma
+   * {@link #reschedule}, pero sen o prazo da persoa, igual ca cancelar desde a xestión. O oco novo
+   * cumpre as normas do uso.
+   *
+   * @throws DomainException {@code booking.not-cancellable}, {@code booking.change-other-facility},
+   *     {@code booking.change-price-paid} ou os de {@link BookingRules#checkSlot}
+   */
+  public Booking rescheduleByMunicipality(
+      BookedSlot to, Price unitPrice, BookingRules newRules, Instant now) {
+    requireConfirmed();
+    return moved(to, unitPrice, newRules, now);
+  }
+
+  /**
+   * Corrixe para quen é unha reserva que fixo o persoal (nome, correo e teléfono). A dunha persoa
+   * coa súa conta non se toca: eses datos son os da conta.
+   *
+   * @throws DomainException {@code booking.holder-not-editable} se a reserva é dunha conta; {@code
+   *     booking.not-cancellable} se xa está cancelada
+   */
+  public Booking withHolder(Holder newHolder, Instant now) {
+    Objects.requireNonNull(newHolder, "newHolder");
+    if (bookedBy == null || holder == null || newHolder.hasAccount()) {
+      throw new DomainException(BookingError.HOLDER_NOT_EDITABLE);
+    }
+    requireConfirmed();
+    return new Booking(
+        id,
+        code,
+        slot,
+        status,
+        paymentStatus,
+        price,
+        rules,
+        cancelUntil,
+        newHolder,
+        bookedBy,
+        cancelledAt,
+        cancelledBy,
+        version,
+        createdAt,
+        now);
+  }
+
+  private Booking moved(BookedSlot to, Price unitPrice, BookingRules newRules, Instant now) {
     if (!to.facilityId().equals(slot.facilityId())) {
       throw new DomainException(BookingError.CHANGE_OTHER_FACILITY);
     }
@@ -295,6 +427,7 @@ public final class Booking {
         newRules,
         newCancelUntil,
         holder,
+        bookedBy,
         newCancelledAt,
         newCancelledBy,
         version,
@@ -352,6 +485,11 @@ public final class Booking {
       throw new IllegalStateException("Anonymised booking " + id.value());
     }
     return holder;
+  }
+
+  /** {@code sub} de quen fixo a reserva no nome da persoa (o persoal); nulo se a fixo ela. */
+  public @Nullable String bookedBy() {
+    return bookedBy;
   }
 
   /** Se a conservación xa lle quitou a persoa (ADR-0017 punto 5). */

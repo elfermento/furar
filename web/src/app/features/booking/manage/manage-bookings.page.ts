@@ -31,6 +31,7 @@ import { BookingFiltersDialogComponent } from './booking-filters-dialog.componen
 import { BookingRowsComponent } from './booking-rows.component';
 import { BookingsToolbarComponent } from './bookings-toolbar.component';
 import { linkedBooking } from './linked-booking';
+import { ManageHeadingComponent } from './manage-heading.component';
 import type { BookingFilters, ListOrigin, ManagedBookingResponse, PaymentsTab } from './manage-bookings';
 import {
   NO_FILTERS,
@@ -57,8 +58,8 @@ type Section = 'latest' | 'payments' | 'list';
 let nextId = 0;
 
 /**
- * «Reservas» do concello (`/:concello/xestion/reservas`, D2-15, maqueta 26). Busca, «Filtros»
- * (diálogo; folla no móbil) e «Calendario» (D2-16). A portada ten «Últimas reservas» e «Cobros»
+ * «Reservas» do concello (`/:concello/xestion/reservas`, D2-15, maqueta 26), con «Nova reserva»
+ * (maqueta 58). Busca, «Filtros» (diálogo; folla no móbil) e «Calendario» (D2-16). A portada ten «Últimas reservas» e «Cobros»
  * (pendentes de pago, a devolver e canceladas, coas contas); picar nunha reserva pasa a súa
  * sección aos 2/3 e trae o detalle ao 1/3 (fixo ao baixar; picar de novo, Esc ou fóra péchao),
  * cunha animación suave que respecta `prefers-reduced-motion`. «Ver máis», os filtros ou a busca
@@ -75,6 +76,7 @@ let nextId = 0;
     ButtonDirective,
     IconComponent,
     ManagedBookingDetailComponent,
+    ManageHeadingComponent,
     StatusStateComponent,
     TabDirective,
     TabsComponent,

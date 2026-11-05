@@ -19,6 +19,7 @@ import org.jspecify.annotations.Nullable;
  * @param done «Realizada»: confirmada e xa rematada
  * @param reservedAt cando se reservou
  * @param cancelledAt cando se cancelou, só nas canceladas
+ * @param bookedBy quen do persoal a fixo no nome da persoa; nulo se a fixo ela
  */
 public record ManagedBookingResponse(
     UUID id,
@@ -40,4 +41,5 @@ public record ManagedBookingResponse(
     boolean done,
     Instant reservedAt,
     @Nullable Instant cancelledAt,
+    @Nullable BookedByResponse bookedBy,
     long version) {}

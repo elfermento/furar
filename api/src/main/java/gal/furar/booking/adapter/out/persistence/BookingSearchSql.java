@@ -53,7 +53,8 @@ class BookingSearchSql {
                        payment_status, price_kind,
                        amount_cents, cancel_until, rule_min_advance_hours, rule_max_advance_days,
                        rule_max_slots, rule_cap_count, rule_cap_period, rule_cancel_hours,
-                       holder_subject, holder_name, holder_email, holder_language, cancelled_at,
+                       holder_subject, holder_name, holder_email, holder_phone, holder_language,
+                   booked_by, cancelled_at,
                        cancelled_by, created_at, updated_at, version
                 from booking
                 where (:anySince or lower(period) >= :since)
@@ -93,7 +94,8 @@ class BookingSearchSql {
                        payment_status, price_kind,
                        amount_cents, cancel_until, rule_min_advance_hours, rule_max_advance_days,
                        rule_max_slots, rule_cap_count, rule_cap_period, rule_cancel_hours,
-                       holder_subject, holder_name, holder_email, holder_language, cancelled_at,
+                       holder_subject, holder_name, holder_email, holder_phone, holder_language,
+                   booked_by, cancelled_at,
                        cancelled_by, created_at, updated_at, version
                 from booking
                 where (:anySince or lower(period) >= :since)
@@ -161,7 +163,8 @@ class BookingSearchSql {
                    upper(period) as end_at, slots, status, payment_status, price_kind,
                    amount_cents, cancel_until, rule_min_advance_hours, rule_max_advance_days,
                    rule_max_slots, rule_cap_count, rule_cap_period, rule_cancel_hours,
-                   holder_subject, holder_name, holder_email, holder_language, cancelled_at,
+                   holder_subject, holder_name, holder_email, holder_phone, holder_language,
+                   booked_by, cancelled_at,
                    cancelled_by, created_at, updated_at, version
             from booking
             where status = 'CONFIRMED' and lower(period) >= :since and lower(period) < :until

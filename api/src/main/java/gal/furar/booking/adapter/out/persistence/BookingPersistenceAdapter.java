@@ -12,6 +12,7 @@ import gal.furar.booking.domain.BookingError;
 import gal.furar.booking.domain.BookingEventKind;
 import gal.furar.booking.domain.BookingId;
 import gal.furar.booking.domain.BookingStatus;
+import gal.furar.booking.domain.Holder;
 import gal.furar.booking.domain.Occupied;
 import gal.furar.booking.domain.RentalMode;
 import gal.furar.shared.domain.CommonError;
@@ -228,6 +229,11 @@ class BookingPersistenceAdapter extends TenantScopedPersistenceAdapter
   }
 
   @Override
+  public void correct(Booking before, Booking after) {
+    update(tenant().id(), before, after);
+  }
+
+  @Override
   public void changePayment(Booking before, Booking after, String actorSubject) {
     UUID m = tenant().id();
     update(m, before, after);
@@ -243,6 +249,11 @@ class BookingPersistenceAdapter extends TenantScopedPersistenceAdapter
     long expected = Objects.requireNonNull(before.version(), "version");
     if (!sql.updateBooking(m, after, expected)) {
       throw new DomainException(CommonError.STALE_VERSION);
+    }
+    // Para quen é: só cambia nas que fixo o persoal (Booking#withHolder).
+    Holder holder = after.holder();
+    if (after.bookedBy() != null && holder != null && !holder.equals(before.holder())) {
+      sql.updateHolder(m, after.id().value(), holder);
     }
   }
 

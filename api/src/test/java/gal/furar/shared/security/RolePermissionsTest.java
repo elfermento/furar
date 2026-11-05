@@ -61,7 +61,11 @@ class RolePermissionsTest {
     Map<String, Set<Role>> expected =
         Map.ofEntries(
             // ADR-0025, punto 4: cobrar é traballo do mostrador; cancelar, da xestión.
+            // Especificación, bloque 7: reservar no nome de alguén, tamén Recepción.
+            Map.entry("booking.book-for", Set.of(Role.MANAGER, Role.STAFF)),
             Map.entry("booking.cancel", Set.of(Role.MANAGER)),
+            // A descarga en CSV leva datos persoais: só a xestión, non o mostrador.
+            Map.entry("booking.export", Set.of(Role.MANAGER)),
             Map.entry("booking.payment", Set.of(Role.MANAGER, Role.STAFF)),
             Map.entry("booking.view", Set.of(Role.MANAGER, Role.STAFF)),
             // ADR-0028 (revisión do 2026-11-03): a plataforma configura o concello enteiro

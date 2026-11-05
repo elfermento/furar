@@ -2,10 +2,14 @@
 // SPDX-License-Identifier: EUPL-1.2
 package gal.furar.booking.adapter.in.web;
 
+import gal.furar.booking.StaffAccounts;
 import gal.furar.booking.adapter.in.web.dto.AvailableSlotResponse;
+import gal.furar.booking.adapter.in.web.dto.BookedByResponse;
 import gal.furar.booking.adapter.in.web.dto.BookingCalendarResponse;
 import gal.furar.booking.adapter.in.web.dto.BookingDayCountResponse;
 import gal.furar.booking.adapter.in.web.dto.BookingHourCountResponse;
+import gal.furar.booking.adapter.in.web.dto.BookingMailKindValue;
+import gal.furar.booking.adapter.in.web.dto.BookingMailResponse;
 import gal.furar.booking.adapter.in.web.dto.BookingOpeningResponse;
 import gal.furar.booking.adapter.in.web.dto.BookingPriceKindValue;
 import gal.furar.booking.adapter.in.web.dto.BookingPriceResponse;
@@ -23,13 +27,16 @@ import gal.furar.booking.adapter.in.web.dto.ManagedBookingResponse;
 import gal.furar.booking.adapter.in.web.dto.MyBookingResponse;
 import gal.furar.booking.adapter.in.web.dto.PaymentStatusValue;
 import gal.furar.booking.adapter.in.web.dto.QrResponse;
+import gal.furar.booking.adapter.in.web.dto.StaffRoleValue;
 import gal.furar.booking.application.port.in.BookingCalendar;
 import gal.furar.booking.application.port.in.BookingsOverview;
 import gal.furar.booking.application.port.in.ManagedBooking;
 import gal.furar.booking.application.port.in.MyBooking;
 import gal.furar.booking.domain.Booking;
 import gal.furar.booking.domain.FreeSlot;
+import gal.furar.booking.domain.Holder;
 import gal.furar.facility.FacilityCover;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.jspecify.annotations.Nullable;
@@ -119,7 +126,31 @@ final class BookingWebMapper {
         view.done(),
         b.createdAt(),
         b.cancelledAt(),
+        bookedBy(view),
         version(b));
+  }
+
+  private static @Nullable BookedByResponse bookedBy(ManagedBooking view) {
+    StaffAccounts.Member member = view.bookedBy();
+    return member == null
+        ? null
+        : new BookedByResponse(member.name(), StaffRoleValue.valueOf(member.role().name()));
+  }
+
+  /**
+   * As canles do aviso ao cancelar (P12): o correo, se a persoa o ten; o aviso na web, se ten conta
+   * onde velo.
+   */
+  private static List<CancelChannelValue> cancelChannels(Booking b) {
+    Holder h = b.holder();
+    List<CancelChannelValue> channels = new ArrayList<>();
+    if (h == null || h.email() != null) {
+      channels.add(CancelChannelValue.EMAIL);
+    }
+    if (h == null || h.hasAccount()) {
+      channels.add(CancelChannelValue.WEB);
+    }
+    return channels;
   }
 
   static ManagedBookingDetailResponse detail(ManagedBooking view) {
@@ -153,9 +184,15 @@ final class BookingWebMapper {
             .sorted()
             .toList(),
         cancellable,
-        // P12: «Chamar» só se hai teléfono, e na fase 1 a reserva non o garda (P7).
-        cancellable ? List.of(CancelChannelValue.EMAIL, CancelChannelValue.WEB) : List.of(),
+        cancellable ? cancelChannels(b) : List.of(),
         view.customFields().toJson(),
+        b.holder() == null ? null : b.holder().phone(),
+        b.holder() != null && b.holder().hasAccount(),
+        bookedBy(view),
+        view.lastMail() == null
+            ? null
+            : new BookingMailResponse(
+                BookingMailKindValue.valueOf(view.lastMail().kind().name()), view.lastMail().at()),
         version(b));
   }
 
