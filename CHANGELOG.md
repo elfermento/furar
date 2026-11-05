@@ -9,6 +9,11 @@ Formato [Keep a Changelog](https://keepachangelog.com/gl/1.1.0/) e versións [Se
 
 ## [Sen publicar]
 
+## [0.1.2] - 2026-11-05
+
+### Corrixido
+- Primeira versión con release e imaxes de 0.1.1: o e2e da etiqueta 0.1.1 fallou nunha proba do PDF do panel de Indicadores (o lector de PDF das probas perdía unha páxina cando os datos comprimidos remataban nun byte `\r`; o produto xeraba ben o PDF), así que 0.1.1 non ten release nin imaxes. 0.1.2 leva o mesmo ca 0.1.1 coa proba corrixida.
+
 ## [0.1.1] - 2026-11-05
 
 ### Engadido

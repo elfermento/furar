@@ -14,21 +14,32 @@ interface PdfObject {
   readonly stream: Buffer | null;
 }
 
+/**
+ * Os obxectos do PDF. Os datos dun fluxo lense polo seu `/Length` e non buscando `endstream`:
+ * os datos comprimidos son bytes arbitrarios e poden rematar en `\r` (ou conter `endobj`), e
+ * recortalos á procura do salto de liña final corrompe o fluxo e perde o texto da páxina.
+ */
 function objects(pdf: Buffer): Map<number, PdfObject> {
   const source = pdf.toString('latin1');
   const found = new Map<number, PdfObject>();
-  const pattern = /(\d+) 0 obj\s*([\s\S]*?)endobj/g;
-  for (let match = pattern.exec(source); match; match = pattern.exec(source)) {
-    const body = match[2]!;
-    const at = body.search(/stream\r?\n/);
+  const header = /(\d+) 0 obj\b/g;
+  for (let match = header.exec(source); match; match = header.exec(source)) {
+    const from = header.lastIndex;
+    const close = source.indexOf('endobj', from);
+    if (close < 0) break;
+    const at = source.slice(from, close).search(/stream\r?\n/);
     if (at < 0) {
-      found.set(Number(match[1]), { dict: body, stream: null });
+      found.set(Number(match[1]), { dict: source.slice(from, close), stream: null });
+      header.lastIndex = close + 6;
       continue;
     }
-    const dict = body.slice(0, at);
-    const start = at + (body[at + 6] === '\r' ? 8 : 7);
-    const end = body.lastIndexOf('endstream');
-    let data = Buffer.from(body.slice(start, end).replace(/\r?\n$/, ''), 'latin1');
+    const dict = source.slice(from, from + at);
+    const start = from + at + (source[from + at + 6] === '\r' ? 8 : 7);
+    const length = /\/Length\s+(\d+)(?!\s+\d+\s+R)/.exec(dict);
+    const end = length ? start + Number(length[1]) : source.indexOf('endstream', start);
+    if (end < start) break;
+    let data = Buffer.from(source.slice(start, end), 'latin1');
+    header.lastIndex = Math.max(end, source.indexOf('endobj', end) + 6);
     if (/\/FlateDecode/.test(dict)) {
       try {
         data = inflateSync(data);
