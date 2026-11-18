@@ -9,6 +9,11 @@ Formato [Keep a Changelog](https://keepachangelog.com/gl/1.1.0/) e versións [Se
 
 ## [Sen publicar]
 
+## [1.0.2] - 2026-11-18
+
+### Arranxado
+- No PDF dos indicadores, un gráfico xa non queda só nunha páxina sen o seu título.
+
 ## [1.0.1] - 2026-11-18
 
 ### Arranxado

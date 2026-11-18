@@ -50,7 +50,7 @@
   }
   html[data-print] .f-chart__print {
     block-size: auto;
-    max-block-size: 75vh;
+    max-block-size: 65vh;
   }
   html[data-print] .f-chart:has(> .f-chart__print) > .f-chart__canvas {
     display: none;
@@ -61,6 +61,20 @@
   }
   html[data-print] .f-chart-card__head {
     break-after: avoid;
+  }
+  /*
+   * O gráfico nunca empeza unha páxina sen o seu título: cos dous lados da quebra en `avoid` e a
+   * imaxe en 65vh, título e imaxe caben xuntos e non queda unha páxina só coa imaxe (sen texto).
+   * En impresión, as reixas do panel pasan a bloque: o navegador parte peor os elementos dunha reixa.
+   */
+  html[data-print] .f-chart-card__chart {
+    break-before: avoid;
+  }
+  html[data-print] :is(.f-indicators, .f-indicators__charts) {
+    display: block;
+  }
+  html[data-print] .f-indicators__charts > * + * {
+    margin-block-start: var(--spacing-item);
   }
   /* A cabeceira da táboa nunca queda soa ao pé dunha páxina: vai coa primeira fila. */
   html[data-print] .f-data-table__table thead {
