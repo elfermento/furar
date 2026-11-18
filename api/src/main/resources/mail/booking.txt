@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+#
+# Parte de texto do correo dunha reserva (a mesma información ca booking.html). As liñas que
+# empezan por # ao principio non se envían.
+
+{{title}}
+{{day}}{{#hours}}, {{hours}}{{/hours}}
+
+{{#greeting}}{{greeting}}
+{{/greeting}}{{lead}}
+
+{{#card}}{{facility}}
+{{#address}}{{address}}
+{{/address}}{{labelUse}}: {{use}}
+{{#who}}{{labelWho}}: {{who}}
+{{/who}}{{#part}}{{labelPart}}: {{part}}
+{{/part}}{{#price}}{{labelPrice}}: {{price}}
+{{/price}}{{#before}}{{labelBefore}}: {{before}}
+{{/before}}{{#code}}{{labelCode}}: {{code}}
+{{/code}}{{#qr}}{{qrHint}}
+{{/qr}}{{/card}}{{#deadline}}
+{{deadlineBefore}} {{deadlineAt}}{{deadlineAfter}}
+{{/deadline}}{{#deadlinePassed}}
+{{deadlinePassed}}
+{{/deadlinePassed}}{{#noShow}}
+{{noShow}}
+{{/noShow}}
+{{#link1}}{{button1}}: {{link1}}
+{{/link1}}{{#link2}}{{button2}}: {{link2}}
+{{/link2}}
+{{note}}
+{{#notYours}}{{notYours}}
+{{/notYours}}
+--
+{{#footerAddress}}{{footerAddress}}
+{{/footerAddress}}{{#footerPhone}}{{footerPhone}}
+{{/footerPhone}}{{#footerEmail}}{{footerEmail}}
+{{/footerEmail}}
+{{why}}
+{{#privacyLink}}{{privacy}}: {{privacyUrl}}{{/privacyLink}}{{#optOutUrl}}
+{{optOut}}: {{optOutUrl}}{{/optOutUrl}}

@@ -1,0 +1,116 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'joinRequest.';
+<div class="max-w-col mx-auto">
+  @if (sentTo(); as email) {
+    <!-- Enviada: só a confirmación, sen a introdución. -->
+    <furar-page-header [heading]="t + 'title' | transloco" />
+    <div #done tabindex="-1" data-join-sent>
+      <furar-callout tone="success" live="status" [heading]="t + 'sent.title' | transloco">
+        <p>
+          {{ t + 'sent.text' | transloco }} <strong>{{ email }}</strong
+          >.
+        </p>
+      </furar-callout>
+    </div>
+  } @else {
+    <furar-page-header [heading]="t + 'title' | transloco" [intro]="t + 'intro' | transloco" />
+    <form class="gap-form grid" novalidate furarFocusError [formGroup]="form" (ngSubmit)="submit()" data-join-form>
+      <furar-field-group>
+        <furar-field
+          [fieldId]="id + '-municipality'"
+          [label]="t + 'municipality' | transloco"
+          required
+          [error]="error('municipality')"
+        >
+          <input
+            furarInput
+            formControlName="municipality"
+            autocomplete="organization"
+            aria-required="true"
+            [id]="id + '-municipality'"
+            [attr.aria-invalid]="error('municipality') ? 'true' : null"
+            [attr.aria-describedby]="described('municipality')"
+          />
+        </furar-field>
+        <furar-field [fieldId]="id + '-name'" [label]="t + 'name' | transloco" required [error]="error('name')">
+          <input
+            furarInput
+            formControlName="name"
+            autocomplete="name"
+            aria-required="true"
+            [id]="id + '-name'"
+            [attr.aria-invalid]="error('name') ? 'true' : null"
+            [attr.aria-describedby]="described('name')"
+          />
+        </furar-field>
+        <furar-field [fieldId]="id + '-role'" [label]="t + 'role' | transloco" [error]="error('role')">
+          <input
+            furarInput
+            formControlName="role"
+            autocomplete="organization-title"
+            [id]="id + '-role'"
+            [attr.aria-invalid]="error('role') ? 'true' : null"
+            [attr.aria-describedby]="described('role')"
+          />
+        </furar-field>
+        <div class="f-field-cells" [style.--f-cell]="'13rem'">
+          <furar-field [fieldId]="id + '-email'" [label]="t + 'email' | transloco" required [error]="error('email')">
+            <input
+              furarInput
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              aria-required="true"
+              [id]="id + '-email'"
+              [attr.aria-invalid]="error('email') ? 'true' : null"
+              [attr.aria-describedby]="described('email')"
+            />
+          </furar-field>
+          <furar-field [fieldId]="id + '-phone'" [label]="t + 'phone' | transloco" required [error]="error('phone')">
+            <input
+              furarInput
+              type="tel"
+              formControlName="phone"
+              autocomplete="tel"
+              aria-required="true"
+              [id]="id + '-phone'"
+              [attr.aria-invalid]="error('phone') ? 'true' : null"
+              [attr.aria-describedby]="described('phone')"
+            />
+          </furar-field>
+        </div>
+      </furar-field-group>
+      <furar-field [fieldId]="id + '-message'" [label]="t + 'message' | transloco" [error]="error('message')">
+        <textarea
+          furarInput
+          rows="4"
+          formControlName="message"
+          [id]="id + '-message'"
+          [placeholder]="t + 'messagePlaceholder' | transloco"
+          [attr.aria-invalid]="error('message') ? 'true' : null"
+          [attr.aria-describedby]="described('message')"
+        ></textarea>
+      </furar-field>
+      <!-- Campo trampa: fóra da vista e da orde de tabulación; as persoas nunca o ven. -->
+      <div class="sr-only" aria-hidden="true">
+        <label [for]="id + '-website'">{{ t + 'trap' | transloco }}</label>
+        <input type="text" tabindex="-1" autocomplete="off" formControlName="website" [id]="id + '-website'" />
+      </div>
+      <!-- O tratamento, na páxina «Privacidade» das solicitudes (ADR-0042, revisión do 2026-11-17). -->
+      <p class="text-support text-ink-soft" data-join-privacy>
+        {{ t + 'privacySentence' | transloco }}
+        <a routerLink="/alta-concello/privacidade">{{ t + 'privacyLink' | transloco }}</a
+        >.
+      </p>
+      <furar-problem-alert [problem]="problem()" />
+      <div class="flex justify-end">
+        <button type="submit" furarButton="primary" data-join-send [busy]="sending()">
+          {{ t + 'send' | transloco }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

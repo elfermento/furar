@@ -1,0 +1,100 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+/*
+ * «Validar QR» (ADR-0032): unha tarxeta estreita co código (ou a cámara), os datos da
+ * reserva, o aviso, o motivo e os botóns, sempre nesa orde.
+ */
+@layer components {
+  .f-validate {
+    display: grid;
+    gap: var(--spacing-item);
+    max-width: 28rem;
+    margin-inline: auto;
+    padding: 1.5rem;
+  }
+  .f-validate h1 {
+    margin: 0;
+    font-size: var(--text-title);
+    letter-spacing: -0.02em;
+  }
+  .f-validate > .f-segmented {
+    justify-self: start;
+  }
+  /* O código, grande e centrado: lese desde lonxe e tecléase sen erros. Dentro da cápsula do campo
+     (fields.css) tamén: o selector gaña á regra do valor a 17 px. */
+  .f-validate .f-field .f-input.f-validate__code,
+  .f-validate__code {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .f-validate__result {
+    display: grid;
+    gap: var(--spacing-item);
+  }
+  .f-validate__result:empty {
+    display: none;
+  }
+  /* A cámara: un cadro escuro co vídeo e unha marca onde poñer o QR. */
+  .f-validate__camera {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border-radius: var(--radius-card);
+    background: var(--f-ink);
+    color: var(--f-surface);
+  }
+  .f-validate__camera::before {
+    position: absolute;
+    inset: 18%;
+    z-index: 1;
+    border: 3px solid var(--f-surface);
+    border-radius: var(--radius-row);
+    opacity: 0.9;
+    content: '';
+    pointer-events: none;
+  }
+  .f-validate__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .f-validate__hint {
+    position: absolute;
+    bottom: 1rem;
+    z-index: 1;
+    margin: 0;
+    padding-inline: 1rem;
+    text-align: center;
+  }
+  .f-validate__acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-unit);
+  }
+  .f-validate__acts .f-button {
+    flex: 1 1 auto;
+  }
+
+  /* «Actividades de hoxe» debaixo do validador: o título fóra e unha tarxeta por sesión. */
+  .f-today-activities {
+    display: block;
+    max-width: 28rem;
+    margin: var(--spacing-section, 2rem) auto 0;
+  }
+  .f-today-activities__title {
+    margin: 0 0 0.75rem;
+    font-size: var(--text-head);
+  }
+  .f-today-activities__list {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}

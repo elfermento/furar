@@ -1,0 +1,80 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.location.';
+@let p = idPrefix();
+<div class="gap-form grid" [formGroup]="form()">
+  @if (manual()) {
+    <furar-callout tone="warn" data-manual [heading]="t + 'manual.title' | transloco">
+      <p>{{ t + 'manual.text' | transloco }}</p>
+    </furar-callout>
+  } @else {
+    <div class="f-address-search">
+      <label class="f-address-search__label" [for]="p + '-search'">{{ t + 'searchShortcut' | transloco }}</label>
+      <div class="f-address-search__combo">
+        <furar-icon name="search" class="f-address-search__lead" />
+        <furar-combobox
+          minLength="3"
+          [inputId]="p + '-search'"
+          [label]="t + 'search' | transloco"
+          [placeholder]="municipality() ? (t + 'searchPlaceholder' | transloco: { municipality: municipality() }) : ''"
+          [emptyText]="municipality() ? (t + 'searchEmpty' | transloco: { municipality: municipality() }) : ''"
+          [errorText]="t + 'manual.title' | transloco"
+          [source]="source"
+          (selected)="pick($event)"
+          (failed)="goManual()"
+        >
+          <p comboboxFooter data-source>{{ t + 'source' | transloco }}</p>
+        </furar-combobox>
+      </div>
+    </div>
+  }
+
+  <!-- Vía e número nunha fila; CP e localidade noutra (se non caben, un debaixo do outro). -->
+  <furar-field-group data-address>
+    @for (row of rows; track $index) {
+      <div class="f-field-cells">
+        @for (cell of row; track cell.name) {
+          @let name = cell.name;
+          @let id = p + '-' + name;
+          <furar-field
+            [fieldId]="id"
+            [label]="t + 'field.' + name | transloco"
+            [required]="name !== 'streetNumber'"
+            [error]="errors()[name]"
+            [style.--f-cell]="cell.width"
+            [style.flex-grow]="cell.grow"
+          >
+            <input
+              furarInput
+              type="text"
+              [id]="id"
+              [formControlName]="name"
+              [furarLongText]="name === 'street' ? '' : null"
+              [attr.placeholder]="name === 'streetNumber' ? (t + 'noNumber' | transloco) : null"
+              [attr.inputmode]="name === 'postalCode' ? 'numeric' : null"
+              [attr.autocomplete]="name === 'postalCode' ? 'postal-code' : 'off'"
+              [attr.aria-required]="name !== 'streetNumber' || null"
+              [attr.aria-invalid]="errors()[name] ? 'true' : null"
+              [attr.aria-describedby]="describedBy(id, false, errors()[name])"
+            />
+          </furar-field>
+        }
+      </div>
+    }
+  </furar-field-group>
+
+  <div class="gap-unit grid">
+    <furar-map
+      editable
+      formControlName="point"
+      [idPrefix]="p + '-map'"
+      [label]="t + 'pin' | transloco"
+      [area]="area()"
+    />
+    @if (errors().point) {
+      <p class="f-field-error" [id]="p + '-point-error'">{{ t + 'pinRequired' | transloco }}</p>
+    }
+  </div>
+</div>

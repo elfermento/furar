@@ -1,0 +1,159 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@if (name()) {
+  <!-- O nome é o texto do botón; no móbil, oculto á vista pero non aos lectores (só se ven as iniciais). -->
+  <button
+    type="button"
+    class="f-usermenu__trigger"
+    [furarMenuTrigger]="menu"
+    [menuPosition]="position"
+    (menuClosed)="level.set('main')"
+  >
+    <span class="f-usermenu__who">
+      <span class="f-usermenu__name">{{ name() }}</span>
+    </span>
+    {{ ' ' }}<span class="f-usermenu__avatar" aria-hidden="true">{{ letters() }}</span>
+  </button>
+} @else {
+  <button
+    type="button"
+    furarButton="primary"
+    size="sm"
+    [round]="compact() || !guestText()"
+    class="f-usermenu__guest"
+    [attr.aria-label]="triggerLabel()"
+    [furarMenuTrigger]="menu"
+    [menuPosition]="position"
+    (menuClosed)="level.set('main')"
+  >
+    <furar-icon name="user" />
+    @if (!compact() && guestText()) {
+      {{ guestText() }}
+    }
+  </button>
+}
+<ng-template #menu>
+  <div class="f-usermenu__panel">
+    @if (name()) {
+      <div class="f-usermenu__head" [id]="headId">
+        <span class="f-usermenu__avatar f-usermenu__avatar--lg" aria-hidden="true">{{ letters() }}</span>
+        <span class="f-usermenu__lines">
+          <span class="f-usermenu__name">{{ name() }}</span>
+          @if (detail()) {
+            <span class="f-usermenu__detail">{{ detail() }}</span>
+          }
+          @if (email()) {
+            <span class="f-usermenu__detail">{{ email() }}</span>
+          }
+        </span>
+      </div>
+    }
+    <!-- Un só panel de menú (CDK): os dous niveis cambian as súas filas, non o panel. -->
+    <div
+      furarMenu
+      class="f-usermenu__items"
+      [attr.data-level]="level()"
+      [attr.aria-labelledby]="level() === 'main' && name() ? headId : null"
+      [attr.aria-label]="level() === 'main' ? (name() ? null : triggerLabel()) : active()?.label"
+    >
+      @if (active(); as switcher) {
+        <button
+          type="button"
+          furarMenuItemStay
+          class="f-usermenu__back"
+          data-item="back"
+          (activated)="back()"
+          (keydown.arrowleft)="back()"
+        >
+          <furar-icon name="chevron-left" />{{ switcher.label }}
+        </button>
+        @for (option of switcher.options; track option.id) {
+          <button
+            type="button"
+            furarMenuItemRadio
+            class="f-usermenu__option"
+            [checked]="option.current === true"
+            [attr.data-option]="option.id"
+            [attr.lang]="option.lang ?? null"
+            (triggered)="choose(option.id)"
+            (keydown.arrowleft)="back()"
+          >
+            <span class="f-usermenu__option-name">{{ option.label }}</span>
+            @if (option.detail) {
+              {{ ' ' }}<span class="f-usermenu__value">{{ option.detail }}</span>
+            }
+          </button>
+        }
+        @if (switcher.extra; as extra) {
+          <hr role="separator" class="f-usermenu__sep" />
+          <a furarMenuItem [routerLink]="extra.link" [attr.data-item]="extra.id" (keydown.arrowleft)="back()">
+            <furar-icon [name]="extra.icon" />{{ extra.label }}
+          </a>
+        }
+      } @else {
+        @for (row of rows(); track row.key) {
+          @switch (row.kind) {
+            @case ('separator') {
+              <hr role="separator" class="f-usermenu__sep" />
+            }
+            @case ('level') {
+              <!-- Fila que abre un segundo nivel (concello ou idioma): o actual á dereita e ›. -->
+              <button
+                type="button"
+                furarMenuItemStay
+                class="f-usermenu__switch"
+                [attr.data-item]="row.level"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                (activated)="go(row.level)"
+                (keydown.arrowright)="go(row.level)"
+              >
+                <furar-icon [name]="row.switcher.icon ?? 'location'" /><span class="f-usermenu__option-name">{{
+                  row.switcher.label
+                }}</span
+                >{{ ' ' }}<span class="f-usermenu__value">{{ row.switcher.current }}</span>
+                <furar-icon name="chevron-right" />
+              </button>
+            }
+            @case ('item') {
+              @if (row.item.href) {
+                <a
+                  furarMenuItem
+                  [href]="row.item.href"
+                  [attr.data-item]="row.item.id"
+                  [attr.data-tone]="row.item.tone ?? null"
+                  [class.f-usermenu__strong]="row.item.strong"
+                >
+                  <furar-icon [name]="row.item.icon" />{{ row.item.label }}
+                </a>
+              } @else if (row.item.link) {
+                <a
+                  furarMenuItem
+                  [routerLink]="row.item.link"
+                  [attr.data-item]="row.item.id"
+                  [attr.data-tone]="row.item.tone ?? null"
+                  [class.f-usermenu__strong]="row.item.strong"
+                >
+                  <furar-icon [name]="row.item.icon" />{{ row.item.label }}
+                </a>
+              } @else {
+                <button
+                  type="button"
+                  furarMenuItem
+                  [attr.data-item]="row.item.id"
+                  [attr.data-tone]="row.item.tone ?? null"
+                  [class.f-usermenu__strong]="row.item.strong"
+                  (triggered)="selected.emit(row.item.id)"
+                >
+                  <furar-icon [name]="row.item.icon" />{{ row.item.label }}
+                </button>
+              }
+            }
+          }
+        }
+      }
+    </div>
+  </div>
+</ng-template>

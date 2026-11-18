@@ -1,0 +1,3 @@
+caniuse-lite CC-BY-4.0: datos de compatibilidade de navegadores (browserslist, @angular/build, Tailwind); só desenvolvemento, non entra na imaxe (ADR-0002)
+spdx-exceptions CC-BY-3.0: lista de excepcións SPDX (datos) que usan as propias ferramentas de licenzas e SBOM (license-checker-rseidelsohn, @cyclonedx/cyclonedx-npm); só desenvolvemento, non entra na imaxe (ADR-0002)
+spdx-ranges CC-BY-3.0: datos de rangos de licenzas SPDX, «(MIT AND CC-BY-3.0)»; dependencia de license-checker-rseidelsohn (spdx-satisfies); só desenvolvemento, non entra na imaxe (ADR-0002)

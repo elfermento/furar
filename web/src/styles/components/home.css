@@ -1,0 +1,838 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Portada do concello: título grande co nome do concello na cor
+ * principal, collaxe de fotos, tarxetas das instalacións e «Así de fácil». O buscador en cápsula
+ * vai en facility-search.css (tamén o usa o listado público).
+ * Todo con tokens; os tamaños propios da portada (título, collaxe) viven aquí como variables.
+ * Vai en `styles/portada.css`, fóra da carga inicial (D27): as rutas das portadas levan
+ * `homeStylesResolver`.
+ */
+@property --t {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+@property --u {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@layer components {
+  /* Os bordos do contedor da barra superior e do pé (.f-main, site.css). */
+  .f-wrap {
+    width: 100%;
+    max-width: calc(var(--container-bar) + 2 * var(--spacing-gutter));
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  /* --- Cabeceira: título, buscador e collaxe --- */
+  .f-hero {
+    position: relative;
+    padding: 3rem 0;
+  }
+  @media (min-width: 640px) {
+    .f-hero {
+      padding-top: 4rem;
+    }
+  }
+  .f-hero__blobs {
+    position: absolute;
+    inset: calc(-1 * var(--f-topbar-h, 5rem)) 0 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .f-hero__blobs span {
+    position: absolute;
+    border-radius: var(--radius-pill);
+    filter: blur(4rem);
+  }
+  .f-hero__blobs span:first-child {
+    top: -16rem;
+    right: -10rem;
+    width: 38rem;
+    height: 38rem;
+    background: color-mix(in srgb, var(--f-primary) 16%, transparent);
+  }
+  .f-hero__blobs span:last-child {
+    bottom: -10rem;
+    left: -8rem;
+    width: 24rem;
+    height: 24rem;
+    background: color-mix(in srgb, var(--f-accent) 10%, transparent);
+  }
+  .f-hero__grid {
+    position: relative;
+    display: grid;
+    align-items: center;
+    gap: 3rem;
+  }
+  /*
+   * A columna do título e do buscador non medra co seu contido: antes da primeira detección de
+   * cambios o buscador aínda non ten o seu aspecto de cápsula e mide máis ca un móbil con texto
+   * «Moi grande»; sen isto, ensanchaba a páxina un instante (scroll horizontal).
+   */
+  .f-hero__main {
+    min-width: 0;
+  }
+  @media (min-width: 1024px) {
+    .f-hero__grid[data-collage] {
+      grid-template-columns: 1.15fr 0.85fr;
+      min-height: 26rem;
+    }
+  }
+  .f-hero__title {
+    margin: 0 0 2.5rem;
+    font-size: clamp(2.5rem, 7.5vw, 5.5rem);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    overflow-wrap: anywhere;
+  }
+  .f-hero__title > * {
+    display: block;
+  }
+  .f-hero__title em {
+    color: var(--f-primary-text);
+    font-style: normal;
+  }
+  @media (min-width: 640px) {
+    .f-hero__title {
+      margin-bottom: 3.5rem;
+    }
+  }
+
+  /*
+   * No canto da barra, o botón «Buscar» xusto despois da última palabra do título (se non cabe,
+   * baixa á liña seguinte). O título vai en liña dentro da súa caixa (`.f-hero__head`, coa letra
+   * del), así o botón segue á última palabra sen entrar no encabezado.
+   */
+  /* Debaixo do título xa non vai nada (a barra sae fixa arriba): sen marxe no móbil. */
+  .f-hero__head {
+    margin-bottom: 0;
+    font-size: clamp(2.5rem, 7.5vw, 5.5rem);
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+  .f-hero__head > .f-hero__title {
+    display: inline;
+    margin: 0;
+  }
+  .f-hero__head > .f-hero__title > :last-child {
+    display: inline;
+  }
+  /* Coa letra dos botóns (o «lg» do escritorio leva a súa), non coa do título. */
+  .f-hero__head > .f-hero__open:not([data-size='lg']) {
+    font-size: var(--text-body);
+  }
+  /* No móbil, debaixo do título e á esquerda, coma el. */
+  .f-hero__head > .f-hero__open {
+    display: flex;
+    width: fit-content;
+    margin-top: var(--spacing-item);
+    letter-spacing: normal;
+    line-height: normal;
+    vertical-align: middle;
+  }
+  /*
+   * A barra de busca: escondida ata pulsar «Buscar» (ou se xa hai filtros); despois, fixa arriba,
+   * debaixo da barra superior (sobe e baixa con ela), ata deixar a páxina: no escritorio no medio
+   * e de 46 rem; no móbil, de bordo a bordo. Aparece subindo en 300 ms; con menos movemento, de golpe.
+   */
+  .f-hero__search:not([data-open]) {
+    display: none;
+  }
+  .f-hero__search[data-open] {
+    position: fixed;
+    /* A barra superior flota a 1 rem do bordo: a de busca queda 1 rem debaixo dela. */
+    top: calc(var(--f-topbar-offset, 4.5rem) + 2 * var(--spacing-item));
+    inset-inline: 0;
+    z-index: var(--f-z-sticky);
+    width: min(46rem, calc(100% - 2 * var(--spacing-gutter)));
+    margin-inline: auto;
+    transition: top var(--f-dur-med) var(--ease-smooth);
+  }
+  .f-hero__search[data-open] .f-search {
+    max-width: none;
+  }
+  /* No móbil a barra non sae: «Buscar» abre a folla de busca (furar-search-sheet). */
+  @media (max-width: 639px) {
+    .f-hero__search {
+      display: none;
+    }
+  }
+  /*
+   * Escritorio, ao baixar: a barra recóllese na pílula «Buscar» arriba no medio (co número de
+   * filtros); o resto da franxa non tapa nada.
+   */
+  .f-hero__search[data-collapsed] {
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .f-hero__search[data-collapsed] > .f-hero__bar {
+    display: none;
+  }
+  .f-hero__pill {
+    gap: var(--spacing-unit);
+    box-shadow: var(--shadow-overlay);
+    pointer-events: auto;
+  }
+  .f-hero__pill > .f-search__count {
+    background: var(--f-on-primary);
+    color: var(--f-primary-text);
+  }
+  :where(html:not([data-motion='reduce'])) .f-hero__pill {
+    animation: f-hero-search-in var(--f-dur-med) var(--ease-smooth);
+  }
+  /*
+   * O fondo da cabeceira chega ata arriba de todo (tamén detrás do oco sobre a barra superior) e
+   * esvaécese no da páxina, sen bordo.
+   */
+  .f-hero__blobs {
+    inset: -12rem 0 0;
+    mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  }
+  /*
+   * Con algo buscado, sen cabeceira: no escritorio, os resultados empezan xusto debaixo da barra de
+   * busca (fixa arriba, 1 rem baixo a superior e de 4 rem); no móbil, debaixo da pílula co resumo.
+   */
+  .f-hero[data-filtered] {
+    padding: var(--spacing-item) 0 0;
+  }
+  .f-hero[data-filtered] .f-hero__grid {
+    display: block;
+    min-height: 0;
+  }
+  .f-hero[data-filtered] .f-hero__blobs,
+  .f-hero[data-filtered] .f-collage,
+  .f-hero[data-filtered] .f-hero__main > :not(furar-hero-search, furar-search-summary) {
+    display: none;
+  }
+  .f-hero[data-filtered] + .f-home__section {
+    margin-top: var(--spacing-item);
+  }
+  /* A pílula do resumo (furar-search-summary): só no móbil e só con algo buscado. */
+  .f-search-summary {
+    display: none;
+  }
+  @media (max-width: 639px) {
+    .f-hero[data-filtered] .f-search-summary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-unit);
+    }
+  }
+  .f-search-summary__pill {
+    min-width: 0;
+    max-width: calc(100% - 2.25rem);
+    box-shadow: var(--shadow-overlay);
+  }
+  .f-search-summary__text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (min-width: 640px) {
+    .f-hero__head {
+      margin-bottom: 3.5rem;
+    }
+    .f-hero__head > .f-hero__open {
+      display: inline-flex;
+      margin: 0 0 0 var(--spacing-item);
+    }
+    .f-hero[data-filtered] {
+      min-height: 6rem;
+      padding: 0;
+    }
+    .f-hero[data-filtered] + .f-home__section {
+      margin-top: 0;
+    }
+    /* A ilustración baixa un pouco (só con transform, sen mover nada) para que a barra non a toque. */
+    .f-hero:has(.f-hero__search[data-open]) .f-collage {
+      transform: translateY(3rem);
+    }
+  }
+  @keyframes f-hero-search-in {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
+
+  /* Collaxe: tres fotos de portada inclinadas (só no escritorio; decorativo). */
+  .f-collage {
+    position: relative;
+    display: none;
+    height: 26rem;
+    transition: transform 300ms var(--ease-smooth);
+  }
+  /*
+   * Móbil: a collaxe do escritorio, en pequeno, no oco baleiro á
+   * dereita da cabeceira. Vai en posición absoluta (non move nada); furarHeroArt busca o oco e dá
+   * a posición e a escala, e só a pon (`data-art`) se colle.
+   */
+  @media (max-width: 639px) {
+    .f-hero:not([data-filtered])[data-art] .f-collage {
+      position: absolute;
+      top: var(--f-art-top);
+      left: var(--f-art-left);
+      display: block;
+      width: 30rem;
+      transform: scale(var(--f-art-scale));
+      transform-origin: 0 0;
+      pointer-events: none;
+    }
+  }
+  @media (min-width: 1024px) {
+    .f-collage {
+      display: block;
+    }
+  }
+  .f-collage figure {
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+    border: 0.375rem solid var(--f-surface);
+    border-radius: var(--radius-sheet);
+    box-shadow: var(--shadow-overlay);
+  }
+  .f-collage img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* «Exemplo» enriba da primeira foto do collaxe, como o [cardBadge] das tarxetas. */
+  .f-collage__badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+  .f-collage [data-place='1'] {
+    top: 0;
+    right: 0;
+    width: 20rem;
+    height: 14rem;
+    transform: rotate(3deg);
+  }
+  .f-collage [data-place='2'] {
+    top: 8rem;
+    left: 0;
+    width: 16rem;
+    height: 11rem;
+    transform: rotate(-4deg);
+  }
+  .f-collage [data-place='3'] {
+    right: 2rem;
+    bottom: 0;
+    width: 15rem;
+    height: 10.5rem;
+    transform: rotate(2deg);
+  }
+
+  /* --- Instalacións --- */
+  .f-home__section {
+    margin-block: 4rem;
+  }
+  .f-home__heading {
+    margin: 0 0 1.5rem;
+    font-size: var(--text-title);
+    letter-spacing: -0.02em;
+  }
+  /* Cun filtro, o número de cada sección no seu título, co mesmo estilo («Instalacións · 4»). */
+  .f-home__count {
+    white-space: nowrap;
+  }
+  /* O número do listado xa vai no título: queda só para o lector de pantalla (o seu anuncio). */
+  .f-home__section:has(> h2.f-home__heading) .f-plist__count {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* Tarxetas: furar-carousel en todos os anchos, coas frechas (no escritorio, sen grella). */
+  .f-rail.f-carousel {
+    --f-carousel-item: 15.5rem;
+    --f-carousel-gap: 1.25rem;
+  }
+  .f-rail .f-carousel__strip {
+    padding-bottom: 1.5rem;
+  }
+  .f-rail .f-carousel__item {
+    display: flex;
+  }
+  /* Portada común: un carrusel por concello, co seu nome enriba. */
+  .f-home__rail + .f-home__rail {
+    margin-top: 2.5rem;
+  }
+
+  /* --- Así de fácil: franxa da marca con raias e baralla fixa --- */
+  .f-steps {
+    position: relative;
+    height: 300vh;
+    margin-top: 5rem;
+    background-color: var(--f-primary);
+    background-image: repeating-linear-gradient(
+      -35deg,
+      transparent 0 2.875rem,
+      color-mix(in srgb, var(--f-on-primary) 7%, transparent) 2.875rem 3rem
+    );
+    color: var(--f-on-primary);
+    /* O que dura o paso dunha tarxeta á seguinte (STEP_MOVE_MS en step-deck.ts). */
+    --f-step-move: 600ms;
+  }
+  /*
+   * Fixa mentres se percorre a sección: do alto da pantalla visible (svh, sen as barras do
+   * navegador) e sen o que tapa a barra superior, que volve ao subir.
+   */
+  .f-steps__pin {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    height: 100svh;
+    padding-top: var(--f-topbar-h, 0px);
+    overflow: hidden;
+  }
+  .f-steps__title {
+    margin: 0 0 2.5rem;
+    padding-inline: var(--spacing-gutter);
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    letter-spacing: -0.035em;
+    line-height: 1;
+    text-align: center;
+  }
+  .f-steps__title em {
+    font-style: normal;
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.12em;
+  }
+  .f-steps__deck {
+    position: relative;
+    width: min(64rem, 92vw);
+    height: min(30rem, 62vh);
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+  .f-step {
+    --rest: 0deg;
+    position: absolute;
+    inset: 0;
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    overflow: hidden;
+    border: var(--f-border-state) solid var(--f-ink);
+    border-radius: var(--radius-sheet);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+    transform: translateX(calc((1 - var(--t)) * 105vw)) translateY(calc(var(--u) * -0.625rem))
+      rotate(calc(var(--rest) + (1 - var(--t)) * 10deg)) scale(calc(1 - var(--u) * 0.04));
+    transform-origin: 50% 100%;
+  }
+  .f-step[data-step='1'] {
+    --rest: -2.5deg;
+    z-index: 1;
+  }
+  .f-step[data-step='2'] {
+    --rest: 1.5deg;
+    z-index: 2;
+  }
+  .f-step[data-step='3'] {
+    --rest: -1deg;
+    z-index: 3;
+  }
+  @media (min-width: 768px) {
+    .f-step {
+      grid-template-columns: 0.8fr 1.2fr;
+      align-items: center;
+      gap: 2.5rem;
+      padding: 2.5rem;
+    }
+  }
+  .f-step__n {
+    display: inline-grid;
+    place-items: center;
+    width: var(--f-touch);
+    height: var(--f-touch);
+    border-radius: var(--radius-pill);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-size: var(--text-head);
+    font-weight: 700;
+  }
+  .f-step h3 {
+    margin: 1rem 0 0.5rem;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .f-step p {
+    margin: 0;
+    color: var(--f-ink-soft);
+    font-size: 1.125rem;
+  }
+
+  /*
+   * O paso á vista (how-it-works, `data-active`): o scroll só escolle o paso e o cambio é unha
+   * transición de duración fixa, sen seguir a velocidade do scroll. Cada tarxeta entra pola dereita
+   * (--t) e queda debaixo da seguinte (--u). Os tempos mínimos de cada paso, en step-deck.ts.
+   */
+  .f-step {
+    transition:
+      --t var(--f-step-move) var(--ease-smooth),
+      --u var(--f-step-move) var(--ease-smooth);
+  }
+  .f-steps[data-active='1'] .f-step[data-step='2'],
+  .f-steps[data-active='2'] .f-step[data-step='2'],
+  .f-steps[data-active='2'] .f-step[data-step='3'] {
+    --t: 1;
+  }
+  .f-steps[data-active='1'] .f-step[data-step='1'],
+  .f-steps[data-active='2'] .f-step[data-step='1'],
+  .f-steps[data-active='2'] .f-step[data-step='2'] {
+    --u: 1;
+  }
+  /* Ao comezo (e ata o primeiro cálculo), só a primeira á vista. */
+  .f-step[data-step='2'],
+  .f-step[data-step='3'] {
+    --t: 0;
+  }
+
+  /*
+   * Pantalla estreita (móbil, tableta; o corte da barra superior e da inferior): a mesma baralla
+   * fixa e animada, entre a barra superior e a inferior (que xa non tapan o pé das tarxetas). As
+   * tres tarxetas na mesma cela: a baralla ten o alto da máis alta, así que cambiar de paso non
+   * move a páxina; as capturas, enteiras. Se non cabe fixa (how-it-works: `data-deck="static"`),
+   * unha debaixo doutra coma con movemento reducido.
+   */
+  @media (max-width: 899px) {
+    .f-steps__title {
+      margin-bottom: 1.5rem;
+    }
+    .f-steps__deck {
+      display: grid;
+      height: auto;
+    }
+    .f-step {
+      position: relative;
+      inset: auto;
+      grid-area: 1 / 1;
+      gap: 1rem;
+      padding: 1.25rem;
+    }
+    .f-step h3 {
+      margin-top: 0.75rem;
+    }
+    /* Máis específico ca o `max-height` base de .f-shot, que vai despois. */
+    .f-step .f-shot {
+      max-height: none;
+    }
+    /* O texto do tique e os botóns pasan debaixo cando non caben ao lado (paso 3 a 320 px). */
+    .f-shot__ticket,
+    .f-shot__row {
+      flex-wrap: wrap;
+    }
+    .f-shot__ticket > div {
+      flex: 1 1 8rem;
+      min-width: 0;
+    }
+    :where(html:has(.f-bottomnav)) .f-steps__pin {
+      padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+    }
+  }
+
+  /*
+   * Unha debaixo doutra, sen fixar nin animar: pantalla ancha pero baixa (o mesmo corte ca
+   * STATIC_QUERY en step-deck.ts), a baralla estreita que non cabe e movemento reducido.
+   */
+  @media (min-width: 900px) and (max-height: 719px) {
+    .f-steps {
+      height: auto;
+      padding: 4rem 0;
+    }
+    .f-steps__pin {
+      position: static;
+      height: auto;
+      padding-top: 0;
+    }
+    .f-steps__deck {
+      display: grid;
+      gap: 1.5rem;
+      height: auto;
+    }
+    .f-step,
+    .f-step[data-step] {
+      position: relative;
+      transform: none;
+    }
+  }
+  .f-steps[data-deck='static'],
+  :where(html[data-motion='reduce']) .f-steps {
+    height: auto;
+    padding: 4rem 0;
+  }
+  .f-steps[data-deck='static'] .f-steps__pin,
+  :where(html[data-motion='reduce']) .f-steps__pin {
+    position: static;
+    height: auto;
+    padding-block: 0;
+  }
+  .f-steps[data-deck='static'] .f-steps__deck,
+  :where(html[data-motion='reduce']) .f-steps__deck {
+    display: grid;
+    gap: 1.5rem;
+    height: auto;
+  }
+  .f-steps[data-deck='static'] .f-step[data-step],
+  :where(html[data-motion='reduce']) .f-step,
+  :where(html[data-motion='reduce']) .f-step[data-step] {
+    position: relative;
+    grid-area: auto;
+    transform: none;
+  }
+
+  /* «Capturas» debuxadas (aria-hidden): unha xanela mínima co deseño da web. */
+  .f-shot {
+    position: relative;
+    align-self: stretch;
+    max-height: 15rem;
+    overflow: hidden;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-row);
+    background: var(--f-page);
+    box-shadow: var(--shadow-overlay);
+    font-size: 0.8125rem;
+  }
+  @media (min-width: 768px) {
+    .f-shot {
+      max-height: 22rem;
+    }
+  }
+  .f-shot__chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    height: 1.75rem;
+    padding: 0 0.75rem;
+    background: var(--f-tint);
+  }
+  .f-shot__chrome i {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-divider);
+  }
+  .f-shot__chrome span {
+    margin-left: 0.75rem;
+    padding: 0 0.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-ink-soft);
+  }
+  .f-shot__page {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 1rem 1.25rem;
+  }
+  .f-shot__title {
+    margin: 0;
+    font-size: 1.6em;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .f-shot__title em {
+    color: var(--f-primary-text);
+    font-style: normal;
+  }
+  .f-shot__search,
+  .f-shot__button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.5rem 0.4rem 0.75rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+  }
+  .f-shot__hint,
+  .f-shot__muted {
+    color: var(--f-ink-soft);
+  }
+  .f-shot__go {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-left: auto;
+    border-radius: var(--radius-pill);
+    background: var(--f-primary);
+  }
+  /* Paso 1: a portada en pequeno, coas instalacións do concello. */
+  .f-shot__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  .f-shot__mini {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    padding: 0.3rem 0.3rem 0.45rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-field);
+    background: var(--f-surface);
+  }
+  .f-shot__mini img,
+  .f-shot__mini .f-shot__square {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    border-radius: calc(var(--radius-field) - 0.2rem);
+    object-fit: cover;
+  }
+  .f-shot__mini b {
+    overflow: hidden;
+    font-size: 0.9em;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .f-shot__tag {
+    align-self: flex-start;
+    padding: 0 0.4rem;
+    border-radius: var(--radius-field);
+    background: var(--f-tint);
+    font-size: 0.85em;
+  }
+  .f-shot__card,
+  .f-shot__ticket {
+    padding: 0.375rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+  }
+  .f-shot__square {
+    flex: none;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: var(--radius-field);
+    background: var(--f-tint);
+  }
+  .f-shot__square[data-large],
+  .f-shot__thumb {
+    flex: none;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-field);
+    object-fit: cover;
+  }
+  /* Paso 2: a tarxeta de reservar, cos campos Data e Hora. */
+  .f-shot__fields,
+  .f-shot__row {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .f-shot__fields > span {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 0.3rem 0.75rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-field);
+    background: var(--f-surface);
+    font-weight: 700;
+  }
+  .f-shot__fields small {
+    color: var(--f-ink-soft);
+    font-size: 0.85em;
+    font-weight: 400;
+  }
+  .f-shot__row > * {
+    flex: 1;
+  }
+  .f-shot__code {
+    font-size: 1.15em;
+    letter-spacing: 0.04em;
+  }
+  .f-shot__card,
+  .f-shot__ticket {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+  .f-shot__slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.35rem;
+  }
+  .f-shot__slots span {
+    padding: 0.05rem 0.55rem;
+    border: var(--f-border) solid var(--f-primary);
+    border-radius: var(--radius-pill);
+    color: var(--f-primary-text);
+    font-weight: 700;
+  }
+  .f-shot__slots span[data-on] {
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+  .f-shot__button {
+    justify-content: center;
+    font-weight: 700;
+  }
+  .f-shot__button[data-primary] {
+    border-color: var(--f-primary);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+  .f-shot__ok {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--f-success);
+    font-size: 1.15em;
+    font-weight: 700;
+  }
+  .f-shot__qr {
+    flex: none;
+    width: 6.5rem;
+    height: 6.5rem;
+    padding: 0.4rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-field);
+    background: var(--f-surface);
+    fill: var(--f-ink);
+  }
+
+  /* Máis contraste e cores forzadas: sen manchas de cor nin raias; bordos á vista. */
+  :where(html[data-contrast='more']) .f-hero__blobs {
+    display: none;
+  }
+  :where(html[data-contrast='more']) .f-steps {
+    background-image: none;
+  }
+  @media (forced-colors: active) {
+    .f-hero__blobs {
+      display: none;
+    }
+    .f-step {
+      border-color: CanvasText;
+    }
+  }
+}

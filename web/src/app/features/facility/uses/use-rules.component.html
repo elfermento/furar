@@ -1,0 +1,145 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.uses.rules.';
+@let f = form();
+@for (key of keys; track key) {
+  @let text = texts()[key];
+  @let isOpen = open() === key;
+  <div class="f-use-rule" [attr.data-open]="isOpen ? '' : null" [attr.data-rule]="key">
+    <button
+      type="button"
+      class="f-use-rule__head"
+      [id]="idPrefix() + '-rule-' + key"
+      [attr.aria-expanded]="isOpen"
+      [attr.aria-controls]="idPrefix() + '-rule-' + key + '-body'"
+      (click)="toggle(key)"
+    >
+      <span class="min-w-0">
+        <b class="block">{{ t + key + '.label' | transloco }}</b>
+        <span class="f-use-rule__value" [attr.data-empty]="text ? null : ''">{{
+          text ?? (t + 'empty' | transloco)
+        }}</span>
+      </span>
+      <furar-icon name="chevron-down" class="f-use-rule__chevron" />
+    </button>
+    @if (isOpen) {
+      <div
+        class="f-use-rule__body"
+        role="group"
+        [id]="idPrefix() + '-rule-' + key + '-body'"
+        [attr.aria-labelledby]="idPrefix() + '-rule-' + key"
+        [formGroup]="f"
+      >
+        <!--
+          Cada norma, campos con rótulo e o número pegado á súa unidade, lido coma unha frase
+          («Polo menos | 2 horas antes»); «Quitar a condición» debaixo, á dereita.
+        -->
+        @switch (key) {
+          @case ('advance') {
+            <furar-field-group cells>
+              <furar-field
+                affix="tight"
+                [fieldId]="idPrefix() + '-minAdvanceHours'"
+                [label]="t + 'advance.atLeast' | transloco"
+                [error]="errors().minAdvanceHours"
+              >
+                <span class="f-field-affix">
+                  <ng-container *ngTemplateOutlet="number; context: { field: 'minAdvanceHours' }" />
+                  <span class="f-field-affix__unit" aria-hidden="true">{{
+                    t + 'advance.hoursBefore' | transloco
+                  }}</span>
+                </span>
+              </furar-field>
+              <furar-field
+                affix="tight"
+                [fieldId]="idPrefix() + '-maxAdvanceDays'"
+                [label]="t + 'advance.atMost' | transloco"
+                [error]="errors().maxAdvanceDays"
+              >
+                <span class="f-field-affix">
+                  <ng-container *ngTemplateOutlet="number; context: { field: 'maxAdvanceDays' }" />
+                  <span class="f-field-affix__unit" aria-hidden="true">{{ t + 'advance.daysBefore' | transloco }}</span>
+                </span>
+              </furar-field>
+            </furar-field-group>
+          }
+          @case ('duration') {
+            <furar-field-group>
+              <furar-field
+                affix="tight"
+                [fieldId]="idPrefix() + '-maxSlots'"
+                [label]="t + 'duration.atMost' | transloco"
+                [tip]="example() ?? ''"
+                [error]="errors().maxSlots"
+              >
+                <span class="f-field-affix">
+                  <ng-container *ngTemplateOutlet="number; context: { field: 'maxSlots' }" />
+                  <span class="f-field-affix__unit" aria-hidden="true">{{ t + 'duration.slots' | transloco }}</span>
+                </span>
+              </furar-field>
+            </furar-field-group>
+          }
+          @case ('cap') {
+            <furar-field-group cells>
+              <furar-field
+                [fieldId]="idPrefix() + '-capCount'"
+                [label]="t + 'cap.count' | transloco"
+                [error]="errors().capCount"
+              >
+                <ng-container *ngTemplateOutlet="number; context: { field: 'capCount' }" />
+              </furar-field>
+              <furar-field [fieldId]="idPrefix() + '-capPeriod'" [label]="t + 'cap.every' | transloco">
+                <furar-select
+                  formControlName="capPeriod"
+                  [selectId]="idPrefix() + '-capPeriod'"
+                  [label]="t + 'cap.every' | transloco"
+                  [options]="periods | furarOptions: t + 'cap.' : lang()"
+                />
+              </furar-field>
+            </furar-field-group>
+          }
+          @case ('cancel') {
+            <furar-field-group>
+              <furar-field
+                affix="tight"
+                [fieldId]="idPrefix() + '-cancelHours'"
+                [label]="t + 'cancel.freeUpTo' | transloco"
+                [error]="errors().cancelHours"
+              >
+                <span class="f-field-affix">
+                  <ng-container *ngTemplateOutlet="number; context: { field: 'cancelHours' }" />
+                  <span class="f-field-affix__unit" aria-hidden="true">{{ t + 'cancel.hoursBefore' | transloco }}</span>
+                </span>
+              </furar-field>
+            </furar-field-group>
+          }
+        }
+        @if (text) {
+          <div class="mt-unit flex flex-wrap items-center justify-end gap-unit">
+            <button type="button" furarButton="quiet" size="sm" [attr.data-rule-clear]="key" (click)="clear(key)">
+              {{ t + 'clear' | transloco }}
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}
+<ng-template #number let-field="field">
+  <input
+    furarInput
+    type="number"
+    inputmode="numeric"
+    placeholder="—"
+    [id]="idPrefix() + '-' + field"
+    [formControl]="f.controls[asField(field)]"
+    [min]="limits[asField(field)].min"
+    [max]="limits[asField(field)].max"
+    [attr.data-field]="field"
+    [attr.aria-label]="t + 'fields.' + field | transloco: limits[asField(field)]"
+    [attr.aria-invalid]="errors()[asField(field)] ? 'true' : null"
+    [attr.aria-describedby]="describedBy(field)"
+  />
+</ng-template>

@@ -1,0 +1,20 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+/*
+ * Pezas que só usan as portadas (a común, a do concello e a de exemplo): folla á parte
+ * (`angular.json`, `bundleName: portada`, `inject: false`) para que non entre na carga inicial
+ * (D27). As rutas das portadas cárgana con `homeStylesResolver` (`core/layout/home-styles.ts`).
+ * As capas son as de styles.css. O buscador (`facility-search.css`) e o seu calendario
+ * (`calendar.css`) tamén van aquí e en `reservas.css` (o listado público): son as mesmas regras. A
+ * tarxeta e o carrusel van antes de `home.css`, que os retoca.
+ */
+@import './components/calendar.css';
+@import './components/clear-button.css';
+@import './components/facility-search.css';
+@import './components/media-card.css';
+@import './components/carousel.css';
+@import './components/home.css';
+@import './components/map-float.css';
+@import './components/peek-sheet.css';
+@import './components/search-sheet.css';
+@import './components/install-hint.css';

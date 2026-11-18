@@ -1,0 +1,10 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+/*
+ * Panel de accesibilidade: folla á parte (`angular.json`, `bundleName: preferencias`,
+ * `inject: false`) para que non entre na carga inicial (D27). Cárgaa o propio compoñente
+ * (`core/preferences/preferences-styles.ts`), que xa vai á parte, en calquera ruta. Leva o
+ * interruptor porque o panel o usa tamén nas rutas sen a folla da xestión.
+ */
+@import './components/switch.css';
+@import './components/display-preferences-panel.css';

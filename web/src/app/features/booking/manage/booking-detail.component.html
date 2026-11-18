@@ -1,0 +1,157 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.manage.detail.';
+@if (closable()) {
+  <button
+    type="button"
+    class="f-mdetail__close"
+    data-detail-close
+    [attr.aria-label]="t + 'close' | transloco"
+    (click)="closed.emit()"
+  >
+    <furar-icon name="close" />
+  </button>
+}
+@let current = store.detail();
+@if (current?.detail; as d) {
+  <div class="f-reserve__facility" data-detail-facility>
+    @if (facility()?.cover; as cover) {
+      <img [src]="cover.thumb" [width]="cover.width" [height]="cover.height" alt="" />
+    }
+    <div>
+      <b>{{ d.facilityName }}</b>
+      @if (d.facilityAddress) {
+        {{ ' ' }}<span>{{ d.facilityAddress }}</span>
+      }
+    </div>
+  </div>
+  <furar-value-list [items]="rows()" />
+  @if (d.activity) {
+    <!-- Unha sesión dunha actividade (ADR-0041): pasar lista, a actividade e cancelar a sesión. -->
+    <furar-activity-session-actions [detail]="d" />
+  } @else {
+    <!-- O xestor oculta a partida (ADR-0040): fila solta co chip-menú. -->
+    <furar-managed-match [detail]="d" (failed)="fail($event)" />
+    <furar-booking-contact [detail]="d" />
+    @if (amount() || chip() || attendance()) {
+      <p class="f-mdetail__total" data-detail-total>
+        <span>{{ t + 'total' | transloco }}</span
+        >{{ ' ' }}
+        <span class="f-mdetail__money">
+          @if (amount(); as value) {
+            <b>{{ value }}</b
+            >{{ ' ' }}
+          }
+          @if (chip(); as c) {
+            <furar-tag [tone]="c.tone" [attr.data-chip]="c.key">{{
+              'booking.mine.status.' + c.key | transloco
+            }}</furar-tag>
+          }
+          @if (attendance(); as a) {
+            {{ ' ' }}
+            <furar-tag [tone]="a.tone" [attr.data-attendance]="a.key">{{
+              'booking.attendance.' + a.key | transloco
+            }}</furar-tag>
+          }
+        </span>
+      </p>
+    }
+    <div role="status" class="f-mdetail__live" data-detail-status>
+      @if (stale()) {
+        <furar-callout tone="warn" data-detail-stale>
+          <p>{{ t + 'stale' | transloco }}</p>
+          <button type="button" furarButton size="sm" class="mt-unit" data-detail-reload (click)="reload()">
+            {{ t + 'reload' | transloco }}
+          </button>
+        </furar-callout>
+      }
+      @if (noShowNotice(); as notice) {
+        <furar-callout tone="warn" data-detail-no-show>
+          <p>{{ notice }}</p>
+        </furar-callout>
+      }
+    </div>
+    @if (problem(); as p) {
+      <furar-callout tone="danger" live="alert" data-detail-error>{{ p.translated }}</furar-callout>
+    }
+    @if (actions().length) {
+      <div class="f-mdetail__acts">
+        @for (action of actions(); track action.target) {
+          <button
+            type="button"
+            [furarButton]="action.undo ? 'quiet' : 'primary'"
+            [attr.data-payment]="action.target"
+            [busy]="busy() === action.target"
+            (click)="setPayment(d, action.target)"
+          >
+            <furar-icon [name]="paymentIcon(action.target)" />
+            {{ t + paymentKey(action.target) | transloco }}
+          </button>
+        }
+      </div>
+    }
+    <!-- O resto, nunha lista de accións: como moito dous botóns á vista. -->
+    @if (canSeeSeries() || canChange() || canCancel() || canMarkNoShow() || canUndoAttendance()) {
+      <ul furarActionList [attr.aria-label]="'booking.mine.detail.actions' | transloco">
+        @if (canSeeSeries()) {
+          <li>
+            <furar-action-item icon="event-repeat">
+              <button type="button" data-detail-series (click)="openSeries(d)">
+                {{ 'booking.seasons.detail.open' | transloco }}
+              </button>
+            </furar-action-item>
+          </li>
+        }
+        @if (canUndoAttendance()) {
+          <li>
+            <furar-action-item icon="undo">
+              <button
+                type="button"
+                data-detail-attendance-undo
+                [disabled]="attendanceBusy()"
+                (click)="undoAttendance(d)"
+              >
+                {{ 'booking.manage.noShow.' + (d.attendance === 'USED' ? 'removeValidation' : 'remove') | transloco }}
+              </button>
+            </furar-action-item>
+          </li>
+        }
+        @if (canChange()) {
+          <li>
+            <furar-action-item icon="edit-calendar">
+              <a data-detail-change [routerLink]="['/', slug(), 'xestion', 'reservas', d.id, 'cambiar']">
+                {{ t + 'change' | transloco }}
+              </a>
+            </furar-action-item>
+          </li>
+        }
+        @if (canMarkNoShow()) {
+          <li>
+            <furar-action-item icon="event-busy" tone="danger">
+              <button type="button" data-detail-no-show-mark [disabled]="attendanceBusy()" (click)="markNoShow(d)">
+                {{ 'booking.manage.noShow.action' | transloco }}
+              </button>
+            </furar-action-item>
+          </li>
+        }
+        @if (canCancel()) {
+          <li>
+            <furar-action-item icon="event-busy" tone="danger">
+              <button type="button" data-detail-cancel (click)="cancel(d)">
+                {{ t + 'cancel' | transloco }}
+              </button>
+            </furar-action-item>
+          </li>
+        }
+      </ul>
+    }
+  }
+} @else if (current?.state === 'error') {
+  <furar-status-state mode="error" [heading]="t + 'loadError' | transloco">
+    <button type="button" furarButton (click)="reload()">{{ t + 'retry' | transloco }}</button>
+  </furar-status-state>
+} @else {
+  <furar-status-state mode="skeleton" shape="card" [rows]="1" [description]="t + 'loading' | transloco" />
+}

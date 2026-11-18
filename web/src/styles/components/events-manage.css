@@ -1,0 +1,224 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Eventos e actividades na xestión (ADR-0041): a segunda liña de «Cando» na lista e o menú da
+ * fila; o detalle (diálogo grande con pestanas), as persoas (táboa e, no móbil, tarxetas con
+ * rótulo e valor), as sesións e «Pasar lista». Folla `reservas.css` (a ruta leva
+ * `bookingStylesResolver`).
+ */
+@layer components {
+  /* Lista: as datas dunha actividade debaixo dos días e a hora; o «⋯» da fila, pegado á dereita. */
+  .f-events__sub {
+    display: block;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  /* O tipo e o estado, nunha liña: o chip non parte por dentro («Cancelad|o»). */
+  .f-events__table td:is([data-cell='kind'], [data-cell='status']) {
+    white-space: nowrap;
+  }
+  .f-events__table td[data-cell='status'] .f-tag {
+    overflow-wrap: normal;
+  }
+  .f-events__table td.f-events__acts {
+    inline-size: 1%;
+    padding-block: 0.375rem;
+    padding-inline-end: var(--spacing-item);
+    text-align: end;
+    white-space: nowrap;
+    cursor: default;
+  }
+
+  /* Alta: «Créanse 68 sesións.» enriba dos días que non se crean. */
+  .f-event-form__sessions {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  /* Detalle: as pestanas e o seu contido ocupan o ancho; o corpo desprázase por dentro. */
+  [data-event-detail] .f-tabs__panel {
+    display: grid;
+    gap: var(--spacing-item);
+    padding-top: var(--spacing-item);
+  }
+  .f-event-detail__data.f-card {
+    padding-block: 0.25rem;
+  }
+
+  /* Persoas: cada parte co seu título fóra da tarxeta. */
+  .f-event-people {
+    display: grid;
+    gap: var(--spacing-group);
+  }
+  .f-event-people__section {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .f-event-people__section > .f-event-people__title {
+    margin: 0;
+  }
+  .f-event-people__list.f-card {
+    padding-block: 0;
+  }
+  .f-event-people__table tbody th {
+    font-weight: 400;
+  }
+  .f-event-people__table th:last-child,
+  .f-event-people__table td:last-child {
+    padding-inline-end: var(--spacing-item);
+  }
+  .f-event-people__position {
+    inline-size: 4rem;
+  }
+  .f-event-people__cards.f-card {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-event-people__card {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    padding: var(--spacing-item);
+  }
+  .f-event-people__card + .f-event-people__card {
+    border-block-start: var(--f-border) solid var(--f-divider);
+  }
+  .f-event-people__card-head {
+    display: flex;
+    justify-self: stretch;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-unit);
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+  .f-event-people__facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    justify-self: stretch;
+    gap: 0.5rem 1rem;
+    margin: 0;
+  }
+  .f-event-people__facts > div {
+    display: grid;
+    gap: 0.125rem;
+  }
+  .f-event-people__facts dt {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-event-people__facts dd {
+    margin: 0;
+    min-inline-size: 0;
+  }
+
+  /* Sesións: unha fila por día, o texto á esquerda e as accións á dereita. */
+  .f-event-sessions {
+    display: grid;
+    gap: var(--spacing-item);
+  }
+  .f-event-sessions__list.f-card {
+    margin: 0;
+    padding: 0 var(--spacing-item);
+    list-style: none;
+  }
+  .f-event-sessions__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 2.75rem;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding-block: 0.75rem;
+  }
+  .f-event-sessions__row + .f-event-sessions__row {
+    border-block-start: var(--f-border) solid var(--f-divider);
+  }
+  .f-event-sessions__text {
+    display: grid;
+    justify-items: start;
+    gap: 0.25rem;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+  .f-event-sessions__meta {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  /* A fila que abre «Pasar lista»: o botón da data estírase sobre ela; o «⋯» queda enriba. */
+  .f-event-sessions__open {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-event-sessions__open::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+  }
+  .f-event-sessions__row--open:hover {
+    background: var(--f-surface-soft, var(--f-divider));
+  }
+  .f-event-sessions__acts {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .f-event-sessions__chevron {
+    color: var(--f-ink-soft);
+  }
+  .f-event-sessions__more {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* «Pasar lista»: a actividade e a hora; unha fila por persoa co interruptor ao bordo dereito. */
+  .f-attendance {
+    display: grid;
+    gap: var(--spacing-item);
+    max-width: 40rem;
+    margin-inline: auto;
+    /* Sitio para a barra de accións fixa. */
+    padding-bottom: 6rem;
+  }
+  .f-attendance .f-reserve__title {
+    margin-bottom: 0;
+  }
+  .f-attendance__what {
+    display: grid;
+    gap: 0.125rem;
+    margin: 0;
+  }
+  .f-attendance__what span {
+    color: var(--f-ink-soft);
+  }
+  .f-attendance__taken {
+    margin: 0;
+    color: var(--f-ink-soft);
+  }
+  .f-attendance__list.f-card {
+    margin: 0;
+    padding: 0 var(--spacing-item);
+    list-style: none;
+  }
+  .f-attendance__row {
+    padding-block: 0.5rem;
+  }
+  .f-attendance__row + .f-attendance__row {
+    border-block-start: var(--f-border) solid var(--f-divider);
+  }
+  .f-attendance__count {
+    color: var(--f-ink-soft);
+  }
+  .f-attendance__count b {
+    color: var(--f-ink);
+  }
+}

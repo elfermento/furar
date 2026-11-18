@@ -1,0 +1,113 @@
+// SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+// SPDX-License-Identifier: EUPL-1.2
+//
+// Renovate (ADR-0016): versións exactas, digests, idade mínima de 14 días e grupos.
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
+    'helpers:pinGitHubActionDigests',
+    ':semanticCommits',
+    ':pinAllExceptPeerDependencies',
+  ],
+  timezone: 'Europe/Madrid',
+  schedule: ['before 7am on monday'],
+  minimumReleaseAge: '14 days',
+  internalChecksFilter: 'strict',
+  pinDigests: true,
+  rangeStrategy: 'pin',
+  prConcurrentLimit: 5,
+  dependencyDashboard: true,
+  // Conventional Commits con DCO (ADR-0002).
+  commitBody: 'Signed-off-by: Renovate Bot <bot@renovateapp.com>',
+  labels: ['dependencias'],
+  vulnerabilityAlerts: {
+    labels: ['seguridade'],
+  },
+  packageRules: [
+    {
+      description: 'Angular, TypeScript e angular-eslint soben xuntos',
+      groupName: 'angular',
+      matchPackageNames: [
+        '@angular/**',
+        '@angular-devkit/**',
+        '@angular-eslint/**',
+        'angular-eslint',
+        'typescript',
+        'typescript-eslint',
+        '@typescript-eslint/**',
+        'rxjs',
+        'zone.js',
+      ],
+    },
+    {
+      description: 'Angular 22 e typescript-eslint 8 piden TypeScript < 6.1 (ADR-0004)',
+      matchPackageNames: ['typescript'],
+      allowedVersions: '<6.1.0',
+    },
+    {
+      description: 'Spring Boot e o que xestiona soben xuntos',
+      groupName: 'spring-boot',
+      matchPackageNames: ['org.springframework.boot:**', 'org.springframework.boot'],
+    },
+    {
+      groupName: 'spring-modulith',
+      matchPackageNames: ['org.springframework.modulith:**'],
+    },
+    {
+      description: 'Java 25 LTS e Node 24 LTS: sen saltos de versión maior automáticos',
+      matchDepNames: ['eclipse-temurin', 'node', 'java'],
+      matchUpdateTypes: ['major'],
+      enabled: false,
+    },
+    {
+      description: 'PostgreSQL maior precisa pg_upgrade: só con aprobación manual',
+      matchDepNames: ['postgres'],
+      matchUpdateTypes: ['major'],
+      dependencyDashboardApproval: true,
+    },
+    {
+      description: 'Keycloak maior: revisar notas de migración',
+      matchDepNames: ['quay.io/keycloak/keycloak'],
+      matchUpdateTypes: ['major'],
+      dependencyDashboardApproval: true,
+    },
+    {
+      groupName: 'github-actions',
+      matchManagers: ['github-actions'],
+    },
+    {
+      description: 'Ferramentas de seguridade e CI: idade mínima tamén para parches (ataques de 2026)',
+      matchDepNames: ['aquasec/trivy', 'zricethezav/gitleaks', 'fsfe/reuse', 'mikefarah/yq', 'renovate'],
+      minimumReleaseAge: '14 days',
+      groupName: 'ferramentas',
+    },
+  ],
+  customManagers: [
+    {
+      description: 'Imaxes de ferramentas fixadas por digest (scripts/imaxes-ferramentas.txt)',
+      customType: 'regex',
+      managerFilePatterns: ['/^scripts/imaxes-ferramentas\\.txt$/'],
+      matchStrings: ['(?<depName>[a-z0-9./-]+):(?<currentValue>[A-Za-z0-9._-]+) (?<currentDigest>sha256:[a-f0-9]{64})'],
+      datasourceTemplate: 'docker',
+    },
+    {
+      description: 'Etiquetas das mesmas ferramentas nos comandos da definición de feito, CI e scripts',
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^docs/definicion-de-feito\\.md$/',
+        '/^\\.github/workflows/.+\\.ya?ml$/',
+        '/^scripts/.+\\.sh$/',
+      ],
+      matchStrings: ['(?<depName>fsfe/reuse|zricethezav/gitleaks|aquasec/trivy|mikefarah/yq|rhysd/actionlint|italia/publiccode-parser-go):(?<currentValue>v?[0-9][A-Za-z0-9._-]*)'],
+      datasourceTemplate: 'docker',
+    },
+    {
+      description: 'Validador de Renovate na definición de feito',
+      customType: 'regex',
+      managerFilePatterns: ['/^docs/definicion-de-feito\\.md$/'],
+      matchStrings: ['--package (?<depName>renovate)@(?<currentValue>[0-9.]+)'],
+      datasourceTemplate: 'npm',
+    },
+  ],
+}

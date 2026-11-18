@@ -1,0 +1,310 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Tempadas das entidades (ADR-0039): os campos dunha tempada, os días que non se
+ * crean (o aviso cos choques), «Entidades» (as solicitudes e a táboa), «Tempadas» na portada de
+ * «Reservas», o detalle dunha tempada e a pestana da entidade. Os anacos dun dato (entre « · »)
+ * nunca parten por dentro. Folla `reservas.css`.
+ */
+@layer components {
+  /* Un dato dunha liña: baixa enteiro á seguinte, só parte se el só non cabe. */
+  .f-season-part {
+    display: inline-block;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  /* Os campos: os paneis dos días e das datas, con aire; «Aplicar» á dereita. */
+  .f-season-form {
+    display: grid;
+    gap: var(--spacing-item);
+  }
+  .f-season-form__panel {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .f-season-form__apply {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  /* Os días que non se crean: o aviso ámbar co título e un choque por fila. */
+  .f-season-clashes {
+    margin-top: var(--spacing-item);
+    padding: 1rem 1.25rem;
+    border: var(--f-border) solid color-mix(in srgb, var(--f-warn) 28%, var(--f-surface));
+    border-radius: var(--radius-row);
+    background: color-mix(in srgb, var(--f-warn) var(--f-soft-mix), var(--f-surface));
+  }
+  .f-season-clashes__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin: 0;
+  }
+  .f-season-clashes__head > .f-icon {
+    flex: none;
+    margin-top: 0.125rem;
+    color: var(--f-warn);
+  }
+  .f-season-clashes__list {
+    margin: 0.75rem 0 0;
+    padding: 0 0 0 2rem;
+    list-style: none;
+  }
+  .f-season-clashes__item {
+    display: grid;
+    gap: 0.75rem;
+    padding-block: 1rem;
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  .f-season-clashes__item:last-child {
+    padding-bottom: 0;
+  }
+  .f-season-clashes__text {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .f-season-clashes__text > span {
+    color: var(--f-ink-soft);
+  }
+  /* A acción do choque, na súa liña, á dereita e con aire. */
+  .f-season-clashes__act {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .f-season-note {
+    margin: var(--spacing-item) 0 0;
+    color: var(--f-ink-soft);
+  }
+
+  /* «solicitada hai 2 h»: na fila dos chips, á dereita. */
+  .f-season-ago {
+    margin-inline-start: auto;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+
+  /* «Tempadas» na portada: o título co número. */
+  .f-season-sec__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* O detalle dunha tempada e as súas sesións: a data á esquerda e «Cancelar a sesión» á dereita. */
+  .f-season-detail {
+    display: grid;
+    gap: var(--spacing-item);
+  }
+  /* «Pago da tempada»: sen campos arredor, aliñada coas filas de datos. */
+  .f-season-detail > .f-field-line {
+    min-height: 0;
+    padding: 0;
+  }
+  /* «Nova reserva › Tempada»: os campos, os avisos e o botón, co aire da tarxeta de reservar. */
+  furar-new-season {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .f-season-sessions {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-season-sessions__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding-block: 0.75rem;
+    border-bottom: var(--f-border) solid var(--f-divider);
+  }
+  .f-season-sessions__row:last-child {
+    border-bottom: 0;
+  }
+  .f-season-sessions__when {
+    min-width: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .f-season-sessions__row > .f-button {
+    margin-inline-start: auto;
+  }
+
+  /* Revisar unha solicitude: a nota entre comiñas, quen e cando, e as dúas accións á dereita. */
+  .f-season-quote {
+    margin: 0.25rem 0 0;
+    overflow-wrap: anywhere;
+  }
+  .f-season-meta {
+    margin: 0.25rem 0 0;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-season-decided {
+    margin: var(--spacing-item) 0 0;
+  }
+  .f-season-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  /*
+   * No móbil, como o pé dos diálogos: cada botón a todo o ancho na súa liña, co texto
+   * enteiro; «Rexeitar» enriba e a principal («Aprobar e crear N sesións») debaixo.
+   */
+  @media (max-width: 40rem) {
+    .f-season-actions > .f-button {
+      flex: 1 1 100%;
+    }
+  }
+
+  /* Entidades: as solicitudes en tarxetas (dúas por fila no escritorio) e a táboa. */
+  .f-orgs {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .f-orgs__title {
+    margin: 0 0 0.75rem;
+    font-size: 1.125rem;
+  }
+  .f-orgs__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    gap: var(--spacing-item);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-orgs__pills {
+    display: none;
+  }
+  .f-orgs__card.f-card {
+    padding: 0;
+  }
+  .f-orgs__table {
+    inline-size: 100%;
+    border-collapse: collapse;
+  }
+  .f-orgs__table th,
+  .f-orgs__table td {
+    padding: 0.5rem;
+    border-block-end: var(--f-border) solid var(--f-divider);
+    text-align: start;
+    vertical-align: middle;
+  }
+  .f-orgs__table th:first-child,
+  .f-orgs__table td:first-child {
+    padding-inline-start: var(--spacing-item);
+  }
+  .f-orgs__table tbody tr:last-child > * {
+    border-block-end: 0;
+  }
+  .f-orgs__table thead th {
+    padding-block: 0.75rem 0.625rem;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-orgs__row {
+    cursor: pointer;
+  }
+  .f-orgs__row:hover {
+    background: var(--f-page);
+  }
+  .f-orgs__open {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: 400;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-orgs__items {
+    display: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-orgs__item {
+    display: grid;
+    gap: 0.25rem;
+    inline-size: 100%;
+    padding: 0.75rem var(--spacing-item);
+    border: 0;
+    border-block-end: var(--f-border) solid var(--f-divider);
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-orgs__items li:last-child .f-orgs__item {
+    border-block-end: 0;
+  }
+  .f-orgs__item-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  .f-orgs__item-head b {
+    overflow-wrap: anywhere;
+  }
+  .f-orgs__item-head .f-tag {
+    flex: none;
+  }
+  .f-orgs__item-meta {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  @media (width < 40rem) {
+    .f-orgs__pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .f-orgs__table {
+      display: none;
+    }
+    .f-orgs__items {
+      display: block;
+    }
+  }
+
+  /* «Solicitar tempada» na liña de Próximas · Historial: se non cabe (móbil), baixa enteiro á súa liña. */
+  .f-tabs__bar:has(> .f-season-ask) {
+    flex-wrap: wrap;
+  }
+  .f-season-ask.f-button {
+    flex: none;
+    margin-inline-start: auto;
+  }
+
+  /* Móbil (320–390 px): o aviso dos choques sen sangría, para que os botóns caiban enteiros. */
+  @media (width < 30rem) {
+    .f-season-clashes {
+      padding: 1rem;
+    }
+    .f-season-clashes__list {
+      padding-inline-start: 0;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .f-season-clashes {
+      border-color: CanvasText;
+    }
+  }
+}

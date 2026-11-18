@@ -1,0 +1,122 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.publicList.';
+<div class="f-plist">
+  <!-- Atrás, o título e o buscador: no escritorio, nunha liña; no móbil, un debaixo do outro. -->
+  <div class="f-plist__head">
+    <furar-all-municipalities-link />
+    <h1 class="f-plist__title">{{ t + 'title' | transloco }}</h1>
+    <furar-facility-search
+      #searchBar
+      [facilities]="facilities()"
+      [criteria]="criteria()"
+      [filterOptions]="filterOptions()"
+      [filterCount]="filterCount()"
+      (filtersOpened)="openFilters()"
+      (filtersCleared)="navigate({ sports: [], covered: false })"
+      (dayChange)="navigate({ date: $event })"
+      (searched)="search($event)"
+    />
+  </div>
+
+  @switch (state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="card" [rows]="4" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [heading]="t + 'error.title' | transloco"
+        [description]="t + 'error.text' | transloco"
+      >
+        <button type="button" furarButton (click)="retry()">{{ t + 'error.retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @default {
+      @if (!facilities().length) {
+        <furar-status-state [heading]="t + 'empty.title' | transloco" [description]="t + 'empty.text' | transloco" />
+      } @else if (!inSheet()) {
+        <ng-container *ngTemplateOutlet="listing" />
+      }
+      <!-- «Mapa» (abaixo no medio), coma nas portadas: no escritorio ao lado da grella; no móbil, a toda a pantalla. -->
+      @if (mapEnabled() && facilities().length) {
+        <furar-catalog-map-float
+          [split]="wide()"
+          [markers]="markers()"
+          [label]="countText()"
+          [listing]="listing"
+          [(open)]="mapOpen"
+          (picked)="openFacility($event)"
+          (moved)="zone.bounds.set($event)"
+        />
+      }
+    }
+  }
+</div>
+<!-- O listado: na páxina ou, co mapa do móbil aberto, na folla que asoma debaixo del. -->
+<ng-template #listing>
+  <div class="f-plist__bar">
+    <div class="f-plist__found">
+      <p class="f-plist__count" role="status">{{ countText() }}</p>
+      <furar-chip-list
+        data-search-text
+        [items]="textChips()"
+        [label]="t + 'searchText' | transloco"
+        [fallbackFocus]="searchBar"
+        (removed)="removeChip($event)"
+      />
+    </div>
+  </div>
+  @if (split()) {
+    <furar-near-notice />
+  }
+  @if (!matched().length) {
+    <furar-status-state [heading]="t + 'none.title' | transloco">
+      <button type="button" furarButton="secondary" (click)="clearFilters()">{{ t + 'none.clear' | transloco }}</button>
+    </furar-status-state>
+  } @else {
+    <div [class.f-plist__split]="split()">
+      @if (!shown().length) {
+        <furar-status-state [heading]="'facility.catalog.zoneEmpty' | transloco" />
+      } @else {
+        <ul class="f-plist__grid" role="list">
+          @for (card of cards(); track card.facility.id) {
+            @let facility = card.facility;
+            <li
+              class="f-plist__item"
+              [attr.data-facility]="facility.id"
+              (mouseenter)="pointed.set(facility.id)"
+              (mouseleave)="pointed.set(null)"
+              (focusin)="pointed.set(facility.id)"
+              (focusout)="pointed.set(null)"
+            >
+              <furar-facility-card
+                [slug]="slug()"
+                [facility]="facility"
+                [slots]="slotsOf(facility.id)"
+                [sports]="filters().sports"
+                [date]="filters().date"
+                [day]="day()"
+                [km]="card.km"
+                [headingLevel]="2"
+              />
+            </li>
+          }
+        </ul>
+      }
+      @if (split()) {
+        <section class="f-plist__map" [attr.aria-label]="t + 'map' | transloco">
+          <p class="cdk-visually-hidden">{{ t + 'mapAlternative' | transloco }}</p>
+          <furar-catalog-map
+            [markers]="markers()"
+            [active]="pointed()"
+            (selected)="openFacility($event)"
+            (moved)="zone.bounds.set($event)"
+          />
+        </section>
+      }
+    </div>
+  }
+</ng-template>

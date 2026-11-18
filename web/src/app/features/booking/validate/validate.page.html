@@ -1,0 +1,157 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'validate.';
+<section class="f-card f-validate" aria-labelledby="validate-title">
+  <h1 id="validate-title">{{ t + 'title' | transloco }}</h1>
+  @if (camera()) {
+    <div furarSegmented role="group" data-validate-mode [attr.aria-label]="t + 'mode.label' | transloco">
+      <button type="button" data-mode="camera" [attr.aria-pressed]="mode() === 'camera'" (click)="setMode('camera')">
+        {{ t + 'mode.camera' | transloco }}
+      </button>
+      <button type="button" data-mode="code" [attr.aria-pressed]="mode() === 'code'" (click)="setMode('code')">
+        {{ t + 'mode.code' | transloco }}
+      </button>
+    </div>
+  }
+  @if (mode() === 'camera') {
+    @if (scanning()) {
+      <!-- A cámara e o seu lector só se cargan cando se usan. -->
+      @defer (on immediate) {
+        <furar-qr-scanner data-validate-camera (scanned)="scanned($event)" (failed)="cameraFailed()" />
+      }
+    }
+  } @else {
+    <furar-field fieldId="validate-code" [label]="t + 'code.label' | transloco">
+      <input
+        #codeInput
+        furarInput
+        id="validate-code"
+        class="f-validate__code"
+        type="text"
+        autocomplete="off"
+        autocapitalize="characters"
+        spellcheck="false"
+        maxlength="8"
+        [placeholder]="t + 'code.placeholder' | transloco"
+        data-validate-code
+        [value]="code()"
+        (input)="typed(codeInput.value)"
+      />
+    </furar-field>
+  }
+  <div role="status" class="f-validate__result" data-validate-result>
+    @if (store.result(); as r) {
+      <div class="f-reserve__facility" data-validate-facility>
+        @if (cover(); as image) {
+          <img [src]="image.thumb" [width]="image.width" [height]="image.height" alt="" />
+        }
+        <div>
+          <b>{{ r.booking.facilityName }}</b>
+          @if (r.booking.facilityAddress) {
+            {{ ' ' }}<span>{{ r.booking.facilityAddress }}</span>
+          }
+        </div>
+      </div>
+      <furar-value-list [items]="rows()" />
+      @switch (r.outcome) {
+        @case ('VALIDATED') {
+          <furar-callout
+            tone="success"
+            data-validate-outcome="VALIDATED"
+            [heading]="t + 'result.validated' | transloco"
+          />
+        }
+        @case ('ALREADY_VALIDATED') {
+          <furar-callout
+            tone="info"
+            data-validate-outcome="ALREADY_VALIDATED"
+            [heading]="t + 'result.already.title' | transloco"
+          >
+            <p>{{ already() }}</p>
+          </furar-callout>
+        }
+        @case ('CANCELLED') {
+          <furar-callout
+            tone="danger"
+            data-validate-outcome="CANCELLED"
+            [heading]="t + 'result.cancelled.title' | transloco"
+          >
+            <p>{{ cancelled() }}</p>
+          </furar-callout>
+        }
+        @case ('OUT_OF_WINDOW') {
+          <furar-callout
+            tone="warn"
+            data-validate-outcome="OUT_OF_WINDOW"
+            [heading]="t + 'result.outOfWindow.title' | transloco"
+          >
+            <p>{{ t + 'result.outOfWindow.body' | transloco: { when: when() } }}</p>
+          </furar-callout>
+        }
+      }
+    } @else if (store.state() === 'notFound') {
+      <furar-callout tone="danger" data-validate-outcome="NOT_FOUND" [heading]="t + 'result.notFound' | transloco" />
+    } @else if (store.problem(); as p) {
+      <furar-callout tone="danger" data-validate-error>{{ p.translated }}</furar-callout>
+    }
+  </div>
+  @if (store.result(); as r) {
+    @if (r.outcome === 'OUT_OF_WINDOW') {
+      <furar-field
+        fieldId="validate-reason"
+        [label]="t + 'reason.label' | transloco"
+        [required]="true"
+        [error]="reasonError()"
+      >
+        <textarea
+          #reasonInput
+          furarInput
+          id="validate-reason"
+          rows="2"
+          maxlength="200"
+          data-validate-reason
+          [attr.aria-invalid]="reasonError() ? 'true' : null"
+          [attr.aria-describedby]="reasonError() ? 'validate-reason-error' : null"
+          [value]="reason()"
+          (input)="reason.set(reasonInput.value)"
+        ></textarea>
+      </furar-field>
+    }
+    @if (problem(); as p) {
+      <furar-callout tone="danger" live="alert" data-validate-error>{{ p.translated }}</furar-callout>
+    }
+    @if (r.outcome === 'VALIDATED') {
+      <div class="f-validate__acts">
+        <button type="button" furarButton="primary" data-validate-next (click)="next()">
+          <furar-icon name="qr" />
+          {{ t + 'next' | transloco }}
+        </button>
+        <button type="button" furarButton="quiet" data-validate-undo [busy]="busy() === 'undo'" (click)="undo()">
+          <furar-icon name="undo" />
+          {{ t + 'undo' | transloco }}
+        </button>
+      </div>
+    } @else if (r.outcome === 'OUT_OF_WINDOW') {
+      <div class="f-validate__acts">
+        <button type="button" furarButton="primary" data-validate-force [busy]="busy() === 'force'" (click)="force()">
+          {{ t + 'force' | transloco }}
+        </button>
+        <button type="button" furarButton data-validate-skip (click)="next()">
+          {{ t + 'skip' | transloco }}
+        </button>
+      </div>
+    }
+  }
+  @if (mode() === 'camera' && !scanning() && !actionable()) {
+    <!-- Coa cámara non hai campo que borrar: o xeito de ler outro QR. -->
+    <div class="f-validate__acts">
+      <button type="button" furarButton data-validate-next (click)="next()">
+        <furar-icon name="qr" />
+        {{ t + 'next' | transloco }}
+      </button>
+    </div>
+  }
+</section>
+<furar-today-activities />

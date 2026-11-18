@@ -1,0 +1,21 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+/*
+ * Letra da web: Inter (OFL-1.1, paquete npm `inter-ui`), servida desde Furar, só latin e só os
+ * pesos 400 e 700; o 600 (rótulos dos campos) vai en components/fields.css. Estes subconxuntos
+ * conservan as funcións OpenType (`zero`, `tnum`) que base.css acende (docs/deseno.md §3.3).
+ */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../node_modules/inter-ui/web-latin/Inter-Regular-subset.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../../node_modules/inter-ui/web-latin/Inter-Bold-subset.woff2') format('woff2');
+}

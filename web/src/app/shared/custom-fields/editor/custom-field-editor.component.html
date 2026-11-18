@@ -1,0 +1,135 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<div class="gap-group grid items-start lg:grid-cols-[minmax(0,1fr)_20rem]">
+  <form #editorForm [formGroup]="form" novalidate (ngSubmit)="submit()">
+    <furar-problem-alert [problem]="problem()" />
+    <furar-form-errors-summary [count]="submitted() ? errorCount() : 0" />
+
+    <furar-place-editor
+      [form]="form"
+      [target]="target()"
+      [personalData]="personalData()"
+      [locked]="placeLocked()"
+      [personalPublic]="personalPublic()"
+      [publicFacility]="publicFacility()"
+      [legacyOwner]="legacyOwner()"
+      [serverError]="visibilityError()"
+    />
+
+    <furar-card class="mb-group">
+      <furar-field-group>
+        <furar-bilingual-field
+          fieldId="def-label"
+          required
+          [label]="'customFields.editor.label' | transloco"
+          [gl]="form.controls.labelGl"
+          [es]="form.controls.labelEs"
+          [submitted]="submitted()"
+        />
+        <furar-bilingual-field
+          fieldId="def-help"
+          longText
+          [label]="'customFields.editor.help' | transloco"
+          [gl]="form.controls.helpGl"
+          [es]="form.controls.helpEs"
+          [submitted]="submitted()"
+        />
+        <div class="f-field-cells" [style.--f-cell]="'12rem'">
+          @let codeError = fieldError(form.controls.code, submitted());
+          <furar-field
+            fieldId="def-code"
+            [label]="'customFields.editor.code' | transloco"
+            [required]="true"
+            [tip]="(definition() ? 'customFields.editor.codeLocked' : 'customFields.editor.codeHelp') | transloco"
+            [error]="codeError"
+          >
+            <input
+              furarInput
+              id="def-code"
+              class="font-mono"
+              formControlName="code"
+              autocomplete="off"
+              spellcheck="false"
+              aria-required="true"
+              [attr.aria-invalid]="codeError ? 'true' : null"
+              [attr.aria-describedby]="describedBy('def-code', true, codeError)"
+            />
+          </furar-field>
+          <furar-field
+            fieldId="def-type"
+            [label]="'customFields.editor.type' | transloco"
+            [tip]="definition() ? ('customFields.editor.typeLocked' | transloco) : ''"
+          >
+            <furar-select
+              selectId="def-type"
+              formControlName="type"
+              [label]="'customFields.editor.type' | transloco"
+              [options]="types | furarOptions: 'customFields.type.' : lang()"
+              [describedBy]="definition() ? 'def-type-help' : null"
+            />
+          </furar-field>
+        </div>
+      </furar-field-group>
+
+      <!--
+        Obrigatorio e dato persoal, xuntos: cada interruptor na súa fila (o rótulo á esquerda e o
+        interruptor á dereita do todo) e, co dato persoal, o seu aviso.
+      -->
+      <div class="mt-form gap-unit grid">
+        <div class="grid" data-def-switches>
+          <furar-switch
+            switchId="def-required"
+            formControlName="required"
+            [label]="'customFields.editor.usageRequired' | transloco"
+          />
+          <furar-switch
+            switchId="def-personalData"
+            formControlName="personalData"
+            describedBy="def-personal-warning"
+            [label]="'customFields.editor.personalData' | transloco"
+          />
+        </div>
+        <!-- Sempre no DOM: aria-live anuncia o aviso ao acender o dato persoal. -->
+        <div id="def-personal-warning" aria-live="polite">
+          @if (personalData()) {
+            @let n = 'customFields.editor.personalDataNotice.';
+            <furar-callout tone="warn" [heading]="n + 'title' | transloco">
+              <ul class="list-disc ps-5">
+                <li>{{ n + 'notPublic' | transloco }}</li>
+                @if (target() === 'BOOKING') {
+                  <li>{{ n + 'bookings' | transloco }}</li>
+                } @else {
+                  <li>{{ n + 'export' | transloco }}</li>
+                }
+                <li>{{ n + 'special' | transloco }}</li>
+              </ul>
+            </furar-callout>
+          }
+        </div>
+      </div>
+    </furar-card>
+
+    <furar-rules-editor [form]="form.controls.rules" [type]="type()" />
+    @if (choice()) {
+      <furar-options-editor [options]="form.controls.options" [submitted]="submitted()" [lang]="lang()" />
+    }
+
+    @for (error of formErrors(); track error.key) {
+      @if (submitted()) {
+        <p class="f-field-error mb-item">{{ error.key | transloco: error.params }}</p>
+      }
+    }
+
+    <div class="gap-item flex flex-wrap">
+      <button type="submit" furarButton="primary" [busy]="saving()">
+        {{ 'common.save' | transloco }}
+      </button>
+      <button type="button" furarButton (click)="cancelled.emit()">{{ 'common.cancel' | transloco }}</button>
+    </div>
+  </form>
+  <aside class="f-below-topbar lg:sticky">
+    <furar-custom-field-preview [definition]="preview()" />
+  </aside>
+</div>

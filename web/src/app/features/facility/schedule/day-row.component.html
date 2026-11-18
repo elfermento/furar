@@ -1,0 +1,88 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.schedule.day.';
+<fieldset
+  class="gap-unit grid border-s-4 border-primary bg-tint px-item py-unit"
+  [attr.data-day-row]="index()"
+  [formGroup]="day()"
+  [attr.aria-describedby]="problem() ? errorId() : null"
+>
+  <legend class="sr-only">{{ name() }}</legend>
+  <!-- Unha fila: o nome á esquerda e o interruptor á dereita do todo. -->
+  <div class="gap-x-item gap-y-unit grid min-h-11 grid-cols-[minmax(0,1fr)_auto] items-center">
+    <span class="col-start-1 row-start-1 font-bold" aria-hidden="true">{{ name() }}</span>
+    <furar-switch
+      class="col-start-2 row-start-1"
+      formControlName="open"
+      hideLabel
+      [label]="t + 'open' | transloco: { day: name() }"
+    />
+  </div>
+  <!--
+    Só co día aberto: cada tramo, unha fila «Abre | Pecha» no grupo; con máis dun, a
+    papeleira dentro do grupo, á dereita. «Engadir tramo», ao centro, debaixo.
+  -->
+  @if (value().open) {
+    <div class="gap-unit grid" formArrayName="intervals" data-day-hours>
+      <furar-field-group>
+        @for (interval of day().controls.intervals.controls; track interval; let j = $index) {
+          @let id = idPrefix() + '-day-' + index() + '-' + j;
+          @let invalid = problem()?.index === j;
+          <div class="f-field-cells" [style.--f-cell]="'6rem'" data-interval [formGroupName]="j">
+            <furar-field [fieldId]="id + '-from'" [label]="t + 'opens' | transloco">
+              <furar-time-picker
+                formControlName="startMinute"
+                [buttonId]="id + '-from'"
+                [label]="t + 'from' | transloco: { day: name(), n: j + 1 }"
+                [max]="1425"
+                [invalid]="invalid"
+                [describedBy]="invalid ? errorId() : null"
+              />
+            </furar-field>
+            <furar-field [fieldId]="id + '-to'" [label]="t + 'closes' | transloco">
+              <furar-time-picker
+                formControlName="endMinute"
+                allowEndOfDay
+                [buttonId]="id + '-to'"
+                [min]="15"
+                [label]="t + 'to' | transloco: { day: name(), n: j + 1 }"
+                [invalid]="invalid"
+                [describedBy]="invalid ? errorId() : null"
+              />
+            </furar-field>
+            @if (value().intervals.length > 1) {
+              <furar-field-action>
+                <furar-delete-button
+                  data-interval-remove
+                  [label]="t + 'remove' | transloco: { hours: hours(j) }"
+                  [tooltip]="t + 'removeShort' | transloco"
+                  (pressed)="remove(j)"
+                />
+              </furar-field-action>
+            }
+          </div>
+        }
+      </furar-field-group>
+      @if (value().intervals.length < max) {
+        <div class="mt-unit flex justify-center">
+          <button
+            type="button"
+            furarButton="secondary"
+            size="sm"
+            data-interval-add
+            [attr.aria-label]="t + 'addLabel' | transloco: { day: name() }"
+            (click)="add()"
+          >
+            <furar-icon name="plus" />
+            {{ t + 'add' | transloco }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+  @if (problem(); as p) {
+    <p class="f-field-error" [id]="errorId()">{{ p.error.key | transloco: p.error.params }}</p>
+  }
+</fieldset>

@@ -1,0 +1,76 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Folla que asoma desde abaixo (`furar-peek-sheet`): a superficie das follas (dialog.css,
+ * `.f-dialog-pane--sheet`), co asa e o título. Pregada, só se ve a cabeceira (`--f-peek-h`);
+ * estendida, cobre o que hai detrás. O arrastre move a folla co dedo (o compoñente escribe o
+ * transform); ao soltar, a curva das follas do sistema (rápida ao principio e suave ao chegar).
+ */
+@layer components {
+  .f-peek {
+    --f-peek-h: 5rem;
+    position: absolute;
+    /* Arriba, onde empeza o que tapa (no mapa da portada, debaixo da barra superior). */
+    inset: var(--f-peek-top, 0) 0 0;
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+    transform: translateY(calc(100% - var(--f-peek-h)));
+    transition: transform 500ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .f-peek[data-expanded] {
+    transform: none;
+  }
+  .f-peek[data-dragging] {
+    transition: none;
+  }
+  .f-peek__head {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: var(--f-peek-h);
+    padding: 0.75rem var(--spacing-gutter) 1rem;
+    border: 0;
+    border-radius: inherit;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: grab;
+    touch-action: none;
+  }
+  .f-peek__handle {
+    width: 2.5rem;
+    height: 0.25rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-line);
+  }
+  .f-peek__label {
+    font-weight: 700;
+  }
+  .f-peek__head:focus-visible {
+    outline-offset: -0.375rem;
+  }
+  /* O contido: desprázase dentro da folla, con sitio abaixo para o botón flotante. */
+  .f-peek__body {
+    flex: 1;
+    min-height: 0;
+    padding: 0 var(--spacing-gutter) 6rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  :where(html[data-motion='reduce']) .f-peek {
+    transition: none;
+  }
+  @media (forced-colors: active) {
+    .f-peek {
+      border-top: 1px solid CanvasText;
+    }
+  }
+}

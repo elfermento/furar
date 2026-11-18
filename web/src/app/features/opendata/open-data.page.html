@@ -1,0 +1,150 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'openData.';
+<div class="f-open-data">
+  <furar-page-header
+    [heading]="t + 'title' | transloco"
+    [intro]="(all ? t + 'intro.all' : t + 'intro.municipality') | transloco: placeParams()"
+  />
+
+  @switch (state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="card" [rows]="3" />
+    }
+    @case ('error') {
+      <furar-status-state mode="error" [description]="t + 'loadError' | transloco">
+        <button type="button" furarButton (click)="load()">{{ 'facility.public.loadError.retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @case ('ready') {
+      @if (summary(); as s) {
+        @if (all && s.municipalities === 0) {
+          <furar-status-state mode="empty" [description]="t + 'empty' | transloco" data-open-data-empty />
+        } @else {
+          <furar-tabs
+            look="line"
+            [label]="t + 'tabs.label' | transloco"
+            [selected]="selected()"
+            (selectedChange)="select($event)"
+          >
+            @for (d of datasets; track d.key) {
+              <button type="button" [furarTab]="d.key" [attr.data-tab]="d.url">
+                {{ tabLabel(d.key) | transloco }}
+              </button>
+            }
+            <p class="f-open-data__lead" data-dataset-description>{{ description(selected()) | transloco }}</p>
+
+            <furar-card class="f-open-data__card">
+              @if (updated(); as date) {
+                <p class="f-open-data__updated" data-updated>{{ t + 'updated' | transloco: { date } }}</p>
+              }
+              <div class="f-open-data__actions" [attr.data-occupancy]="selected() === 'OCCUPANCY' ? '' : null">
+                @if (selected() === 'OCCUPANCY') {
+                  <div
+                    class="f-open-data__dates"
+                    role="group"
+                    [attr.aria-labelledby]="ids.dates"
+                    [attr.aria-describedby]="datesError() ? ids.error : null"
+                  >
+                    <p class="f-open-data__label" [id]="ids.dates">
+                      {{ t + 'dates.label' | transloco }}<furar-required-mark />
+                      @if (all) {
+                        <furar-help-tip
+                          [label]="t + 'dates.label' | transloco"
+                          [text]="t + 'dates.tipAll' | transloco"
+                        />
+                      }
+                    </p>
+                    <furar-date-filter
+                      [(from)]="from"
+                      [(to)]="to"
+                      [today]="today"
+                      [presets]="presets()"
+                      [min]="s.occupancy.availableFrom"
+                      [max]="s.occupancy.availableTo"
+                    />
+                    @if (datesError(); as error) {
+                      <span class="f-field-error" data-dates-error [id]="ids.error">
+                        {{ t + 'dates.' + error | transloco: { n: s.occupancy.maxMonths } }}
+                      </span>
+                    }
+                  </div>
+                }
+                <button
+                  type="button"
+                  furarButton="primary"
+                  class="f-open-data__download"
+                  data-download
+                  (click)="download()"
+                >
+                  <furar-icon name="download" />
+                  {{ t + 'download' | transloco }}
+                </button>
+              </div>
+
+              <furar-disclosure [heading]="t + 'fold.details' | transloco" data-fold="details">
+                <furar-value-list variant="plain" [items]="details()" />
+                @if (selected() === 'OCCUPANCY') {
+                  <furar-callout class="f-open-data__privacy" tone="info" [heading]="t + 'privacy.title' | transloco">
+                    {{ 'openData.privacy.body' | transloco }}
+                  </furar-callout>
+                }
+              </furar-disclosure>
+              <furar-disclosure [heading]="t + 'fold.columns' | transloco" data-fold="columns">
+                @for (table of columnTables(); track table.id; let first = $first) {
+                  <furar-data-table
+                    [attr.data-columns]="table.id"
+                    [caption]="table.caption"
+                    [captionHidden]="columnTables().length === 1"
+                    [columns]="columnHeaders()"
+                    [rows]="table.rows"
+                  />
+                  @if (first && all && selected() === 'FACILITIES') {
+                    <p class="f-open-data__note" data-custom-all>{{ t + 'column.customFieldsAll' | transloco }}</p>
+                  }
+                }
+                <p class="f-open-data__note">{{ t + 'columns.format' | transloco }}</p>
+              </furar-disclosure>
+            </furar-card>
+          </furar-tabs>
+
+          <section class="f-open-data__more" [attr.aria-label]="t + 'more.label' | transloco">
+            <div>
+              <h2>{{ t + 'more.people.title' | transloco }}</h2>
+              <p>{{ t + 'more.people.body' | transloco }}</p>
+            </div>
+            <div data-reuse>
+              <h2>{{ t + 'more.reuse.title' | transloco }}</h2>
+              <p>
+                @if (all) {
+                  {{ t + 'more.reuse.bodyAll' | transloco }}
+                } @else {
+                  {{ t + 'more.reuse.body' | transloco: { owner: owner() } }}
+                }
+                <a
+                  href="https://creativecommons.org/licenses/by/4.0/"
+                  target="_blank"
+                  rel="noopener"
+                  class="f-open-data__license"
+                >
+                  {{ t + 'more.reuse.license' | transloco }}
+                </a>
+              </p>
+            </div>
+            @if (s.catalog) {
+              <div data-portals>
+                <h2>{{ t + 'more.portals.title' | transloco }}</h2>
+                <p>
+                  <a [href]="catalogUrl()" download>{{ t + 'more.portals.link' | transloco }}</a>
+                  · {{ t + 'more.portals.body' | transloco }}
+                </p>
+              </div>
+            }
+          </section>
+        }
+      }
+    }
+  }
+</div>

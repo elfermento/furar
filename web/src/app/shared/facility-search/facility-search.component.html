@@ -1,0 +1,109 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<form
+  #bar
+  class="f-search"
+  [attr.data-disabled]="disabled() || null"
+  [attr.data-keyboard]="keyboard() || null"
+  role="search"
+  [attr.aria-label]="'home.search.label' | transloco"
+  (submit)="submit($event)"
+>
+  <!-- Cada parte (texto, día, «Filtros») é unha cápsula: a aberta márcase co seu bordo e leva o seu «✕». -->
+  <div #where class="f-search__seg f-search__where">
+    <label class="f-search__query" [for]="queryId">
+      <furar-icon name="search" [size]="24" />
+      <span class="sr-only">{{ 'home.search.what' | transloco }}</span>
+    </label>
+    <furar-combobox
+      class="f-search__combobox"
+      look="pill"
+      highlight
+      debounce="120"
+      [quiet]="wide()"
+      [inputId]="queryId"
+      [panelOrigin]="wide() ? where : bar"
+      [formControl]="choice"
+      [label]="'home.search.suggestions' | transloco"
+      [placeholder]="(catalog() ? 'home.search.whatCatalog' : 'home.search.what') | transloco"
+      [source]="source()"
+      [displayWith]="choiceLabel"
+      (selected)="pick($event.value)"
+    />
+    @if (!disabled() && combobox()?.typedText()) {
+      <furar-clear-button
+        class="f-search__clear"
+        data-clear="text"
+        [label]="'home.search.clear.text' | transloco"
+        (pressed)="clearText()"
+      />
+    }
+  </div>
+  <div #daySegment class="f-search__seg f-search__day">
+    <furar-date-field
+      look="pill"
+      [formControl]="day"
+      [label]="'home.search.day' | transloco"
+      [min]="today"
+      [today]="today"
+      [shortcuts]="shortcuts()"
+      [displayWith]="dayText()"
+    >
+      <furar-icon furarDateFieldIcon name="calendar" />
+    </furar-date-field>
+    @if (!disabled() && date() !== today) {
+      <furar-clear-button
+        class="f-search__clear"
+        data-clear="day"
+        [label]="'home.search.clear.day' | transloco"
+        (pressed)="clearDay(daySegment)"
+      />
+    }
+  </div>
+  @if (filterOptions()) {
+    <!--
+      «Filtros» abre a folla cos filtros (tipo, deporte e, no móbil, o día), que pon quen usa o
+      buscador. No móbil só a icona co número; no escritorio, co rótulo e o «✕» que os quita.
+    -->
+    <div #filtersSegment class="f-date-field f-search__seg f-search__day f-search__filters" data-look="pill">
+      <button
+        type="button"
+        class="f-date-field__button"
+        aria-haspopup="dialog"
+        data-search-filters
+        [disabled]="disabled()"
+        [attr.aria-label]="
+          shownCount()
+            ? ('home.search.filtersCount' | transloco: { count: shownCount() })
+            : ('home.search.filters' | transloco)
+        "
+        (click)="filtersOpened.emit()"
+      >
+        <furar-icon name="tune" />
+        <span class="f-date-field__text">{{ 'home.search.filters' | transloco }}</span>
+        @if (shownCount()) {
+          <!-- O nome empeza polo que se le («Filtros 1»): o espazo sepáraos tamén para axe. -->
+          {{ ' ' }}<span class="f-search__count" aria-hidden="true">{{ shownCount() }}</span>
+        }
+      </button>
+      @if (!disabled() && filterCount()) {
+        <furar-clear-button
+          class="f-search__clear"
+          data-clear="filters"
+          [label]="'home.search.clear.filters' | transloco"
+          (pressed)="clearFilters(filtersSegment)"
+        />
+      }
+    </div>
+  }
+  <button
+    type="submit"
+    class="f-search__go"
+    [disabled]="disabled()"
+    [attr.aria-label]="'home.search.submit' | transloco"
+  >
+    <furar-icon name="arrow-right" [size]="24" />
+  </button>
+</form>

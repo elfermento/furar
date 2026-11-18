@@ -1,0 +1,142 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'openMatch.dialog.';
+@let e = errors();
+<furar-dialog
+  size="sm"
+  [heading]="(editing ? t + 'editTitle' : 'openMatch.action') | transloco"
+  [subheading]="data.subheading"
+  [busy]="busy()"
+>
+  <form
+    class="gap-form grid"
+    id="furar-open-match-form"
+    novalidate
+    data-open-match-form
+    [formGroup]="form"
+    (submit)="submit($event)"
+  >
+    <furar-field-group>
+      <furar-field fieldId="match-level" [label]="t + 'level' | transloco">
+        <furar-select
+          selectId="match-level"
+          formControlName="level"
+          [label]="t + 'level' | transloco"
+          [options]="levels()"
+        />
+      </furar-field>
+      <!-- Información de protección de datos (ADR-0040 punto 13): onde se ve, co nome e ata cando. -->
+      <furar-field
+        fieldId="match-title"
+        [label]="t + 'title' | transloco"
+        [tip]="t + 'privacyTip' | transloco"
+        [tipLabel]="t + 'privacyTipLabel' | transloco"
+        [error]="e.title"
+      >
+        <input
+          furarInput
+          id="match-title"
+          formControlName="title"
+          autocomplete="off"
+          [attr.maxlength]="titleMax"
+          [placeholder]="t + 'titlePlaceholder' | transloco"
+          [attr.aria-invalid]="e.title ? 'true' : null"
+          [attr.aria-describedby]="describedBy('match-title', true, e.title)"
+        />
+      </furar-field>
+      <furar-field
+        fieldId="match-description"
+        [label]="t + 'description' | transloco"
+        [tip]="t + 'descriptionTip' | transloco"
+        [error]="e.description"
+      >
+        <textarea
+          furarInput
+          id="match-description"
+          rows="3"
+          formControlName="description"
+          [attr.maxlength]="descriptionMax"
+          [attr.aria-invalid]="e.description ? 'true' : null"
+          [attr.aria-describedby]="describedBy('match-description', true, e.description)"
+        ></textarea>
+      </furar-field>
+      <div class="f-field-cells f-match-cells" data-match-counts>
+        <furar-field
+          fieldId="match-known"
+          required
+          [label]="t + 'known' | transloco"
+          [tip]="t + 'knownTip' | transloco"
+          [error]="e.knownCount"
+        >
+          <input
+            furarInput
+            id="match-known"
+            type="text"
+            inputmode="numeric"
+            maxlength="2"
+            size="2"
+            autocomplete="off"
+            formControlName="knownCount"
+            aria-required="true"
+            [attr.aria-invalid]="e.knownCount ? 'true' : null"
+            [attr.aria-describedby]="describedBy('match-known', true, e.knownCount)"
+          />
+        </furar-field>
+        <furar-field
+          fieldId="match-minimum"
+          required
+          [label]="t + 'minimum' | transloco"
+          [tip]="t + 'minimumTip' | transloco: { hours: data.cancelHours }"
+          [error]="e.minimum"
+        >
+          <input
+            furarInput
+            id="match-minimum"
+            type="text"
+            inputmode="numeric"
+            maxlength="2"
+            size="2"
+            autocomplete="off"
+            formControlName="minimum"
+            aria-required="true"
+            [attr.aria-invalid]="e.minimum ? 'true' : null"
+            [attr.aria-describedby]="describedBy('match-minimum', true, e.minimum)"
+          />
+        </furar-field>
+        <furar-field fieldId="match-maximum" required [label]="t + 'maximum' | transloco" [error]="e.maximum">
+          <input
+            furarInput
+            id="match-maximum"
+            type="text"
+            inputmode="numeric"
+            maxlength="2"
+            size="2"
+            autocomplete="off"
+            formControlName="maximum"
+            aria-required="true"
+            [attr.aria-invalid]="e.maximum ? 'true' : null"
+            [attr.aria-describedby]="describedBy('match-maximum', false, e.maximum)"
+          />
+        </furar-field>
+      </div>
+    </furar-field-group>
+    <furar-switch
+      switchId="match-approval"
+      formControlName="approval"
+      data-match-approval
+      [label]="t + 'approval' | transloco"
+      [tip]="t + 'approvalTip' | transloco"
+    />
+    <furar-problem-alert [problem]="problem()" />
+  </form>
+  <ng-container dialogActions>
+    <button type="button" furarButton="quiet" data-match-dismiss [disabled]="busy()" (click)="ref.close()">
+      {{ 'common.cancel' | transloco }}
+    </button>
+    <button type="submit" form="furar-open-match-form" furarButton="primary" data-match-save [busy]="busy()">
+      {{ saveKey() | transloco }}
+    </button>
+  </ng-container>
+</furar-dialog>

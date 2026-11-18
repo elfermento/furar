@@ -1,0 +1,55 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!doctype html>
+<html lang="gl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Reservas deportivas</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Reserva de instalacións deportivas municipais · reserva de instalaciones deportivas municipales"
+    />
+    <meta name="theme-color" content="#0b5c8e" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="manifest" href="manifest.json" />
+    <!--
+      Preferencias de visualización antes do primeiro pintado (sen parpadeo): o mesmo cálculo ca
+      core/preferences/display-preferences.ts (display-preferences.spec.ts compárao). A CSP leva o
+      hash deste script (security.autoCsp).
+    -->
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var stored = {};
+        try {
+          stored = JSON.parse(localStorage.getItem('furar.display') || '{}') || {};
+        } catch (e) {
+          stored = {};
+        }
+        function system(query) {
+          try {
+            return matchMedia(query).matches;
+          } catch (e) {
+            return false;
+          }
+        }
+        var size = stored.textSize === 'large' || stored.textSize === 'x-large' ? stored.textSize : 'normal';
+        var contrast =
+          typeof stored.highContrast === 'boolean' ? stored.highContrast : system('(prefers-contrast: more)');
+        var motion =
+          typeof stored.reducedMotion === 'boolean' ? stored.reducedMotion : system('(prefers-reduced-motion: reduce)');
+        root.setAttribute('data-text-size', size);
+        root.setAttribute('data-contrast', contrast ? 'more' : 'no-preference');
+        root.setAttribute('data-motion', motion ? 'reduce' : 'no-preference');
+      })();
+    </script>
+  </head>
+  <body>
+    <furar-root></furar-root>
+    <noscript>Esta web precisa JavaScript · Esta web necesita JavaScript</noscript>
+  </body>
+</html>

@@ -1,0 +1,376 @@
+/* SPDX-FileCopyrightText: Google LLC */
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 AND Apache-2.0 */
+/* A frecha dos despregables (máscara en liña) é o trazado «expand_more» de Material Symbols (Apache-2.0). */
+/* O rótulo do campo vai en seminegra (600), do mesmo paquete local ca os pesos 400 e 700 (styles/fonts.css). */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../../../node_modules/inter-ui/web-latin/Inter-SemiBold-subset.woff2') format('woff2');
+}
+
+/*
+ * Sistema de campos (docs/deseno.md P1-3). Só os campos (texto, número, texto longo, bilingüe,
+ * despregable, data e hora) levan cápsula: un marco co rótulo dentro (14 px, seminegra, en
+ * minúsculas) e o valor debaixo (17 px, normal), duns 62 px de alto. A axuda visible e o erro van
+ * fóra, debaixo da cápsula, a todo o ancho; o foco e o erro pintan un anel (primary ou danger).
+ *
+ * Herdan a cápsula sen tocar o modelo: `furar-field` (e o `.f-field` feito a man) cando o control é
+ * un campo (fillo directo ou dentro de `.f-field__control`), e `furar-bilingual-field`. Un `.f-field`
+ * con outra cousa (interruptor, segmentado, chips…) queda coma antes. O marco é o `::before` do
+ * campo, unha peza da súa grella nas filas do rótulo e do control; o resto vai transparente enriba.
+ *
+ * Campos relacionados: `furar-field-group` (`.f-field-group`), unha cápsula con liñas entre os
+ * campos e o erro de cada un xusto debaixo del, dentro; `.f-field-cells` (ou `cells` no grupo), campos curtos nunha fila que
+ * parte en máis se non caben (ancho mínimo de cada un: `--f-cell`). Filas soltas sen caixa
+ * (interruptor, chip-menú, segmentado): `furar-field-line` e `furar-switch`, co texto onde
+ * empezan os campos e o control rematando onde rematan.
+ *
+ * Vai nas follas das rutas con formularios (reservas.css e xestion.css), non na carga inicial.
+ */
+@layer components {
+  /* ---------- Cápsula ---------- */
+  .f-bilingual,
+  .f-field:has(
+    > :is(.f-input, .input, select, .f-select, .f-date-field, .f-time-picker, .f-combobox, .f-field-affix),
+    > .f-field__control
+      > :is(.f-input, .input, select, .f-select, .f-date-field, .f-time-picker, .f-combobox, .f-field-affix)
+  ) {
+    row-gap: 0;
+
+    /* O marco: nas filas do rótulo e do control. Nun grupo, transparente (o marco é o do grupo). */
+    &::before {
+      content: '';
+      grid-row: 1 / 3;
+      grid-column: 1;
+      border: var(--f-border) solid var(--f-cap-line, var(--f-line));
+      border-radius: var(--f-cap-radius, var(--radius-card));
+      background: var(--f-cap-bg, var(--f-surface));
+      transition:
+        border-color var(--f-dur-fast) var(--ease-smooth),
+        box-shadow var(--f-dur-fast) var(--ease-smooth);
+    }
+
+    /* Rótulo dentro, arriba; o control debaixo; a axuda e o erro, fóra. */
+    & > :is(.f-label, .label, .f-field__head, .f-bilingual__head) {
+      grid-row: 1;
+      grid-column: 1;
+      min-width: 0;
+      margin: 0;
+      padding: calc(var(--f-fld-pad-y) + var(--f-border)) var(--f-fld-in) 0;
+    }
+    & > :not(.f-label, .label, .f-field__head, .f-bilingual__head, .f-help, .help, .f-field-error, .field-error) {
+      grid-row: 2;
+      grid-column: 1;
+      min-width: 0;
+    }
+    & > :is(.f-help, .help) {
+      grid-row: 3;
+      margin: var(--spacing-unit) 0 0;
+    }
+    & > :is(.f-field-error, .field-error) {
+      grid-row: 4;
+    }
+    & > :is(.f-label, .label),
+    & > :is(.f-field__head, .f-bilingual__head) > :is(.f-label, .label) {
+      color: var(--f-ink);
+      font-size: var(--text-support);
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    & > .f-bilingual__head {
+      align-items: center;
+    }
+    & > .f-bilingual__head > .f-segmented {
+      margin-block: -0.375rem -0.25rem;
+    }
+
+    /* O control, sen marco propio: o valor a 17 px, aliñado co rótulo. */
+    & :is(.f-input, .input),
+    & select,
+    & :is(.f-select__button, .f-date-field__button, .f-time-picker__button) {
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      padding: var(--f-fld-gap) var(--f-fld-in) calc(var(--f-fld-pad-y) + var(--f-border));
+      border: 0;
+      border-radius: 0 0 var(--f-cap-radius, var(--radius-card)) var(--f-cap-radius, var(--radius-card));
+      background: transparent;
+      color: var(--f-ink);
+      font-size: 1.0625rem;
+      font-weight: 400;
+      line-height: 1.4;
+
+      &:focus-visible {
+        outline: none;
+      }
+    }
+    & textarea:is(.f-input, .input) {
+      min-height: 3.5rem;
+    }
+    /* Os que abren unha capa deixan sitio á frecha (a do campo) e escoden a súa e a icona. */
+    & select,
+    & :is(.f-select__button, .f-date-field__button, .f-time-picker__button) {
+      display: flex;
+      align-items: center;
+      padding-inline-end: calc(var(--f-fld-in) + 2rem);
+      background-image: none;
+    }
+    & :is(.f-select__button, .f-time-picker__button)::after,
+    & .f-date-field__button > .f-icon {
+      display: none;
+    }
+    & .f-date-field:not([data-look='pill']),
+    & .f-time-picker {
+      display: block;
+      width: 100%;
+    }
+    & .f-select__button[data-empty],
+    & .f-date-field__button[data-empty],
+    & .f-time-picker__button[data-empty],
+    & :is(.f-input, .input)::placeholder {
+      color: var(--f-ink-soft);
+      opacity: 1;
+    }
+
+    /* Frecha dos que abren unha capa (a icona chevron-down, coma furar-field-popover), centrada na cápsula. */
+    &:has(.f-select, .f-date-field, .f-time-picker, select)::after {
+      content: '';
+      grid-row: 1 / 3;
+      grid-column: 1;
+      align-self: center;
+      justify-self: end;
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-inline-end: calc(var(--f-fld-in) - 0.25rem);
+      background: var(--f-primary-text);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath d='M480-344 240-584l43-43 197 197 197-197 43 43-240 240Z'/%3E%3C/svg%3E")
+        center / contain no-repeat;
+      pointer-events: none;
+      transition: transform var(--f-dur-fast) var(--ease-smooth);
+    }
+    &:has(:is(.f-select__button, .f-date-field__button, .f-time-picker__button)[aria-expanded='true'])::after {
+      transform: rotate(180deg);
+    }
+    &:has(:disabled)::after {
+      background: var(--f-ink-soft);
+    }
+
+    /* Anel: foco (primary), erro (danger); desactivado ou só lectura, marco descontinuo sobre a páxina. */
+    &:has(
+        :is(.f-input, .input, select):focus-visible,
+        :is(.f-select__button, .f-date-field__button, .f-time-picker__button):is(:focus-visible, [aria-expanded='true'])
+      )::before {
+      border-color: var(--f-primary);
+      box-shadow: inset 0 0 0 calc(var(--f-border-state) - var(--f-border)) var(--f-primary);
+    }
+    &:has([aria-invalid='true'])::before {
+      border-color: var(--f-danger);
+      box-shadow: inset 0 0 0 calc(var(--f-border-state) - var(--f-border)) var(--f-danger);
+    }
+    &:has(
+        :is(.f-input, .input, select, .f-select__button, .f-date-field__button, .f-time-picker__button):is(
+          :disabled,
+          [readonly]
+        )
+      )::before {
+      border-style: dashed;
+      background: var(--f-page);
+    }
+    &:has(:disabled) :is(.f-input, .input, select, button) {
+      cursor: not-allowed;
+    }
+    & .f-field-affix > :is(.f-input, .input) {
+      flex: 1 1 auto;
+      padding-inline-end: 0.375rem;
+    }
+  }
+
+  /* Unha lista de chips (os escollidos) debaixo do control, dentro da cápsula: co sangrado do texto. */
+  .f-field__control > .f-chip-list-host:has(.f-chip) {
+    padding: 0 var(--f-fld-in) var(--f-fld-pad-y);
+  }
+  .f-field__control > .f-chip-list-host > .f-chip-list {
+    margin-top: 0;
+  }
+
+  /* Valor cunha unidade ao final («€», «min»): `<span class="f-field-affix">` co input e a unidade. */
+  .f-field-affix {
+    display: flex;
+    align-items: baseline;
+    min-width: 0;
+  }
+  .f-field-affix__unit {
+    flex: none;
+    padding-inline-end: var(--f-fld-in);
+    color: var(--f-ink-soft);
+    font-size: 1.0625rem;
+  }
+
+  /* ---------- Grupo de campos ---------- */
+  .f-fields {
+    display: grid;
+    min-width: 0;
+  }
+  /*
+   * O erro de cada campo do grupo, xusto debaixo del e dentro do grupo (o seguinte campo baixa),
+   * co sangrado do texto; nunha fila de campos curtos, debaixo da súa metade. O dun
+   * `furar-field-popover` vai dentro del (`fieldError`).
+   */
+  .f-field-group :is(.f-field, .f-bilingual, .f-field-popover) > .f-field-error {
+    margin: 0;
+    padding: 0 var(--f-fld-in) var(--f-fld-pad-y);
+  }
+  .f-field-group {
+    --f-cap-line: transparent;
+    --f-cap-bg: transparent;
+    --f-cap-radius: calc(var(--radius-card) - var(--f-border));
+    display: grid;
+    min-width: 0;
+    overflow: hidden;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+  }
+  .f-field-group > * + * {
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  /* Campo de elixir (furar-field-popover) nun grupo: o anel tamén vai por dentro. */
+  .f-field-group .f-field-popover[data-look] .f-field-popover__trigger::after {
+    inset: 0;
+    border-radius: var(--f-cap-radius);
+  }
+
+  /* Campos curtos nunha fila (desde e ata, teléfono e correo): parte en máis filas se non caben. */
+  .f-field-cells,
+  .f-field-group[data-cells] {
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+  }
+  :is(.f-field-cells, .f-field-group[data-cells]) > * {
+    flex: 1 1 var(--f-cell, 10rem);
+    min-width: 0;
+    margin: calc(-1 * var(--f-border)) 0 0 calc(-1 * var(--f-border));
+    border: 0;
+    border-top: var(--f-border) solid var(--f-divider);
+    border-inline-start: var(--f-border) solid var(--f-divider);
+    border-radius: 0;
+  }
+  :is(.f-field-cells, .f-field-group[data-cells]) > .f-field {
+    grid-template-rows: auto 1fr auto auto;
+  }
+  :is(.f-field-cells, .f-field-group[data-cells]) > .f-field > * {
+    align-self: start;
+  }
+  :is(.f-field-cells, .f-field-group[data-cells]) > .f-field-popover > .f-field-popover__trigger {
+    align-items: flex-start;
+    height: 100%;
+  }
+
+  /*
+   * Celda dun botón ao final da fila (furar-field-action): a papeleira dentro do grupo,
+   * á dereita, co alto da fila e sen liña divisoria (a liña entre filas segue).
+   */
+  :is(.f-field-cells, .f-field-group[data-cells]) > .f-field-action {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    border-inline-start-color: transparent;
+  }
+
+  /*
+   * Valor e unidade lidos coma unha frase (furar-field affix="tight"): o número co ancho
+   * das súas cifras e a unidade pegada detrás, cun espazo de palabra.
+   */
+  /* (Máis específica ca a regra do valor coa unidade da cápsula, que lle dá todo o ancho.) */
+  .f-field[data-affix='tight'] .f-field-affix > input.f-input[furarInput] {
+    flex: none;
+    field-sizing: content;
+    width: auto;
+    min-width: calc(1ch + var(--f-fld-in));
+    max-width: calc(4ch + var(--f-fld-in));
+    padding-inline-end: 0;
+  }
+  .f-field[data-affix='tight'] .f-field-affix__unit {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin-inline-start: 0.3em;
+  }
+
+  /* ---------- Filas soltas (furar-field-line): texto á esquerda, control á dereita ---------- */
+  .f-field-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-unit) var(--spacing-item);
+    min-width: 0;
+    min-height: var(--f-fld-h);
+    /* Sen sangrado lateral: o texto empeza e o control remata onde os campos (coma furar-switch). */
+    padding: var(--f-fld-pad-y) 0;
+  }
+  .f-field-line__text {
+    flex: 1 1 8rem;
+    min-width: 0;
+    color: var(--f-ink);
+    font-size: 1.0625rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+  .f-field-line__text > .f-help-tip,
+  .f-field-line__glue > .f-help-tip {
+    margin-inline-start: 0.375rem;
+    vertical-align: -0.125rem;
+  }
+  /* A última palabra do texto e o «?», sempre xuntos: se non caben, baixan os dous. */
+  .f-field-line__glue {
+    white-space: nowrap;
+  }
+  .f-field-line__control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--spacing-unit);
+    max-width: 100%;
+    margin-inline-start: auto;
+  }
+  /* Se baixa á liña seguinte, á esquerda (na mesma liña segue á dereita: o texto medra). */
+  .f-field-line[data-wrap='start'] .f-field-line__control {
+    justify-content: flex-start;
+    margin-inline-start: 0;
+  }
+  /* O menú dun chip de estado é unha lista de valores: a letra do valor e a escollida só co ✓. */
+  .f-menu[data-values] .f-menu__item {
+    font-size: 1.0625rem;
+    font-weight: 400;
+  }
+  .f-menu[data-values] .f-menu__item[aria-checked='true'] {
+    background: transparent;
+    font-weight: 400;
+  }
+
+  :where(html[data-contrast='more']) .f-field-group,
+  :where(html[data-contrast='more']) .f-bilingual::before,
+  :where(html[data-contrast='more']) .f-field::before {
+    border-width: var(--f-border-state);
+  }
+  @media (forced-colors: active) {
+    .f-field-group,
+    .f-bilingual::before,
+    .f-field::before {
+      border-color: CanvasText;
+    }
+    .f-bilingual:has(:focus-visible)::before,
+    .f-field:has(:focus-visible)::before {
+      border-color: Highlight;
+    }
+    .f-field:has(select, .f-select, .f-date-field, .f-time-picker)::after {
+      background: CanvasText;
+    }
+  }
+}

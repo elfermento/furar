@@ -1,0 +1,164 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.bookFor.';
+<div class="f-reserve">
+  <div class="f-reserve__title">
+    <a
+      furarButton="secondary"
+      round
+      [routerLink]="['/', slug(), 'xestion', 'reservas']"
+      [queryParams]="back()"
+      [attr.aria-label]="t + 'back' | transloco"
+      data-book-for-back
+    >
+      <furar-icon name="arrow-left" />
+    </a>
+    <h1>{{ (changing() ? t + 'changeTitle' : t + 'title') | transloco }}</h1>
+  </div>
+
+  @switch (state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="card" [rows]="4" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state mode="error" [heading]="t + 'loadError' | transloco">
+        <button type="button" furarButton (click)="load()">{{ t + 'retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @case ('ready') {
+      <!-- «Tipo de reserva»: só a xestión e nunha reserva nova; unha tempada é dunha entidade. -->
+      <ng-template #kindRow><furar-booking-kind [(kind)]="kind" [changing]="changing()" /></ng-template>
+      @if (kind() === 'season') {
+        <section class="f-card f-reserve__card" data-book-for-season [attr.aria-label]="t + 'kind.season' | transloco">
+          <ng-container *ngTemplateOutlet="kindRow" />
+          @defer {
+            <furar-new-season [slug]="slug()" />
+          } @placeholder {
+            <furar-status-state mode="skeleton" shape="card" [rows]="3" [description]="t + 'loading' | transloco" />
+          }
+        </section>
+      } @else if (!facilityOptions().length) {
+        <furar-status-state mode="empty" [heading]="t + 'noFacilities' | transloco" />
+      } @else {
+        <form
+          #bookForm
+          class="f-card f-reserve__card"
+          novalidate
+          furarFocusError
+          (submit)="$event.preventDefault(); submit(bookForm)"
+        >
+          <ng-container *ngTemplateOutlet="kindRow" />
+          <!-- A instalación, no mesmo grupo ca Que · Data · Hora (furar-reserve-fields). -->
+          <ng-template #facilityField>
+            <furar-field [fieldId]="ids + '-facility'" [label]="t + 'facility' | transloco" [required]="true">
+              <furar-select
+                data-book-for-facility
+                [selectId]="ids + '-facility'"
+                [label]="t + 'facility' | transloco"
+                [options]="facilityOptions()"
+                [value]="facilityId() ?? undefined"
+                [required]="true"
+                (changed)="pickFacility($event)"
+              />
+            </furar-field>
+          </ng-template>
+          @if (reserve.state() === 'ready') {
+            <furar-reserve-fields>
+              <ng-container *ngTemplateOutlet="facilityField" />
+            </furar-reserve-fields>
+          } @else {
+            <div class="f-field-group">
+              <ng-container *ngTemplateOutlet="facilityField" />
+            </div>
+          }
+
+          <div role="status" class="f-reserve__live" data-book-for-status>
+            @if (reserve.taken(); as taken) {
+              <furar-callout tone="warn" [heading]="'booking.reserve.taken.title' | transloco: { time: taken.time }">
+                @if (taken.alternatives.length) {
+                  <p>{{ 'booking.reserve.taken.choose' | transloco }}</p>
+                  <div class="f-reserve__alts">
+                    @for (time of taken.alternatives; track time) {
+                      <button type="button" class="f-reserve__alt" (click)="reserve.selectTime(time)">
+                        {{ time }}
+                      </button>
+                    }
+                  </div>
+                } @else {
+                  <p>{{ 'booking.reserve.taken.none' | transloco }}</p>
+                }
+              </furar-callout>
+            }
+          </div>
+          @if (reserve.facility(); as f) {
+            @if (!f.bookable) {
+              <furar-callout tone="info">{{ 'booking.reserve.notBookable' | transloco }}</furar-callout>
+            }
+          }
+
+          @if (reserve.state() === 'error') {
+            <furar-callout tone="danger">{{ t + 'loadError' | transloco }}</furar-callout>
+          }
+          @if (beforeText(); as before) {
+            <p class="f-reserve__hint" data-book-for-before>{{ before }}</p>
+          }
+
+          <furar-book-for-who
+            [form]="holder"
+            [ids]="ids"
+            [submitted]="submitted()"
+            [account]="account() ? store.original() : null"
+            [hint]="account() ? null : people.hint(currentEmail())"
+            [people]="people.people(currentEmail())"
+            [holderName]="holderName() || (store.original()?.holderName ?? '')"
+            [holderFixed]="!changing()"
+            (emailLeft)="lookupPeople()"
+          />
+
+          @if (priced()) {
+            <furar-field-line data-book-for-payment [label]="t + 'payment' | transloco">
+              <furar-chip-menu
+                [label]="t + 'payment' | transloco"
+                [options]="paymentOptions()"
+                [value]="paid() ? 'PAID' : 'PENDING'"
+                (selected)="paid.set($event === 'PAID')"
+              />
+            </furar-field-line>
+          }
+
+          @if (totalText(); as total) {
+            <div class="f-reserve__total">
+              <span>{{ 'booking.reserve.total' | transloco }}</span>
+              <b data-book-for-total>{{ total }}</b>
+            </div>
+          }
+
+          @if (canNotify()) {
+            <furar-switch
+              data-book-for-notify
+              [switchId]="ids + '-notify'"
+              [formControl]="notifyControl"
+              [label]="t + 'notify' | transloco: { name: notifyName() }"
+            />
+          }
+
+          @if (problem() ?? people.problem(); as p) {
+            <furar-callout tone="danger" live="alert" data-book-for-error>{{ p.translated }}</furar-callout>
+          }
+          <button
+            type="submit"
+            furarButton="primary"
+            class="f-reserve__go"
+            data-book-for-go
+            [disabled]="reserve.facility()?.bookable === false"
+            [busy]="submitting()"
+          >
+            {{ goText() }}
+          </button>
+        </form>
+      }
+    }
+  }
+</div>

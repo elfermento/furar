@@ -1,0 +1,23 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Apuntarse na ficha dun evento ou dunha actividade (ADR-0041): «Para quen» (furar-person-picker),
+ * a data de nacemento, «Engadir persoa» centrado debaixo da lista e o botón principal a todo o
+ * ancho; ao pé da tarxeta de datos ou dentro da banda «Non quedan prazas».
+ */
+@layer components {
+  .f-event-join {
+    display: grid;
+    gap: var(--spacing-unit);
+  }
+  .f-event-join > .f-public-card__title {
+    margin: 0;
+  }
+  .f-event-join > .f-event-join__add {
+    justify-self: center;
+  }
+  .f-event-join > .f-button[data-variant='primary'] {
+    width: 100%;
+  }
+}

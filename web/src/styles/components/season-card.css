@@ -1,0 +1,88 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Tempadas en edición (furar-facility-season-list): unha tarxeta por tempada con
+ * cabeceira tinguida (nome e papeleira) e corpo cos campos; igual no asistente e na ficha.
+ */
+@layer components {
+  .f-season-list {
+    display: grid;
+    gap: 1rem;
+  }
+  .f-season-card {
+    display: grid;
+    min-width: 0;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-raised);
+  }
+  .f-season-card__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    min-height: calc(var(--f-touch) + 1.25rem);
+    padding: 0.625rem 0.625rem 0.625rem 1.25rem;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    background: var(--f-tint);
+  }
+  .f-season-card__title {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+  }
+  .f-season-card__body {
+    display: grid;
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+  .f-season-card__copy {
+    max-width: 24rem;
+  }
+  .f-season-card__rule {
+    margin: 0;
+    border: 0;
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  @media (max-width: 40rem) {
+    .f-season-card__head {
+      padding-inline-start: 1rem;
+    }
+    .f-season-card__body {
+      padding: 1rem;
+    }
+  }
+
+  /* Semana día a día */
+  .f-season-week {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Un tramo do día (hora – hora e a papeleira): nunca máis ancho ca a fila; en 320 px as horas
+     estréitanse en vez de desbordar. */
+  [data-interval] {
+    flex-wrap: wrap;
+    max-width: 100%;
+    min-width: 0;
+  }
+  /* Se non cabe (texto moi grande), a papeleira baixa e queda á dereita. */
+  [data-interval] > furar-delete-button > .f-button {
+    margin-inline-start: auto;
+  }
+  [data-interval] > .f-time-picker {
+    flex: 0 1 7.5rem;
+    min-width: 5.5rem;
+  }
+  [data-interval] > .f-time-picker .f-time-picker__button {
+    width: 100%;
+  }
+}

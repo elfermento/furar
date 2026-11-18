@@ -1,0 +1,76 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * «Buscar xente para xogar» (ADR-0040): a páxina da partida (persoas e solicitudes) e
+ * o aviso do diálogo. As partidas das portadas e da ficha van co carrusel, a `furar-media-card` e as
+ * filas da ficha, sen nada propio. Folla `reservas.css`.
+ */
+@layer components {
+  /* Páxina da partida: as persoas que van, unha por fila, co chip «Organiza» á dereita. */
+  .f-match-people {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+  }
+  .f-match-people > li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.25rem 1rem;
+    padding: 0.75rem 1rem;
+    border-block-end: var(--f-border) solid var(--f-divider);
+    overflow-wrap: anywhere;
+  }
+  .f-match-people > li:last-child {
+    border-block-end: 0;
+  }
+  .f-match-count {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+
+  /* Solicitudes: unha tarxeta por solicitude; os dous botóns abaixo, á dereita e con aire. */
+  .f-match-requests {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-match-request {
+    display: grid;
+    gap: 0.25rem;
+    overflow-wrap: anywhere;
+  }
+  .f-match-request__acts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  /* Cada dato da tarxeta lateral (« · ») baixa enteiro, nunca parte por dentro. */
+  .f-match-part {
+    display: inline-block;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  /*
+   * Diálogo: «Xa somos · Mínimo · Máximo» nunha fila. Cada cela mide polo menos o seu rótulo
+   * enteiro (co «*» e o «?», nunca partido); se non caben as tres (360 px ou menos), 2 + 1.
+   */
+  .f-match-cells > * {
+    flex: 1 1 max-content;
+  }
+  .f-match-cells .f-field__head {
+    white-space: nowrap;
+  }
+}

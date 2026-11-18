@@ -1,0 +1,111 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.seasons.organization.';
+<furar-dialog [heading]="(current ? t + 'edit' : t + 'new') | transloco" [busy]="saving()">
+  <form class="gap-form grid" novalidate [id]="id" [formGroup]="form" (submit)="submit($event)">
+    <furar-field-group>
+      <furar-field [fieldId]="id + '-name'" [label]="t + 'name' | transloco" required [error]="error('name')">
+        <input
+          furarInput
+          formControlName="name"
+          autocomplete="off"
+          data-organization-name
+          [id]="id + '-name'"
+          [attr.aria-invalid]="error('name') ? 'true' : null"
+          [attr.aria-describedby]="described('name')"
+        />
+      </furar-field>
+      <furar-field [fieldId]="id + '-contact'" [label]="t + 'contact' | transloco" [error]="error('contactName')">
+        <input
+          furarInput
+          formControlName="contactName"
+          autocomplete="off"
+          data-organization-contact
+          [id]="id + '-contact'"
+          [attr.aria-invalid]="error('contactName') ? 'true' : null"
+          [attr.aria-describedby]="described('contactName', '-contact')"
+        />
+      </furar-field>
+      <div class="f-field-cells" [style.--f-cell]="'13rem'">
+        <furar-field [fieldId]="id + '-email'" [label]="t + 'email' | transloco" required [error]="error('email')">
+          <input
+            furarInput
+            type="email"
+            formControlName="email"
+            autocomplete="off"
+            data-organization-email
+            [id]="id + '-email'"
+            [attr.aria-invalid]="error('email') ? 'true' : null"
+            [attr.aria-describedby]="described('email')"
+          />
+        </furar-field>
+        <furar-field [fieldId]="id + '-phone'" [label]="t + 'phone' | transloco" [error]="error('phone')">
+          <input
+            furarInput
+            type="tel"
+            formControlName="phone"
+            autocomplete="off"
+            data-organization-phone
+            [id]="id + '-phone'"
+            [attr.aria-invalid]="error('phone') ? 'true' : null"
+            [attr.aria-describedby]="described('phone')"
+          />
+        </furar-field>
+      </div>
+      <furar-field
+        [fieldId]="id + '-managers'"
+        [label]="t + 'managers' | transloco"
+        [tip]="t + 'managersTip' | transloco"
+        [error]="managerError()"
+      >
+        <input
+          #managerInput
+          furarInput
+          type="email"
+          autocomplete="off"
+          data-organization-manager
+          [formControl]="manager"
+          [id]="id + '-managers'"
+          [placeholder]="t + 'managersPlaceholder' | transloco"
+          [attr.aria-invalid]="managerError() ? 'true' : null"
+          [attr.aria-describedby]="managerError() ? id + '-managers-error' : null"
+          (keydown.enter)="$event.preventDefault(); addManager()"
+          (blur)="addManager(true)"
+        />
+      </furar-field>
+    </furar-field-group>
+    <furar-chip-list
+      data-organization-managers
+      [items]="chips()"
+      [label]="t + 'managers' | transloco"
+      [status]="chipStatus()"
+      [fallbackFocus]="managerFocus"
+      [disabled]="saving()"
+      (removed)="removeManager($event)"
+    />
+    <furar-problem-alert [problem]="problem()" />
+  </form>
+
+  @if (current; as org) {
+    <!-- A acción destrutiva, á parte e debaixo de todo: fóra da fila de botóns (Cancelar · Gardar). -->
+    <div class="f-dialog-danger">
+      <furar-delete-button
+        data-organization-delete
+        [text]="t + 'delete' | transloco"
+        [label]="t + 'deleteLabel' | transloco: { name: org.name }"
+        (pressed)="remove(org)"
+      />
+    </div>
+  }
+
+  <ng-container dialogActions>
+    <button type="button" furarButton="quiet" data-organization-dismiss (click)="ref.close()">
+      {{ 'common.cancel' | transloco }}
+    </button>
+    <button type="submit" furarButton="primary" data-organization-save [attr.form]="id" [busy]="saving()">
+      {{ (saving() ? 'common.saving' : 'common.save') | transloco }}
+    </button>
+  </ng-container>
+</furar-dialog>

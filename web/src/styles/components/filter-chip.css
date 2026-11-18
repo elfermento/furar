@@ -1,0 +1,105 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Chip de filtro ([furarFilterChip], docs/deseno.md P1-9, excepción do 2026-10-26). É un botón
+ * con `aria-pressed`, non unha etiqueta, e é a ÚNICA peza que pode levar o fondo pálido do ton
+ * coa letra no ton (tag-color.spec.ts só o admite neste selector e comproba o 4,5:1).
+ * - Neutro: superficie, bordo `line` e letra na tinta; marcado, bordo máis groso en `primary` e
+ *   letra `primary-text` (sen recheo, nunca negro nin ✓).
+ * - Con ton: sen marcar, fondo do 9 % do ton (`--f-chip-mix`, derivado), bordo do 28 % e letra no
+ *   ton; marcado, recheo do ton cun degradado lixeiro cara a escuro (a letra branca só gaña
+ *   contraste), letra branca e sombra suave.
+ * 16 px e 40 px de alto mínimo.
+ */
+@layer components {
+  .f-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-height: 2.5rem;
+    padding: 0 1rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-ink);
+    font: inherit;
+    font-size: var(--text-body);
+    line-height: 1.25;
+    text-align: center;
+    cursor: pointer;
+    transition:
+      background-color var(--f-dur-fast) var(--ease-smooth),
+      border-color var(--f-dur-fast) var(--ease-smooth),
+      box-shadow var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-filter-chip:not([data-tone])[aria-pressed='true'] {
+    border-color: var(--f-primary);
+    box-shadow: inset 0 0 0 1.5px var(--f-primary);
+    color: var(--f-primary-text);
+  }
+
+  .f-filter-chip[data-tone='success'] {
+    --f-chip-tone: var(--f-success);
+    --f-chip-fill: var(--f-success-fill);
+    --f-chip-on: var(--f-on-success);
+  }
+  .f-filter-chip[data-tone='warn'] {
+    --f-chip-tone: var(--f-warn);
+    --f-chip-fill: var(--f-warn-fill);
+    --f-chip-on: var(--f-on-warn);
+  }
+  .f-filter-chip[data-tone='danger'] {
+    --f-chip-tone: var(--f-danger);
+    --f-chip-fill: var(--f-danger-fill);
+    --f-chip-on: var(--f-on-danger);
+  }
+  .f-filter-chip[data-tone='info'] {
+    --f-chip-tone: var(--f-info);
+    --f-chip-fill: var(--f-info-fill);
+    --f-chip-on: var(--f-on-info);
+  }
+  .f-filter-chip[data-tone='muted'] {
+    --f-chip-tone: var(--f-muted);
+    --f-chip-fill: var(--f-muted-fill);
+    --f-chip-on: var(--f-on-muted);
+  }
+  .f-filter-chip[data-tone] {
+    border-color: color-mix(in srgb, var(--f-chip-tone) 28%, var(--f-surface));
+    background: color-mix(in srgb, var(--f-chip-tone) var(--f-chip-mix), var(--f-surface));
+    color: var(--f-chip-tone);
+    font-weight: 700;
+  }
+  .f-filter-chip[data-tone][aria-pressed='true'] {
+    border-color: var(--f-chip-fill);
+    background: linear-gradient(var(--f-chip-fill), color-mix(in srgb, var(--f-chip-fill) 85%, #000000));
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--f-chip-fill) 35%, transparent);
+    color: var(--f-chip-on);
+  }
+  .f-filter-chip[data-tone][aria-pressed='true']:focus-visible {
+    outline-offset: 2px;
+  }
+
+  /* Ao pasar só cambia o bordo: o fondo non se move, así o contraste é o comprobado. */
+  @media (hover: hover) {
+    .f-filter-chip:not([data-tone]):hover {
+      border-color: var(--f-primary);
+    }
+    .f-filter-chip[data-tone]:not([aria-pressed='true']):hover {
+      border-color: var(--f-chip-tone);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .f-filter-chip {
+      border-color: ButtonText;
+    }
+    .f-filter-chip[aria-pressed='true'] {
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+      forced-color-adjust: none;
+    }
+  }
+}

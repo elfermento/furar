@@ -1,0 +1,748 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+ * SPDX-License-Identifier: EUPL-1.2
+ *
+ * Estilo de Furar sobre keycloak.v2 (PatternFly 5): o da web e o das pantallas de acceso
+ * (tipografía, cores, tarxeta, campos e botóns). As cores son os tokens da web
+ * (web/src/styles/tokens.css), con contraste AA (4,5:1 texto, 3:1 bordos e controis).
+ * A letra é a da web (Inter 4.1, OFL-1.1, resources/fonts: os mesmos woff2 ca o paquete npm
+ * `inter-ui` da web), co cero con barra e o ollo ao 0,5 do tamaño, coma na web (base.css).
+ */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../fonts/Inter-Regular-subset.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(../fonts/Inter-Bold-subset.woff2) format('woff2');
+}
+
+:root {
+  --f-page: #f5f8fa;
+  --f-surface: #ffffff;
+  --f-tint: #e7eff4;
+  --f-ink: #1a1a1a;
+  --f-ink-soft: #5a5a5a;
+  --f-divider: #dadada;
+  --f-line: #818181;
+  --f-primary: #0b5c8e;
+  --f-primary-hover: #094e79;
+  --f-on-primary: #ffffff;
+  --f-danger: #c6362c;
+  --f-success: #2a7b3e;
+  --f-shadow-color: rgb(0 0 0 / 0.12);
+  --f-font: 'Inter', system-ui, sans-serif;
+  --f-radius-control: 0.75rem;
+  --f-radius-card: 1.25rem;
+  --f-touch: 2.75rem;
+  /* Da web (web/src/styles/tokens.css), para as pezas que se copian dela (selector segmentado). */
+  --f-warn: #9d5c0e;
+  --f-border: 1px;
+  --radius-pill: 999px;
+  --shadow-raised: 0 1px 2px var(--f-shadow-color);
+  --f-dur-fast: 160ms;
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --pf-v5-global--FontFamily--text: var(--f-font);
+  --pf-v5-global--FontFamily--heading: var(--f-font);
+  --pf-v5-global--FontFamily--redhat-updated--sans-serif: var(--f-font);
+  --pf-v5-global--FontFamily--redhat-updated--heading--sans-serif: var(--f-font);
+  --pf-v5-global--FontFamily--sans-serif: var(--f-font);
+  --pf-v5-global--FontFamily--heading--sans-serif: var(--f-font);
+  --pf-v5-global--primary-color--100: var(--f-primary);
+  --pf-v5-global--primary-color--200: var(--f-primary-hover);
+  --pf-v5-global--link--Color: var(--f-primary);
+  --pf-v5-global--link--Color--hover: var(--f-primary-hover);
+  --pf-v5-global--Color--100: var(--f-ink);
+  --pf-v5-global--Color--200: var(--f-ink-soft);
+  --pf-v5-global--BackgroundColor--100: var(--f-surface);
+  --pf-v5-global--danger-color--100: var(--f-danger);
+}
+
+/*
+ * Escuro (template.ftl pon data-theme="dark" antes de pintar só se a web gardou o esquema escuro dun
+ * concello): deriveTokens(tema escuro de referencia) da web (core/theme/theme-tokens.ts; o dos tests
+ * e do catálogo: fondo #0d1117 case negro, texto #f0f6fc case branco, primary #4493f8), cos mesmos
+ * contrastes comprobados. A sombra é negra e máis forte: sobre fondo escuro a clara non se ve.
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --f-page: #0d1117;
+  --f-surface: #171b20;
+  --f-tint: #1a222d;
+  --f-ink: #f0f6fc;
+  --f-ink-soft: #999ea4;
+  --f-divider: #3a3e43;
+  --f-line: #8e9399;
+  --f-primary: #4493f8;
+  --f-primary-hover: #60a3f9;
+  --f-on-primary: #0a0a0a;
+  --f-danger: #e3857d;
+  --f-success: #3db65c;
+  --f-shadow-color: rgb(0 0 0 / 0.4);
+  --f-warn: #eb8915;
+}
+
+html.login-pf,
+.login-pf body,
+body#keycloak-bg {
+  background: var(--f-page) !important;
+  color: var(--f-ink);
+  font-family: var(--f-font);
+  font-feature-settings: 'zero' 1, 'ss02' 1;
+  font-size-adjust: 0.5;
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+
+/*
+ * Columna centrada: marca enriba e tarxeta. A 320 px, 1 rem de marxe e sen scroll horizontal. 32 rem
+ * de ancho: o título máis longo («Verificación del correo electrónico», ~390 px) cabe nunha liña.
+ */
+.pf-v5-c-login {
+  display: block;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+.pf-v5-c-login__container {
+  display: block !important;
+  width: 100%;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 0 !important;
+}
+.pf-v5-c-login__header {
+  padding: 0 0 1.25rem !important;
+  margin: 0 !important;
+}
+
+/* Marca: o cadrado e o nome do despregue co servizo (template.ftl). */
+#kc-header-wrapper.furar-brand {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.1;
+  color: var(--f-ink) !important;
+}
+.furar-brand__mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  background: var(--f-primary);
+  color: var(--f-on-primary);
+}
+.furar-brand__mark svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: currentColor;
+}
+.furar-brand__text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  min-width: 0;
+}
+.furar-brand__name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.furar-brand__service {
+  color: var(--f-ink-soft);
+  font-size: 0.875rem;
+}
+
+/* Tarxeta: as marxes interiores, en variables (a cabeceira achégase á esquina con elas). */
+.pf-v5-c-login__main {
+  --f-card-pad-y: 1.5rem;
+  --f-card-pad-x: 1.25rem;
+  margin: 0 !important;
+  padding: var(--f-card-pad-y) var(--f-card-pad-x) !important;
+  background: var(--f-surface) !important;
+  border: 1px solid var(--f-divider);
+  border-radius: var(--f-radius-card);
+  box-shadow: 0 1px 2px var(--f-shadow-color), 0 8px 24px rgb(0 0 0 / 0.06);
+}
+@media (min-width: 30rem) {
+  .pf-v5-c-login__main {
+    --f-card-pad-y: 2rem;
+    --f-card-pad-x: 2rem;
+  }
+}
+/*
+ * Cabeceira da tarxeta en dúas filas: arriba, «Cambiar de método» á esquerda (se o hai) e o
+ * selector de idioma á dereita, os dous subidos cara á esquina ata a metade da marxe da tarxeta
+ * (máis aire co título); debaixo, o título, ao centro e con todo o ancho. A colocación vai
+ * explícita: PatternFly pon o selector nunha segunda columna e o título quedaba na mesma liña e
+ * partido.
+ */
+.pf-v5-c-login__main-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  justify-items: center;
+  gap: 0.75rem;
+  padding: 0 0 1.25rem !important;
+  border-top: 0 !important;
+}
+.pf-v5-c-login__main-header .pf-v5-c-title,
+#kc-page-title {
+  grid-row: 2 !important;
+  grid-column: 1 / -1 !important;
+  justify-self: stretch;
+  margin: 0;
+  font-family: var(--f-font);
+  font-size: 1.5rem !important;
+  line-height: 1.25 !important;
+  font-weight: 700 !important;
+  text-align: center;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.pf-v5-c-login__main-header-utilities {
+  grid-row: 1 !important;
+  grid-column: 2 !important;
+  justify-self: end;
+  /* Sen max-width: co marxe negativo, un 100 % facía saír o selector uns px da tarxeta. */
+  max-width: none;
+  margin: calc(var(--f-card-pad-y) / -2) calc(var(--f-card-pad-x) / -2) 0 0 !important;
+}
+.pf-v5-c-login__main-header-utilities .pf-v5-c-form-control {
+  display: inline-flex;
+  width: auto;
+}
+.pf-v5-c-login__main-header-utilities select {
+  flex: none;
+  width: auto;
+}
+.furar-header-action {
+  grid-row: 1;
+  grid-column: 1;
+  justify-self: start;
+  align-self: center;
+  min-width: 0;
+  margin: calc(var(--f-card-pad-y) / -2) 0 0 calc(var(--f-card-pad-x) / -2);
+}
+.furar-header-action form {
+  margin: 0;
+}
+/* «Cambiar de método»: botón de ligazón discreto, subliñado coma as ligazóns, e diana táctil. */
+.furar-back.pf-v5-c-button {
+  min-height: var(--f-touch);
+  padding-inline: 0;
+  font-size: 0.9375rem;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: normal;
+}
+.furar-back.pf-v5-c-button:focus-visible {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+.pf-v5-c-login__main-body,
+.pf-v5-c-login__main-footer {
+  padding: 0 !important;
+}
+.pf-v5-c-login__main-footer-band {
+  margin: 1.25rem 0 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  text-align: center;
+  background: none !important;
+}
+
+/* Formularios. */
+.pf-v5-c-form {
+  --pf-v5-c-form--GridGap: 1.25rem;
+  font-family: var(--f-font);
+}
+.pf-v5-c-form__label,
+.pf-v5-c-form__label-text {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--f-ink);
+}
+.pf-v5-c-form__label-required {
+  color: var(--f-danger);
+}
+.pf-v5-c-helper-text__item-text {
+  font-size: 0.875rem;
+  color: var(--f-ink-soft);
+}
+.pf-v5-c-helper-text__item-text.pf-m-error,
+.pf-m-error .pf-v5-c-helper-text__item-text {
+  color: var(--f-danger);
+  font-weight: 700;
+}
+/*
+ * Axuda entre o rótulo e o campo (docs/deseno.md P1-3, desde o 2026-11-04): a do contrasinal
+ * («Polo menos 10 caracteres e un número.») chega dentro da macro base, despois do campo; aquí sóbese á vista,
+ * xusto baixo o rótulo. O erro segue debaixo do campo.
+ */
+.pf-v5-c-form__group:has([id^='furar-password-help-']) > * {
+  order: 3;
+}
+.pf-v5-c-form__group:has([id^='furar-password-help-']) > :first-child {
+  order: 1;
+}
+.pf-v5-c-form__group:has([id^='furar-password-help-']) > :has([id^='furar-password-help-']) {
+  order: 2;
+}
+.pf-v5-c-form-control {
+  --pf-v5-c-form-control--BorderRadius: var(--f-radius-control);
+  min-height: var(--f-touch);
+  border-radius: var(--f-radius-control);
+  background: var(--f-surface);
+  font-family: var(--f-font);
+  font-size: 1rem;
+}
+.pf-v5-c-form-control::before {
+  border: 1px solid var(--f-line) !important;
+  border-radius: var(--f-radius-control) !important;
+}
+.pf-v5-c-form-control::after {
+  border: 0 !important;
+}
+.pf-v5-c-form-control:focus-within::before {
+  border: 2px solid var(--f-primary) !important;
+}
+/* O foco, no campo enteiro e coas súas esquinas (o input non pinta o seu). */
+.pf-v5-c-form-control:has(> input:focus-visible),
+.pf-v5-c-form-control:has(> select:focus-visible) {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+.pf-v5-c-form-control > input:focus-visible,
+.pf-v5-c-form-control > select:focus-visible {
+  outline: none;
+}
+.pf-v5-c-form-control.pf-m-error::before {
+  border: 2px solid var(--f-danger) !important;
+}
+.pf-v5-c-form-control.pf-m-readonly {
+  background: var(--f-tint);
+}
+.pf-v5-c-form-control > input,
+.pf-v5-c-form-control > select {
+  min-height: var(--f-touch);
+  padding-inline: 0.875rem;
+  font: inherit;
+  color: var(--f-ink);
+}
+/* Selector de idioma: sitio para a frecha e o fondo do campo (en escuro, PatternFly pon un gris). */
+.pf-v5-c-form-control > select {
+  padding-inline-end: 2.25rem;
+  background-color: transparent;
+}
+/* Contrasinal co botón de ver: un só campo co bordo e o foco por fóra; o botón vai dentro. */
+.pf-v5-c-input-group {
+  min-width: 0;
+  border: 1px solid var(--f-line);
+  border-radius: var(--f-radius-control);
+  background: var(--f-surface);
+}
+.pf-v5-c-input-group:focus-within {
+  border: 2px solid var(--f-primary);
+  margin: -1px;
+}
+.pf-v5-c-input-group:has(input:focus-visible) {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+.pf-v5-c-input-group:has(.pf-m-error) {
+  border: 2px solid var(--f-danger);
+  margin: -1px;
+}
+.pf-v5-c-input-group .pf-v5-c-form-control,
+.pf-v5-c-input-group .pf-v5-c-form-control:has(> input:focus-visible) {
+  outline: none;
+  background: transparent;
+}
+.pf-v5-c-input-group .pf-v5-c-form-control::before,
+.pf-v5-c-input-group .pf-v5-c-form-control:focus-within::before,
+.pf-v5-c-input-group .pf-v5-c-form-control.pf-m-error::before,
+.pf-v5-c-input-group .pf-v5-c-button.pf-m-control::after {
+  border: 0 !important;
+}
+.pf-v5-c-input-group .pf-v5-c-button.pf-m-control {
+  min-width: var(--f-touch);
+  min-height: var(--f-touch);
+  border-radius: 0 var(--f-radius-control) var(--f-radius-control) 0;
+  background: transparent;
+  --pf-v5-c-button--m-control--BackgroundColor: transparent;
+  --pf-v5-c-button--m-control--Color: var(--f-ink-soft);
+}
+.pf-v5-c-input-group .pf-v5-c-button.pf-m-control:focus-visible {
+  outline-offset: -3px;
+}
+
+/* Botóns en pílula, coma na web (shared/ui/button). */
+.pf-v5-c-button {
+  --pf-v5-c-button--BorderRadius: 999px;
+  --pf-v5-c-button--FontWeight: 700;
+  font-family: var(--f-font);
+}
+.pf-v5-c-button.pf-m-primary,
+.pf-v5-c-button.pf-m-secondary,
+.pf-v5-c-button.pf-m-tertiary {
+  min-height: var(--f-touch);
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding-inline: 1.25rem;
+}
+.pf-v5-c-button.pf-m-primary {
+  --pf-v5-c-button--m-primary--BackgroundColor: var(--f-primary);
+  --pf-v5-c-button--m-primary--hover--BackgroundColor: var(--f-primary-hover);
+  --pf-v5-c-button--m-primary--focus--BackgroundColor: var(--f-primary-hover);
+  --pf-v5-c-button--m-primary--active--BackgroundColor: var(--f-primary-hover);
+  --pf-v5-c-button--m-primary--Color: var(--f-on-primary);
+  --pf-v5-c-button--m-primary--hover--Color: var(--f-on-primary);
+}
+.pf-v5-c-button.pf-m-secondary,
+.pf-v5-c-button.pf-m-tertiary {
+  --pf-v5-c-button--m-secondary--BackgroundColor: var(--f-surface);
+  --pf-v5-c-button--m-secondary--Color: var(--f-primary);
+  --pf-v5-c-button--m-secondary--hover--Color: var(--f-primary-hover);
+  --pf-v5-c-button--m-secondary--after--BorderColor: var(--f-primary);
+  --pf-v5-c-button--m-secondary--hover--after--BorderColor: var(--f-primary-hover);
+  --pf-v5-c-button--m-tertiary--BackgroundColor: var(--f-surface);
+  --pf-v5-c-button--m-tertiary--Color: var(--f-primary);
+  --pf-v5-c-button--m-tertiary--hover--Color: var(--f-primary-hover);
+  --pf-v5-c-button--m-tertiary--after--BorderColor: var(--f-primary);
+  --pf-v5-c-button--m-tertiary--hover--after--BorderColor: var(--f-primary-hover);
+}
+.pf-v5-c-button.pf-m-primary::after,
+.pf-v5-c-button.pf-m-secondary::after,
+.pf-v5-c-button.pf-m-tertiary::after {
+  border-radius: 999px;
+}
+#kc-social-providers .pf-v5-c-button.pf-m-tertiary {
+  /* A 320 px o nome do provedor coa icona non cabe nunha liña: parte, sen scroll (WCAG 1.4.10). */
+  white-space: normal;
+  --pf-v5-c-button--m-tertiary--after--BorderColor: var(--f-primary);
+  --pf-v5-c-button--m-tertiary--hover--after--BorderColor: var(--f-primary-hover);
+}
+/*
+ * Icona do provedor xenérico (Cl@ve simulada): o SVG da base trae o recheo negro fixo e en escuro
+ * desaparece. Pintámola coa cor do texto do botón (o primary, ≥ 3:1 sobre a superficie) cunha
+ * máscara do mesmo SVG; o padding deixa a imaxe orixinal sen sitio.
+ */
+#kc-social-providers img[src$='/social/default.svg'] {
+  box-sizing: border-box;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding-inline-start: 1.25rem;
+  background: currentColor;
+  -webkit-mask: url(../img/social/default.svg) center / contain no-repeat;
+  mask: url(../img/social/default.svg) center / contain no-repeat;
+}
+input.pf-v5-c-button[type='submit'] {
+  width: 100%;
+}
+
+.pf-v5-c-alert {
+  border-radius: var(--f-radius-control);
+}
+
+/* Ligazóns: subliñadas dentro do texto (WCAG 1.4.1; axe link-in-text-block). */
+a {
+  color: var(--f-primary);
+}
+a:hover {
+  color: var(--f-primary-hover);
+}
+#kc-registration a,
+#kc-form-options a,
+#kc-info a,
+.furar-privacy-notice a,
+.furar-switch a,
+.pf-v5-c-login__main-body p a,
+.kc-login-tooltip a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* «Xa tes conta? Entrar» (rexistro) e «Aínda non tes conta? Rexistrarse» (acceso), ao centro. */
+.furar-switch,
+#kc-registration {
+  margin: 0;
+  text-align: center;
+  font-size: 0.9375rem;
+}
+
+/* «Verificación do correo»: a pregunta e, debaixo, o botón «Reenviar o correo», ao centro. */
+.furar-verify-resend {
+  text-align: center;
+}
+.furar-verify-resend p {
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+}
+.furar-verify-resend .pf-v5-c-button:focus-visible {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+
+/* Ligazón curta caducada: a liña ao centro e os dous botóns a todo o ancho, un debaixo do outro. */
+.furar-link-expired {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.furar-link-expired .instruction {
+  margin: 0 0 0.5rem;
+  text-align: center;
+}
+.furar-link-expired .pf-v5-c-button {
+  text-align: center;
+  text-decoration: none;
+  white-space: normal;
+}
+.furar-link-expired .pf-v5-c-button:focus-visible {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+
+/* Escolla do segundo factor (ADR-0029): dúas opcións, a aplicación primeiro co rótulo «Recomendado». */
+.furar-choice {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.furar-choice__legend {
+  margin: 0 0 0.75rem;
+  padding: 0;
+  font-weight: 700;
+  color: var(--f-ink);
+}
+.furar-choice__option {
+  padding: 0.75rem 0;
+}
+.furar-choice__option + .furar-choice__option {
+  border-top: 1px solid var(--f-divider);
+}
+.furar-choice__badge {
+  display: inline-block;
+  margin-inline-start: 0.375rem;
+  padding: 0.0625rem 0.5rem;
+  border-radius: 999px;
+  background: var(--f-primary);
+  color: var(--f-on-primary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+/* Protección de datos no rexistro: unha frase (RGPD art. 13, ADR-0017). */
+.furar-privacy-notice {
+  font-size: 0.875rem;
+  color: var(--f-ink-soft);
+}
+.furar-privacy-notice p {
+  margin: 0;
+}
+/* A idade mínima, unha frase aparte debaixo (ADR-0017, revisión do 2026-11-09). */
+p.furar-privacy-notice {
+  margin: 0.5rem 0 0;
+}
+
+/*
+ * Pista de «Volver empezar» (o botón xunto ao usuario xa escrito). Na base abre á dereita do
+ * botón e, aínda escondida, ensancha a páxina: a 320 px había scroll horizontal (WCAG 1.4.10;
+ * atopouno o e2e do persoal). Abre enriba, aliñada co botón, e vese tamén co foco do
+ * teclado, non só co rato (1.4.13).
+ */
+.kc-login-tooltip .kc-tooltip-text {
+  top: auto;
+  bottom: calc(100% + 6px);
+  left: auto;
+  right: 0;
+}
+.kc-login-tooltip .kc-tooltip-text::after {
+  display: none;
+}
+.kc-login-tooltip:focus-visible .kc-tooltip-text {
+  visibility: visible;
+  opacity: 0.9;
+}
+
+/* Só para lectores de pantalla. */
+.furar-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*
+ * Selector segmentado (copiado de web/src/styles/components/segmented.css, cos tokens do tema):
+ * grupo de botóns con aria-pressed; a pista no tinte e a opción activa en cápsula clara con bordo
+ * --f-line (o estado non depende só da sombra).
+ */
+.f-segmented {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-self: start;
+  align-self: start;
+  width: fit-content;
+  max-width: 100%;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: var(--f-border) solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--f-tint);
+}
+.f-segmented > button {
+  flex: 1 1 auto;
+  position: relative;
+  z-index: 1;
+  min-width: var(--f-touch);
+  min-height: 2.25rem;
+  padding: 0.25rem 1rem;
+  border: var(--f-border) solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--f-ink-soft);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    color var(--f-dur-fast) var(--ease-smooth),
+    background-color var(--f-dur-fast) var(--ease-smooth),
+    box-shadow var(--f-dur-fast) var(--ease-smooth);
+}
+/* A área de toque segue sendo de 44 px aínda que a pastilla vista sexa menor. */
+.f-segmented > button::after {
+  content: '';
+  position: absolute;
+  inset: -0.25rem 0;
+}
+.f-segmented > button[aria-pressed='true'] {
+  border-color: var(--f-line);
+  background: var(--f-surface);
+  box-shadow: var(--shadow-raised);
+  color: var(--f-ink);
+}
+.f-segmented > button:focus-visible {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+@media (hover: hover) {
+  .f-segmented > button[aria-pressed='false']:hover {
+    border-color: var(--f-divider);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .f-segmented > button {
+    transition: none;
+  }
+}
+
+/*
+ * Alta da aplicación de autenticación: «Que móbil tes?» e o selector a todo o ancho;
+ * ao escoller, a nota, os pasos (o QR ao centro no paso 2), o campo, «Enviar» e o aviso de non
+ * recargar. Sen JS (sen data-js), sen selector e cos textos dos dous móbiles, cada un co seu nome.
+ */
+.furar-totp__question {
+  margin: 0 0 0.75rem;
+  font-weight: 700;
+  /* Centrada, coma o título e o QR. */
+  text-align: center;
+}
+.f-segmented.furar-wide {
+  width: 100%;
+}
+.f-segmented.furar-wide > button {
+  flex: 1 1 0;
+}
+.furar-totp[data-js] .furar-totp__after {
+  margin-top: 1.25rem;
+}
+.furar-totp:not([data-js]) .furar-totp__choice,
+.furar-totp[data-js]:not([data-phone]):not([data-open]) .furar-totp__after,
+.furar-totp[data-js][data-phone] .furar-totp__name,
+.furar-totp[data-phone='ios'] [data-for='android'],
+.furar-totp[data-phone='android'] [data-for='ios'] {
+  display: none;
+}
+.furar-totp__note {
+  margin: 0 0 0.75rem;
+  color: var(--f-ink-soft);
+}
+.furar-totp .pf-v5-c-list {
+  margin-bottom: 1.25rem;
+}
+/* O QR ao centro da tarxeta (anula a sangría da lista) e «Non podes escanear o código?» debaixo. */
+.furar-totp__qr {
+  display: grid;
+  justify-items: center;
+  margin: 0.75rem 0 0 -1.5rem;
+  text-align: center;
+}
+.furar-totp__qr .pf-v5-c-login__main-footer-helper-text,
+.furar-totp__qr > div {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+}
+.furar-totp__sub {
+  margin-top: 0.25rem;
+  color: var(--f-ink-soft);
+  font-size: 0.875rem;
+}
+/* Aviso discreto baixo «Enviar»: unha liña pequena co triángulo. */
+.furar-totp__reload {
+  margin: 1rem 0 0;
+  color: var(--f-ink-soft);
+  font-size: 0.875rem;
+  text-align: center;
+}
+.furar-totp__reload svg {
+  display: inline-block;
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-inline-end: 0.25rem;
+  vertical-align: -0.2em;
+  fill: var(--f-warn);
+}
+/*
+ * Eliminar a conta (ADR-0043, furar-delete-account.ftl): «Eliminar a conta» coma o botón de
+ * borrar da web, contorno e texto en vermello (o significado vai no texto), primeiro e a todo o
+ * ancho; «Cancelar» debaixo. A frase «non se pode desfacer», en negra.
+ */
+.pf-v5-c-button.pf-m-secondary.furar-button-danger {
+  --pf-v5-c-button--m-secondary--Color: var(--f-danger);
+  --pf-v5-c-button--m-secondary--hover--Color: var(--f-danger);
+  --pf-v5-c-button--m-secondary--after--BorderColor: var(--f-danger);
+  --pf-v5-c-button--m-secondary--hover--after--BorderColor: var(--f-danger);
+}
+.furar-delete-account p {
+  margin: 0 0 1rem;
+}
+.furar-delete-account__final {
+  font-weight: 700;
+}

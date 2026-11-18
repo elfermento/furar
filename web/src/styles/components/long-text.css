@@ -1,0 +1,29 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Editor dun texto longo (`[furarLongText]`, só no móbil): folla alta, o GL/ES arriba á dereita e
+ * a área de texto enchendo o corpo, para ler e editar o texto enteiro.
+ */
+@layer components {
+  .f-long-text {
+    height: min(32rem, calc(100dvh - 2 * var(--spacing-gutter)));
+  }
+  .f-dialog-pane--sheet .f-long-text {
+    height: 85dvh;
+  }
+  .f-long-text .f-dialog__body {
+    display: flex;
+    flex-direction: column;
+  }
+  .f-long-text__lang {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--spacing-unit);
+  }
+  .f-long-text__input {
+    flex: 1 1 auto;
+    min-height: 10rem;
+    resize: none;
+  }
+}

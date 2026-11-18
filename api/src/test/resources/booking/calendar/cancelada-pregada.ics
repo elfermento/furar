@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Furar//Reservas//ES
+CALSCALE:GREGORIAN
+METHOD:CANCEL
+BEGIN:VEVENT
+UID:019a0b6e-0000-7000-8000-0000000000c1
+DTSTAMP:20261020T080000Z
+SEQUENCE:1
+DTSTART:20261110T170000Z
+DTEND:20261110T183000Z
+SUMMARY:Fútbol 7 (Metade norte\, a carón da rúa) · Campo de fútbol de 
+ herba artificial de Piñeiros\; vestiarios\, bancadas e iluminación
+LOCATION:Campo de fútbol de herba artificial de Piñeiros\; vestiarios\, b
+ ancadas e iluminación
+DESCRIPTION:Código de la reserva: FUR-AB23
+STATUS:CANCELLED
+END:VEVENT
+END:VCALENDAR

@@ -1,0 +1,44 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Pregable (furar-disclosure): o título como botón a todo o ancho, na cor principal, coa frecha á
+ * dereita que vira ao abrir; separados por unha liña.
+ */
+@layer components {
+  .f-disclosure {
+    display: block;
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  .f-disclosure__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-unit);
+    width: 100%;
+    min-height: var(--f-touch);
+    padding: 0.5rem 0;
+    border: 0;
+    background: none;
+    color: var(--f-primary-text);
+    font: inherit;
+    font-weight: 700;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-disclosure__chevron {
+    flex: none;
+    transition: rotate 150ms ease;
+  }
+  .f-disclosure[data-open] .f-disclosure__chevron {
+    rotate: 180deg;
+  }
+  .f-disclosure__panel {
+    padding-bottom: var(--spacing-item);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .f-disclosure__chevron {
+      transition: none;
+    }
+  }
+}

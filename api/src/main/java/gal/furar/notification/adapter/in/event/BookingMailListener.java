@@ -1,0 +1,110 @@
+// SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+// SPDX-License-Identifier: EUPL-1.2
+package gal.furar.notification.adapter.in.event;
+
+import gal.furar.booking.BookingCancelled;
+import gal.furar.booking.BookingChanged;
+import gal.furar.booking.BookingConfirmed;
+import gal.furar.booking.BookingNoShow;
+import gal.furar.booking.BookingReminderDue;
+import gal.furar.notification.application.port.in.BookingMailCommand;
+import gal.furar.notification.application.port.in.NoShowFacts;
+import gal.furar.notification.application.port.in.SendBookingMail;
+import gal.furar.notification.domain.MailKind;
+import java.util.concurrent.Semaphore;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
+
+/**
+ * Escoita as reservas despois do commit, nun fío propio e no concello do evento (ADR-0025, punto
+ * 15; ADR-0006): confirmada, cambiada, cancelada pola persoa e, se o concello escolleu avisar por
+ * correo, cancelada polo concello. Un SMTP caído nunca desfai a reserva; o rexistro de publicacións
+ * garda o evento ata que o correo sae (ou se esgotan os intentos).
+ */
+@Component
+class BookingMailListener {
+
+  /** Só hai un correo de alta e un de cancelación por reserva. */
+  static final String ONCE = "once";
+
+  /** Correos que se envían á vez. */
+  static final int PARALLEL = 2;
+
+  private final Semaphore slots = new Semaphore(PARALLEL, true);
+  private final SendBookingMail mails;
+
+  BookingMailListener(SendBookingMail mails) {
+    this.mails = mails;
+  }
+
+  private void send(BookingMailCommand command) {
+    slots.acquireUninterruptibly();
+    try {
+      mails.send(command);
+    } finally {
+      slots.release();
+    }
+  }
+
+  @Async
+  @TransactionalEventListener
+  void on(BookingConfirmed event) {
+    send(new BookingMailCommand(event.bookingId(), MailKind.CONFIRMED, ONCE, null, null));
+  }
+
+  @Async
+  @TransactionalEventListener
+  void on(BookingChanged event) {
+    if (event.silent()) {
+      return;
+    }
+    send(
+        new BookingMailCommand(
+            event.bookingId(),
+            MailKind.CHANGED,
+            "v" + event.version(),
+            event.previousStart(),
+            event.previousEnd()));
+  }
+
+  /** Unha falta (ADR-0032, punto 10): un correo por cada unha, coa súa fila da historia. */
+  @Async
+  @TransactionalEventListener
+  void on(BookingNoShow event) {
+    send(
+        new BookingMailCommand(
+            event.bookingId(),
+            MailKind.NO_SHOW,
+            event.eventId().toString(),
+            null,
+            null,
+            new NoShowFacts(
+                event.faults(),
+                event.threshold(),
+                event.windowDays(),
+                event.blockDays(),
+                event.blockedUntil())));
+  }
+
+  /** O recordatorio (ADR-0035): un por reserva. */
+  @Async
+  @TransactionalEventListener
+  void on(BookingReminderDue event) {
+    send(new BookingMailCommand(event.bookingId(), MailKind.REMINDER, ONCE, null, null));
+  }
+
+  @Async
+  @TransactionalEventListener
+  void on(BookingCancelled event) {
+    MailKind kind;
+    if (event.by() == BookingCancelled.By.PERSON) {
+      kind = MailKind.CANCELLED_BY_PERSON;
+    } else if (event.channels().contains(BookingCancelled.Channel.EMAIL)) {
+      kind = MailKind.CANCELLED_BY_MUNICIPALITY;
+    } else {
+      return;
+    }
+    send(new BookingMailCommand(event.bookingId(), kind, ONCE, null, null));
+  }
+}

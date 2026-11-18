@@ -1,0 +1,415 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * «Rexistro de actividade»: busca, táboa densa nunha card cos
+ * filtros nas cabeceiras (`furar-column-filter`) e o detalle nunha capa. Por debaixo de 40rem os
+ * filtros son pílulas e cada fila, unha tarxeta de dúas liñas, sen scroll horizontal a 320 px. Folla `xestion.css`: a ruta leva `managementStylesResolver`.
+ */
+@layer components {
+  .f-activity {
+    display: grid;
+    gap: var(--spacing-group);
+  }
+  .f-activity > .f-page-header {
+    margin-bottom: 0;
+  }
+  /* «Os eventos de hai máis de 1 ano non se mostran»: discreta, debaixo da táboa e separada dela. */
+  .f-activity__blocked {
+    margin: var(--spacing-item) 0 0;
+  }
+  .f-activity__messages:not(:has(furar-callout)) {
+    margin-block-start: -0.75rem;
+  }
+  .f-activity__messages furar-callout {
+    display: block;
+  }
+
+  /* Busca, pílulas do móbil e chips dos filtros postos. */
+  .f-activity__stack {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .f-activity__chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .f-activity__period {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+    padding-top: 0.75rem;
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  .f-activity__period-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  .f-activity__period-hint {
+    margin: 0;
+    color: var(--f-danger);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+
+  /* Táboa densa: unha liña por fila, unha cousa por columna. */
+  /* Se as columnas ensanchadas non caben, a táboa despraza dentro da card. */
+  .f-activity__card.f-card {
+    padding: 0;
+    overflow-x: auto;
+  }
+  .f-activity__card[aria-busy] tbody {
+    opacity: 0.6;
+  }
+  .f-activity__table-host {
+    display: block;
+  }
+  .f-activity__table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+  /* Varios roles (táboa e detalle): un pouco de aire entre os chips. */
+  .f-activity__roles furar-tag + furar-tag {
+    margin-inline-start: 0.25rem;
+  }
+  .f-activity__table th,
+  .f-activity__table td {
+    overflow: hidden;
+    padding: 0.5rem;
+    border-block-end: var(--f-border) solid var(--f-divider);
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  .f-activity__table th:first-child,
+  .f-activity__table td:first-child {
+    padding-inline-start: var(--spacing-item);
+  }
+  .f-activity__table th:last-child,
+  .f-activity__table td:last-child {
+    padding-inline-end: var(--spacing-item);
+  }
+  .f-activity__table tbody tr:last-child > * {
+    border-block-end: 0;
+  }
+  .f-activity__table thead th {
+    overflow: visible;
+    padding-block: 0.75rem 0.625rem;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-activity__table tbody th {
+    font-weight: 400;
+  }
+  .f-activity__row {
+    cursor: pointer;
+  }
+  @media (hover: hover) {
+    .f-activity__row:hover > * {
+      background: var(--f-page);
+    }
+  }
+  .f-activity__row [data-cell='date'] {
+    font-variant-numeric: tabular-nums;
+  }
+  .f-activity__open {
+    display: block;
+    max-inline-size: 100%;
+    overflow: hidden;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .f-activity__open:focus-visible {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+  .f-activity__row[data-outcome='FAILURE'] .f-activity__summary {
+    font-weight: 700;
+  }
+  .f-activity__count,
+  .f-activity__soft {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-activity__row furar-tag {
+    font-size: 0.8125rem;
+  }
+  .f-activity__more {
+    display: flex;
+    justify-content: center;
+  }
+
+  /*
+   * Detalle (capa): os datos en tres columnas entre dúas liñas (Persoa e Rol; Data e
+   * Hora; Onde e Resultado; a Petición a todo o ancho) e os cambios nunha lista compacta con bordo en
+   * columnas aliñadas: campo, antes, frecha e despois. Aire debaixo: a capa non ten pé.
+   */
+  .f-activity-detail {
+    display: grid;
+    gap: 1.75rem;
+    padding-bottom: var(--spacing-card);
+  }
+  .f-activity-detail__meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto auto;
+    grid-auto-flow: column;
+    gap: 1.25rem 1.5rem;
+    margin: 0;
+    padding-block: 1.25rem;
+    border-block: var(--f-border) solid var(--f-divider);
+  }
+  .f-activity-detail__meta > div {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 0.25rem;
+    min-inline-size: 0;
+  }
+  .f-activity-detail__meta dt {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-activity-detail__meta dd {
+    display: grid;
+    justify-items: start;
+    gap: 0.125rem;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  .f-activity-detail__meta .f-activity-detail__wide {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+  .f-activity-detail__time {
+    font-variant-numeric: tabular-nums;
+  }
+  .f-activity-detail__mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: var(--text-support);
+    font-size-adjust: none;
+  }
+  .f-activity-detail__changes h3 {
+    margin: 0 0 0.5rem;
+    font-size: var(--text-body);
+    line-height: 1.25;
+  }
+  .f-activity-detail__list {
+    margin: 0;
+    padding: 0;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-card);
+    background: var(--f-surface);
+    list-style: none;
+  }
+  .f-activity-detail__change {
+    position: relative;
+    display: grid;
+    grid-template-columns: 8.5rem 9.5rem 1.25rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.125rem 0.75rem;
+    padding: 0.375rem 1rem;
+    line-height: 1.4;
+  }
+  .f-activity-detail__change + .f-activity-detail__change::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 1rem;
+    border-block-start: var(--f-border) solid var(--f-divider);
+  }
+  .f-activity-detail__field {
+    color: var(--f-ink-soft);
+    overflow-wrap: anywhere;
+  }
+  .f-activity-detail__field--wide {
+    grid-column: 1 / -1;
+  }
+  .f-activity-detail__change del {
+    color: var(--f-ink-soft);
+    text-decoration-color: color-mix(in srgb, var(--f-ink-soft) 55%, transparent);
+    overflow-wrap: anywhere;
+  }
+  .f-activity-detail__empty,
+  .f-activity-detail__arrow {
+    color: var(--f-ink-soft);
+  }
+  .f-activity-detail__arrow {
+    display: inline-flex;
+  }
+  .f-activity-detail__change ins {
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .f-activity-detail__changed {
+    grid-column: 2 / -1;
+    color: var(--f-ink-soft);
+    font-style: italic;
+  }
+  .f-activity-detail__acts {
+    display: grid;
+    gap: 1rem;
+  }
+  .f-activity-detail__act-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 0 0 0.375rem;
+  }
+  .f-activity-detail__act-time {
+    flex: none;
+    inline-size: 3rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .f-activity-detail__act-summary {
+    flex: 1;
+    min-inline-size: 0;
+    font-weight: 700;
+  }
+  .f-activity-detail__act .f-activity-detail__list {
+    margin-inline-start: 3.75rem;
+  }
+  .f-activity-detail__none {
+    margin: 0;
+    color: var(--f-ink-soft);
+  }
+
+  /*
+   * Móbil: os filtros son pílulas (as cabeceiras ocúltanse só á vista) e cada fila é unha tarxeta de
+   * dúas liñas: o resumo co resultado e, debaixo, data · persoa · onde. Sen scroll horizontal a
+   * 320 px.
+   */
+  @media (max-width: 40rem) {
+    .f-activity__table.f-column-resize-table {
+      min-inline-size: 0;
+    }
+    .f-activity__table thead {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .f-activity__table,
+    .f-activity__table tbody {
+      display: block;
+    }
+    /* A persoa (un correo longo) non pasa do que deixan a data e uns 4 rem para «Onde»: a 320 px
+       comía todo o ancho e o sitio quedaba nun punto. */
+    .f-activity__table tbody tr {
+      display: grid;
+      grid-template-columns: auto fit-content(calc(100% - 10rem)) auto minmax(0, 1fr);
+      grid-template-areas:
+        'action action action outcome'
+        'date person place place';
+      align-items: center;
+      gap: 0.125rem 0.375rem;
+      padding: 0.625rem var(--spacing-item);
+      border-block-end: var(--f-border) solid var(--f-divider);
+    }
+    .f-activity__table tbody tr:last-child {
+      border-block-end: 0;
+    }
+    .f-activity__table tbody th,
+    .f-activity__table tbody td,
+    .f-activity__table tbody th:first-child,
+    .f-activity__table tbody td:first-child,
+    .f-activity__table tbody td:last-child {
+      padding: 0;
+      border: 0;
+    }
+    /* O resumo, nunha liña e cortado con «…» antes do chip; sen «· N cambios» (vese no detalle). O
+       sitio, igual: nunca pisa nada. */
+    .f-activity__table [data-cell='action'] {
+      grid-area: action;
+      min-inline-size: 0;
+      overflow: hidden;
+    }
+    .f-activity__table [data-cell='action'] .f-activity__open {
+      inline-size: 100%;
+    }
+    .f-activity__table .f-activity__count {
+      display: none;
+    }
+    .f-activity__table [data-cell='person'],
+    .f-activity__table [data-cell='place'] {
+      min-inline-size: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .f-activity__table [data-cell='outcome'] {
+      grid-area: outcome;
+      justify-self: end;
+    }
+    .f-activity__table [data-cell='date'] {
+      grid-area: date;
+    }
+    .f-activity__table [data-cell='person'] {
+      grid-area: person;
+    }
+    .f-activity__table [data-cell='place'] {
+      grid-area: place;
+    }
+    .f-activity__table [data-cell='role'] {
+      display: none;
+    }
+    .f-activity__table [data-cell='date'],
+    .f-activity__table [data-cell='person'],
+    .f-activity__table [data-cell='place'] {
+      color: var(--f-ink-soft);
+      font-size: var(--text-support);
+    }
+    .f-activity__table [data-cell='person']::before,
+    .f-activity__table [data-cell='place']::before {
+      content: '· ';
+    }
+    /* Detalle en folla: datos en dúas columnas e o campo enriba de «antes → despois». */
+    .f-activity-detail__meta {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: none;
+      grid-auto-flow: row;
+    }
+    .f-activity-detail__meta .f-activity-detail__wide {
+      grid-row: auto;
+    }
+    .f-activity-detail__change {
+      grid-template-columns: minmax(0, auto) 1.25rem minmax(0, 1fr);
+    }
+    .f-activity-detail__field {
+      grid-column: 1 / -1;
+      font-size: var(--text-support);
+    }
+    .f-activity-detail__change[data-hidden] .f-activity-detail__field {
+      grid-column: 1;
+      font-size: var(--text-body);
+    }
+    .f-activity-detail__act-head {
+      flex-wrap: wrap;
+    }
+    .f-activity-detail__act-head .f-activity-detail__mono {
+      flex-basis: 100%;
+      padding-inline-start: 3.75rem;
+    }
+    .f-activity-detail__act .f-activity-detail__list {
+      margin-inline-start: 0;
+    }
+  }
+}

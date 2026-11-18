@@ -1,0 +1,179 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'event.public.';
+<div class="f-public">
+  <a [routerLink]="['/', slug()]" furarButton round [attr.aria-label]="t + 'back' | transloco">
+    <furar-icon name="arrow-left" />
+  </a>
+
+  @switch (state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="card" [rows]="2" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [headingLevel]="1"
+        [heading]="(notFound() ? t + 'notFound.title' : t + 'loadError.title') | transloco"
+        [description]="(notFound() ? t + 'notFound.text' : t + 'loadError.text') | transloco"
+      >
+        @if (!notFound()) {
+          <button type="button" furarButton (click)="retry()">{{ t + 'loadError.retry' | transloco }}</button>
+        }
+      </furar-status-state>
+    }
+    @case ('ready') {
+      @if (event(); as e) {
+        <div class="f-public__title">
+          <h1>{{ name() }}</h1>
+        </div>
+        <div class="f-public__cols">
+          <div class="f-public__main">
+            <img class="f-public__image" [src]="e.cover.large" [alt]="alt(e)" />
+            @if (description(); as text) {
+              <section class="f-public__section" aria-labelledby="event-description">
+                <h2 id="event-description">{{ t + 'description' | transloco }}</h2>
+                <p class="whitespace-pre-line text-ink-soft">{{ text }}</p>
+              </section>
+            }
+          </div>
+          <aside class="f-public__side" [attr.aria-label]="t + 'card' | transloco">
+            @for (item of registrations(); track bandKey(item)) {
+              <furar-registration-band
+                [item]="item"
+                [busy]="busyBand() === bandKey(item)"
+                (leave)="leave(item)"
+                (confirm)="confirm(item)"
+              />
+            }
+            @if (action() === 'wait') {
+              <furar-status-band
+                tone="info"
+                icon="info"
+                data-band="full"
+                [heading]="(e.free ? 'event.band.listFirst' : 'event.band.full') | transloco"
+              >
+                <furar-event-join
+                  ngProjectAs="[bandActions]"
+                  mode="wait"
+                  [event]="e"
+                  [registrations]="registrations()"
+                  (changed)="reload()"
+                />
+                <furar-disclosure bandMore data-band-how [heading]="'event.band.howListTitle' | transloco">
+                  <p>{{ 'event.band.howList' | transloco }}</p>
+                </furar-disclosure>
+              </furar-status-band>
+            }
+            <section class="f-public-card" data-event-card>
+              <div class="f-public-card__item">
+                <furar-icon name="calendar-month" [size]="24" />
+                <div>
+                  <h2 class="f-public-card__title">{{ t + 'when' | transloco }}</h2>
+                  @for (line of when(); track $index) {
+                    <p
+                      class="text-ink-soft"
+                      [attr.data-event-when]="$first ? '' : null"
+                      [attr.data-event-dates]="$first ? null : ''"
+                    >
+                      {{ line }}
+                    </p>
+                  }
+                </div>
+              </div>
+              <div class="f-public-card__item">
+                <furar-icon name="location" [size]="24" />
+                <div class="min-w-0">
+                  <h2 class="f-public-card__title">{{ t + 'where' | transloco }}</h2>
+                  @if (e.facility; as f) {
+                    <a
+                      class="f-public-card__link"
+                      data-event-facility
+                      [routerLink]="['/', slug(), 'instalacions', f.id]"
+                      >{{ f.name }}</a
+                    >
+                    @if (e.partName) {
+                      <p class="text-ink-soft" data-event-part>{{ e.partName }}</p>
+                    }
+                    @if (f.address) {
+                      <p class="text-ink-soft">{{ f.address }}</p>
+                    }
+                  } @else {
+                    <p class="text-ink-soft">{{ e.place }}</p>
+                  }
+                </div>
+              </div>
+              @if (age(); as limit) {
+                <div class="f-public-card__item">
+                  <furar-icon name="group" [size]="24" />
+                  <div>
+                    <h2 class="f-public-card__title">{{ t + 'age.title' | transloco }}</h2>
+                    <p class="text-ink-soft" data-event-age>{{ limit }}</p>
+                  </div>
+                </div>
+              }
+              <div class="f-public-card__item">
+                <furar-icon name="user" [size]="24" />
+                <div>
+                  <h2 class="f-public-card__title">{{ t + 'seats' | transloco }}</h2>
+                  <p data-event-seats>
+                    @if (!e.capacity) {
+                      <span class="text-ink-soft">{{ t + 'noLimit' | transloco }}</span>
+                    } @else if (!e.free) {
+                      <furar-seats-chip [free]="0" />
+                    } @else if (e.waitlist) {
+                      <b>{{ (e.free === 1 ? t + 'freeSingle' : t + 'freeOf') | transloco: { count: e.free } }}</b
+                      ><span class="text-ink-soft">{{ t + 'forList' | transloco }}</span>
+                    } @else {
+                      <b>{{ (e.free === 1 ? t + 'freeSingle' : t + 'freeOf') | transloco: { count: e.free } }}</b>
+                      <span class="text-ink-soft"> {{ t + 'ofTotal' | transloco: { total: e.capacity } }}</span>
+                    }
+                  </p>
+                </div>
+              </div>
+              <div class="f-public-card__item">
+                <furar-icon name="payments" [size]="24" />
+                <div>
+                  <h2 class="f-public-card__title">{{ t + 'price' | transloco }}</h2>
+                  @if (price(); as amount) {
+                    <p data-event-price>
+                      <b>{{ amount }}</b>
+                    </p>
+                    <p class="text-ink-soft">{{ t + 'payAtDesk' | transloco }}</p>
+                  } @else {
+                    <p class="text-ink-soft" data-event-price>{{ t + 'freeOfCharge' | transloco }}</p>
+                  }
+                </div>
+              </div>
+              @if (deadline(); as until) {
+                <div class="f-public-card__item">
+                  <furar-icon name="schedule" [size]="24" />
+                  <div>
+                    <h2 class="f-public-card__title">{{ t + 'deadline' | transloco }}</h2>
+                    <p class="text-ink-soft" data-event-deadline>{{ until }}</p>
+                  </div>
+                </div>
+              }
+
+              <div class="f-event-action" [attr.data-event-action]="action()">
+                @switch (action()) {
+                  @case ('join') {
+                    <furar-event-join mode="join" [event]="e" [registrations]="registrations()" (changed)="reload()" />
+                  }
+                  @case ('ask') {
+                    <furar-event-join mode="ask" [event]="e" [registrations]="registrations()" (changed)="reload()" />
+                  }
+                  @case ('closed') {
+                    <p class="text-ink-soft" data-event-closed>{{ t + 'closed' | transloco }}</p>
+                  }
+                }
+              </div>
+            </section>
+          </aside>
+        </div>
+      }
+    }
+  }
+</div>

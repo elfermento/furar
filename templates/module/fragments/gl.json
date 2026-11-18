@@ -1,0 +1,21 @@
+{
+  "titles": { "@name@": "@Names@", "@name@New": "Novo rexistro", "@name@Edit": "Editar rexistro" },
+  "@name@": {
+    "title": "@Names@",
+    "listLabel": "Lista",
+    "new": "Engadir",
+    "newTitle": "Novo rexistro",
+    "editTitle": "Editar rexistro",
+    "name": "Nome",
+    "saved": "«{{name}}» gardado",
+    "reload": "Cargar os datos actuais (pérdense os teus cambios)",
+    "customFields": "Datos adicionais", // @cf
+    "empty": "Aínda non hai ningún rexistro."
+  },
+  "errors": {
+    "@module@": {
+      "not-found": "Non existe neste concello.",
+      "name-invalid": "O nome é obrigatorio e ten como máximo {{max}} caracteres."
+    }
+  }
+}

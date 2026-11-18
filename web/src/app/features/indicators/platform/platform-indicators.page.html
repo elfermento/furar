@@ -1,0 +1,112 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'platformIndicators.';
+<div class="f-indicators f-pindicators" [attr.aria-busy]="store.state() === 'loading' || null">
+  <header class="f-pindicators__head">
+    <h1 class="f-indicators__title">{{ t + 'title' | transloco }}</h1>
+    <p class="f-pindicators__intro">{{ t + 'intro' | transloco }}</p>
+  </header>
+  <p class="f-print-header">{{ printHeader() }}</p>
+  <div class="f-pindicators__filters">
+    <furar-filter-bar [label]="'indicators.filters.label' | transloco">
+      <furar-filter-field [label]="'indicators.filters.period' | transloco">
+        <furar-period-filter
+          [value]="filters()"
+          [today]="today"
+          [month]="month()"
+          [maxDays]="maxDays"
+          [label]="'indicators.filters.period' | transloco"
+          (changed)="setPeriod($event)"
+        />
+      </furar-filter-field>
+      <furar-export-menu
+        class="f-filter-bar__end"
+        size="md"
+        [pdfHint]="'indicators.filters.pdfHint' | transloco"
+        [csvHint]="t + 'csvHint' | transloco"
+        [pdf]="printPanel"
+        [csv]="exportCsv"
+      />
+    </furar-filter-bar>
+  </div>
+  <p class="sr-only" role="status" data-platform-indicators-status>{{ announcement() }}</p>
+  <furar-problem-alert [problem]="store.problem()" />
+  @if (store.data()) {
+    <furar-indicator-kpis [kpis]="kpis()" (open)="openKpi($event)" />
+    <section class="f-card f-pindicators__card" aria-labelledby="f-pindicators-caption" data-platform-municipalities>
+      <h2 id="f-pindicators-caption" class="sr-only">{{ t + 'caption' | transloco }}</h2>
+      @if (rows().length) {
+        <div class="f-pindicators__pills">
+          <furar-column-filter
+            #mobileSort
+            variant="chip"
+            data-platform-sort
+            [label]="t + 'sort.label' | transloco"
+            [options]="mobileOptions()"
+            [selected]="mobileSelected()"
+            [marked]="false"
+            (toggled)="sortMobile($event); mobileSort.close()"
+          />
+        </div>
+        <table class="f-pindicators__table" data-platform-table>
+          <caption class="sr-only">
+            {{
+              t + 'caption' | transloco
+            }}
+          </caption>
+          <thead>
+            <tr>
+              @for (header of headers(); track header.id) {
+                <th
+                  scope="col"
+                  [class.f-pindicators__num]="header.numeric"
+                  [attr.aria-sort]="header.active ? (sort().direction === 'asc' ? 'ascending' : 'descending') : null"
+                  [attr.data-column]="header.id"
+                >
+                  <furar-column-filter
+                    #columnSort
+                    [label]="header.label"
+                    [options]="header.options"
+                    [selected]="header.selected"
+                    [marked]="header.active"
+                    (toggled)="sortBy(header.id, $event); columnSort.close()"
+                  />
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rows(); track row.slug) {
+              <tr [attr.data-municipality]="row.slug">
+                <th scope="row">{{ row.name }}</th>
+                <td class="f-pindicators__num">{{ row.bookings }}</td>
+                <td class="f-pindicators__num">{{ row.occupancy }}</td>
+                <td class="f-pindicators__num">{{ row.reservedHours }}</td>
+                <td class="f-pindicators__num">{{ row.people }}</td>
+                <td class="f-pindicators__num">{{ row.paidCents }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <ul class="f-pindicators__cards" role="list" data-platform-cards>
+          @for (row of rows(); track row.slug) {
+            <li class="f-pindicators__item" [attr.data-municipality]="row.slug">
+              <p class="f-pindicators__line">
+                <span class="f-pindicators__name">{{ row.name }}</span
+                >{{ ' ' }}
+                <span class="f-pindicators__paid">{{ row.paidCents }}</span>
+              </p>
+              <p class="f-pindicators__summary">{{ row.summary }}</p>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="f-pindicators__empty" data-platform-empty>{{ t + 'empty' | transloco }}</p>
+      }
+    </section>
+  } @else if (store.state() !== 'error') {
+    <furar-status-state mode="skeleton" shape="card" [rows]="5" />
+  }
+</div>

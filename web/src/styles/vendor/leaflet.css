@@ -1,0 +1,10 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Folla estrutural de Leaflet 1.9.4 (BSD-2-Clause), á parte da folla global: angular.json
+ * empaquétaa como `leaflet.css` con `inject: false` e furar-map crea o seu `<link>` ao abrir o
+ * primeiro mapa (ADR-0023). Vai na capa `base` para que o aspecto de Furar
+ * (`styles/components/map.css`, capa `components`) gañe sempre sen `!important`.
+ */
+@import 'leaflet/dist/leaflet.css' layer(base);

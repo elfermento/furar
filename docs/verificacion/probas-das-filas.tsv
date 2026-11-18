@@ -1,0 +1,54 @@
+D01	d890d9928106	base
+D02	3b684a43defb	base
+D03	7cc525fe98ca	base
+D04	f18a239a1851	base
+D05	5cb5b320f9cf	base
+D06	bdfce6e473bd	base
+D07	94beca7229ae	base
+D08	b74a339d7b33	base
+D10	5342de7c2385	base
+D11	815f141f76d5	D28:m
+D12	a3c031f074fc	ArchitectureRulesSelfTest.everyRuleHasAFixture
+D13	4f01d46beb26	base
+D14	4f999d2f0626	D28:i,j,u,w; NativeSqlRowLevelSecurityIT.policyThatOnlyChecksNotNullIsRejected
+D15	2e6e2d513de6	base
+D16	4a6a84236a30	D28:x; ProblemDetailsIT.missingFieldFailsWithAnAssertionNamingIt
+D17	620338d2d151	base
+D18	1b4c6f734040	CustomFieldsDatabaseIT.aValueGoesOnlyInTheColumnOfItsType; CustomFieldsMigrationIT.aValueWithoutDefinitionStopsTheMigration
+D19	68a3fe14890d	OccupancyModelIT.withoutTheFacilityLockTheBaseStillNeverDoubleBooks; OccupancyModelIT.btreeGistSupportsUuidNotEqualInTheOneUseExclusion; OccupancyModelIT.samePersonNeverHoldsTwoSeats
+D20	8426768a82be	base
+D21	ff566a9e4797	base
+D22	c2ae5b73af46	base
+D23	ff346e59cf00	sen cambio de comando nin de resultado: só se quitaron do texto códigos de revisión (2026-11-16)
+D24	2b539e162b0a	base
+D25	e066686e908f	base
+D26	8058ad82bf72	D28:g,y
+D27	91a761dfe7db	base
+D28	00f8ede501e3	D28:v,w,x,y,z
+D29	482a9a9084b6	base
+D30	c970259a0699	base
+D31	008a2ac12970	sen cambio de comando nin de resultado: só se quitaron do texto códigos de revisión (2026-11-16)
+D32	9ddef68e1733	base
+D33	048de2e4b62a	base
+D34	172225652238	D28:p
+D35	1d13e5c48e40	base
+D36	07d7ea738333	sen cambio de comando nin de resultado: só se quitaron do texto códigos de revisión (2026-11-16)
+D37	8ba82afcd987	sen cambio de comando nin de resultado: só se quitaron do texto códigos de revisión (2026-11-16)
+D38	491700f9e611	base
+D39	b477975e05f7	base
+D40	cd4a1bd1f025	base
+D41	ebe689e147a8	sen cambio de comando nin de resultado: só se quitaron do texto códigos de revisión (2026-11-16)
+D42	a5beeb1cf8ad	base
+D43	7fa7c5b52b6c	sen cambio de comando nin de resultado: só se quitaron do texto códigos de revisión (2026-11-16)
+D44	83145312995e	base
+D45	0ca7216eeadf	base
+D46a	c48192f50e3c	base
+D46	13867bd3d11b	base
+D47	98bd1a4d4610	base
+D48	5386fa7ad138	MunicipalityPortabilityIT.onlyTheManagerExportsAndOnlyThePlatformImports; CrossTenantAuthorizationIT.platformDoesNotSeeResidentsData; PlatformFirstAdminIT.theVerifiedAccountOfFurarAdminEmailBecomesTheFirstAdministratorOnce; StaffAccessIT.aPasswordOnlySessionGivesTheRoleAndRecordsTheSignIn; JwtCurrentActorTest.theTableRoleCountsInTheMunicipalityOfTheRequest; StaffAccessIT.anActiveMembershipGivesItsRoleAndADeactivationCountsOnTheNextRequest; SecondFactorEndpointIT.staffAndPlatformAdministratorsNeedTheSecondFactorAndResidentsDoNot; SecondFactorEndpointIT.withoutTheDerivedKeyItAnswersNothing
+D49	791c5926c2e2	sen cambio de comando nin de resultado: só se quitaron do texto códigos de revisión (2026-11-16)
+D50	b4962a1fa061	MunicipalityPortabilityIT.aSavedFileFromVersionOneIsImported; MunicipalityPortabilityIT.facilitiesTravelWithEverythingButPhotoBytes
+D51	400e9384b954	PrivacyNoticeIT.anyoneReadsTheDeploymentPrivacyNotice; MunicipalityLegalDetailsIT.withoutPageIsSavedAndTheMailHasNoPrivacyLink; StaffInvitationMailComposerTest.theMunicipalityOwnPrivacyPageIsTheLink
+D52	27e9cf290352	sen cambio de comando nin de resultado: só se quitaron do texto códigos de revisión (2026-11-16)
+D53	294c0ce5cdab	D28:z
+D54	eb204ab63366	sen cambio de comando nin de resultado: só se quitaron do texto códigos de revisión (2026-11-16)

@@ -1,0 +1,126 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<furar-problem-alert [problem]="saver.problem()" />
+@if (saver.problem()?.code === 'common.stale-version') {
+  <p class="mb-group">
+    <button type="button" furarButton (click)="reload()">{{ 'settings.reload' | transloco }}</button>
+  </p>
+}
+@if (tab.form(); as f) {
+  @let legal = f.controls.legal;
+  <form #formElement [formGroup]="f" novalidate (ngSubmit)="save()">
+    <furar-form-errors-summary [count]="saver.submitted() ? saver.errorCount() : 0" />
+    <div role="status" class="f-legal__warn">
+      @if (missingText(); as text) {
+        <furar-callout tone="warn" class="mb-group" data-legal-missing>
+          <p>{{ text }}</p>
+        </furar-callout>
+      }
+    </div>
+
+    <furar-card class="mb-group" data-legal-required [heading]="'settings.legal.required.title' | transloco">
+      <div class="gap-form grid">
+        <furar-legal-fields [form]="legal" [rows]="entityRows" [submitted]="saver.submitted()" />
+      </div>
+    </furar-card>
+
+    @let page = current();
+    @let mode = fields[page].mode;
+    @let url = fields[page].url;
+    <section class="f-card mb-group" data-legal [attr.aria-label]="'settings.legal.pages' | transloco">
+      <furar-tab-nav size="sm" [label]="'settings.legal.pages' | transloco">
+        @for (key of pages; track key) {
+          <a
+            furarTabLink
+            [routerLink]="pageLink(key)"
+            routerLinkActive
+            ariaCurrentWhenActive="page"
+            [attr.data-legal-tab]="key"
+          >
+            {{ 'settings.legal.tab.' + key | transloco }}
+            @if (errorPages().includes(key)) {
+              <span class="f-tabs__error" aria-hidden="true"></span>
+              <span class="sr-only">{{ 'ui.tabs.withErrors' | transloco }}</span>
+            }
+          </a>
+        }
+      </furar-tab-nav>
+      <div class="f-legal__panel" [attr.data-legal-panel]="page">
+        <div class="f-legal__mode gap-form grid">
+          @let modeId = 'settings-legal-' + page + '-mode';
+          <furar-field [fieldId]="modeId" [label]="'settings.legal.modeLabel.' + page | transloco">
+            <furar-select
+              data-legal-mode
+              [selectId]="modeId"
+              [label]="'settings.legal.modeLabel.' + page | transloco"
+              [options]="modeOptions()"
+              [formControl]="legal.controls[mode]"
+            />
+          </furar-field>
+          @switch (legal.controls[mode].value) {
+            @case ('TEXT') {
+              <furar-legal-text-editor
+                [page]="page"
+                [form]="f.controls.texts.controls[page]"
+                [submitted]="saver.submitted()"
+                (preview)="actions.preview(page, $event)"
+                (restore)="resetText(page)"
+              />
+            }
+            @case ('URL') {
+              @let id = 'settings-legal-' + url;
+              @let error = fieldError(legal.controls[url], saver.submitted());
+              <furar-field
+                [fieldId]="id"
+                [label]="'settings.legal.url' | transloco"
+                [tip]="'settings.legal.urlHelp' | transloco"
+                [error]="error"
+              >
+                <input
+                  furarInput
+                  type="url"
+                  autocomplete="off"
+                  spellcheck="false"
+                  [id]="id"
+                  [formControl]="legal.controls[url]"
+                  [attr.placeholder]="placeholder"
+                  [attr.aria-label]="
+                    ('settings.legal.url' | transloco) + ' ' + ('settings.legal.of.' + page | transloco)
+                  "
+                  [attr.aria-invalid]="error ? 'true' : null"
+                  [attr.aria-describedby]="describedBy(id, true, error)"
+                />
+              </furar-field>
+            }
+            @case ('NONE') {
+              <furar-callout tone="warn" data-legal-none>
+                <p>{{ 'settings.legal.none.' + page | transloco }}</p>
+              </furar-callout>
+            }
+            @default {
+              <furar-legal-fields [form]="legal" [rows]="rows[page]" [submitted]="saver.submitted()" />
+              <p>
+                <button type="button" furarButton size="sm" data-legal-view (click)="actions.preview(page)">
+                  <furar-icon name="visibility" />
+                  {{ 'settings.legal.view' | transloco
+                  }}<span class="sr-only"> {{ 'settings.legal.of.' + page | transloco }}</span>
+                </button>
+              </p>
+            }
+          }
+        </div>
+      </div>
+    </section>
+
+    <div class="f-save-actions">
+      <p class="f-save-status" role="status" data-save-status>{{ status() }}</p>
+      <button type="submit" furarButton="primary" block [busy]="saver.saving()">
+        {{ (saver.saving() ? 'common.saving' : 'common.save') | transloco }}
+      </button>
+    </div>
+  </form>
+} @else if (!saver.problem()) {
+  <furar-status-state mode="loading" />
+}

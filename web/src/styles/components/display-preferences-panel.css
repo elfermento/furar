@@ -1,0 +1,80 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Panel de accesibilidade (furar-display-preferences): capa debaixo do botón no
+ * escritorio e, no móbil, folla co ancho da barra superior debaixo dela (a barra é a referencia:
+ * site.css). Coma un menú: superficie, bordo divisor e sombra de capa. Nunca sae da pantalla:
+ * con texto «Moi grande» despraza o seu contido.
+ */
+@layer components {
+  .f-display-prefs__panel {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    right: 0;
+    z-index: var(--f-z-popover);
+    width: 20rem;
+    max-width: calc(100vw - 2 * var(--spacing-gutter));
+    max-height: calc(100dvh - var(--f-topbar-h, 4.5rem) - 2rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--spacing-item);
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+    color: var(--f-ink);
+  }
+  .f-display-prefs__form {
+    display: grid;
+    gap: var(--spacing-unit);
+  }
+  .f-display-prefs__intro {
+    margin: 0 0 var(--spacing-unit);
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-display-prefs__row {
+    display: grid;
+    gap: var(--spacing-unit);
+  }
+  .f-display-prefs__name,
+  .f-display-prefs__switch .f-switch__label {
+    font-weight: 700;
+  }
+  /* As tres opcións enchen o ancho e reparten o sitio; con texto grande, baixan de liña. */
+  .f-display-prefs__sizes.f-segmented {
+    width: 100%;
+  }
+  .f-display-prefs__sizes.f-segmented > button {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding-inline: 0.5rem;
+  }
+  /* No panel (un menú, non un formulario) a fila vai co rótulo de «Tamaño do texto», sen sangrado. */
+  .f-display-prefs__form > .f-display-prefs__switch.f-switch[data-pref] {
+    width: 100%;
+    min-height: var(--f-touch);
+    padding: 0;
+  }
+  .f-display-prefs__switch .f-switch__label {
+    font-size: inherit;
+  }
+
+  /* Móbil: folla co ancho da barra, xusto debaixo dela. */
+  @media (max-width: 639px) {
+    .f-display-prefs__panel {
+      top: calc(100% + 0.5rem);
+      right: 0;
+      left: 0;
+      width: auto;
+      max-width: none;
+      border-radius: var(--radius-card);
+    }
+  }
+  @media (forced-colors: active) {
+    .f-display-prefs__panel {
+      border-color: CanvasText;
+    }
+  }
+}

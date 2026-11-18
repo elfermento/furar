@@ -1,0 +1,158 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'incident.list.';
+<div class="f-incidents">
+  <furar-page-header class="f-page-header--inline-actions" [heading]="t + 'title' | transloco" [quiet]="underTabs()" />
+
+  <!-- Busca e «+» na mesma liña; no móbil, os filtros das columnas van en «Filtros» (folla). -->
+  <div class="f-list-toolbar">
+    <furar-search-bar
+      [filters]="columnFilters"
+      [filterCount]="filterCount()"
+      [doneLabel]="t + 'show' | transloco: { count: rows().length }"
+    >
+      <input
+        type="search"
+        data-incident-search
+        [attr.aria-label]="t + 'search' | transloco"
+        [placeholder]="t + 'search' | transloco"
+        [value]="query()"
+        (input)="query.set(typed($event))"
+      />
+    </furar-search-bar>
+    <div class="f-list-toolbar__end">
+      <button
+        type="button"
+        furarButton="primary"
+        class="max-sm:size-(--f-control-h) max-sm:px-0"
+        data-incident-new
+        [busy]="creating()"
+        (click)="create()"
+      >
+        <furar-icon name="plus" />
+        <span class="max-sm:sr-only">{{ t + 'new' | transloco }}</span>
+      </button>
+    </div>
+  </div>
+
+  <ng-template #columnFilters>
+    @for (column of columns; track column) {
+      <furar-column-filter
+        variant="chip"
+        [label]="label(column)"
+        [options]="options()[column]"
+        [selected]="filters()[column]"
+        [searchable]="column === 'facility' || column === 'reporter'"
+        [doneLabel]="t + 'show' | transloco: { count: rows().length }"
+        (toggled)="toggle(column, $event)"
+        (cleared)="clear(column)"
+      />
+    }
+  </ng-template>
+
+  <p role="status" class="sr-only">{{ t + 'count' | transloco: { count: rows().length } }}</p>
+
+  @switch (store.state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="row" [rows]="5" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [heading]="t + 'loadError.title' | transloco"
+        [description]="t + 'loadError.text' | transloco"
+      >
+        <button type="button" furarButton (click)="retry()">{{ t + 'loadError.retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @case ('ready') {
+      <div class="f-card f-incidents__card">
+        <table class="f-incidents__table" data-incidents-table>
+          <caption class="sr-only">
+            {{
+              t + 'caption' | transloco
+            }}
+          </caption>
+          <thead>
+            <tr>
+              @for (column of columns; track column) {
+                <th scope="col" [attr.data-col]="column">
+                  <furar-column-filter
+                    [label]="label(column)"
+                    [options]="options()[column]"
+                    [selected]="filters()[column]"
+                    [searchable]="column === 'facility' || column === 'reporter'"
+                    (toggled)="toggle(column, $event)"
+                    (cleared)="clear(column)"
+                  />
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (incident of rows(); track incident.id) {
+              <tr class="f-incidents__row" [attr.data-incident]="incident.id" (click)="open(incident.id)">
+                <td data-cell="date">
+                  <time [attr.datetime]="incident.createdAt">{{ dayOf(incident.createdAt) }}</time>
+                </td>
+                <th scope="row" data-cell="facility">
+                  <button
+                    type="button"
+                    class="f-incidents__open"
+                    aria-haspopup="dialog"
+                    (click)="$event.stopPropagation(); open(incident.id)"
+                  >
+                    {{ incident.facilityName }}
+                  </button>
+                </th>
+                <td data-cell="type">{{ 'incident.types.' + incident.type | transloco }}</td>
+                <td data-cell="status">
+                  <furar-tag [tone]="tone[incident.status]" look="solid" [attr.data-status]="incident.status">{{
+                    'incident.status.' + incident.status | transloco
+                  }}</furar-tag>
+                </td>
+                <td data-cell="reporter">{{ reporter(incident) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <ul class="f-incidents__cards" [attr.aria-label]="t + 'caption' | transloco">
+          @for (incident of rows(); track incident.id) {
+            <li>
+              <button
+                type="button"
+                class="f-incidents__item"
+                aria-haspopup="dialog"
+                [attr.data-incident-card]="incident.id"
+                (click)="open(incident.id)"
+              >
+                <span class="f-incidents__item-head">
+                  <b>{{ incident.facilityName }}</b>
+                  <furar-tag [tone]="tone[incident.status]" look="solid">{{
+                    'incident.status.' + incident.status | transloco
+                  }}</furar-tag>
+                </span>
+                <span class="f-incidents__item-meta">
+                  {{ dayOf(incident.createdAt) }} · {{ reporter(incident) }} ·
+                  {{ 'incident.types.' + incident.type | transloco }}
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+
+        @if (!rows().length) {
+          <furar-status-state
+            mode="empty"
+            data-incidents-empty
+            [heading]="t + 'empty.title' | transloco"
+            [description]="(filtered() ? t + 'empty.filtered' : t + 'empty.all') | transloco"
+          />
+        }
+      </div>
+    }
+  }
+</div>

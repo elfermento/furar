@@ -1,0 +1,195 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'event.people.';
+@let c = columns();
+@if (requests().length) {
+  <section class="f-event-people__section" [attr.aria-labelledby]="'event-requests-' + event().id">
+    <h3 class="f-event-people__title" [id]="'event-requests-' + event().id">
+      {{ t + 'requests' | transloco }} <span class="f-event-people__count">{{ requests().length }}</span>
+    </h3>
+    <ul class="f-card f-event-people__list">
+      @for (person of requests(); track person.id) {
+        <li class="f-event-people__request" [attr.data-request]="person.id">
+          <span class="f-event-people__who">
+            <b>{{ who(person) }}</b>
+            <span class="text-ink-soft">{{ t + 'asked' | transloco: { date: day(person.createdAt) } }}</span>
+          </span>
+          @if (reviewer()) {
+            <span class="f-event-people__acts">
+              <button
+                type="button"
+                furarButton="danger-fill"
+                size="sm"
+                data-request-reject
+                [busy]="busy() === person.id + 'reject'"
+                (click)="reject(person)"
+              >
+                <furar-icon name="close" />
+                {{ t + 'reject' | transloco }}
+              </button>
+              <button
+                type="button"
+                furarButton="primary"
+                size="sm"
+                data-request-accept
+                [busy]="busy() === person.id + 'accept'"
+                (click)="accept(person)"
+              >
+                <furar-icon name="check" />
+                {{ t + 'accept' | transloco }}
+              </button>
+            </span>
+          }
+        </li>
+      }
+    </ul>
+  </section>
+}
+
+<section class="f-event-people__section" data-event-people [attr.aria-labelledby]="'event-people-' + event().id">
+  <h3 class="f-event-people__title" [id]="'event-people-' + event().id">
+    {{ t + 'title' | transloco }}
+    <span class="f-event-people__count tabular-nums">{{
+      event().capacity
+        ? ('event.manage.seatsOf' | transloco: { count: event().confirmed, total: event().capacity })
+        : event().confirmed
+    }}</span>
+  </h3>
+  @if (rows().length || payments().length) {
+    @if (desktop()) {
+      <div class="f-card f-events__card">
+        <table class="f-events__table f-event-people__table" data-people-table>
+          <caption class="sr-only">
+            {{
+              t + 'title' | transloco
+            }}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">{{ t + 'col.person' | transloco }}</th>
+              @if (c.dependent) {
+                <th scope="col">{{ t + 'col.dependent' | transloco }}</th>
+              }
+              @if (c.born) {
+                <th scope="col">{{ t + 'col.born' | transloco }}</th>
+              }
+              @if (c.absences) {
+                <th
+                  scope="col"
+                  data-col="absences"
+                  [attr.aria-sort]="sort() ? (sort() === 'asc' ? 'ascending' : 'descending') : null"
+                >
+                  <furar-column-filter
+                    #absenceSort
+                    [label]="t + 'col.absences' | transloco"
+                    [options]="sortOptions()"
+                    [selected]="sort() ? [sort()] : []"
+                    (toggled)="sortBy($event); absenceSort.close()"
+                    (cleared)="sort.set('')"
+                  />
+                </th>
+              }
+              @if (c.payment) {
+                <th scope="col" data-col="payment">
+                  <furar-column-filter
+                    [label]="t + 'payment' | transloco"
+                    [options]="paymentFilter()"
+                    [selected]="payments()"
+                    (toggled)="togglePayment($event)"
+                    (cleared)="payments.set([])"
+                  />
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rows(); track row.id) {
+              <tr [attr.data-person]="row.id">
+                <th scope="row">{{ row.name }}</th>
+                @if (c.dependent) {
+                  <td data-cell="dependent">{{ row.dependent ?? '—' }}</td>
+                }
+                @if (c.born) {
+                  <td class="tabular-nums" data-cell="born">{{ row.born ?? '—' }}</td>
+                }
+                @if (c.absences) {
+                  <td class="tabular-nums" data-cell="absences">
+                    {{ row.absences }}
+                  </td>
+                }
+                @if (c.payment) {
+                  <td data-cell="payment">
+                    @if (row.payment; as payment) {
+                      <furar-chip-menu
+                        data-person-payment
+                        [label]="(t + 'payment' | transloco) + ' · ' + row.name"
+                        [options]="paymentOptions()"
+                        [value]="payment"
+                        [busy]="busy() === row.id + 'pay'"
+                        (selected)="pay(row, $event)"
+                      />
+                    }
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <ul class="f-card f-event-people__cards" data-people-cards [attr.aria-label]="t + 'title' | transloco">
+        @for (row of rows(); track row.id) {
+          <li class="f-event-people__card" [attr.data-person]="row.id">
+            <div class="f-event-people__card-head">
+              <b>{{ row.name }}</b>
+              @if (row.payment; as payment) {
+                <furar-chip-menu
+                  data-person-payment
+                  [label]="(t + 'payment' | transloco) + ' · ' + row.name"
+                  [options]="paymentOptions()"
+                  [value]="payment"
+                  [busy]="busy() === row.id + 'pay'"
+                  (selected)="pay(row, $event)"
+                />
+              }
+            </div>
+            @if (c.dependent || c.born || c.absences) {
+              <dl class="f-event-people__facts">
+                @if (c.dependent) {
+                  <div>
+                    <dt>{{ t + 'col.dependent' | transloco }}</dt>
+                    <dd>{{ row.dependent ?? '—' }}</dd>
+                  </div>
+                }
+                @if (c.born) {
+                  <div>
+                    <dt>{{ t + 'col.born' | transloco }}</dt>
+                    <dd class="tabular-nums">{{ row.born ?? '—' }}</dd>
+                  </div>
+                }
+                @if (c.absences) {
+                  <div>
+                    <dt>{{ t + 'col.absences' | transloco }}</dt>
+                    <dd class="tabular-nums">
+                      {{ row.absences }}
+                    </dd>
+                  </div>
+                }
+              </dl>
+            }
+          </li>
+        }
+      </ul>
+    }
+    @if (!rows().length) {
+      <p class="text-ink-soft" data-people-filtered>{{ t + 'emptyFiltered' | transloco }}</p>
+    }
+  } @else {
+    <p class="text-ink-soft" data-people-empty>{{ t + 'empty' | transloco }}</p>
+  }
+</section>
+
+<furar-event-waitlist [rows]="waits()" [desktop]="desktop()" [eventId]="event().id" />
+<furar-problem-alert [problem]="problem()" />

@@ -1,0 +1,31 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * «✕» que baleira un campo (`furar-clear-button`): 28 px de área (WCAG 2.5.8 pide 24) e icona de
+ * 18 px, sen fondo, na tinta suave. Vai nas follas que o usan (portada.css e reservas.css, co buscador).
+ */
+@layer components {
+  .f-clear-button {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--f-ink-soft);
+    cursor: pointer;
+  }
+  .f-clear-button .f-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  @media (forced-colors: active) {
+    .f-clear-button {
+      color: ButtonText;
+    }
+  }
+}

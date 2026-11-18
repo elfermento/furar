@@ -1,0 +1,177 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Eventos do concello (ADR-0038): a lista da xestión (táboa co filtro do estado na
+ * cabeceira e, por debaixo de 40rem, pílula e tarxetas), o diálogo (o lugar coa súa escolla na liña
+ * do rótulo, os interruptores en filas), as persoas e as solicitudes, e a acción da ficha pública.
+ * Folla `reservas.css`: a ficha e a xestión levan `bookingStylesResolver`.
+ */
+@layer components {
+  .f-events {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .f-events > .f-page-header {
+    margin-bottom: 0;
+  }
+  .f-events__pills {
+    display: none;
+  }
+  .f-events__card.f-card {
+    padding: 0;
+  }
+  .f-events__table {
+    inline-size: 100%;
+    border-collapse: collapse;
+  }
+  .f-events__table th,
+  .f-events__table td {
+    padding: 0.5rem;
+    border-block-end: var(--f-border) solid var(--f-divider);
+    text-align: start;
+    vertical-align: middle;
+  }
+  .f-events__table th:first-child,
+  .f-events__table td:first-child {
+    padding-inline-start: var(--spacing-item);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .f-events__table tbody tr:last-child > * {
+    border-block-end: 0;
+  }
+  .f-events__table thead th {
+    padding-block: 0.75rem 0.625rem;
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-events__row {
+    cursor: pointer;
+  }
+  .f-events__row:hover {
+    background: var(--f-surface-soft, var(--f-divider));
+  }
+  .f-events__open {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: 400;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-events__cards {
+    display: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-events__item {
+    display: grid;
+    gap: 0.25rem;
+    inline-size: 100%;
+    padding: 0.75rem var(--spacing-item);
+    border: 0;
+    border-block-end: var(--f-border) solid var(--f-divider);
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .f-events__cards li:last-child .f-events__item {
+    border-block-end: 0;
+  }
+  .f-events__item-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+  .f-events__item-head b,
+  .f-events__item-meta {
+    overflow-wrap: anywhere;
+  }
+  .f-events__item-meta {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  @media (width < 40rem) {
+    .f-events__pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .f-events__table {
+      display: none;
+    }
+    .f-events__cards {
+      display: block;
+    }
+  }
+
+  /* Diálogo: o prezo e a data de «Apuntarse ata», campos curtos. */
+  .f-event-form__price,
+  .f-event-form__deadline {
+    max-inline-size: 16rem;
+  }
+
+  /* As persoas e as solicitudes (pestana «Persoas» do detalle; o resto, en events-manage.css). */
+  .f-event-people__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.5rem;
+    font-size: 1.0625rem;
+  }
+  .f-event-people__count {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-event-people__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-event-people__request {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding: 0.75rem var(--spacing-item);
+    border-block-end: var(--f-border) solid var(--f-divider);
+  }
+  .f-event-people__list li:last-child {
+    border-block-end: 0;
+  }
+  .f-event-people__who {
+    display: grid;
+    gap: 0.125rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .f-event-people__acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Ficha pública: a acción ao pé da tarxeta (o aviso enriba do botón, cada un na súa liña). */
+  .f-event-action {
+    display: grid;
+    gap: 0.75rem;
+    padding-top: var(--spacing-item);
+  }
+  .f-event-action:empty {
+    display: none;
+  }
+  .f-event-action__chip {
+    margin: 0;
+  }
+}

@@ -1,0 +1,132 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.photos.library.';
+<furar-dialog size="lg" [heading]="t + 'title' | transloco" [back]="t + 'back' | transloco">
+  <furar-tabs [label]="t + 'tabs' | transloco" [(selected)]="tab">
+    <button type="button" furarTab="municipality" data-tab="municipality">{{ t + 'municipality' | transloco }}</button>
+    <button type="button" furarTab="drawings" data-tab="drawings">{{ t + 'drawings' | transloco }}</button>
+    @if (tab() === 'municipality') {
+      <div class="f-library__drop" (dragover)="dragOver($event)" (drop)="drop($event)">
+        <input
+          id="photo-library-file"
+          type="file"
+          class="sr-only"
+          accept="image/jpeg,image/png"
+          multiple
+          aria-describedby="photo-library-file-help"
+          (change)="pickFiles($event)"
+        />
+        <label for="photo-library-file" class="f-library__upload">{{ t + 'upload' | transloco }}</label>
+        <span id="photo-library-file-help">{{ t + 'uploadHelp' | transloco: { max: maxSize } }}</span>
+      </div>
+      <ul class="f-library__notes" aria-live="polite">
+        @if (uploadingName()) {
+          <li>{{ t + 'uploading' | transloco: { name: uploadingName() } }}</li>
+        }
+        @for (note of notes(); track note.id) {
+          <li [class.f-field-error]="note.error" [attr.data-error]="note.error ? '' : null">{{ note.text }}</li>
+        }
+      </ul>
+    }
+    @switch (state()) {
+      @case ('loading') {
+        <furar-status-state mode="skeleton" shape="card" [rows]="2" [description]="t + 'loading' | transloco" />
+      }
+      @case ('error') {
+        <furar-status-state mode="error" [heading]="t + 'error' | transloco">
+          <button type="button" furarButton (click)="load()">{{ t + 'retry' | transloco }}</button>
+        </furar-status-state>
+      }
+      @default {
+        @let picks = tab() === 'municipality' ? municipalityPicks() : drawingPicks();
+        @if (picks.length) {
+          <ul
+            class="f-library__grid"
+            [attr.aria-label]="(tab() === 'municipality' ? t + 'municipality' : t + 'drawings') | transloco"
+          >
+            @for (pick of picks; track pick.image.key) {
+              @let taken = inList(pick.image);
+              @let n = order().get(pick.image.key);
+              <li>
+                <button
+                  type="button"
+                  class="f-library__pick"
+                  [attr.data-key]="pick.image.key"
+                  [attr.aria-pressed]="!!n"
+                  [attr.aria-disabled]="taken ? 'true' : null"
+                  [attr.aria-label]="
+                    taken ? pick.label + '. ' + (t + 'inList' | transloco) : n ? pick.label + '. ' + n : pick.label
+                  "
+                  (click)="toggle(pick)"
+                >
+                  <img [src]="pick.image.thumb" alt="" loading="lazy" />
+                  <!-- O texto visible, na orde do nome accesible e separado (o nome, un espazo e a marca): quen usa a voz di o que ve. -->
+                  <span class="f-library__caption" aria-hidden="true">{{ pick.caption }}</span
+                  >&ngsp;
+                  @if (taken) {
+                    <span class="f-library__taken" aria-hidden="true">{{ t + 'inList' | transloco }}</span>
+                  } @else {
+                    <span class="f-library__mark" aria-hidden="true">{{ n }}</span>
+                  }
+                </button>
+              </li>
+            }
+          </ul>
+        } @else {
+          <furar-status-state data-empty [description]="t + 'empty' | transloco" />
+        }
+      }
+    }
+  </furar-tabs>
+  <span dialogStatus data-selected role="status">
+    <span class="sr-only">{{ announcement() }}</span>
+    @if (tooMany()) {
+      <span class="text-danger font-bold">{{ t + 'full' | transloco: { max: 12, left: data.left } }}</span>
+    } @else if (pickOne() && !chosen().length) {
+      <span class="text-danger font-bold" data-pick-one>{{ t + 'pickOne' | transloco }}</span>
+    } @else if (chosen().length) {
+      <b>{{
+        chosen().length === 1
+          ? (t + 'selectedOne' | transloco)
+          : (t + 'selected' | transloco: { count: chosen().length })
+      }}</b>
+    } @else {
+      {{ t + 'none' | transloco }}
+    }
+  </span>
+  @if (tray().length) {
+    <!-- Bandexa: no pé (fila propia, enriba das accións), para que se vexa sempre. -->
+    <section dialogActions class="f-library__tray" aria-labelledby="photo-library-tray" data-tray>
+      <h3 id="photo-library-tray" class="f-library__tray-title">{{ t + 'tray' | transloco }}</h3>
+      <ol class="f-library__tray-row">
+        @for (item of tray(); track item.image.key; let i = $index) {
+          <li class="f-library__chip" [attr.data-key]="item.image.key">
+            <img [src]="item.image.thumb" alt="" />
+            <span class="f-library__number">{{ i + 1 }}</span>
+            <button
+              type="button"
+              class="f-library__remove"
+              data-tray-remove
+              [attr.aria-label]="t + 'remove' | transloco: { name: item.name }"
+              (click)="remove(item.image.key, item.name)"
+            >
+              <span><furar-icon name="close" /></span>
+            </button>
+          </li>
+        }
+      </ol>
+    </section>
+  }
+  <ng-container dialogActions>
+    @if (chosen().length) {
+      <button type="button" furarButton="quiet" data-clear (click)="clear()">{{ t + 'clear' | transloco }}</button>
+    }
+    <button type="button" furarButton data-cancel (click)="cancel()">{{ t + 'cancel' | transloco }}</button>
+    <button type="button" furarButton="primary" data-add-selected [disabled]="uploading() > 0" (click)="add()">
+      <furar-icon name="plus" />
+      {{ chosen().length ? (t + 'addSelected' | transloco: { count: chosen().length }) : (t + 'add' | transloco) }}
+    </button>
+  </ng-container>
+</furar-dialog>

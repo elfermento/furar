@@ -1,0 +1,73 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.seasons.detail.';
+<furar-dialog size="sm" [heading]="series()?.organizationName ?? ''" [subheading]="place()">
+  @if (series(); as s) {
+    <div class="f-season-detail" [attr.data-series-detail]="s.id">
+      <furar-value-list [items]="rows()" />
+      <furar-field-line data-series-payment [label]="t + 'payment' | transloco">
+        <furar-chip-menu
+          [label]="t + 'payment' | transloco"
+          [options]="payments()"
+          [value]="s.paymentStatus"
+          [busy]="paying()"
+          (selected)="setPayment(s, $event)"
+        />
+      </furar-field-line>
+      <furar-problem-alert [problem]="problem()" />
+      @if (!s.endedFrom) {
+        <furar-disclosure data-series-sessions [heading]="sessionsHeading()">
+          @switch (sessionsState()) {
+            @case ('ready') {
+              @if (sessions().length) {
+                <ul class="f-season-sessions">
+                  @for (b of sessions(); track b.id) {
+                    <li class="f-season-sessions__row" [attr.data-session]="b.id">
+                      <span class="f-season-sessions__when">
+                        <span class="f-season-part">{{ day(b) }}</span>
+                        {{ ' · ' }}
+                        <span class="f-season-part">{{ time(b) }}</span>
+                      </span>
+                      <button
+                        type="button"
+                        furarButton="danger"
+                        size="sm"
+                        data-session-cancel
+                        [busy]="cancelling() === b.id"
+                        (click)="cancelSession(s, b)"
+                      >
+                        <furar-icon name="event-busy" />
+                        {{ 'booking.seasons.preview.cancelSession' | transloco }}
+                      </button>
+                    </li>
+                  }
+                </ul>
+              } @else {
+                <p class="f-season-note">{{ t + 'noSessions' | transloco }}</p>
+              }
+            }
+            @case ('error') {
+              <p class="f-season-note">{{ t + 'sessionsError' | transloco }}</p>
+            }
+            @default {
+              <furar-status-state mode="skeleton" [rows]="2" [description]="'common.loading' | transloco" />
+            }
+          }
+        </furar-disclosure>
+        <ul furarActionList [attr.aria-label]="'booking.mine.detail.actions' | transloco">
+          <li>
+            <furar-action-item icon="event-busy" tone="danger">
+              <button type="button" data-series-end (click)="end(s)">{{ t + 'end' | transloco }}</button>
+            </furar-action-item>
+          </li>
+        </ul>
+      }
+    </div>
+  } @else if (problem(); as p) {
+    <furar-problem-alert [problem]="p" />
+  } @else {
+    <furar-status-state mode="skeleton" [rows]="3" [description]="'common.loading' | transloco" />
+  }
+</furar-dialog>

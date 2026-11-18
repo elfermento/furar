@@ -1,0 +1,167 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'event.form.';
+@let e = errors();
+<furar-dialog [heading]="heading()" [busy]="saving()">
+  <form class="gap-form grid" novalidate data-event-form [id]="id" [formGroup]="form" (submit)="submit($event)">
+    <furar-bilingual-field
+      required
+      [fieldId]="id + '-name'"
+      [label]="t + 'name' | transloco"
+      [gl]="form.controls.nameGl"
+      [es]="form.controls.nameEs"
+      [maxlength]="nameMax"
+      [submitted]="submitted()"
+    />
+
+    @if (locked()) {
+      <!-- O horario, as datas e o lugar dunha actividade non se cambian: lense coma texto. -->
+      <furar-value-list variant="plain" data-event-fixed [items]="fixedRows()" />
+    } @else {
+      @if (!editing) {
+        <furar-field-line #when required [label]="t + 'when' | transloco" [labelId]="id + '-kind-label'">
+          <div furarSegmented mode="radio" formControlName="kind" [attr.aria-labelledby]="when.labelId()">
+            <button type="button" furarSegmentedOption="ONE_DAY" data-event-kind="ONE_DAY">
+              {{ t + 'kind.ONE_DAY' | transloco }}
+            </button>
+            <button type="button" furarSegmentedOption="SCHEDULED" data-event-kind="SCHEDULED">
+              {{ t + 'kind.SCHEDULED' | transloco }}
+            </button>
+          </div>
+        </furar-field-line>
+      }
+
+      @if (kind() === 'SCHEDULED') {
+        <furar-schedule-fields
+          data-event-schedule
+          [value]="scheduleValue()"
+          [errors]="e.schedule"
+          (changed)="patchSchedule($event)"
+        />
+      } @else {
+        <furar-field-group cells [style.--f-cell]="'10rem'">
+          <furar-field [fieldId]="id + '-date'" [label]="t + 'date' | transloco" [required]="true" [error]="e.date">
+            <furar-date-field
+              required
+              formControlName="date"
+              data-event-date
+              [buttonId]="id + '-date'"
+              [label]="t + 'date' | transloco"
+              [min]="today"
+              [today]="today"
+              [invalid]="!!e.date"
+              [describedBy]="e.date ? id + '-date-error' : null"
+            />
+          </furar-field>
+          <furar-field [fieldId]="id + '-time'" [label]="t + 'time' | transloco" [required]="true" [error]="e.minute">
+            <furar-time-picker
+              required
+              formControlName="minute"
+              data-event-time
+              [buttonId]="id + '-time'"
+              [label]="t + 'time' | transloco"
+              [invalid]="!!e.minute"
+              [describedBy]="e.minute ? id + '-time-error' : null"
+            />
+          </furar-field>
+        </furar-field-group>
+      }
+
+      <furar-event-place-field
+        [form]="form"
+        [fieldId]="id + '-place'"
+        [facilities]="data.facilities"
+        [placeKind]="placeKind()"
+        [withUse]="kind() === 'SCHEDULED'"
+        [uses]="useOptions()"
+        [parts]="partOptions()"
+        [errors]="e.place"
+      />
+    }
+
+    <furar-event-limits-fields [form]="form" [fieldId]="id" [scheduled]="kind() === 'SCHEDULED'" [errors]="e" />
+
+    <furar-bilingual-field
+      multiline
+      [fieldId]="id + '-description'"
+      [label]="t + 'description' | transloco"
+      [gl]="form.controls.descriptionGl"
+      [es]="form.controls.descriptionEs"
+      [maxlength]="descriptionMax"
+      [rows]="3"
+      [submitted]="submitted()"
+    />
+
+    <div class="grid">
+      <furar-switch
+        formControlName="deadlineOn"
+        data-event-deadline-on
+        [label]="t + 'deadline' | transloco"
+        [tip]="t + (kind() === 'SCHEDULED' ? 'deadlineTipActivity' : 'deadlineTip') | transloco"
+      />
+      <!-- A data, só co interruptor acendido. -->
+      @if (deadlineOn()) {
+        <furar-field
+          class="f-event-form__deadline"
+          [fieldId]="id + '-deadline'"
+          [label]="t + 'date' | transloco"
+          [error]="e.deadline"
+        >
+          <furar-date-field
+            formControlName="deadline"
+            data-event-deadline
+            [buttonId]="id + '-deadline'"
+            [label]="t + 'deadline' | transloco"
+            [min]="today"
+            [today]="today"
+            [invalid]="!!e.deadline"
+            [describedBy]="e.deadline ? id + '-deadline-error' : null"
+          />
+        </furar-field>
+      }
+      <furar-switch
+        formControlName="published"
+        data-event-published
+        [label]="t + 'published' | transloco"
+        [tip]="t + 'publishedTip' | transloco"
+      />
+      <furar-switch
+        formControlName="approval"
+        data-event-approval
+        [label]="t + 'approval' | transloco"
+        [tip]="t + 'approvalTip' | transloco"
+      />
+    </div>
+
+    @if (kind() === 'SCHEDULED' && !locked()) {
+      <div class="f-event-form__preview" role="status" data-event-preview>
+        @switch (planner.state()) {
+          @case ('loading') {
+            <p class="f-season-note">{{ t + 'previewLoading' | transloco }}</p>
+          }
+          @case ('ready') {
+            @if (planner.preview(); as p) {
+              <p class="f-event-form__sessions" data-event-sessions>
+                {{ (p.sessions === 1 ? t + 'sessionsOne' : t + 'sessionsOther') | transloco: { count: p.sessions } }}
+              </p>
+              <furar-schedule-preview [preview]="p" (cancelBooking)="planner.cancelConflict($event)" />
+            }
+          }
+        }
+      </div>
+    }
+
+    <furar-problem-alert [problem]="problem()" />
+  </form>
+
+  <ng-container dialogActions>
+    <button type="button" furarButton="quiet" data-event-dismiss (click)="ref.close()">
+      {{ 'common.cancel' | transloco }}
+    </button>
+    <button type="submit" furarButton="primary" data-event-save [attr.form]="id" [busy]="saving()">
+      {{ (saving() ? 'common.saving' : 'common.save') | transloco }}
+    </button>
+  </ng-container>
+</furar-dialog>

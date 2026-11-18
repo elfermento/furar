@@ -1,0 +1,198 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.publicList.';
+<div class="f-home">
+  <!-- No móbil sen a app instalada; aquí sempre aceso (o interruptor de cada concello vale só para a súa portada). -->
+  <furar-install-hint [enabled]="true" />
+  <section class="f-hero" furarHeroArt aria-labelledby="common-home-title" [attr.data-filtered]="searching() || null">
+    <div class="f-hero__blobs" aria-hidden="true"><span></span><span></span></div>
+    <div class="f-wrap f-hero__grid" [attr.data-collage]="collage().length ? '' : null">
+      <div class="f-hero__main">
+        <furar-search-summary #pill [summary]="summary()" (opened)="openSheet($event, pill)" (cleared)="clearAll()" />
+        <!-- «Buscar» despois da última palabra: no escritorio, a barra arriba; no móbil, a folla. -->
+        <div class="f-hero__head">
+          <h1 id="common-home-title" class="f-hero__title">
+            <span>{{ 'home.title.line1' | transloco }}</span
+            >{{ ' ' }}<em>{{ 'home.showcase.place' | transloco }}</em>
+          </h1>
+          <button
+            type="button"
+            furarButton="primary"
+            class="f-hero__open"
+            data-open-search
+            [size]="heroSearch.wide() ? 'lg' : 'md'"
+            (click)="heroSearch.wide() ? heroSearch.open($event) : openSheet($event, pill)"
+          >
+            <furar-icon name="search" />
+            {{ 'home.search.submit' | transloco }}
+          </button>
+        </div>
+        <furar-hero-search #heroSearch [pinned]="searching()" [count]="pillCount()">
+          <furar-facility-search
+            #searchBar
+            catalog
+            [facilities]="facilities()"
+            [criteria]="criteria()"
+            [filterOptions]="filterOptions()"
+            [sportKeyOf]="sportKeys()"
+            [filterCount]="filterCount()"
+            (dayChange)="navigate({ date: $event, dateChosen: false })"
+            (filtersOpened)="openFilters()"
+            (filtersCleared)="clearFilters()"
+            (textCleared)="navigate({ text: '', municipality: null })"
+            (searched)="search($event)"
+          />
+        </furar-hero-search>
+      </div>
+      @if (collage().length) {
+        <div class="f-collage" aria-hidden="true">
+          @for (photo of collage(); track $index; let i = $index) {
+            <figure [attr.data-place]="i + 1"><img [src]="photo" alt="" /></figure>
+          }
+        </div>
+      }
+    </div>
+  </section>
+  @if (show.shows('facilities')) {
+    <section class="f-wrap f-home__section" aria-labelledby="common-home-facilities">
+      <!-- Cun filtro, o título co número, coma os das actividades e as partidas. -->
+      <h2 id="common-home-facilities" [class]="searching() && !split() ? 'f-home__heading' : 'sr-only'">
+        {{ 'home.facilities.title' | transloco }}
+        @if (searching() && !split()) {
+          <span class="f-home__count">· {{ shown().length }}</span>
+        }
+      </h2>
+      <div class="f-plist">
+        @switch (state()) {
+          @case ('loading') {
+            <furar-status-state mode="skeleton" shape="card" [rows]="4" [description]="t + 'loading' | transloco" />
+          }
+          @case ('error') {
+            <furar-status-state
+              mode="error"
+              [heading]="t + 'error.title' | transloco"
+              [description]="t + 'error.text' | transloco"
+            >
+              <button type="button" furarButton (click)="load()">{{ t + 'error.retry' | transloco }}</button>
+            </furar-status-state>
+          }
+          @default {
+            @if (!inSheet()) {
+              <ng-container *ngTemplateOutlet="listing" />
+            }
+          }
+        }
+      </div>
+    </section>
+  }
+  @if (mapEnabled() && state() === 'ready' && facilities().length && show.shows('facilities')) {
+    <furar-catalog-map-float
+      [split]="wide()"
+      [markers]="markers()"
+      [label]="sheetLabel()"
+      [listing]="listing"
+      [(open)]="mapOpen"
+      (picked)="openFacility($event)"
+      (moved)="zone.bounds.set($event)"
+    />
+  }
+  <furar-home-sections
+    [municipalities]="municipalities()"
+    [show]="show"
+    [only]="filters().municipality"
+    [facilityIds]="sectionIds()"
+    [day]="sectionDay()"
+    [counted]="searching()"
+  />
+  <!-- «¿Es un concello?» (ADR-0042): franxa ao final, só se o despregue ten a función. -->
+  @if (joinRequests()) {
+    <section class="f-wrap f-home__section" data-join-band>
+      <furar-card class="text-center" [heading]="'joinRequest.band.title' | transloco">
+        <p>{{ 'joinRequest.band.text' | transloco }}</p>
+        <div class="mt-form">
+          <a furarButton="primary" routerLink="/alta-concello">{{ 'joinRequest.band.action' | transloco }}</a>
+        </div>
+      </furar-card>
+    </section>
+  }
+</div>
+<!-- O listado: na páxina ou, co mapa do móbil aberto, na folla que asoma debaixo del. -->
+<ng-template #listing>
+  @if (!facilities().length) {
+    <furar-status-state
+      [heading]="t + 'empty.title' | transloco"
+      [description]="'facility.catalog.empty' | transloco"
+    />
+  } @else {
+    @if (filtered() || split() || zone.bounds()) {
+      <div class="f-plist__bar">
+        <div class="f-plist__found">
+          <p class="f-plist__count" role="status">{{ countText() }}</p>
+          <furar-chip-list
+            data-search-text
+            [items]="textChips()"
+            [label]="t + 'searchText' | transloco"
+            [fallbackFocus]="searchBar"
+            (removed)="textChips()[$event].key === 'zone' ? zone.clear() : navigate({ text: '' })"
+          />
+        </div>
+      </div>
+    }
+    @if (split()) {
+      <furar-near-notice />
+    }
+    @if (filtered() && !matched().length) {
+      <furar-status-state [heading]="t + 'none.title' | transloco">
+        <button type="button" furarButton="secondary" (click)="zone.clear(); navigate(noFilters)">
+          {{ t + 'none.clear' | transloco }}
+        </button>
+      </furar-status-state>
+    } @else {
+      <!-- Sen filtros, un carrusel por concello; cun filtro ou co mapa ao lado, todas en grella. -->
+      <div [class.f-plist__split]="split()">
+        @if (!shown().length) {
+          <furar-status-state [heading]="'facility.catalog.zoneEmpty' | transloco" />
+        } @else if (!filtered() && !split()) {
+          <furar-catalog-rails [facilities]="shown()" [slots]="slots()" [date]="filters().date" [day]="day()" />
+        } @else {
+          <ul class="f-plist__grid" role="list">
+            @for (card of cards(); track card.facility.id) {
+              @let facility = card.facility;
+              <li
+                class="f-plist__item"
+                [attr.data-facility]="facility.id"
+                (mouseenter)="pointed.set(facility.id)"
+                (mouseleave)="pointed.set(null)"
+                (focusin)="pointed.set(facility.id)"
+                (focusout)="pointed.set(null)"
+              >
+                <furar-facility-card
+                  [slug]="facility.municipality.slug"
+                  [facility]="facility"
+                  [slots]="slots().get(facility.id) ?? null"
+                  [sports]="cardSports(facility)"
+                  [date]="filters().date"
+                  [day]="day()"
+                  [km]="card.km"
+                />
+              </li>
+            }
+          </ul>
+        }
+        @if (split()) {
+          <section class="f-plist__map" [attr.aria-label]="t + 'map' | transloco">
+            <p class="cdk-visually-hidden">{{ t + 'mapAlternative' | transloco }}</p>
+            <furar-catalog-map
+              [markers]="markers()"
+              [active]="pointed()"
+              (selected)="openFacility($event)"
+              (moved)="zone.bounds.set($event)"
+            />
+          </section>
+        }
+      </div>
+    }
+  }
+</ng-template>

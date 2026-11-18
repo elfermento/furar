@@ -1,0 +1,150 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<header #bar furarHideOnScroll class="f-topbar__bar f-glass">
+  <div class="f-topbar__row">
+    <a class="f-topbar__brand" [routerLink]="homeLink()">
+      <span class="f-topbar__shield" aria-hidden="true"><furar-icon name="shield" /></span>
+      <!-- Dentro dun concello, o seu nome e «Deportes municipais»; na portada común, unha liña. -->
+      <span class="f-topbar__names">
+        @if (municipality.name(); as name) {
+          <span class="f-topbar__name">{{ name }}</span
+          >{{ ' ' }}<span class="f-topbar__tagline">{{ 'site.tagline' | transloco }}</span>
+        } @else {
+          <span class="f-topbar__name">{{ 'app.name' | transloco }}</span>
+        }
+      </span>
+    </a>
+    @if (municipality.slug(); as slug) {
+      @if (canManage()) {
+        <nav class="f-topbar__nav" data-manage [attr.aria-label]="'app.manageNav' | transloco">
+          <ul>
+            <!-- Un apartado está activo en calquera das súas pestanas e nas páxinas debaixo delas. -->
+            @for (section of manage.sections(); track section.key) {
+              @let active = manage.section() === section;
+              <li>
+                <a
+                  class="f-topbar__link"
+                  [routerLink]="section.path"
+                  [class.f-topbar__link--active]="active"
+                  [attr.aria-current]="active ? 'page' : null"
+                  [attr.data-section]="section.key"
+                  >{{ section.key | transloco }}
+                  @if (manage.sectionCount(section); as n) {
+                    <span class="sr-only">, {{ manage.sectionCountText(section) }}</span>
+                    <span class="f-count" data-count aria-hidden="true">{{ n }}</span>
+                  }
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+      } @else {
+        <nav class="f-topbar__nav" [attr.aria-label]="'site.mainNav' | transloco">
+          <ul>
+            <li>
+              <a
+                class="f-topbar__link"
+                [routerLink]="['/', slug, 'instalacions']"
+                routerLinkActive="f-topbar__link--active"
+                ariaCurrentWhenActive="page"
+                [routerLinkActiveOptions]="exact"
+                >{{ 'site.facilities' | transloco }}</a
+              >
+            </li>
+            @if (session.authenticated() && !workAccount()) {
+              <li>
+                <a
+                  class="f-topbar__link"
+                  data-my-bookings
+                  [routerLink]="['/', slug, 'reservas']"
+                  routerLinkActive="f-topbar__link--active"
+                  ariaCurrentWhenActive="page"
+                  [routerLinkActiveOptions]="exact"
+                  >{{ 'site.myBookings' | transloco }}</a
+                >
+              </li>
+            }
+          </ul>
+        </nav>
+      }
+    }
+    <div class="f-topbar__tools">
+      <!-- Persoal de varios concellos sen ningún escollido: «Concello ▾» (no móbil, unha folla). -->
+      @if (pickOptions().length > 0) {
+        @defer (on immediate) {
+          <furar-pick-menu
+            class="f-topbar__pick"
+            icon="location"
+            [label]="'session.switchMunicipality' | transloco"
+            [options]="pickOptions()"
+            [sheet]="compact()"
+            (picked)="onSwitch($event)"
+            (sheetRequested)="openPickSheet($event)"
+          />
+        }
+      }
+      <!-- O botón de accesibilidade cárgase á parte (orzamento, D27); o de index.html xa aplicou os axustes. -->
+      @defer (on immediate) {
+        <furar-display-preferences />
+      } @placeholder {
+        <span class="f-display-prefs" aria-hidden="true">
+          <span class="f-button f-display-prefs__trigger" data-variant="quiet" data-size="sm" data-round="true">
+            <furar-icon name="accessibility" [size]="24" />
+          </span>
+        </span>
+      }
+      <!--
+        O idioma vai no menú da conta en todos os anchos. Sen sesión, o botón da persoa abre un menú
+        con «Entrar» e «Idioma». O menú (CDK Menu) cárgase á parte (orzamento, D27).
+      -->
+      @defer (on immediate) {
+        @if (session.authenticated()) {
+          <furar-user-menu
+            [name]="session.name() ?? ''"
+            [roleName]="roleLabel()"
+            [context]="contextLabel()"
+            [email]="session.email() ?? ''"
+            [items]="menuItems()"
+            [switcher]="switcher()"
+            [language]="languageMenu()"
+            (selected)="onMenu($event)"
+            (switched)="onSwitch($event)"
+            (languageSelected)="useLanguage($event)"
+          />
+        } @else {
+          <furar-user-menu
+            name=""
+            [triggerLabel]="'session.guestMenu' | transloco"
+            [guestText]="'session.login' | transloco"
+            [compact]="compact()"
+            [items]="guestItems()"
+            [language]="languageMenu()"
+            (selected)="onMenu($event)"
+            (languageSelected)="useLanguage($event)"
+          />
+        }
+      } @placeholder {
+        @if (session.authenticated()) {
+          <span class="f-usermenu__trigger" aria-hidden="true">
+            <span class="f-usermenu__avatar">{{ initials(session.name() ?? '') }}</span>
+          </span>
+        } @else {
+          <span
+            class="f-button f-usermenu__guest"
+            data-variant="primary"
+            data-size="sm"
+            [attr.data-round]="compact() || null"
+            aria-hidden="true"
+          >
+            <furar-icon name="user" />
+            @if (!compact()) {
+              {{ 'session.login' | transloco }}
+            }
+          </span>
+        }
+      }
+    </div>
+  </div>
+</header>

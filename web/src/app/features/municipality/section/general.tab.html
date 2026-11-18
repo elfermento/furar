@@ -1,0 +1,200 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<!-- «Para abrir as reservas»: á parte, fóra da carga da pestana. -->
+@defer (on idle) {
+  <furar-opening-checklist />
+}
+<furar-problem-alert [problem]="saver.problem()" />
+@if (saver.problem()?.code === 'common.stale-version') {
+  <p class="mb-group">
+    <button type="button" furarButton (click)="reload()">{{ 'settings.reload' | transloco }}</button>
+  </p>
+}
+@if (tab.form(); as f) {
+  <form #formElement [formGroup]="f" novalidate (ngSubmit)="save()">
+    <furar-form-errors-summary [count]="saver.submitted() ? saver.errorCount() : 0" />
+    @let nameError = fieldError(f.controls.name, saver.submitted());
+    <furar-card class="mb-group" data-general>
+      <div class="grid">
+        <furar-field-group>
+          <furar-field
+            fieldId="settings-name"
+            [label]="'settings.name' | transloco"
+            [tip]="'settings.nameHelp' | transloco"
+            [required]="true"
+            [error]="nameError"
+          >
+            <input
+              id="settings-name"
+              furarInput
+              formControlName="name"
+              aria-required="true"
+              autocomplete="organization"
+              [attr.aria-invalid]="nameError ? 'true' : null"
+              [attr.aria-describedby]="describedBy('settings-name', true, nameError)"
+            />
+          </furar-field>
+          <furar-languages-fieldset [form]="f.controls.languages" [submitted]="saver.submitted()" idPrefix="settings" />
+        </furar-field-group>
+        <furar-default-language-line [form]="f.controls.languages" idPrefix="settings" />
+      </div>
+    </furar-card>
+
+    <furar-card class="mb-group" data-sports [heading]="'settings.sports.title' | transloco">
+      <furar-field-group formGroupName="contact">
+        @for (row of contactRows; track $index) {
+          <div class="f-field-cells" [style.--f-cell]="'14rem'" data-contact-row>
+            @for (field of row; track field.key) {
+              @let id = 'settings-sports-' + field.key;
+              @let error = fieldError(f.controls.contact.controls[field.key], saver.submitted());
+              @let label = 'settings.sports.' + field.key | transloco;
+              <furar-field [fieldId]="id" [label]="label" [error]="error">
+                <input
+                  furarInput
+                  [id]="id"
+                  [type]="field.type"
+                  [formControlName]="field.key"
+                  [furarLongText]="field.long ? label : null"
+                  [autocomplete]="field.autocomplete"
+                  [attr.aria-invalid]="error ? 'true' : null"
+                  [attr.aria-describedby]="describedBy(id, false, error)"
+                />
+              </furar-field>
+            }
+          </div>
+        }
+      </furar-field-group>
+    </furar-card>
+
+    <furar-card class="mb-group" data-payment [heading]="'settings.payment.title' | transloco">
+      <div class="gap-form grid">
+        <!-- Só as dúas opcións, sen texto ao carón: o título da card xa di que se escolle e así cabe nunha liña no móbil. -->
+        <div
+          furarSegmented
+          mode="radio"
+          formControlName="scope"
+          data-payment-scope
+          [attr.aria-label]="'settings.payment.scopeLabel' | transloco"
+        >
+          @for (option of scopes; track option) {
+            <button type="button" [furarSegmentedOption]="option" [attr.data-scope]="option">
+              {{ 'settings.payment.scope.' + option | transloco }}
+            </button>
+          }
+        </div>
+        @if (f.controls.scope.value === 'ALL') {
+          <furar-field-group>
+            @for (note of noteKeys; track note) {
+              @let fallback = defaults()[note];
+              <furar-bilingual-field
+                multiline
+                longText
+                [rows]="2"
+                [fieldId]="'settings-note-' + note"
+                [label]="'settings.payment.' + note | transloco"
+                [tip]="fallback ? ('settings.payment.default' | transloco: { text: fallback }) : ''"
+                [maxlength]="noteMax"
+                [submitted]="saver.submitted()"
+                [gl]="f.controls.notes.controls[note].controls.gl"
+                [es]="f.controls.notes.controls[note].controls.es"
+              />
+            }
+          </furar-field-group>
+        } @else {
+          <p class="f-help" data-payment-by-facility>{{ 'settings.payment.byFacility' | transloco }}</p>
+        }
+      </div>
+    </furar-card>
+
+    <furar-card class="mb-group" data-custom-fields [heading]="'settings.customFields' | transloco">
+      <p class="f-help mb-form">
+        {{ 'settings.customFieldsHelp' | transloco }}
+        <a routerLink="../campos">{{ 'settings.manageFields' | transloco }}</a>
+      </p>
+      @if (definitions().length) {
+        <furar-custom-fields-form
+          [definitions]="definitions()"
+          [form]="f.controls.customFields"
+          [lang]="language.lang()"
+          idPrefix="settings-cf"
+          [showErrors]="saver.submitted()"
+        />
+      } @else {
+        <p>{{ 'settings.noCustomFields' | transloco }}</p>
+      }
+    </furar-card>
+
+    <!-- «Configuración adicional», a última: unha fila por opción, co interruptor á dereita. «Penalizar as faltas» (ADR-0032): apagada, sen números. -->
+    <furar-card class="mb-group" data-extra-settings [heading]="'section.extraSettings.title' | transloco">
+      <div class="gap-form grid">
+        <div class="grid" data-no-show formGroupName="noShow">
+          <furar-switch
+            switchId="settings-no-show-penalty"
+            formControlName="enabled"
+            [label]="'section.noShow.penalty' | transloco"
+            [tip]="'section.noShow.help' | transloco"
+          />
+          @if (f.controls.noShow.controls.enabled.value) {
+            <furar-field-group cells [style.--f-cell]="'8rem'" data-no-show-numbers>
+              @for (key of f.controls.noShow.numbers; track key) {
+                @let id = 'settings-no-show-' + key;
+                @let error = fieldError(f.controls.noShow.controls[key], saver.submitted());
+                <furar-field [fieldId]="id" [label]="'section.noShow.' + key | transloco" [error]="error">
+                  <input
+                    furarInput
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="3"
+                    autocomplete="off"
+                    [id]="id"
+                    [formControlName]="key"
+                    [attr.aria-invalid]="error ? 'true' : null"
+                    [attr.aria-describedby]="describedBy(id, false, error)"
+                  />
+                </furar-field>
+              }
+            </furar-field-group>
+          }
+        </div>
+        <div data-open-data>
+          <furar-switch
+            switchId="settings-open-data"
+            formControlName="openData"
+            [label]="'section.openData.label' | transloco"
+            [tip]="'section.openData.help' | transloco"
+          />
+          <!-- O botón, na súa liña debaixo do interruptor e á dereita, co bordo do interruptor (nunca dentro del). -->
+          @if (previewUrl(); as url) {
+            <div class="flex justify-end">
+              <a furarButton size="sm" target="_blank" rel="noopener" data-open-data-preview [href]="url">
+                <furar-icon name="visibility" />
+                {{ 'section.openData.preview' | transloco
+                }}<span class="sr-only"> {{ 'section.openData.previewOf' | transloco }}</span>
+              </a>
+            </div>
+          }
+        </div>
+        <!-- «Buscar xente para xogar» (ADR-0040): apagado, as horas non se ven. -->
+        <furar-open-match-policy [form]="f.controls.openMatch" [submitted]="saver.submitted()" />
+        <furar-switch
+          data-install-hint-setting
+          switchId="settings-install-hint"
+          formControlName="installHint"
+          [label]="'section.installHint.label' | transloco"
+          [tip]="'section.installHint.help' | transloco"
+        />
+      </div>
+    </furar-card>
+
+    <div class="f-save-actions">
+      <p class="f-save-status" role="status" data-save-status></p>
+      <button type="submit" furarButton="primary" block [busy]="saver.saving()">
+        {{ (saver.saving() ? 'common.saving' : 'common.save') | transloco }}
+      </button>
+    </div>
+  </form>
+} @else if (!saver.problem()) {
+  <furar-status-state mode="loading" />
+}

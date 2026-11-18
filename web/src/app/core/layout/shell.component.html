@@ -1,0 +1,105 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<a
+  href="#contido"
+  class="sr-only-focusable bg-surface text-primary-text rounded-field top-unit left-unit px-item py-unit absolute z-60 font-bold"
+  (click)="skipToContent($event)"
+  >{{ 'app.skipToContent' | transloco }}</a
+>
+<furar-site-bar />
+<furar-offline-banner />
+<main id="contido" #main tabindex="-1" class="f-main" furarActionScope [attr.data-layout]="layout()">
+  <!--
+    Pestanas do apartado da xestión (Reservas · Validar QR…), se a páxina é unha delas. Á parte
+    (@defer): só as usan as páxinas da xestión, que xa cargan o seu código á parte (D27).
+  -->
+  @defer (on immediate) {
+    <furar-manage-tabs />
+  }
+  <router-outlet />
+</main>
+<!--
+  Pé: enteiro (tres columnas e o nome do servizo) só nas portadas e nas páxinas
+  legais; no resto, unha liña fina coas ligazóns legais e o soporte (site.css).
+-->
+<footer class="f-footer" [attr.data-variant]="footer()">
+  <div class="f-footer__in">
+    @if (footer() === 'full') {
+      <nav [attr.aria-label]="'footer.nav' | transloco">
+        <div class="f-footer__cols">
+          @for (column of footerColumns(); track column.key) {
+            <div [attr.data-footer-column]="column.key">
+              <p class="f-footer__title" [id]="'footer-' + column.key">{{ column.title | transloco }}</p>
+              <ul class="f-footer__list" [attr.aria-labelledby]="'footer-' + column.key">
+                @for (link of column.links; track link.key) {
+                  <li><ng-container *ngTemplateOutlet="footerLink; context: { $implicit: link, full: true }" /></li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      </nav>
+      <div class="f-footer__base">
+        <!-- O nome do servizo, como texto: cada parte enteira (só se parte no « · »). -->
+        <p class="f-footer__brand">
+          @for (part of ('app.footer' | transloco).split(' · '); track $index) {
+            <span>{{ part }}</span>
+          }
+        </p>
+      </div>
+    } @else {
+      <nav class="f-footer__line" [attr.aria-label]="'footer.nav' | transloco">
+        <ul>
+          @for (link of footerLine(); track link.key) {
+            <li><ng-container *ngTemplateOutlet="footerLink; context: { $implicit: link, full: false }" /></li>
+          }
+        </ul>
+      </nav>
+    }
+  </div>
+</footer>
+<ng-template #footerLink let-link let-full="full">
+  @if (link.email; as email) {
+    <!-- No pé enteiro, na columna «Contacto», só o enderezo; na liña, «Soporte:» diante. -->
+    @if (!full) {
+      <span>{{ link.label | transloco }}&nbsp;</span>
+    }
+    <a
+      class="f-footer__link"
+      [href]="'mailto:' + email"
+      [attr.aria-label]="'footer.supportEmail' | transloco: { email }"
+      data-footer-support
+      >{{ email }}</a
+    >
+  } @else if (link.external; as url) {
+    <a class="f-footer__link" [furarExternalHref]="url" rel="noopener noreferrer"
+      >{{ link.label | transloco }}<furar-icon name="open-in-new" /><span class="sr-only">{{
+        'footer.external' | transloco
+      }}</span></a
+    >
+  } @else if (link.link) {
+    <a
+      class="f-footer__link"
+      [routerLink]="link.link"
+      [fragment]="link.fragment"
+      [attr.data-footer-open-data]="link.key === 'openData' ? '' : null"
+      [attr.data-footer-software]="link.key === 'software' ? '' : null"
+      [attr.data-footer-join-request]="link.key === 'joinRequest' ? '' : null"
+      >{{ link.label | transloco }}</a
+    >
+  } @else {
+    <a class="f-footer__link" [href]="link.href" [attr.data-footer-software]="link.key === 'software' ? '' : null">{{
+      link.label | transloco
+    }}</a>
+  }
+</ng-template>
+<!-- Barra inferior do móbil: fixa abaixo, á parte (@defer) para que non entre na carga inicial (D27). -->
+@defer (on immediate) {
+  <furar-bottom-nav />
+}
+<!-- Avisos: tamén á parte (@defer), fóra da carga inicial (D27); o estado vive no ToastService. -->
+@defer (on immediate) {
+  <furar-toast />
+}

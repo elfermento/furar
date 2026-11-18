@@ -1,0 +1,76 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Aviso (furar-callout, docs/deseno.md P1-6): aspecto A (2026-10-24), tinte suave do ton
+ * sen barra lateral. O texto vai sempre na tinta e o ton só no fondo, no bordo e na icona; a
+ * mestura (--f-soft-mix) bórdase para que a tinta siga a 4,5:1 e a icona a 3:1 (theme-tokens.ts).
+ */
+@layer components {
+  .f-callout {
+    --f-callout-tone: var(--f-info);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border: var(--f-border) solid color-mix(in srgb, var(--f-callout-tone) 28%, var(--f-surface));
+    border-radius: var(--radius-row);
+    background: color-mix(in srgb, var(--f-callout-tone) var(--f-soft-mix), var(--f-surface));
+  }
+  .f-callout[data-tone='warn'] {
+    --f-callout-tone: var(--f-warn);
+  }
+  .f-callout[data-tone='danger'] {
+    --f-callout-tone: var(--f-danger);
+  }
+  .f-callout[data-tone='success'] {
+    --f-callout-tone: var(--f-success);
+  }
+  /* A icona ocupa o alto dunha liña (1lh): unha liña de texto vai centrada con ela; varias, coa primeira. */
+  .f-callout > .f-callout__icon {
+    align-items: center;
+    height: 1lh;
+    color: var(--f-callout-tone);
+  }
+  .f-callout__body {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .f-callout__body > p {
+    margin: 0;
+  }
+  /* A ✕ (44 px) sen engordar o aviso: as marxes negativas comen o seu recheo. */
+  .f-callout__close {
+    flex: none;
+    margin-block: -0.625rem;
+    margin-inline-end: -0.75rem;
+  }
+  .f-callout__title {
+    color: var(--f-ink);
+    font-weight: 700;
+  }
+  .f-callout__body .text-muted {
+    font-size: var(--text-support);
+  }
+
+  @media (forced-colors: active) {
+    .f-callout {
+      border-color: CanvasText;
+    }
+  }
+}
+
+/*
+ * Oco do aviso de erro (furar-problem-alert, furar-form-errors-summary): o role="alert" vai sempre
+ * no DOM para que o lector anuncie o aviso ao aparecer. Baleiro, sae do fluxo (segue na árbore de
+ * accesibilidade, a diferenza de display: none): nunha grella non suma un gap enriba da primeira
+ * card nin do primeiro campo.
+ */
+@layer components {
+  .f-alert-slot[data-empty] {
+    position: absolute;
+  }
+}

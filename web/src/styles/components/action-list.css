@@ -1,0 +1,74 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Lista de accións dun detalle (ul[furarActionList] + furar-action-item): en caixa con
+ * bordo, unha acción por fila coa icona, o rótulo e o chevron; a destrutiva en vermello. O botón
+ * ou a ligazón de dentro estírase sobre a fila e o foco pinta a fila enteira. Folla `reservas.css`.
+ */
+@layer components {
+  .f-action-list {
+    display: grid;
+    margin: 0;
+    padding: 0.25rem;
+    list-style: none;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-row);
+    background: var(--f-surface);
+  }
+  .f-action-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: var(--f-row-h);
+    padding: 0 0.75rem;
+    border-radius: var(--radius-field);
+    color: var(--f-ink);
+  }
+  .f-action-item__icon {
+    flex: none;
+    color: var(--f-primary-text);
+  }
+  .f-action-item__label {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-block: 0.5rem;
+  }
+  .f-action-item__label > :is(a, button) {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .f-action-item__label > :is(a, button)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .f-action-item__label > :is(a, button):focus-visible {
+    outline: none;
+  }
+  .f-action-item__label > :is(a, button):focus-visible::after {
+    outline: var(--f-focus-ring) solid var(--f-focus);
+    outline-offset: calc(-1 * var(--f-focus-ring));
+  }
+  .f-action-item__chevron {
+    flex: none;
+    color: var(--f-ink-soft);
+  }
+  .f-action-item[data-tone='danger'],
+  .f-action-item[data-tone='danger'] .f-action-item__icon {
+    color: var(--f-danger);
+  }
+  @media (hover: hover) {
+    .f-action-item:hover {
+      background: var(--f-tint);
+    }
+  }
+}

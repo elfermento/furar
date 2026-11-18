@@ -1,0 +1,102 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * O botón flotante «Mapa» / «Lista» e o mapa a toda a pantalla do móbil (`furar-catalog-map-float`):
+ * nas portadas e no listado dun concello, así que van en portada.css e en reservas.css (as mesmas
+ * regras). A folla que asoma debaixo do mapa, en peek-sheet.css.
+ */
+@layer components {
+  /*
+   * Botón flotante «Mapa» / «Lista» da portada común: abaixo no medio, enriba da barra inferior do
+   * móbil. O pé ten sitio para el.
+   */
+  .f-home-float {
+    position: fixed;
+    right: 0;
+    bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    z-index: var(--f-z-sticky);
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  /* Con calquera capa aberta (diálogo, folla, despregable), fóra: nunca por riba do veo. */
+  html:has(.cdk-overlay-pane) .f-home-float {
+    display: none;
+  }
+  .f-home-float > .f-button {
+    box-shadow: var(--shadow-overlay);
+    pointer-events: auto;
+  }
+  .f-shell:has(.f-home-float) .f-footer {
+    padding-bottom: 6rem;
+  }
+  /* Co mapa do móbil aberto e a folla pregada, o botón vai xusto enriba dela. */
+  html:has(.f-home-map .f-peek:not([data-expanded])) .f-home-float {
+    bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+  }
+  @media (max-width: 899px) {
+    html:has(.f-bottomnav) .f-home-float {
+      bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+    }
+    html:has(.f-bottomnav[data-qr]) .f-home-float {
+      bottom: calc(5.25rem + 12px + env(safe-area-inset-bottom, 0px));
+    }
+    html:has(.f-bottomnav):has(.f-home-map .f-peek:not([data-expanded])) .f-home-float {
+      bottom: calc(10rem + env(safe-area-inset-bottom, 0px));
+    }
+    .f-shell:has(.f-bottomnav):has(.f-home-float) .f-footer {
+      padding-bottom: calc(10rem + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  /*
+   * O mapa da portada común a toda a pantalla, debaixo da barra superior e por riba dos
+   * carruseis; a páxina non se despraza mentres está aberto.
+   */
+  html:has(.f-home-map) {
+    overflow: hidden;
+  }
+  .f-home-map {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--f-z-sticky) - 1);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-unit);
+    /* Debaixo da barra superior. */
+    --f-home-map-top: calc(var(--f-topbar-offset, 4.5rem) + 1.5rem);
+    /* A folla que asoma (furar-peek-sheet) cobre só o mapa, non as barras. */
+    --f-peek-top: var(--f-home-map-top);
+    padding-top: var(--f-home-map-top);
+    background: var(--f-page);
+    transition: padding-top var(--f-dur-med) var(--ease-smooth);
+  }
+  /* Na folla do mapa, o número xa vai no seu título. */
+  .f-home-map .f-plist__count {
+    display: none;
+  }
+  .f-home-map > .f-callout {
+    margin-inline: var(--spacing-gutter);
+  }
+  .f-home-map .f-map {
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr);
+    --f-map-height: 100%;
+    --f-map-height-sm: 100%;
+  }
+  .f-home-map .f-map__frame {
+    border-width: var(--f-border) 0 0;
+    border-radius: 0;
+  }
+  @media (max-width: 899px) {
+    html:has(.f-bottomnav) .f-home-map {
+      bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px));
+    }
+  }
+  :where(html[data-motion='reduce']) .f-home-map {
+    transition: none;
+  }
+}

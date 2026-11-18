@@ -1,0 +1,263 @@
+// SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+// SPDX-License-Identifier: EUPL-1.2
+import { ChangeDetectionStrategy, Component, signal, viewChild } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
+import { SELECT_OPTIONS, definition } from '../../../testing/fixtures';
+import { provideTestI18n } from '../../../testing/i18n';
+import { pickOption, selectText } from '../../../testing/select';
+import { CustomFieldsFormComponent } from './custom-fields-form.component';
+import { buildCustomFieldsForm, customFieldValuesOf } from './custom-field-controls';
+import type { CustomFieldDefinition, CustomFieldType } from './custom-field.types';
+
+const DEFS: CustomFieldDefinition[] = [
+  definition({ code: 'phone', required: true, rules: { format: 'PHONE' } }),
+  definition({ code: 'notes', type: 'LONG_TEXT', help: undefined }),
+  definition({ code: 'courts', type: 'NUMBER', rules: { min: 0, decimals: 0 } }),
+  definition({ code: 'opened', type: 'DATE', rules: { minDate: '2026-06-10' } }),
+  definition({
+    code: 'defib',
+    type: 'BOOLEAN',
+    required: true,
+    label: { gl: 'Desfibrilador', es: 'Desfibrilador' },
+  }),
+  definition({ code: 'roof', type: 'BOOLEAN', label: { gl: 'Teito', es: 'Techo' } }),
+  definition({ code: 'main', type: 'SELECT', options: SELECT_OPTIONS }),
+  definition({ code: 'sports', type: 'MULTI_SELECT', options: SELECT_OPTIONS }),
+];
+
+@Component({
+  imports: [CustomFieldsFormComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<furar-custom-fields-form [definitions]="defs" [form]="form" [lang]="lang()" [showErrors]="show()" />`,
+})
+class HostComponent {
+  readonly defs = DEFS;
+  readonly form = buildCustomFieldsForm(DEFS, { main: 'old' });
+  readonly lang = signal('gl');
+  readonly show = signal(false);
+  readonly component = viewChild.required(CustomFieldsFormComponent);
+}
+
+describe('CustomFieldsFormComponent', () => {
+  async function render() {
+    TestBed.configureTestingModule({ providers: provideTestI18n() });
+    const fixture = TestBed.createComponent(HostComponent);
+    await fixture.whenStable();
+    return { fixture, host: fixture.componentInstance, el: fixture.nativeElement as HTMLElement };
+  }
+
+  it('pinta cada tipo co control axeitado e etiqueta visible ligada', async () => {
+    const { el } = await render();
+    expect(el.querySelector('label[for="cf-phone"]')?.textContent).toContain('Teléfono');
+    expect(el.querySelector('label[for="cf-phone"]')?.textContent).toContain('obrigatorio');
+    expect(el.querySelector('#cf-phone')?.getAttribute('type')).toBe('tel');
+    expect(el.querySelector('#cf-phone')?.getAttribute('aria-describedby')).toBe('cf-phone-help');
+    expect(el.querySelector('textarea#cf-notes')).not.toBeNull();
+    expect(el.querySelector('#cf-courts')?.getAttribute('type')).toBe('number');
+    expect(el.querySelector('#cf-courts')?.getAttribute('step')).toBe('1');
+    expect(el.querySelector('furar-date-field button#cf-opened')).not.toBeNull();
+    expect(el.querySelector('label[for="cf-opened"]')).not.toBeNull();
+    expect(el.querySelector('input[type="date"]')).toBeNull();
+    // Si/Non obrigatorio (dous valores): interruptor, «Non» sen tocar.
+    expect(el.querySelector('furar-switch #cf-defib')?.getAttribute('role')).toBe('switch');
+    expect(el.querySelector('#cf-defib')?.getAttribute('aria-checked')).toBe('false');
+    // Si/Non opcional (tres valores): despregable, sen dato ao comezo.
+    expect(selectText(el.querySelector('#cf-roof')!)).toBe('Sen indicar');
+    expect(el.querySelector('furar-select button#cf-main')).not.toBeNull();
+    // A selección múltiple, un despregable (sen casillas).
+    expect(el.querySelector('furar-select button#cf-sports')?.getAttribute('aria-haspopup')).toBe('listbox');
+    expect(el.querySelector('label[for="cf-sports"]')).not.toBeNull();
+    expect(el.querySelector('input[type="checkbox"]')).toBeNull();
+  });
+
+  it('si/non opcional: «Sen indicar», «Si» e «Non», coma «Cuberta»; o obrigatorio sen tocar envíase como «non»', async () => {
+    const { fixture, host, el } = await render();
+    await pickOption(el.querySelector('#cf-roof')!, 'Non', () => fixture.whenStable());
+    await fixture.whenStable();
+    expect(host.form.controls['roof'].value).toBe(false);
+    el.querySelector<HTMLButtonElement>('#cf-roof')!.click();
+    await fixture.whenStable();
+    expect([...document.querySelectorAll('.f-select__option')].map((o) => o.textContent?.trim())).toEqual([
+      'Sen indicar',
+      'Si',
+      'Non',
+    ]);
+    el.querySelector<HTMLButtonElement>('#cf-roof')!.click();
+    await fixture.whenStable();
+    expect(customFieldValuesOf(DEFS, host.form)['defib']).toBe(false);
+  });
+
+  it('sen grupos nin orde manual: os campos na orde da API', async () => {
+    const { el } = await render();
+    const ids = [...el.querySelectorAll('furar-custom-field [id^="cf-"]')].map((e) => e.id);
+    expect(ids.indexOf('cf-phone')).toBeLessThan(ids.indexOf('cf-notes'));
+    expect(ids.indexOf('cf-notes')).toBeLessThan(ids.indexOf('cf-sports'));
+  });
+
+  it('a opción desactivada só aparece se xa estaba escollida', async () => {
+    const { fixture, el } = await render();
+    expect(selectText(el.querySelector('#cf-main')!)).toBe('Vella');
+    el.querySelector<HTMLButtonElement>('#cf-main')!.click();
+    await fixture.whenStable();
+    const options = [...document.querySelectorAll('.f-select__option')].map((o) => o.textContent?.trim());
+    expect(options).toEqual(['Escolle unha opción', 'Piscina', 'Ximnasio', 'Vella']);
+    el.querySelector<HTMLButtonElement>('#cf-main')!.click();
+    await fixture.whenStable();
+    el.querySelector<HTMLButtonElement>('#cf-sports')!.click();
+    await fixture.whenStable();
+    expect([...document.querySelectorAll('.f-select__option')].map((o) => o.textContent?.trim())).toEqual([
+      'Piscina',
+      'Ximnasio',
+    ]);
+    el.querySelector<HTMLButtonElement>('#cf-sports')!.click();
+    await fixture.whenStable();
+  });
+
+  it('ao enviar amosa os erros ligados con aria-describedby e leva o foco ao primeiro', async () => {
+    const { fixture, host, el } = await render();
+    host.show.set(true);
+    await fixture.whenStable();
+    const phone = el.querySelector<HTMLInputElement>('#cf-phone');
+    expect(phone?.getAttribute('aria-invalid')).toBe('true');
+    expect(phone?.getAttribute('aria-describedby')).toBe('cf-phone-help cf-phone-error');
+    expect(el.querySelector('#cf-phone-error')?.textContent).toContain('Este campo é obrigatorio.');
+    expect(host.component().focusFirstInvalid()).toBe(true);
+    // Orde do documento (a da API): «Teléfono» é o primeiro obrigatorio.
+    expect(document.activeElement?.id).toBe('cf-phone');
+  });
+
+  it('o erro desaparece ao escribir un valor válido', async () => {
+    const { fixture, host, el } = await render();
+    host.show.set(true);
+    await fixture.whenStable();
+    expect(el.querySelector('#cf-phone-error')).not.toBeNull();
+    const phone = el.querySelector<HTMLInputElement>('#cf-phone');
+    if (!phone) throw new Error('sen #cf-phone');
+    phone.value = '981 000 000';
+    phone.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+    expect(host.form.controls['phone']?.valid).toBe(true);
+    expect(el.querySelector('#cf-phone-error')).toBeNull();
+    expect(phone.getAttribute('aria-invalid')).toBeNull();
+  });
+
+  it('marcar e desmarcar opcións múltiples actualiza o valor', async () => {
+    const { fixture, host, el } = await render();
+    const sports = el.querySelector<HTMLButtonElement>('#cf-sports')!;
+    sports.click();
+    await fixture.whenStable();
+    const option = (label: string) =>
+      [...document.querySelectorAll<HTMLElement>('.f-select__option')].find((o) => o.textContent?.trim() === label)!;
+    option('Ximnasio').click();
+    await fixture.whenStable();
+    option('Piscina').click();
+    await fixture.whenStable();
+    // Na orde das opcións; o despregable segue aberto para marcar máis.
+    expect(host.form.controls['sports']?.value).toEqual(['pool', 'gym']);
+    option('Ximnasio').click();
+    await fixture.whenStable();
+    expect(host.form.controls['sports']?.value).toEqual(['pool']);
+    sports.click();
+    await fixture.whenStable();
+    expect(host.form.controls['sports']?.touched).toBe(true);
+  });
+
+  it('a lista escóllese no despregable e «Escolle unha opción» déixaa baleira', async () => {
+    const { fixture, host, el } = await render();
+    const main = el.querySelector<HTMLButtonElement>('#cf-main')!;
+    await pickOption(main, 'Piscina', () => fixture.whenStable());
+    await fixture.whenStable();
+    expect(host.form.controls['main']?.value).toBe('pool');
+    expect(document.activeElement).toBe(main);
+    await pickOption(main, 'Escolle unha opción', () => fixture.whenStable());
+    await fixture.whenStable();
+    expect(host.form.controls['main']?.value).toBeNull();
+  });
+
+  it('a data escóllese no calendario propio, en ISO e dentro dos límites', async () => {
+    const { fixture, host, el } = await render();
+    host.form.controls['opened']?.setValue('2026-06-15');
+    await fixture.whenStable();
+    const opened = el.querySelector<HTMLButtonElement>('#cf-opened')!;
+    expect(opened.textContent?.trim()).toBe('15/06/2026');
+    opened.click();
+    await fixture.whenStable();
+    expect(document.querySelector('td[data-date="2026-06-09"]')?.getAttribute('aria-disabled')).toBe('true');
+    document.querySelector<HTMLElement>('td[data-date="2026-06-20"]')!.click();
+    await fixture.whenStable();
+    expect(host.form.controls['opened']?.value).toBe('2026-06-20');
+    expect(host.form.controls['opened']?.touched).toBe(true);
+    expect(document.activeElement).toBe(opened);
+  });
+
+  it('cambia de idioma as etiquetas', async () => {
+    const { fixture, host, el } = await render();
+    host.lang.set('es');
+    await fixture.whenStable();
+    // As opcións do despregable, no idioma novo.
+    el.querySelector<HTMLButtonElement>('#cf-sports')!.click();
+    await fixture.whenStable();
+    expect([...document.querySelectorAll('.f-select__option')].map((o) => o.textContent?.trim())).toContain('Gimnasio');
+    el.querySelector<HTMLButtonElement>('#cf-sports')!.click();
+    await fixture.whenStable();
+  });
+});
+
+// Cada FieldType anuncia axuda e erro ao lector de pantalla, non só o texto.
+const TYPES: CustomFieldType[] = ['TEXT', 'LONG_TEXT', 'NUMBER', 'DATE', 'BOOLEAN', 'SELECT', 'MULTI_SELECT'];
+let oneDefinition: CustomFieldDefinition[] = [];
+
+@Component({
+  imports: [CustomFieldsFormComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<furar-custom-fields-form [definitions]="defs" [form]="form" [lang]="'gl'" [showErrors]="show()" />`,
+})
+class OneFieldHostComponent {
+  readonly defs = oneDefinition;
+  readonly form = buildCustomFieldsForm(oneDefinition, {});
+  readonly show = signal(false);
+}
+
+describe.each(TYPES)('CustomFieldsFormComponent, tipo %s', (type) => {
+  it('liga axuda e erro con aria-describedby e marca aria-invalid ao enviar', async () => {
+    oneDefinition = [
+      definition({
+        code: 'x',
+        type,
+        required: true,
+        options: type === 'SELECT' || type === 'MULTI_SELECT' ? SELECT_OPTIONS : [],
+      }),
+    ];
+    TestBed.configureTestingModule({ providers: provideTestI18n() });
+    const fixture = TestBed.createComponent(OneFieldHostComponent);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    const control = el.querySelector('#cf-x');
+    if (!control) throw new Error(`${type}: sen #cf-x`);
+    if (type === 'BOOLEAN') {
+      // Obrigatorio: un interruptor, que sempre ten valor («Non» sen tocar): axuda ligada e sen erro.
+      expect(control.getAttribute('role')).toBe('switch');
+      expect(control.getAttribute('aria-describedby')).toBe('cf-x-help');
+      fixture.componentInstance.show.set(true);
+      await fixture.whenStable();
+      expect(control.getAttribute('aria-invalid')).toBeNull();
+      expect(el.querySelector('#cf-x-error')).toBeNull();
+      return;
+    }
+    const owner = control;
+    expect(owner, `${type}: elemento con aria`).not.toBeNull();
+    expect(owner?.getAttribute('aria-describedby')).toBe('cf-x-help');
+    expect(owner?.getAttribute('aria-invalid')).toBeNull();
+    if (type === 'SELECT' || type === 'MULTI_SELECT' || type === 'DATE') {
+      // O botón non admite aria-required: o «(obrigatorio)» vai no nome, coma no rótulo.
+      expect(control.getAttribute('aria-label')).toContain('(obrigatorio)');
+    }
+
+    fixture.componentInstance.show.set(true);
+    await fixture.whenStable();
+    expect(owner?.getAttribute('aria-describedby')).toBe('cf-x-help cf-x-error');
+    expect(owner?.getAttribute('aria-invalid')).toBe('true');
+    expect(el.querySelector('#cf-x-help')?.textContent).toContain('Para avisos');
+    expect(el.querySelector('#cf-x-error')?.textContent?.trim()).not.toBe('');
+  });
+});

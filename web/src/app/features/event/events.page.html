@@ -1,0 +1,199 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'event.manage.';
+<div class="f-events">
+  <furar-page-header class="f-page-header--inline-actions" [heading]="t + 'title' | transloco" [quiet]="underTabs()" />
+
+  <!-- No móbil a táboa vai en tarxetas: o filtro do estado, en pílula, na liña do «+». -->
+  <div class="f-list-toolbar">
+    <div class="f-events__pills">
+      <furar-column-filter
+        variant="chip"
+        [label]="t + 'col.status' | transloco"
+        [options]="statusOptions()"
+        [selected]="selected()"
+        [doneLabel]="t + 'show' | transloco: { count: rows().length }"
+        (toggled)="toggle('status', $event)"
+        (cleared)="selected.set([])"
+      />
+    </div>
+    @if (canManage()) {
+      <div class="f-list-toolbar__end">
+        <button
+          type="button"
+          furarButton="primary"
+          class="max-sm:size-(--f-control-h) max-sm:px-0"
+          data-event-new
+          [busy]="opening()"
+          (click)="edit(null)"
+        >
+          <furar-icon name="plus" />
+          <span class="max-sm:sr-only">{{ t + 'new' | transloco }}</span>
+        </button>
+      </div>
+    }
+  </div>
+
+  <p role="status" class="sr-only">{{ t + 'count' | transloco: { count: rows().length } }}</p>
+
+  @switch (store.state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="row" [rows]="5" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [heading]="t + 'loadError.title' | transloco"
+        [description]="t + 'loadError.text' | transloco"
+      >
+        <button type="button" furarButton (click)="retry()">{{ t + 'loadError.retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @case ('ready') {
+      <div class="f-card f-events__card">
+        <table class="f-events__table" data-events-table>
+          <caption class="sr-only">
+            {{
+              t + 'caption' | transloco
+            }}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">{{ t + 'col.date' | transloco }}</th>
+              <th scope="col">{{ t + 'col.name' | transloco }}</th>
+              <th scope="col" data-col="kind">
+                <furar-column-filter
+                  [label]="t + 'col.kind' | transloco"
+                  [options]="kindOptions()"
+                  [selected]="kinds()"
+                  (toggled)="toggle('kind', $event)"
+                  (cleared)="kinds.set([])"
+                />
+              </th>
+              <th scope="col">{{ t + 'col.place' | transloco }}</th>
+              <th scope="col">{{ t + 'col.seats' | transloco }}</th>
+              <th scope="col" data-col="status">
+                <furar-column-filter
+                  [label]="t + 'col.status' | transloco"
+                  [options]="statusOptions()"
+                  [selected]="selected()"
+                  (toggled)="toggle('status', $event)"
+                  (cleared)="selected.set([])"
+                />
+              </th>
+              @if (canManage()) {
+                <th scope="col">
+                  <span class="sr-only">{{ t + 'col.actions' | transloco }}</span>
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (event of rows(); track event.id) {
+              @let status = statusOf(event);
+              @let w = when(event);
+              <tr class="f-events__row" [attr.data-event-row]="event.id" (click)="open(event)">
+                <td>
+                  <time [attr.datetime]="event.startsAt">{{ w.main }}</time>
+                  @if (w.sub) {
+                    <span class="f-events__sub">{{ w.sub }}</span>
+                  }
+                </td>
+                <th scope="row">
+                  <button
+                    type="button"
+                    class="f-events__open"
+                    aria-haspopup="dialog"
+                    (click)="$event.stopPropagation(); open(event)"
+                  >
+                    {{ name(event) }}
+                  </button>
+                  @if (event.pending) {
+                    <furar-tag tone="warn" class="ms-2" data-event-pending>{{
+                      t + 'pending' | transloco: { count: event.pending }
+                    }}</furar-tag>
+                  }
+                </th>
+                <td data-cell="kind">{{ kindLabel(event) }}</td>
+                <td>{{ place(event) }}</td>
+                <td class="tabular-nums">{{ seats(event) }}</td>
+                <td data-cell="status">
+                  <furar-tag [tone]="tone[status]" [look]="look[status]" [attr.data-status]="status">{{
+                    statusLabel(status)
+                  }}</furar-tag>
+                </td>
+                @if (canManage()) {
+                  <td class="f-events__acts" (click)="$event.stopPropagation()">
+                    <button
+                      type="button"
+                      furarButton
+                      round
+                      [furarMenuTrigger]="menu"
+                      [attr.data-event-more]="event.id"
+                      [attr.aria-label]="t + 'actionsFor' | transloco: { name: name(event) }"
+                    >
+                      <furar-icon name="more" />
+                    </button>
+                    <ng-template #menu>
+                      <div furarMenu [attr.aria-label]="t + 'actionsFor' | transloco: { name: name(event) }">
+                        @if (status === 'PUBLISHED' || status === 'DRAFT') {
+                          <button type="button" furarMenuItem data-event-edit (triggered)="edit(event)">
+                            <furar-icon name="pencil" />
+                            {{ t + 'edit' | transloco }}
+                          </button>
+                        }
+                        <button type="button" furarMenuItem data-event-duplicate (triggered)="edit(event, true)">
+                          <furar-icon name="plus" />
+                          {{ t + 'duplicate' | transloco }}
+                        </button>
+                      </div>
+                    </ng-template>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <ul class="f-events__cards" [attr.aria-label]="t + 'caption' | transloco">
+          @for (event of rows(); track event.id) {
+            @let status = statusOf(event);
+            @let w = when(event);
+            <li>
+              <button
+                type="button"
+                class="f-events__item"
+                aria-haspopup="dialog"
+                [attr.data-event-item]="event.id"
+                (click)="open(event)"
+              >
+                <span class="f-events__item-head">
+                  <b>{{ name(event) }}</b>
+                  <furar-tag [tone]="tone[status]" [look]="look[status]">{{ statusLabel(status) }}</furar-tag>
+                </span>
+                <span class="f-events__item-meta">{{ w.main }}{{ w.sub ? ' · ' + w.sub : '' }}</span>
+                <span class="f-events__item-meta">{{ place(event) }} · {{ seats(event) }}</span>
+                @if (event.pending) {
+                  <span>
+                    <furar-tag tone="warn">{{ t + 'pending' | transloco: { count: event.pending } }}</furar-tag>
+                  </span>
+                }
+              </button>
+            </li>
+          }
+        </ul>
+
+        @if (!rows().length) {
+          <furar-status-state
+            mode="empty"
+            data-events-empty
+            [heading]="t + 'empty.title' | transloco"
+            [description]="(selected().length || kinds().length ? t + 'empty.filtered' : t + 'empty.all') | transloco"
+          />
+        }
+      </div>
+    }
+  }
+</div>

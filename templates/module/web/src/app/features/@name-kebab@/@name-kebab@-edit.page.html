@@ -1,0 +1,56 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<h1 class="mb-6 text-3xl">{{ (id() ? '@name@.editTitle' : '@name@.newTitle') | transloco }}</h1>
+
+<furar-problem-alert [problem]="problem() ?? loadProblem()" />
+@if (problem()?.code === 'common.stale-version') {
+  <p class="mb-4">
+    <button type="button" class="btn-secondary" (click)="load()">{{ '@name@.reload' | transloco }}</button>
+  </p>
+}
+
+@if (ready()) {
+  <form #editForm [formGroup]="form" novalidate (ngSubmit)="save()">
+    <furar-form-errors-summary [count]="submitted() ? errorCount() : 0" />
+
+    @let nameError = fieldError(form.controls.name, submitted());
+    <div class="mb-6">
+      <furar-field fieldId="@name-kebab@-name" [label]="'@name@.name' | transloco" [required]="true" [error]="nameError">
+        <input
+          id="@name-kebab@-name"
+          class="input"
+          formControlName="name"
+          maxlength="100"
+          [attr.aria-invalid]="nameError ? 'true' : null"
+          [attr.aria-describedby]="describedBy('@name-kebab@-name', false, nameError)"
+        />
+      </furar-field>
+    </div>
+    <!-- @cf{ -->
+
+    @if (definitions().length) {
+      <section class="border-line mb-6 rounded-lg border p-4" aria-labelledby="@name-kebab@-custom-fields">
+        <h2 id="@name-kebab@-custom-fields" class="mb-4 text-xl">{{ '@name@.customFields' | transloco }}</h2>
+        <furar-custom-fields-form
+          [definitions]="definitions()"
+          [form]="customFields()"
+          [lang]="language.lang()"
+          idPrefix="@name-kebab@-cf"
+          [showErrors]="submitted()"
+        />
+      </section>
+    }
+    <!-- @cf} -->
+
+    <div class="flex flex-wrap gap-3">
+      <button type="submit" class="btn-primary" [disabled]="saving()">
+        {{ (saving() ? 'common.saving' : 'common.save') | transloco }}
+      </button>
+      <button type="button" class="btn-secondary" (click)="back()">{{ 'common.cancel' | transloco }}</button>
+    </div>
+  </form>
+} @else if (!loadProblem()) {
+  <p role="status">{{ 'common.loading' | transloco }}</p>
+}

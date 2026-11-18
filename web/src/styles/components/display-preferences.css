@@ -1,0 +1,25 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Botón de accesibilidade da barra superior (furar-display-preferences). Vai na folla
+ * inicial; o panel, en `display-preferences-panel.css` (folla `preferencias.css`, á parte).
+ */
+@layer components {
+  .f-display-prefs {
+    position: relative;
+    display: inline-flex;
+  }
+  .f-display-prefs__trigger.f-button {
+    --f-button-ink: var(--f-primary-text);
+  }
+  .f-display-prefs__trigger.f-button[aria-expanded='true'] {
+    --f-button-bg: var(--f-tint);
+  }
+  /* Móbil: o panel colle o ancho da barra (a referencia é ela, site.css). */
+  @media (max-width: 639px) {
+    .f-display-prefs {
+      position: static;
+    }
+  }
+}

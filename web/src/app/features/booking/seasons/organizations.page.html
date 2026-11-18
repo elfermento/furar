@@ -1,0 +1,170 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.seasons.organizations.';
+<div class="f-orgs">
+  <furar-page-header class="f-page-header--inline-actions" [heading]="t + 'title' | transloco" [quiet]="underTabs()" />
+
+  <!-- No móbil a táboa vai en filas: o filtro do estado, en pílula, na liña do «+». -->
+  <div class="f-list-toolbar">
+    @if (store.organizationsState() === 'ready') {
+      <div class="f-orgs__pills">
+        <furar-column-filter
+          variant="chip"
+          [label]="t + 'col.status' | transloco"
+          [options]="statusOptions()"
+          [selected]="selected()"
+          [doneLabel]="t + 'show' | transloco: { count: rows().length }"
+          (toggled)="toggle($event)"
+          (cleared)="selected.set([])"
+        />
+      </div>
+    }
+    <div class="f-list-toolbar__end">
+      <button
+        type="button"
+        furarButton="primary"
+        class="max-sm:size-(--f-control-h) max-sm:px-0"
+        data-organization-new
+        [busy]="opening()"
+        [attr.aria-label]="t + 'new' | transloco"
+        (click)="open(null)"
+      >
+        <furar-icon name="plus" />
+        <span class="max-sm:sr-only" aria-hidden="true">{{ t + 'new' | transloco }}</span>
+      </button>
+    </div>
+  </div>
+
+  @switch (store.organizationsState()) {
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [heading]="t + 'loadError.title' | transloco"
+        [description]="t + 'loadError.text' | transloco"
+      >
+        <button type="button" furarButton (click)="load()">{{ t + 'loadError.retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @case ('ready') {
+      @if (store.requests().length) {
+        <section class="f-orgs__requests" data-series-requests [attr.aria-labelledby]="ids.requests">
+          <h2 class="f-orgs__title" [id]="ids.requests">{{ t + 'requests' | transloco }}</h2>
+          <ul class="f-orgs__cards">
+            @for (card of requestCards(); track card.request.id) {
+              <li>
+                <furar-status-card
+                  [level]="3"
+                  [attr.data-series-request]="card.request.id"
+                  [heading]="card.request.organizationName"
+                  [lines]="card.lines"
+                  (opened)="review(card.request)"
+                >
+                  <furar-tag cardChips look="solid" tone="warn" data-chip="PENDING">{{
+                    'booking.seasons.request.PENDING' | transloco
+                  }}</furar-tag>
+                  <span cardChips class="f-season-ago">{{ card.ago }}</span>
+                </furar-status-card>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      <p role="status" class="sr-only">{{ t + 'count' | transloco: { count: rows().length } }}</p>
+
+      <div class="f-card f-orgs__card">
+        <table class="f-orgs__table" data-organizations-table>
+          <caption class="sr-only">
+            {{
+              t + 'title' | transloco
+            }}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">{{ t + 'col.name' | transloco }}</th>
+              <th scope="col">{{ t + 'col.contact' | transloco }}</th>
+              <th scope="col">{{ t + 'col.phone' | transloco }}</th>
+              <th scope="col">{{ t + 'col.managers' | transloco }}</th>
+              <th scope="col">
+                <furar-column-filter
+                  [label]="t + 'col.status' | transloco"
+                  [options]="statusOptions()"
+                  [selected]="selected()"
+                  (toggled)="toggle($event)"
+                  (cleared)="selected.set([])"
+                />
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (org of rows(); track org.id) {
+              <tr class="f-orgs__row" [attr.data-organization-row]="org.id" (click)="open(org)">
+                <th scope="row">
+                  <button
+                    type="button"
+                    class="f-orgs__open"
+                    aria-haspopup="dialog"
+                    (click)="$event.stopPropagation(); open(org)"
+                  >
+                    {{ org.name }}
+                  </button>
+                </th>
+                <td>{{ org.contactName ?? '' }}</td>
+                <td class="tabular-nums">{{ org.phone ?? '' }}</td>
+                <td>{{ managersText(org.managers) }}</td>
+                <td>
+                  <furar-tag look="solid" [tone]="tone[org.status]" [attr.data-status]="org.status">{{
+                    t + 'status.' + org.status | transloco
+                  }}</furar-tag>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+        <ul class="f-orgs__items" [attr.aria-label]="t + 'title' | transloco">
+          @for (org of rows(); track org.id) {
+            <li>
+              <button
+                type="button"
+                class="f-orgs__item"
+                aria-haspopup="dialog"
+                [attr.data-organization-item]="org.id"
+                (click)="open(org)"
+              >
+                <span class="f-orgs__item-head">
+                  <b>{{ org.name }}</b>
+                  <furar-tag look="solid" [tone]="tone[org.status]">{{
+                    t + 'status.' + org.status | transloco
+                  }}</furar-tag>
+                </span>
+                <span class="f-orgs__item-meta">
+                  @for (part of itemParts(org); track $index) {
+                    <span class="f-season-part">{{ part }}</span>
+                    @if (!$last) {
+                      {{ ' · ' }}
+                    }
+                  }
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+
+        @if (!rows().length) {
+          <furar-status-state
+            mode="empty"
+            data-organizations-empty
+            [heading]="(selected().length ? t + 'empty.filtered' : t + 'empty.title') | transloco"
+            [description]="selected().length ? '' : (t + 'empty.text' | transloco)"
+          />
+        }
+      </div>
+    }
+    @default {
+      <furar-status-state mode="skeleton" shape="row" [rows]="5" [description]="'common.loading' | transloco" />
+    }
+  }
+</div>

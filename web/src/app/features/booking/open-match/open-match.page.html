@@ -1,0 +1,195 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'openMatch.page.';
+<div class="f-public">
+  <a [routerLink]="['/', slug()]" furarButton round [attr.aria-label]="t + 'back' | transloco">
+    <furar-icon name="arrow-left" />
+  </a>
+
+  @switch (state()) {
+    @case ('loading') {
+      <furar-status-state mode="skeleton" shape="card" [rows]="2" [description]="t + 'loading' | transloco" />
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [headingLevel]="1"
+        [heading]="(notFound() ? t + 'notFound.title' : t + 'loadError.title') | transloco"
+        [description]="(notFound() ? t + 'notFound.text' : t + 'loadError.text') | transloco"
+      >
+        @if (!notFound()) {
+          <button type="button" furarButton (click)="retry()">{{ t + 'loadError.retry' | transloco }}</button>
+        }
+      </furar-status-state>
+    }
+    @case ('ready') {
+      @if (view(); as v) {
+        @let m = v.match;
+        <div class="f-public__title">
+          <h1 data-match-title>{{ v.title }}</h1>
+        </div>
+        <div class="f-public__cols">
+          <div class="f-public__main">
+            @if (m.cover; as image) {
+              <img class="f-public__image" [src]="image.large" [width]="image.width" [height]="image.height" alt="" />
+            }
+            @if (mine()?.hidden) {
+              <furar-callout tone="warn" data-match-hidden>{{ t + 'hidden' | transloco }}</furar-callout>
+            }
+
+            <!-- Solicitudes (só quen organiza) e persoas que van (só dentro). -->
+            <furar-open-match-requests
+              [requests]="requests()"
+              [busy]="busy()"
+              (decided)="decide($event.request, $event.accept)"
+            />
+
+            <section class="f-public__section" aria-labelledby="match-description">
+              <h2 id="match-description">{{ t + 'description' | transloco }}</h2>
+              <p class="flex flex-wrap gap-2" data-match-tags>
+                @for (tag of v.tags; track $index) {
+                  <furar-tag look="soft">{{ tag }}</furar-tag>
+                }
+              </p>
+              @if (m.description; as text) {
+                <!-- Texto plano: nunca HTML nin ligazóns (ADR-0040, punto 9). -->
+                <p class="whitespace-pre-line text-ink-soft" data-match-description>{{ text }}</p>
+              }
+            </section>
+
+            <furar-open-match-people [match]="mine()" />
+
+            <!-- «Como chegar», coma na ficha da instalación; sen mapa no despregue, o enderezo xa está na tarxeta. -->
+            @if (mapEnabled()) {
+              @if (point(); as p) {
+                <section class="f-public__section" aria-labelledby="match-map" data-match-map>
+                  <h2 id="match-map">{{ 'facility.public.howToGet' | transloco }}</h2>
+                  <furar-map [point]="p" [label]="'facility.public.pin' | transloco: { name: m.facilityName }" />
+                </section>
+              }
+            }
+          </div>
+
+          <aside class="f-public__side" [attr.aria-label]="t + 'card' | transloco">
+            <section class="f-public-card" data-match-card>
+              <div class="f-public-card__item">
+                <furar-icon name="location" [size]="24" />
+                <div class="min-w-0">
+                  <h2 class="f-public-card__title">{{ t + 'where' | transloco }}</h2>
+                  <a
+                    class="f-public-card__link"
+                    data-match-facility
+                    [routerLink]="['/', slug(), 'instalacions', m.facilityId]"
+                    >{{ m.facilityName }}</a
+                  >
+                  @if (m.facilityAddress) {
+                    <p class="text-ink-soft">{{ m.facilityAddress }}</p>
+                  }
+                </div>
+              </div>
+              <div class="f-public-card__item">
+                <furar-icon name="calendar-month" [size]="24" />
+                <div class="min-w-0">
+                  <h2 class="f-public-card__title">{{ t + 'when' | transloco }}</h2>
+                  <p class="text-ink-soft" data-match-when>
+                    @for (part of v.when; track $index) {
+                      <span class="f-match-part">{{ part }}</span>
+                      @if (!$last) {
+                        {{ ' · ' }}
+                      }
+                    }
+                  </p>
+                </div>
+              </div>
+              <div class="f-public-card__item">
+                <furar-icon name="group" [size]="24" />
+                <div class="min-w-0">
+                  <h2 class="f-public-card__title">{{ t + 'seats' | transloco }}</h2>
+                  <p data-match-counts>
+                    <b>{{ v.counts }}</b>
+                  </p>
+                  <p class="text-ink-soft" data-match-rule>{{ v.rule }}</p>
+                </div>
+              </div>
+              <div class="f-public-card__item">
+                <furar-icon name="user" [size]="24" />
+                <div class="min-w-0">
+                  <h2 class="f-public-card__title">{{ t + 'organizer' | transloco }}</h2>
+                  <p class="text-ink-soft" data-match-organizer>
+                    {{ v.action === 'organizer' ? (t + 'you' | transloco) : m.organizerName }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="f-event-action" [attr.data-match-action]="v.action">
+                @switch (v.action) {
+                  @case ('organizer') {
+                    <furar-open-match-organizer-actions
+                      [status]="m.status"
+                      [canCancel]="canCancel()"
+                      (stopped)="stop()"
+                      (cancelled)="cancelBooking()"
+                    />
+                  }
+                  @case ('joined') {
+                    <furar-callout tone="success" live="status" [heading]="t + 'joinedTitle' | transloco">
+                      <p>{{ t + 'joinedText' | transloco }}</p>
+                    </furar-callout>
+                  }
+                  @case ('pending') {
+                    <furar-callout tone="warn" live="status" [heading]="t + 'pendingTitle' | transloco">
+                      <p>{{ t + 'pendingText' | transloco: { name: m.organizerName } }}</p>
+                    </furar-callout>
+                  }
+                  @case ('rejected') {
+                    <furar-callout tone="info" [heading]="t + 'rejectedTitle' | transloco">
+                      <p>{{ t + 'rejectedText' | transloco }}</p>
+                    </furar-callout>
+                  }
+                  @case ('cancelled') {
+                    <p class="text-ink-soft" data-match-cancelled>{{ t + 'cancelled' | transloco }}</p>
+                  }
+                  @case ('closed') {
+                    <p class="text-ink-soft" data-match-closed>{{ t + 'closed' | transloco }}</p>
+                  }
+                  @case ('full') {
+                    <p class="f-event-action__chip">
+                      <furar-tag tone="danger" data-match-full>{{ 'openMatch.full' | transloco }}</furar-tag>
+                    </p>
+                  }
+                }
+                @if (v.action === 'joined' || v.action === 'pending') {
+                  <button
+                    type="button"
+                    furarButton="danger"
+                    block
+                    data-match-leave
+                    [busy]="busy() === 'leave'"
+                    (click)="leave()"
+                  >
+                    <furar-icon name="event-busy" />
+                    {{ (v.action === 'pending' ? t + 'withdraw' : t + 'leave') | transloco }}
+                  </button>
+                } @else if (v.action === 'join' || v.action === 'ask') {
+                  <button
+                    type="button"
+                    furarButton="primary"
+                    block
+                    data-match-join
+                    [busy]="busy() === 'join'"
+                    (click)="join()"
+                  >
+                    {{ (v.action === 'ask' ? t + 'ask' : t + 'join') | transloco }}
+                  </button>
+                }
+                <furar-problem-alert [problem]="problem()" />
+              </div>
+            </section>
+          </aside>
+        </div>
+      }
+    }
+  }
+</div>

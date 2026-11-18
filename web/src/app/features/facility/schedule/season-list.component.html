@@ -1,0 +1,149 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'facility.wizard.schedule.';
+@let d = 'facility.schedule.seasonDialog.';
+@for (view of views(); track view.season.key) {
+  @let season = view.season;
+  <section class="f-season-card" [attr.aria-labelledby]="view.id + '-title'" [attr.data-season]="season.key">
+    <div class="f-season-card__head">
+      <h3 class="f-season-card__title" [id]="view.id + '-title'">{{ view.title }}</h3>
+      @if (removable()) {
+        <furar-delete-button
+          data-season-delete
+          [label]="'facility.schedule.delete.label' | transloco: { name: view.title }"
+          [tooltip]="'facility.schedule.delete.action' | transloco"
+          (pressed)="removed(season)"
+        />
+      }
+    </div>
+    <div class="f-season-card__body">
+      <div class="contents" [formGroup]="season.form">
+        <furar-field
+          [fieldId]="view.id + '-name'"
+          [label]="d + 'name' | transloco"
+          [required]="true"
+          [error]="view.name"
+        >
+          <input
+            furarInput
+            formControlName="name"
+            aria-required="true"
+            autocomplete="off"
+            data-season-name
+            [id]="view.id + '-name'"
+            [placeholder]="d + 'nameHelp' | transloco"
+            [attr.aria-invalid]="view.name ? 'true' : null"
+            [attr.aria-describedby]="view.name ? view.id + '-name-error' : null"
+          />
+        </furar-field>
+        <!-- A data de fin só existe co interruptor aceso (apagado, nin desactivada). -->
+        <furar-switch data-season-has-end [formControl]="season.hasEnd" [label]="t + 'hasEnd' | transloco" />
+        <furar-field-group cells data-season-dates>
+          <furar-field
+            [fieldId]="view.id + '-start'"
+            [label]="d + 'from' | transloco"
+            [required]="true"
+            [error]="view.start"
+          >
+            <furar-date-field
+              required
+              formControlName="startDate"
+              data-season-start
+              [buttonId]="view.id + '-start'"
+              [label]="d + 'from' | transloco"
+              [invalid]="!!view.start"
+              [describedBy]="view.start ? view.id + '-start-error' : null"
+            />
+          </furar-field>
+          @if (view.hasEnd) {
+            <furar-field
+              [fieldId]="view.id + '-end'"
+              [label]="d + 'to' | transloco"
+              [required]="true"
+              [error]="view.end"
+            >
+              <furar-date-field
+                required
+                formControlName="endDate"
+                data-season-end
+                [buttonId]="view.id + '-end'"
+                [label]="d + 'to' | transloco"
+                [min]="season.form.controls.startDate.value"
+                [invalid]="!!view.end"
+                [describedBy]="view.end ? view.id + '-end-error' : null"
+              />
+            </furar-field>
+          }
+        </furar-field-group>
+      </div>
+      @if (view.copy.length) {
+        <furar-field class="f-season-card__copy" [fieldId]="view.id + '-copy'" [label]="d + 'copyFrom' | transloco">
+          <furar-select
+            data-season-copy
+            [selectId]="view.id + '-copy'"
+            [label]="d + 'copyFrom' | transloco"
+            [options]="view.copy"
+            [value]="season.copiedFrom ?? undefined"
+            (changed)="copied(season, $event)"
+          />
+        </furar-field>
+      }
+      <hr class="f-season-card__rule" />
+      <furar-field-line [label]="t + 'mode' | transloco" [labelId]="view.id + '-mode'">
+        <div furarSegmented mode="radio" [formControl]="season.mode" [attr.aria-labelledby]="view.id + '-mode'">
+          <button type="button" furarSegmentedOption="SAME">{{ t + 'same' | transloco }}</button>
+          <button type="button" furarSegmentedOption="DAYS">{{ t + 'days' | transloco }}</button>
+        </div>
+      </furar-field-line>
+
+      @if (season.mode.value === 'SAME') {
+        <furar-field-group cells [style.--f-cell]="'8rem'" data-season-same [formGroup]="season.sameHours">
+          <furar-field [fieldId]="view.id + '-same-from'" [label]="t + 'from' | transloco">
+            <furar-time-picker
+              formControlName="startMinute"
+              [buttonId]="view.id + '-same-from'"
+              [max]="1425"
+              [label]="t + 'openFrom' | transloco"
+              [invalid]="!!view.same"
+              [describedBy]="view.same ? view.id + '-same-to-error' : null"
+            />
+          </furar-field>
+          <furar-field
+            [fieldId]="view.id + '-same-to'"
+            [label]="t + 'to' | transloco"
+            [error]="view.same ? endBeforeStart : null"
+          >
+            <furar-time-picker
+              formControlName="endMinute"
+              allowEndOfDay
+              [buttonId]="view.id + '-same-to'"
+              [min]="15"
+              [label]="t + 'openTo' | transloco"
+              [invalid]="!!view.same"
+              [describedBy]="view.same ? view.id + '-same-to-error' : null"
+            />
+          </furar-field>
+        </furar-field-group>
+      } @else {
+        <ul class="f-season-week" [attr.aria-label]="t + 'week' | transloco: { name: view.title }">
+          @for (day of season.week.controls; track day; let i = $index) {
+            <li>
+              <furar-facility-day-row [idPrefix]="view.id + '-week'" [day]="day" [index]="i" [name]="names()[i]" />
+            </li>
+          }
+        </ul>
+        @if (view.noOpenDay) {
+          <p class="f-field-error">{{ 'errors.facility.no-open-day' | transloco }}</p>
+        }
+      }
+    </div>
+  </section>
+}
+<div class="mt-unit flex justify-center">
+  <button type="button" furarButton="secondary" data-season-add (click)="added()">
+    <furar-icon name="plus" />
+    {{ t + 'addSeason' | transloco }}
+  </button>
+</div>

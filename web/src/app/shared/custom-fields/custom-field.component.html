@@ -1,0 +1,168 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let def = definition();
+@let ctl = control();
+@switch (def.type) {
+  @case ('BOOLEAN') {
+    @if (def.required) {
+      <!-- Obrigatorio: dous valores, interruptor (nome á esquerda, «?» pegado; sen tocar, «Non»). -->
+      <furar-switch
+        [switchId]="id()"
+        [formControl]="ctl"
+        [label]="label()"
+        [tip]="help()"
+        [describedBy]="error() ? errorId() : null"
+      />
+    } @else {
+      <!-- Opcional: tres valores (sen dato, Si, Non), despregable coma «Cuberta». -->
+      <div class="f-field__head">
+        <label class="label" [for]="id()">{{ label() }}</label>
+        @if (help()) {
+          <furar-help-tip
+            [label]="'ui.helpTip.label' | transloco: { label: label() }"
+            [text]="help()"
+            [textId]="helpId()"
+          />
+        }
+      </div>
+      <furar-select
+        [selectId]="id()"
+        [formControl]="ctl"
+        [label]="label()"
+        [options]="yesNoOptions()"
+        [invalid]="!!error()"
+        [describedBy]="describedBy()"
+      />
+    }
+    @if (error(); as e) {
+      <span class="field-error" [id]="errorId()">{{ e.key | transloco: e.params }}</span>
+    }
+  }
+  @case ('MULTI_SELECT') {
+    <!-- Despregable de selección múltiple (o mesmo ca o simple; non se pecha ao marcar). -->
+    <div class="f-field__head">
+      <label class="label" [for]="id()">
+        {{ label() }}
+        @if (def.required) {
+          <furar-required-mark />
+        }
+      </label>
+      @if (help()) {
+        <furar-help-tip
+          [label]="'ui.helpTip.label' | transloco: { label: label() }"
+          [text]="help()"
+          [textId]="helpId()"
+        />
+      }
+    </div>
+    <furar-select
+      multiple
+      [selectId]="id()"
+      [formControl]="ctl"
+      [label]="label()"
+      [required]="def.required"
+      [options]="multiOptions()"
+      [invalid]="!!error()"
+      [describedBy]="describedBy()"
+    />
+    @if (error(); as e) {
+      <span class="field-error" [id]="errorId()">{{ e.key | transloco: e.params }}</span>
+    }
+  }
+  @default {
+    <!-- A axuda nun «?» ao carón do rótulo, fóra do <label> (un botón dentro activaría o campo). -->
+    <div class="f-field__head">
+      <label class="label" [for]="id()">
+        {{ label() }}
+        @if (def.required) {
+          <furar-required-mark />
+        }
+      </label>
+      @if (help()) {
+        <furar-help-tip
+          [label]="'ui.helpTip.label' | transloco: { label: label() }"
+          [text]="help()"
+          [textId]="helpId()"
+        />
+      }
+    </div>
+    @switch (def.type) {
+      @case ('LONG_TEXT') {
+        <textarea
+          class="input min-h-32"
+          [id]="id()"
+          [formControl]="ctl"
+          [attr.aria-describedby]="describedBy()"
+          [attr.aria-invalid]="error() ? 'true' : null"
+          [attr.aria-required]="def.required"
+          [attr.maxlength]="def.rules.maxLength ?? 5000"
+        ></textarea>
+      }
+      @case ('NUMBER') {
+        <input
+          type="number"
+          class="input"
+          [id]="id()"
+          [formControl]="ctl"
+          [step]="step()"
+          [attr.min]="def.rules.min ?? null"
+          [attr.max]="def.rules.max ?? null"
+          [attr.aria-describedby]="describedBy()"
+          [attr.aria-invalid]="error() ? 'true' : null"
+          [attr.aria-required]="def.required"
+        />
+      }
+      @case ('DATE') {
+        <!-- O botón non admite aria-required: «(obrigatorio)» vai no nome accesible (required). -->
+        <furar-date-field
+          [buttonId]="id()"
+          [formControl]="ctl"
+          [label]="label()"
+          [required]="def.required"
+          [min]="def.rules.minDate ?? null"
+          [max]="def.rules.maxDate ?? null"
+          [invalid]="!!error()"
+          [describedBy]="describedBy()"
+        />
+      }
+      @case ('SELECT') {
+        <!-- O botón non admite aria-required: «(obrigatorio)» vai no nome accesible (required). -->
+        <furar-select
+          [selectId]="id()"
+          [formControl]="ctl"
+          [label]="label()"
+          [required]="def.required"
+          [options]="selectOptions()"
+          [invalid]="!!error()"
+          [describedBy]="describedBy()"
+        />
+      }
+      @default {
+        <input
+          class="input"
+          [type]="
+            def.rules.format === 'EMAIL'
+              ? 'email'
+              : def.rules.format === 'PHONE'
+                ? 'tel'
+                : def.rules.format === 'URL'
+                  ? 'url'
+                  : 'text'
+          "
+          [attr.autocomplete]="def.rules.format === 'EMAIL' ? 'email' : def.rules.format === 'PHONE' ? 'tel' : 'off'"
+          [id]="id()"
+          [formControl]="ctl"
+          [attr.aria-describedby]="describedBy()"
+          [attr.aria-invalid]="error() ? 'true' : null"
+          [attr.aria-required]="def.required"
+          [attr.maxlength]="def.rules.maxLength ?? 500"
+        />
+      }
+    }
+    @if (error(); as e) {
+      <span class="field-error" [id]="errorId()">{{ e.key | transloco: e.params }}</span>
+    }
+  }
+}

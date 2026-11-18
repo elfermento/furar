@@ -1,0 +1,51 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<div class="f-account">
+  <furar-page-header [heading]="'account.title' | transloco" />
+  <furar-card class="f-account__card">
+    <div class="f-account__who">
+      <span class="f-usermenu__avatar f-usermenu__avatar--lg" aria-hidden="true">{{ letters() }}</span>
+      <span class="f-account__lines">
+        <span class="f-account__name" data-account-name>{{ session.name() }}</span>
+        @if (session.email(); as email) {
+          <span class="f-account__detail" data-account-email>{{ email }}</span>
+        }
+        @if (lastSignIn(); as date) {
+          <span class="f-account__detail" data-last-sign-in>{{ 'account.lastSignIn' | transloco: { date } }}</span>
+        }
+      </span>
+    </div>
+    @if (places().length > 0) {
+      <ul class="f-account__places" [attr.aria-label]="'account.municipalities' | transloco">
+        @for (place of places(); track place.slug) {
+          <li>
+            <a class="f-account__place" [routerLink]="place.link" [attr.data-account-place]="place.slug">
+              <span class="f-account__place-name">{{ place.name }}</span>
+              @if (place.current) {
+                {{ ' ' }}<furar-tag tone="primary" data-account-current>{{ 'account.current' | transloco }}</furar-tag>
+              }
+              {{ ' ' }}<span class="f-account__role">{{ place.role }}</span>
+              <furar-icon class="f-account__chevron" name="chevron-right" />
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </furar-card>
+  <ul furarActionList [attr.aria-label]="'account.actions' | transloco">
+    <li>
+      <furar-action-item icon="shield">
+        <a [href]="session.securityUrl()" data-account-security>{{ 'session.security' | transloco }}</a>
+      </furar-action-item>
+    </li>
+    <li>
+      <furar-action-item icon="trash" tone="danger">
+        <button type="button" data-account-delete (click)="deleteAccount()">
+          {{ 'session.deleteAccount' | transloco }}
+        </button>
+      </furar-action-item>
+    </li>
+  </ul>
+</div>

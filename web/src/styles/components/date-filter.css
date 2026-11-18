@@ -1,0 +1,136 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Chip de data (`.f-mdate__*`, `furar-date-filter`): o único chip de data da app (rango nas
+ * reservas e nos datos abertos; unha data, `single`, na folla de filtros da portada común). Sen
+ * data, un chip de contorno «Escoller data»; con ela, o chip cheo co aspa dentro. Vai na folla
+ * das reservas (`reservas.css`, fóra da carga inicial, D27): todas as rutas que o usan levan
+ * `bookingStylesResolver`.
+ */
+@layer components {
+  /* Sen data, chip de contorno; con ela, chip cheo co aspa. Os dous co mesmo alto (44 px). */
+  .f-mdate {
+    display: block;
+  }
+  .f-mdate__row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .f-mdate__add {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: var(--f-touch);
+    padding: 0 1rem 0 0.75rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-primary-text);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .f-mdate__add[aria-expanded='true'] {
+    border-color: var(--f-primary);
+    box-shadow: inset 0 0 0 1px var(--f-primary);
+  }
+  @media (hover: hover) {
+    .f-mdate__add:hover {
+      border-color: var(--f-primary);
+    }
+  }
+  .f-mdate__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-height: var(--f-touch);
+    padding: 0.25rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-weight: 700;
+  }
+  .f-mdate__chip-open,
+  .f-mdate__chip-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.25rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+  .f-mdate__chip-open {
+    padding: 0 0.5rem;
+  }
+  .f-mdate__chip-clear {
+    justify-content: center;
+    width: 2.25rem;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--f-on-primary) 18%, transparent);
+  }
+  .f-mdate__chip :focus-visible {
+    outline-color: var(--f-on-primary);
+  }
+  .f-mdate__panel {
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border: var(--f-border) solid var(--f-divider);
+    border-radius: var(--radius-sheet);
+    background: var(--f-surface);
+    box-shadow: var(--shadow-overlay);
+  }
+  /*
+   * Dentro dunha folla ou diálogo (corpo con desprazamento e sen recheo abaixo): aire debaixo para
+   * que o bordo e a sombra do panel non queden cortados; ao abrir, desprázase ata velo enteiro.
+   */
+  .f-dialog__body .f-mdate__panel {
+    margin-bottom: 1rem;
+    scroll-margin-bottom: 1rem;
+  }
+  .f-mdate__presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-bottom: 0.75rem;
+  }
+  .f-mdate__preset {
+    min-height: 2.5rem;
+    padding: 0 0.875rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    background: var(--f-surface);
+    color: var(--f-primary-text);
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+  .f-mdate__preset[aria-pressed='true'] {
+    border-color: var(--f-primary);
+    box-shadow: inset 0 0 0 1px var(--f-primary);
+    font-weight: 700;
+  }
+  .f-mdate__error {
+    margin: 0.75rem 0 0;
+    color: var(--f-danger);
+    font-size: var(--text-support);
+    font-weight: 700;
+  }
+  .f-mdate__ok {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.75rem;
+  }
+
+  @media (forced-colors: active) {
+    .f-mdate__add,
+    .f-mdate__chip,
+    .f-mdate__panel {
+      border: var(--f-border) solid CanvasText;
+    }
+  }
+}

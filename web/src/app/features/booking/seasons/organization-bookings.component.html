@@ -1,0 +1,84 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.mine.';
+@let s = 'booking.seasons.';
+@if (problem(); as p) {
+  <furar-callout tone="danger" live="alert" data-org-error>{{ p.translated }}</furar-callout>
+}
+<furar-tabs [label]="t + 'tabs' | transloco" [(selected)]="scope">
+  <button type="button" furarTab="UPCOMING" data-org-tab="upcoming">{{ t + 'upcoming' | transloco }}</button>
+  <button type="button" furarTab="HISTORY" data-org-tab="history">{{ t + 'history' | transloco }}</button>
+  <button furarTabsActions type="button" furarButton class="f-season-ask" data-season-ask (click)="ask()">
+    <furar-icon name="event-repeat" />
+    {{ s + 'ask.title' | transloco }}
+  </button>
+
+  @let current = list();
+  @switch (current.state) {
+    @case ('ready') {
+      @if (scope() === 'UPCOMING' && requestCards().length) {
+        <ul class="f-mine__list" data-my-season-requests [attr.aria-label]="s + 'request.list' | transloco">
+          @for (card of requestCards(); track card.request.id) {
+            <li>
+              <furar-status-card
+                [attr.data-my-season-request]="card.request.id"
+                [heading]="card.request.facilityName"
+                [lines]="card.lines"
+                (opened)="openRequest(card.request)"
+              >
+                <furar-tag
+                  cardChips
+                  look="solid"
+                  [tone]="card.request.status === 'PENDING' ? 'info' : 'danger'"
+                  [attr.data-chip]="card.request.status"
+                  >{{ s + 'request.mine.' + card.request.status | transloco }}</furar-tag
+                >
+                <span cardChips class="f-season-ago">{{ card.ago }}</span>
+              </furar-status-card>
+            </li>
+          }
+        </ul>
+      }
+      @if (current.items.length) {
+        <ul class="f-mine__list" data-org-bookings>
+          @for (booking of current.items; track booking.id) {
+            <li>
+              <furar-booking-card [booking]="booking" (opened)="open(booking)" />
+            </li>
+          }
+        </ul>
+        @if (current.items.length < current.total) {
+          <button
+            type="button"
+            furarButton
+            class="f-mine__more"
+            data-org-more
+            [busy]="current.loadingMore"
+            (click)="more()"
+          >
+            {{ t + 'more' | transloco }}
+          </button>
+        }
+      } @else if (scope() === 'HISTORY' || !requestCards().length) {
+        <furar-status-state
+          mode="empty"
+          [heading]="(scope() === 'UPCOMING' ? s + 'club.empty' : t + 'empty.history') | transloco"
+        />
+      }
+    }
+    @case ('error') {
+      <furar-status-state
+        mode="error"
+        [heading]="t + 'loadError.title' | transloco"
+        [description]="t + 'loadError.text' | transloco"
+      >
+        <button type="button" furarButton (click)="retry()">{{ t + 'loadError.retry' | transloco }}</button>
+      </furar-status-state>
+    }
+    @default {
+      <furar-status-state mode="skeleton" shape="card" [rows]="3" [description]="t + 'loading' | transloco" />
+    }
+  }
+</furar-tabs>

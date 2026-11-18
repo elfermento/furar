@@ -1,0 +1,147 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+ * SPDX-License-Identifier: EUPL-1.2
+ *
+ * Consola da conta clara, coma o tema de acceso e a web: cabeceira e menú lateral coas cores do
+ * tema de acceso (login/resources/css/furar-tema.css, tokens da web), con contraste AA. O elemento
+ * actual do menú vai coma na web (menu.css, [aria-current='page']): fondo --f-tint e negra. Os
+ * botóns e ligazóns do contido levan o azul de Furar, coma no acceso.
+ * A letra é Inter coas mesmas variantes ca o acceso e a web (cero con barra, ss02: l con cola e I con
+ * remates; ollo ao 0,5). Os woff2 son os do tema de acceso: Keycloak serve os recursos de cada tipo
+ * de tema baixo resources/<versión>/<tipo>/furar/, así que a ruta relativa chega aos de login e non
+ * hai dúas copias (X09 comproba que a ruta existe e que os selectores de PatternFly seguen na consola).
+ */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(../../../login/furar/fonts/Inter-Regular-subset.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(../../../login/furar/fonts/Inter-Bold-subset.woff2) format('woff2');
+}
+:root {
+  --f-surface: #ffffff;
+  --f-tint: #e7eff4;
+  --f-ink: #1a1a1a;
+  --f-ink-soft: #5a5a5a;
+  --f-divider: #dadada;
+  --f-page: #f5f8fa;
+  --f-primary: #0b5c8e;
+  --f-primary-hover: #094e79;
+  --f-font: 'Inter', system-ui, sans-serif;
+
+  --pf-v5-global--FontFamily--text: var(--f-font);
+  --pf-v5-global--FontFamily--heading: var(--f-font);
+
+  --pf-v5-global--primary-color--100: var(--f-primary);
+  --pf-v5-global--primary-color--200: var(--f-primary-hover);
+  --pf-v5-global--link--Color: var(--f-primary);
+  --pf-v5-global--link--Color--hover: var(--f-primary-hover);
+}
+
+body {
+  font-family: var(--f-font);
+  font-feature-settings: 'zero' 1, 'ss02' 1;
+  font-size-adjust: 0.5;
+}
+/* Os controis non herdan as variantes da letra. */
+button,
+input,
+select,
+textarea {
+  font-feature-settings: inherit;
+  font-size-adjust: inherit;
+}
+
+/* Foco co teclado: o aro do tema de acceso (3 px, azul). */
+:focus-visible {
+  outline: 3px solid var(--f-primary);
+  outline-offset: 2px;
+}
+
+.pf-v5-c-masthead {
+  --pf-v5-c-masthead--BackgroundColor: var(--f-surface);
+  --pf-v5-global--Color--100: var(--f-ink);
+  --pf-v5-global--Color--200: var(--f-ink-soft);
+  --pf-v5-c-button--m-plain--Color: var(--f-ink);
+  --pf-v5-c-button--m-plain--hover--Color: var(--f-ink);
+  --pf-v5-c-button--m-plain--focus--Color: var(--f-ink);
+  --pf-v5-c-button--m-plain--active--Color: var(--f-ink);
+  --pf-v5-c-menu-toggle--Color: var(--f-ink);
+  --pf-v5-c-menu-toggle--before--BorderTopColor: var(--f-divider);
+  --pf-v5-c-menu-toggle--before--BorderRightColor: var(--f-divider);
+  --pf-v5-c-menu-toggle--before--BorderLeftColor: var(--f-divider);
+  --pf-v5-c-menu-toggle--before--BorderBottomColor: var(--f-divider);
+  --pf-v5-c-menu-toggle--after--BorderBottomColor: var(--f-primary);
+  background-color: var(--f-surface);
+  color: var(--f-ink);
+  border-bottom: 1px solid var(--f-divider);
+}
+.pf-v5-c-masthead .pf-v5-c-button.pf-m-plain,
+.pf-v5-c-masthead .pf-v5-c-menu-toggle,
+.pf-v5-c-masthead .pf-v5-c-menu-toggle__text,
+.pf-v5-c-masthead .pf-v5-c-menu-toggle__controls {
+  color: var(--f-ink);
+}
+.pf-v5-c-masthead .pf-v5-c-menu-toggle:hover,
+.pf-v5-c-masthead .pf-v5-c-button.pf-m-plain:hover {
+  background-color: var(--f-tint);
+}
+
+/* Menú lateral: fondo da páxina, borde --f-divider, texto --f-ink. */
+.pf-v5-c-page__sidebar {
+  --pf-v5-c-page__sidebar--BackgroundColor: var(--f-page);
+  background-color: var(--f-page);
+  color: var(--f-ink);
+  border-right: 1px solid var(--f-divider);
+}
+.pf-v5-c-page__sidebar .pf-v5-c-nav {
+  --pf-v5-c-nav__link--Color: var(--f-ink);
+  --pf-v5-c-nav__link--hover--Color: var(--f-ink);
+  --pf-v5-c-nav__link--focus--Color: var(--f-ink);
+  --pf-v5-c-nav__link--active--Color: var(--f-ink);
+  --pf-v5-c-nav__link--m-current--Color: var(--f-ink);
+  --pf-v5-c-nav__link--BackgroundColor: transparent;
+  --pf-v5-c-nav__link--hover--BackgroundColor: var(--f-tint);
+  --pf-v5-c-nav__link--focus--BackgroundColor: var(--f-tint);
+  --pf-v5-c-nav__link--active--BackgroundColor: var(--f-tint);
+  --pf-v5-c-nav__link--m-current--BackgroundColor: var(--f-tint);
+  --pf-v5-c-nav__link--before--BorderColor: var(--f-divider);
+  --pf-v5-c-nav__link--after--BorderColor: transparent;
+  --pf-v5-c-nav__link--m-current--after--BorderColor: transparent;
+  --pf-v5-c-nav__link--hover--after--BorderColor: transparent;
+  --pf-v5-c-nav__link--focus--after--BorderColor: transparent;
+  --pf-v5-c-nav__link--active--after--BorderColor: transparent;
+  --pf-v5-c-nav__item--before--BorderColor: var(--f-divider);
+  --pf-v5-c-nav__section-title--Color: var(--f-ink-soft);
+  --pf-v5-c-nav__section-title--BorderBottomColor: var(--f-divider);
+  --pf-v5-global--Color--100: var(--f-ink);
+  --pf-v5-global--Color--200: var(--f-ink-soft);
+  background-color: transparent;
+  color: var(--f-ink);
+}
+.pf-v5-c-page__sidebar .pf-v5-c-nav__link {
+  color: var(--f-ink);
+  background-color: transparent;
+}
+.pf-v5-c-page__sidebar .pf-v5-c-nav__link:hover {
+  background-color: var(--f-tint);
+}
+.pf-v5-c-page__sidebar .pf-v5-c-nav__link.pf-m-current,
+.pf-v5-c-page__sidebar .pf-v5-c-nav__link[aria-current='page'] {
+  background-color: var(--f-tint);
+  font-weight: 700;
+}
+.pf-v5-c-page__sidebar .pf-v5-c-nav__link::after {
+  border-color: transparent !important;
+}
+.pf-v5-c-page__sidebar .pf-v5-c-nav__link:focus-visible {
+  outline: 3px solid var(--f-primary);
+  outline-offset: -3px;
+}

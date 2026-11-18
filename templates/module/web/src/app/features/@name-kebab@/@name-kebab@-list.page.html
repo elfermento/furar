@@ -1,0 +1,30 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+<h1 class="mb-4 text-3xl">{{ '@name@.title' | transloco }}</h1>
+<furar-problem-alert [problem]="problem()" />
+@if (canManage()) {
+  <p class="mb-4">
+    <a class="btn-primary" routerLink="novo">{{ '@name@.new' | transloco }}</a>
+  </p>
+}
+@if (items(); as list) {
+  @if (list.length) {
+    <ul class="flex flex-col gap-3" [attr.aria-label]="'@name@.listLabel' | transloco">
+      @for (item of list; track item.id) {
+        <li class="card">
+          @if (canManage()) {
+            <a [routerLink]="item.id">{{ item.name }}</a>
+          } @else {
+            {{ item.name }}
+          }
+        </li>
+      }
+    </ul>
+  } @else {
+    <p>{{ '@name@.empty' | transloco }}</p>
+  }
+} @else if (!problem()) {
+  <p role="status">{{ 'common.loading' | transloco }}</p>
+}

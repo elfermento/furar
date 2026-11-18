@@ -1,0 +1,533 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * Marco da web (docs/deseno.md §6 e §7): barra superior de cristal flotante, barra inferior no
+ * móbil e contido. O cristal só vai nestas pezas fixas; baixo máis contraste, transparencia
+ * reducida, cores forzadas ou sen `backdrop-filter`, fondo sólido.
+ */
+@layer components {
+  /* Columna da altura da pantalla: o contido medra e o pé queda abaixo se a páxina é curta. */
+  .f-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+  .f-shell > .f-main {
+    flex: 1 0 auto;
+  }
+  html {
+    /* O foco e as áncoras nunca quedan baixo as barras (alto real da superior, medido en JS). */
+    scroll-padding-top: calc(var(--f-topbar-h, 4.5rem) + 1rem);
+    /* O que tapa a barra superior agora: o seu alto ou, escondida ao baixar, nada. */
+    --f-topbar-offset: var(--f-topbar-h, 4.5rem);
+  }
+  html[data-topbar-hidden] {
+    --f-topbar-offset: 0px;
+  }
+  /*
+   * Pegado debaixo da barra superior (paneis laterais, pasos): sobe e baixa con ela. Na súa folla,
+   * `top: calc(var(--f-topbar-offset) + …)` e esta transición; nas plantillas, esta clase.
+   */
+  .f-below-topbar {
+    top: calc(var(--f-topbar-offset) + 1rem);
+  }
+  .f-below-topbar,
+  .f-manage__detail,
+  .f-appearance__detail,
+  .f-public__side,
+  .f-plist__split > .f-plist__map,
+  .f-stepper[data-layout='vertical'] {
+    transition: top var(--f-dur-med) var(--ease-smooth);
+  }
+
+  /* Cristal: superficie translúcida (--f-glass, derivada con AA) e desenfoque do de debaixo. */
+  .f-glass {
+    border: var(--f-border) solid var(--f-divider);
+    background: var(--f-glass);
+    box-shadow: var(--shadow-float);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+  @supports not (backdrop-filter: blur(1px)) {
+    .f-glass {
+      background: var(--f-surface);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .f-glass {
+      background: var(--f-surface);
+      backdrop-filter: none;
+    }
+  }
+  :where(html[data-contrast='more']) .f-glass {
+    background: var(--f-surface);
+    backdrop-filter: none;
+  }
+  @media (forced-colors: active) {
+    .f-glass {
+      border-color: CanvasText;
+      background: Canvas;
+      backdrop-filter: none;
+    }
+  }
+
+  /* Barra superior: pegada arriba, con aire arredor; a envoltura non colle clics. */
+  .f-topbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--f-z-sticky);
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem 0.75rem 0;
+    pointer-events: none;
+  }
+  /*
+   * Escondida ao baixar (HideOnScrollDirective): sobe o seu alto máis o aire de enriba, só con
+   * `transform`; con menos movemento, de golpe.
+   */
+  .f-topbar__bar[data-hidden] {
+    transform: translateY(calc(-100% - 1.25rem));
+  }
+  .f-topbar__bar {
+    /* Referencia do panel de accesibilidade no móbil (display-preferences.css). */
+    position: relative;
+    width: 100%;
+    max-width: var(--container-bar);
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-overlay);
+    pointer-events: auto;
+    transition: transform var(--f-dur-med) var(--ease-smooth);
+  }
+  .f-topbar__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-unit) 2.5rem;
+    min-height: 3.5rem;
+  }
+  .f-topbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: var(--f-touch);
+    color: var(--f-ink);
+    text-decoration: none;
+  }
+  .f-topbar__shield {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-field);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+  }
+  .f-topbar__names {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+  .f-topbar__name {
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+  .f-topbar__tagline {
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+  }
+  .f-topbar__nav,
+  .f-topbar__nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-topbar__nav {
+    display: none;
+  }
+  .f-topbar__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--f-touch);
+    color: var(--f-ink);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  /* Indicador da activa: liña de 2 px na marca (e aria-current; o estado non vai só na cor). */
+  .f-topbar__link::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0.375rem;
+    left: 0;
+    height: var(--f-border-state);
+    background: var(--f-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--f-dur-med) var(--ease-smooth);
+  }
+  .f-topbar__link--active,
+  .f-topbar__link[data-active] {
+    color: var(--f-primary-text);
+  }
+  .f-topbar__link--active::after,
+  .f-topbar__link[data-active]::after {
+    transform: scaleX(1);
+  }
+  @media (hover: hover) {
+    .f-topbar__link:hover::after {
+      transform: scaleX(1);
+    }
+  }
+  .f-topbar__tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-unit);
+    margin-left: auto;
+  }
+  @media (min-width: 900px) {
+    .f-topbar__nav {
+      display: flex;
+    }
+  }
+  @media (min-width: 640px) {
+    .f-topbar {
+      padding: 1rem 1rem 0;
+    }
+  }
+  /*
+   * Móbil: unha soa fila co escudo, a accesibilidade e a conta, tamén co texto «Moi
+   * grande». O nome do concello non se ve (non se corta) pero segue sendo o nome da ligazón; o
+   * idioma vai no menú da conta (en todos os anchos).
+   */
+  @media (max-width: 639px) {
+    .f-topbar__bar {
+      padding-left: 0.75rem;
+    }
+    .f-topbar__row {
+      flex-wrap: nowrap;
+      column-gap: var(--spacing-unit);
+    }
+    .f-topbar__names {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .f-topbar__tools {
+      flex-wrap: nowrap;
+    }
+  }
+
+  /* Contador do menú da xestión (barra, pestanas e barra inferior): número branco en primario. */
+  .f-count {
+    display: inline-block;
+    min-width: 1.25rem;
+    margin-inline-start: 0.375rem;
+    padding: 0 0.375rem;
+    border-radius: var(--radius-pill);
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.25rem;
+    text-align: center;
+    text-decoration: none;
+  }
+  .f-bottomnav__icon > .f-count {
+    margin-inline-start: 0;
+  }
+
+  /* Barra inferior (móbil): os mesmos destinos; no escritorio non existe. */
+  .f-bottomnav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: var(--f-z-sticky);
+    padding-bottom: env(safe-area-inset-bottom);
+    border-width: var(--f-border) 0 0;
+    border-radius: 0;
+  }
+  .f-bottomnav > ul {
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    /* Sen recheo lateral: máis sitio para os nomes. */
+    padding: 0;
+    list-style: none;
+  }
+  /* Cada sitio, do ancho do seu nome (e o que sobra, a partes iguais): ningún nome se parte. */
+  .f-bottomnav > ul > li {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .f-bottomnav > ul > li > a,
+  .f-bottomnav__more {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+    inline-size: 100%;
+    min-height: var(--f-touch);
+    padding: 0.625rem 0.125rem 0.75rem;
+    border: 0;
+    background: transparent;
+    color: var(--f-ink-soft);
+    font: inherit;
+    /*
+     * Ningún nome se parte nin se corta: «Instalacións» e «Indicadores» enteiros a
+     * 320 px, cinco sitios co QR. A letra baixa co ancho da pantalla e, co texto «Moi grande», non
+     * pasa do que cabe (e2e/barra-inferior.e2e.ts mídeo).
+     */
+    font-size: min(var(--text-support), 3.3vw);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .f-bottomnav__icon {
+    position: relative;
+    display: inline-flex;
+  }
+  /*
+   * Contador (p. ex. incidencias abertas) no canto da icona. En px, coma a icona: co texto «Moi
+   * grande» non sae do seu sitio nin lle quita sitio ao nome (e2e/barra-inferior.e2e.ts).
+   */
+  .f-bottomnav__icon > .f-count {
+    position: absolute;
+    top: -6px;
+    inset-inline-start: 14px;
+    min-width: 18px;
+    padding: 0 5px;
+    font-size: 11px;
+    line-height: 18px;
+  }
+  .f-bottomnav .f-bottomnav__link--active,
+  .f-bottomnav__more[data-active] {
+    color: var(--f-primary-text);
+    text-decoration: underline;
+    text-decoration-thickness: var(--f-border-state);
+    text-underline-offset: 0.3em;
+  }
+  /*
+   * «Validar QR»: botón redondo primario de 56 px no medio, que sobresae 12 px por
+   * riba da barra, cun aro da cor da barra e sombra suave; na súa páxina, cun anel primario.
+   */
+  /* O sitio do QR, en px coma o botón: co texto «Moi grande» non lle quita sitio aos nomes. */
+  .f-bottomnav > ul > li.f-bottomnav__qr-slot {
+    display: flex;
+    flex: 0 0 64px;
+    justify-content: center;
+  }
+  .f-bottomnav > ul > li > a.f-bottomnav__qr {
+    display: grid;
+    flex: none;
+    place-items: center;
+    inline-size: 56px;
+    block-size: 56px;
+    min-height: 0;
+    margin-top: -12px;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--f-primary);
+    color: var(--f-on-primary);
+    box-shadow:
+      0 0 0 4px var(--f-surface),
+      var(--shadow-float);
+    transition: transform var(--f-dur-fast) var(--ease-smooth);
+  }
+  .f-bottomnav__qr .f-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .f-bottomnav > ul > li > a.f-bottomnav__qr[aria-current='page'] {
+    box-shadow:
+      0 0 0 4px var(--f-surface),
+      0 0 0 6px var(--f-primary),
+      var(--shadow-float);
+  }
+  @media (hover: hover) {
+    .f-bottomnav > ul > li > a.f-bottomnav__qr:hover {
+      background: var(--f-primary-hover);
+    }
+  }
+  .f-bottomnav > ul > li > a.f-bottomnav__qr:active {
+    transform: scale(0.96);
+  }
+  .f-bottomnav > ul > li > a.f-bottomnav__qr:focus-visible {
+    outline-offset: 6px;
+  }
+  @media (forced-colors: active) {
+    .f-bottomnav > ul > li > a.f-bottomnav__qr {
+      border: 2px solid ButtonText;
+    }
+  }
+  @media (min-width: 900px) {
+    .f-bottomnav {
+      display: none;
+    }
+  }
+  @media (max-width: 899px) {
+    html:has(.f-bottomnav) {
+      scroll-padding-bottom: 5.5rem;
+    }
+    html:has(.f-bottomnav[data-qr]) {
+      scroll-padding-bottom: calc(5.5rem + 12px);
+    }
+    .f-shell:has(.f-bottomnav) .f-footer {
+      padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+    }
+    /* Co botón do QR, que sobresae: o último do pé non queda debaixo del. */
+    .f-shell:has(.f-bottomnav[data-qr]) .f-footer {
+      padding-bottom: calc(5rem + 12px + env(safe-area-inset-bottom));
+    }
+    /* Pestanas da xestión: no móbil, sen «Validar QR» (é o botón central) e sen franxa dunha soa. */
+    .f-manage-tabs [data-qr],
+    .f-manage-tabs[data-mobile-hidden] {
+      display: none;
+    }
+  }
+
+  /*
+   * Pé. Enteiro (portadas e páxinas legais): unha franxa a todo o ancho co fondo da
+   * páxina e unha liña fina enriba, sen tarxeta nin sombra; tres columnas con título pequeno
+   * («Legal», «Servizo» e, se hai correo de soporte, «Contacto») e, debaixo doutra liña fina, o
+   * nome do servizo como texto. Liña (o resto): as ligazóns legais e o soporte nunha liña fina, co
+   * mesmo estilo. No móbil, as columnas unha debaixo doutra, á esquerda.
+   */
+  .f-footer {
+    display: block;
+    margin-top: var(--spacing-section);
+    border-top: var(--f-border) solid var(--f-divider);
+    background: var(--f-page);
+    color: var(--f-ink-soft);
+    font-size: var(--text-support);
+    line-height: 1.5;
+  }
+  .f-footer__in {
+    max-width: calc(var(--container-bar) + 2 * var(--spacing-gutter));
+    margin-inline: auto;
+    padding: var(--spacing-section) var(--spacing-gutter) var(--spacing-card);
+  }
+  .f-footer__cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--spacing-card);
+  }
+  .f-footer__title {
+    margin: 0 0 var(--spacing-unit);
+    color: var(--f-ink);
+    font-weight: 700;
+  }
+  .f-footer__list {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-footer__list > li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 0.25em;
+  }
+  /*
+   * Ligazón do pé, variante discreta: a cor e o peso do texto do pé, sen subliñado; subliñada ao
+   * pasar o rato e co foco do teclado (co foco visible da app). 44 px de alto no móbil.
+   */
+  .f-footer__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-height: var(--f-touch);
+    color: inherit;
+    text-decoration: none;
+    text-underline-offset: 0.2em;
+  }
+  .f-footer__link:hover,
+  .f-footer__link:focus-visible {
+    color: var(--f-ink);
+    text-decoration: underline;
+  }
+  /* Debaixo, o nome do servizo como texto: cada parte enteira, cun « · » entre elas. */
+  .f-footer__base {
+    overflow: hidden;
+    margin-top: var(--spacing-section);
+    padding-top: var(--spacing-item);
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  .f-footer__brand {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 0 0 -1.25em;
+  }
+  .f-footer__brand > span {
+    white-space: nowrap;
+  }
+  /* O « · » vai diante de cada parte e o do comezo de cada liña queda fóra (sen puntos colgando). */
+  .f-footer__brand > span::before,
+  .f-footer__line > ul > li::before {
+    content: '·' / '';
+    display: inline-block;
+    width: 1.25em;
+    text-align: center;
+  }
+  /* Liña das páxinas interiores. */
+  .f-footer[data-variant='line'] .f-footer__in {
+    padding-block: var(--spacing-item);
+  }
+  .f-footer__line {
+    overflow: hidden;
+  }
+  .f-footer__line > ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 0 0 -1.25em;
+    padding: 0;
+    list-style: none;
+  }
+  .f-footer__line > ul > li {
+    display: flex;
+    align-items: center;
+  }
+  @media (min-width: 640px) {
+    .f-footer__cols {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--spacing-section);
+    }
+    .f-footer__link {
+      min-height: 2rem;
+    }
+  }
+
+  /*
+   * Contido: o mesmo contedor ca a barra superior e o pé, cos mesmos bordos (desde 640 px, as tres
+   * pezas deixan 1rem ao lado); na portada, ancho enteiro e cada sección pon o seu (.f-wrap).
+   */
+  .f-main {
+    display: block;
+    width: 100%;
+    max-width: calc(var(--container-bar) + 2 * var(--spacing-gutter));
+    margin-inline: auto;
+    padding: var(--spacing-section) var(--spacing-gutter);
+  }
+  .f-main[data-layout='bleed'] {
+    max-width: none;
+    padding: 0;
+  }
+
+  :where(html[data-motion='reduce']) .f-topbar__bar {
+    transition: none;
+  }
+}

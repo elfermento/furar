@@ -1,0 +1,160 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.reserve.';
+<div class="f-field-group">
+  <!-- O que vai enriba no mesmo grupo (no mostrador, a instalación). -->
+  <ng-content />
+  <!-- Que: o despregable de sempre; ao escoller outro uso, abre a Data. -->
+  <furar-field fieldId="reserve-what" [label]="t + 'what' | transloco" required data-reserve-field="what">
+    <furar-select
+      selectId="reserve-what"
+      required
+      [label]="t + 'what' | transloco"
+      [placeholder]="t + 'choose' | transloco"
+      [options]="useOptions()"
+      [value]="store.use()?.id ?? null"
+      (changed)="pickUse($event)"
+    />
+  </furar-field>
+
+  <furar-field-popover
+    #whenField
+    required
+    [label]="t + 'date' | transloco"
+    [value]="dateText()"
+    [placeholder]="t + 'choose' | transloco"
+    [nextField]="hourField"
+    (opened)="focusCalendar()"
+    data-reserve-field="date"
+  >
+    <furar-calendar
+      [value]="store.date()"
+      [min]="today()"
+      [max]="maxDate()"
+      [today]="today()"
+      [dateDisabled]="closedDay()"
+      (picked)="pickDate($event, whenField)"
+    />
+  </furar-field-popover>
+
+  <furar-field-popover
+    #hourField
+    required
+    [label]="t + 'time' | transloco"
+    [value]="timeText()"
+    [placeholder]="t + 'choose' | transloco"
+    [nextField]="whoPopover() ?? null"
+    data-reserve-field="time"
+  >
+    <div class="f-reserve__hours">
+      @if (store.durations().length > 1) {
+        <div
+          furarSegmented
+          mode="radio"
+          [value]="store.slots()"
+          (valueChange)="pickDuration($event)"
+          [attr.aria-label]="t + 'duration' | transloco"
+        >
+          @for (option of store.durations(); track option) {
+            <button type="button" [furarSegmentedOption]="option">{{ durationText(option) }}</button>
+          }
+        </div>
+      }
+      @if (store.availabilityState() === 'loading' && (!store.availability() || store.slotsStale())) {
+        <p class="f-reserve__hint">{{ t + 'slotsLoading' | transloco }}</p>
+      } @else if (store.availabilityState() === 'error') {
+        <p class="f-reserve__hint">{{ t + 'slotsError' | transloco }}</p>
+      } @else if (!hours().length) {
+        <p class="f-reserve__hint" data-reserve-no-slots>{{ t + 'noSlots' | transloco }}</p>
+      } @else {
+        <div class="f-reserve__slots" role="group" [attr.aria-label]="t + 'times' | transloco">
+          @for (hour of hours(); track hour.start) {
+            @if (hour.offered; as slot) {
+              <button
+                type="button"
+                class="f-reserve__slot"
+                data-reserve-slot
+                [attr.aria-pressed]="hour.time === pressed()"
+                (click)="pickTime(hour.time, hourField)"
+              >
+                <b>{{ hour.time }}</b>
+                @if (slotNote(slot); as note) {
+                  <small>{{ note }}</small>
+                }
+              </button>
+            } @else if (hour.part; as part) {
+              <!-- Ocupada pero libre noutro uso que vale: pasa a el. -->
+              <button
+                type="button"
+                class="f-reserve__slot"
+                data-reserve-part-hour
+                aria-pressed="false"
+                (click)="pickPartHour(hour, hourField)"
+              >
+                <b>{{ hour.time }}</b>
+                <small>{{ part.label ?? (t + 'onlyPart' | transloco) }}</small>
+              </button>
+            } @else {
+              <!-- Ocupada (ADR-0033): gris, elixible; ao escollela, «Avísame se se libera». -->
+              <button
+                type="button"
+                class="f-reserve__slot"
+                data-busy
+                data-reserve-busy
+                [attr.aria-pressed]="hour.time === pressed()"
+                (click)="pickBusy(hour.time, hourField)"
+              >
+                <b>{{ hour.time }}</b>
+                <small>{{ t + 'busy' | transloco }}</small>
+              </button>
+            }
+          }
+        </div>
+      }
+    </div>
+  </furar-field-popover>
+
+  <!-- Reservar como: a persoa ou unha entidade da que é responsable. -->
+  @if (asOptions().length) {
+    <furar-field fieldId="reserve-as" [label]="'booking.seasons.as.label' | transloco" required>
+      <furar-select
+        selectId="reserve-as"
+        data-reserve-as
+        required
+        [label]="'booking.seasons.as.label' | transloco"
+        [options]="asOptions()"
+        [value]="asValue()"
+        (changed)="pickAs($event)"
+      />
+    </furar-field>
+  }
+
+  <!-- Para quen: só nos usos por prazas, debaixo de «Hora». -->
+  @if (who() && store.bySeats()) {
+    <furar-field-popover
+      #whoField
+      required
+      [label]="'booking.who.label' | transloco"
+      [value]="whoText()"
+      [placeholder]="'booking.who.placeholder' | transloco"
+      data-reserve-field="who"
+    >
+      <furar-reserve-who />
+    </furar-field-popover>
+  }
+
+  @if (store.use()?.rentalMode === 'PARTS') {
+    <furar-field fieldId="reserve-part" [label]="t + 'part' | transloco" required data-reserve-field="part">
+      <furar-select
+        selectId="reserve-part"
+        required
+        [label]="t + 'part' | transloco"
+        [options]="partOptions()"
+        [value]="store.partId()"
+        (changed)="pickPart($event)"
+      />
+    </furar-field>
+  }
+</div>

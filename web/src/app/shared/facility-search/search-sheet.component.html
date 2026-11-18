@@ -1,0 +1,200 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let s = 'home.search.';
+@let f = 'facility.catalog.filters.';
+<furar-dialog [heading]="s + 'submit' | transloco">
+  <div class="f-ssheet__body">
+    <!-- Onde: o texto e as suxestións (premelas non quita o foco: nada se move baixo o dedo). -->
+    <section class="f-card f-ssheet__sec" [attr.data-open]="open() === 'where' || null">
+      <h3 class="f-ssheet__heading">
+        <button
+          type="button"
+          class="f-ssheet__toggle"
+          data-section="where"
+          [attr.aria-expanded]="open() === 'where'"
+          (click)="show('where')"
+        >
+          <span class="f-ssheet__label">{{ s + 'sections.where' | transloco }}</span>
+          @if (open() !== 'where') {
+            {{ ' ' }}<span class="f-ssheet__value">{{ summary().where }}</span>
+          }
+        </button>
+      </h3>
+      @if (open() === 'where') {
+        <div class="f-search f-ssheet__where">
+          <label class="f-search__query" [for]="ids.input">
+            <furar-icon name="search" [size]="24" />
+            <span class="sr-only">{{ s + 'sections.where' | transloco }}</span>
+          </label>
+          <input
+            #field
+            type="text"
+            class="f-ssheet__input"
+            autocomplete="off"
+            enterkeyhint="search"
+            [id]="ids.input"
+            [value]="text()"
+            [placeholder]="(data.catalog ? s + 'where' : s + 'whereLocal') | transloco"
+            [attr.aria-describedby]="ids.where"
+            (input)="onInput($event); keyboard.typed()"
+            (pointerdown)="raise(field)"
+            (touchstart)="raise(field)"
+            (focus)="keyboard.focus()"
+            (blur)="keyboard.blur(!text().trim())"
+            (keydown.enter)="apply()"
+          />
+        </div>
+        <span class="cdk-visually-hidden" role="status" [id]="ids.where">
+          @if (text().trim()) {
+            {{
+              'ui.combobox.' + (found() === 0 ? 'empty' : found() === 1 ? 'countOne' : 'countOther')
+                | transloco: { count: found() }
+            }}
+          }
+        </span>
+        <div class="f-ssheet__suggestions" (touchmove)="dropKeyboard()" (mousedown)="$event.preventDefault()">
+          @for (group of groups(); track group.name) {
+            <p class="f-combobox__group-label">{{ group.name }}</p>
+            <ul class="f-ssheet__options" role="list">
+              @for (option of group.items; track $index) {
+                <li>
+                  <button type="button" class="f-combobox__option" (click)="pick(option)">
+                    @if (option.image) {
+                      <img class="f-combobox__thumb" [src]="option.image" alt="" />
+                    } @else if (option.icon) {
+                      <span class="f-combobox__thumb" data-icon><furar-icon [name]="option.icon" /></span>
+                    }
+                    <span class="f-combobox__text">
+                      <span class="f-combobox__label">
+                        @for (part of parts(option.label); track $index) {
+                          @if (part.match) {
+                            <mark>{{ part.text }}</mark>
+                          } @else {
+                            <span>{{ part.text }}</span>
+                          }
+                        }
+                      </span>
+                      @if (option.detail) {
+                        <span class="f-combobox__detail">{{ option.detail }}</span>
+                      }
+                    </span>
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="f-card f-ssheet__sec" [attr.data-open]="open() === 'when' || null">
+      <h3 class="f-ssheet__heading">
+        <button
+          type="button"
+          class="f-ssheet__toggle"
+          data-section="when"
+          [attr.aria-expanded]="open() === 'when'"
+          (click)="show('when')"
+        >
+          <span class="f-ssheet__label">{{ s + 'sections.when' | transloco }}</span>
+          @if (open() !== 'when') {
+            {{ ' ' }}<span class="f-ssheet__value">{{ summary().when }}</span>
+          }
+        </button>
+      </h3>
+      @if (open() === 'when') {
+        <div class="f-date-field__shortcuts">
+          @for (shortcut of shortcuts(); track shortcut.date) {
+            <button
+              type="button"
+              class="f-date-field__shortcut"
+              [attr.aria-pressed]="shortcut.date === date()"
+              (click)="pickDate(shortcut.date)"
+            >
+              {{ shortcut.label }}
+            </button>
+          }
+        </div>
+        <furar-calendar [value]="date()" [min]="data.today" [today]="data.today" (picked)="pickDate($event)" />
+      }
+    </section>
+
+    @if (kinds().length > 1) {
+      <section class="f-card f-ssheet__sec" [attr.data-open]="open() === 'kind' || null">
+        <h3 class="f-ssheet__heading">
+          <button
+            type="button"
+            class="f-ssheet__toggle"
+            data-section="kind"
+            [attr.aria-expanded]="open() === 'kind'"
+            (click)="show('kind')"
+          >
+            <span class="f-ssheet__label">{{ f + 'kind' | transloco }}</span>
+            @if (open() !== 'kind') {
+              {{ ' ' }}<span class="f-ssheet__value">{{ summary().kind }}</span>
+            }
+          </button>
+        </h3>
+        @if (open() === 'kind') {
+          <ul
+            cdkListbox
+            class="f-select__list"
+            [attr.aria-label]="f + 'kind' | transloco"
+            [cdkListboxValue]="[kind()]"
+            (cdkListboxValueChange)="pickKind($event.value[0])"
+          >
+            @for (option of kinds(); track option.value) {
+              <li class="f-select__option" [cdkOption]="option.value">{{ option.label }}</li>
+            }
+          </ul>
+        }
+      </section>
+    }
+
+    @if (sports()) {
+      <!-- Deporte: varios (e «Cuberta»). -->
+      <section class="f-card f-ssheet__sec" [attr.data-open]="open() === 'sport' || null">
+        <h3 class="f-ssheet__heading">
+          <button
+            type="button"
+            class="f-ssheet__toggle"
+            data-section="sport"
+            [attr.aria-expanded]="open() === 'sport'"
+            (click)="show('sport')"
+          >
+            <span class="f-ssheet__label">{{ f + 'sport' | transloco }}</span>
+            @if (open() !== 'sport') {
+              {{ ' ' }}<span class="f-ssheet__value">{{ summary().sport }}</span>
+            }
+          </button>
+        </h3>
+        @if (open() === 'sport') {
+          <ul
+            cdkListbox
+            cdkListboxMultiple
+            class="f-select__list f-multi-select__list"
+            [attr.aria-label]="f + 'sport' | transloco"
+            [cdkListboxValue]="value()"
+            (cdkListboxValueChange)="value.set($event.value)"
+          >
+            @for (option of data.options; track option.value) {
+              <li class="f-select__option" [cdkOption]="option.value">{{ option.label }}</li>
+            }
+          </ul>
+        }
+      </section>
+    }
+  </div>
+
+  <ng-container dialogActions>
+    <button type="button" furarButton="quiet" data-search-clear (click)="clear()">
+      {{ s + 'clearAll' | transloco }}
+    </button>
+    <button type="button" furarButton="primary" data-search-apply (click)="apply()">
+      <furar-icon name="search" />
+      {{ s + 'submit' | transloco }}
+    </button>
+  </ng-container>
+</furar-dialog>

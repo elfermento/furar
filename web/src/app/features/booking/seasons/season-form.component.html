@@ -1,0 +1,90 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'booking.seasons.form.';
+@let e = errors();
+@let d = draft();
+<furar-schedule-fields [value]="d" [errors]="e" (changed)="patch($event)">
+  @if (organizations(); as orgs) {
+    <furar-field
+      [fieldId]="id + '-org'"
+      [label]="t + 'organization' | transloco"
+      required
+      [error]="e.organization ?? null"
+    >
+      <furar-select
+        data-season-organization
+        required
+        [selectId]="id + '-org'"
+        [placeholder]="t + 'choose' | transloco"
+        [label]="t + 'organization' | transloco"
+        [options]="orgs"
+        [value]="d.organizationId ?? undefined"
+        [invalid]="!!e.organization"
+        [describedBy]="e.organization ? id + '-org-error' : null"
+        (changed)="patch({ organizationId: $event })"
+      />
+    </furar-field>
+  }
+  <furar-field [fieldId]="id + '-facility'" [label]="t + 'facility' | transloco" required [error]="e.facility ?? null">
+    <furar-select
+      data-season-facility
+      required
+      [selectId]="id + '-facility'"
+      [placeholder]="t + 'choose' | transloco"
+      [label]="t + 'facility' | transloco"
+      [options]="facilityOptions()"
+      [value]="d.facilityId ?? undefined"
+      [invalid]="!!e.facility"
+      [describedBy]="e.facility ? id + '-facility-error' : null"
+      (changed)="pickFacility($event)"
+    />
+  </furar-field>
+  <furar-field [fieldId]="id + '-use'" [label]="t + 'use' | transloco" required [error]="e.use ?? null">
+    <furar-select
+      data-season-use
+      required
+      [selectId]="id + '-use'"
+      [placeholder]="t + 'choose' | transloco"
+      [label]="t + 'use' | transloco"
+      [options]="useOptions()"
+      [value]="d.useId ?? undefined"
+      [invalid]="!!e.use"
+      [describedBy]="e.use ? id + '-use-error' : null"
+      (changed)="pickUse($event)"
+    />
+  </furar-field>
+  @if (partRequired()) {
+    <furar-field [fieldId]="id + '-part'" [label]="t + 'part' | transloco" required [error]="e.part ?? null">
+      <furar-select
+        data-season-part
+        required
+        [selectId]="id + '-part'"
+        [placeholder]="t + 'choose' | transloco"
+        [label]="t + 'part' | transloco"
+        [options]="partOptions()"
+        [value]="d.partId ?? undefined"
+        [invalid]="!!e.part"
+        [describedBy]="e.part ? id + '-part-error' : null"
+        (changed)="patch({ partId: $event })"
+      />
+    </furar-field>
+  }
+</furar-schedule-fields>
+@if (note()) {
+  <furar-field [fieldId]="id + '-note'" [label]="t + 'note' | transloco" [error]="e.note ?? null">
+    <textarea
+      furarInput
+      rows="3"
+      data-season-note
+      [id]="id + '-note'"
+      [attr.maxlength]="noteMax"
+      [placeholder]="t + 'notePlaceholder' | transloco"
+      [value]="d.note"
+      [attr.aria-invalid]="e.note ? 'true' : null"
+      [attr.aria-describedby]="e.note ? id + '-note-error' : null"
+      (input)="writeNote($event)"
+    ></textarea>
+  </furar-field>
+}

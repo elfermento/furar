@@ -1,0 +1,138 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+
+/*
+ * As miñas reservas: título e pestanas ao ancho do contedor e a reixa
+ * de tarxetas (`furar-status-card`, `status-card.css`), as das reservas e as dos eventos; o
+ * detalle dunha reserva ou dun evento, co QR, os datos e as accións.
+ * Folla `reservas.css`: a ruta leva `bookingStylesResolver`.
+ */
+@layer components {
+  .f-mine {
+    display: grid;
+    gap: var(--spacing-item);
+    width: 100%;
+  }
+  .f-mine > h1 {
+    margin: 0 0 0.5rem;
+    font-size: 2rem;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+  .f-mine__live:empty {
+    display: none;
+  }
+  /* Reixa de tarxetas ao ancho do contedor: unha columna ata que caiban dúas de 34rem. */
+  .f-mine__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 34rem), 1fr));
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* As tarxetas dunha fila da reixa (reservas e eventos), todas da mesma altura. */
+  .f-mybooking-card {
+    display: block;
+    height: 100%;
+  }
+  .f-mine__list > li > .f-status-card,
+  .f-mybooking-card > .f-status-card {
+    height: 100%;
+  }
+  .f-mine__more.f-button {
+    justify-self: center;
+    margin-top: 1rem;
+  }
+  .f-mine .f-tabs__panel {
+    display: grid;
+  }
+  /* Eventos e partidas van en reixas propias enriba da das reservas: entre elas, o mesmo oco ca
+     entre as tarxetas dunha reixa. */
+  .f-mine :is(furar-my-events, furar-my-open-matches) > .f-mine__list {
+    margin-bottom: 1rem;
+  }
+  /* «Eu · ‹Entidade›»: o da entidade vai dentro do panel das pestanas de liña e o de «Eu», despois
+     delas; co mesmo aire (a marxe das pestanas e o oco da reixa) nada salta ao cambiar. */
+  .f-mine [data-mine-holders] > .f-tabs__panel > * {
+    margin-top: calc(1.75rem + var(--spacing-item));
+  }
+  /* «Recordatorios por correo» (ADR-0035): ao final, separado das tarxetas por unha liña. */
+  .f-mine__settings {
+    display: block;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--f-divider);
+  }
+  .f-mine__settings:empty {
+    display: none;
+  }
+
+  /* Fóra de prazo (no detalle): o aviso co teléfono do servizo. */
+  .f-mybooking__late {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0;
+    color: var(--f-ink-soft);
+  }
+  .f-mybooking__late > .f-icon {
+    flex: none;
+    margin-top: 0.125rem;
+    color: var(--f-warn);
+  }
+  .f-mybooking__late a {
+    color: var(--f-primary-text);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /*
+   * Detalle dunha reserva ou dun evento: o QR, os datos (o importe e, debaixo, o estado do pago, á
+   * dereita), o aviso de prazo, «Valorar» e a lista de accións, co aire de sempre entre bloques.
+   */
+  .f-mydetail {
+    display: grid;
+    gap: var(--spacing-item);
+  }
+  .f-mydetail .f-mybooking-qr {
+    padding-bottom: 0;
+  }
+  .f-mydetail__state {
+    display: grid;
+    justify-items: end;
+    gap: 0.375rem;
+  }
+  /* «Partida»: o chip e as contas na mesma liña; se non caben, as contas debaixo, enteiras. */
+  .f-mydetail__match {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.375rem 0.5rem;
+  }
+  .f-mydetail__match > span {
+    white-space: nowrap;
+  }
+  .f-mydetail__state b {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* O QR do detalle: centrado, co código e «Ensínao ao chegar». */
+  .f-mybooking-qr {
+    --f-qr-size: 12rem;
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    padding-bottom: var(--spacing-item);
+    text-align: center;
+  }
+  .f-mybooking-qr__code {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+  .f-mybooking-qr p {
+    margin: 0;
+    color: var(--f-ink-soft);
+  }
+}

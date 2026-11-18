@@ -1,0 +1,105 @@
+/* SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar */
+/* SPDX-License-Identifier: EUPL-1.2 */
+/*
+ * Persoas a cargo e «Para quen» (ADR-0031): a lista de persoas que se marcan
+ * (furar-participant-list, coas opcións de select.css), as accións do panel, a lista de fichas do
+ * diálogo «Persoas ao meu cargo» e as filas dos acompañantes do mostrador.
+ */
+@layer components {
+  .f-participants {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .f-participants small {
+    margin-inline-start: auto;
+    color: var(--f-ink-soft);
+    font-size: inherit;
+    font-weight: 400;
+  }
+  .f-participants [data-fixed] {
+    cursor: default;
+  }
+  .f-who {
+    display: grid;
+    gap: var(--spacing-item);
+  }
+  .f-who__acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-unit);
+  }
+
+  .f-dependents {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* Nome e ano enteiros; «Editar» e a papeleira baixan debaixo, á dereita, só se non caben. */
+  .f-dependents li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-unit);
+    padding-block: 0.5rem;
+  }
+  .f-dependents__acts {
+    display: flex;
+    flex: 1 0 auto;
+    justify-content: flex-end;
+    gap: var(--spacing-unit);
+  }
+  .f-dependents li + li {
+    border-top: var(--f-border) solid var(--f-divider);
+  }
+  .f-dependents b {
+    flex: 1 1 10rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .f-dependents small {
+    color: var(--f-ink-soft);
+    font-size: inherit;
+  }
+  .f-dependents__empty {
+    margin: 0;
+    color: var(--f-ink-soft);
+  }
+  /* «Está ao meu cargo»: a casilla de aceptación, nunha cápsula. */
+  .f-dependents__care {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: var(--f-touch);
+    margin-top: var(--spacing-item);
+    padding: 0 1rem;
+    border: var(--f-border) solid var(--f-line);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+  }
+  .f-dependents__care:has(:checked) {
+    border-color: var(--f-primary);
+    background: var(--f-tint);
+  }
+  .f-dependents__care input {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Mostrador: «Prazas», os acompañantes (nome, ano e quitar) e «Engadir acompañante». */
+  .f-seats {
+    display: grid;
+    gap: var(--spacing-unit);
+  }
+  .f-seats > .f-button {
+    justify-self: start;
+  }
+  .f-seats__companion {
+    display: grid;
+    gap: var(--spacing-unit);
+  }
+  .f-seats__remove {
+    justify-self: end;
+  }
+}

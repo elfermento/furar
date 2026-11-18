@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+# SPDX-License-Identifier: EUPL-1.2
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.java]
+indent_size = 4
+
+[{Caddyfile,*.caddy}]
+indent_style = tab
+
+[*.md]
+trim_trailing_whitespace = false
+
+# iCalendar (RFC 5545): CRLF e, ao pregar, un espazo ao final dalgunha liña.
+[*.ics]
+end_of_line = crlf
+trim_trailing_whitespace = false

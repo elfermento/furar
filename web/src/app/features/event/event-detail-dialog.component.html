@@ -1,0 +1,89 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'event.detail.';
+<furar-dialog size="full" data-event-detail [heading]="name()" [subheading]="subheading()">
+  <furar-tabs look="line" [label]="t + 'tabs' | transloco" [(selected)]="tab">
+    <button type="button" furarTab="data" data-detail-tab="data">{{ t + 'tab.data' | transloco }}</button>
+    @if (seesPeople()) {
+      <button type="button" furarTab="people" data-detail-tab="people">{{ t + 'tab.people' | transloco }}</button>
+    }
+    @if (scheduled()) {
+      <button type="button" furarTab="sessions" data-detail-tab="sessions">
+        {{ t + 'tab.sessions' | transloco }}
+      </button>
+    }
+    @if (canManage()) {
+      <button
+        furarTabsActions
+        type="button"
+        furarButton
+        round
+        data-detail-more
+        [furarMenuTrigger]="menu"
+        [attr.aria-label]="t + 'actionsFor' | transloco: { name: name() }"
+      >
+        <furar-icon name="more" />
+      </button>
+    }
+
+    @switch (tab()) {
+      @case ('people') {
+        <furar-event-people [slug]="data.slug" [event]="event()" (changed)="peopleChanged()" />
+      }
+      @case ('sessions') {
+        <furar-event-sessions
+          [slug]="data.slug"
+          [event]="event()"
+          [canManage]="canManage() && open()"
+          [canAttend]="seesPeople()"
+          (attend)="attend($event)"
+          (loaded)="sessions.set($event)"
+        />
+      }
+      @default {
+        <div class="f-card f-event-detail__data">
+          <furar-value-list data-detail-data [items]="rows()" />
+        </div>
+      }
+    }
+  </furar-tabs>
+  <furar-problem-alert [problem]="problem()" />
+
+  <ng-container dialogActions>
+    @if (tab() === 'data' && canManage() && open()) {
+      <button type="button" furarButton data-detail-edit (click)="edit()">
+        <furar-icon name="pencil" />
+        {{ 'event.manage.edit' | transloco }}
+      </button>
+    }
+    @if (tab() === 'sessions' && endable()) {
+      <button type="button" furarButton="danger" data-detail-end (click)="end()">
+        {{ 'event.end.open' | transloco }}
+      </button>
+    }
+  </ng-container>
+</furar-dialog>
+
+<ng-template #menu>
+  <div furarMenu [attr.aria-label]="t + 'actionsFor' | transloco: { name: name() }">
+    <button type="button" furarMenuItem data-detail-duplicate (triggered)="edit(true)">
+      <furar-icon name="plus" />
+      {{ 'event.manage.duplicate' | transloco }}
+    </button>
+    @if (open()) {
+      @if (hasPeople()) {
+        <button type="button" furarMenuItem data-detail-cancel (triggered)="cancelEvent()">
+          <furar-icon name="event-busy" />
+          {{ (scheduled() ? 'event.form.cancelActivity' : 'event.form.cancelEvent') | transloco }}
+        </button>
+      } @else {
+        <button type="button" furarMenuItem data-detail-delete (triggered)="remove()">
+          <furar-icon name="trash" />
+          {{ 'event.form.delete' | transloco }}
+        </button>
+      }
+    }
+  </div>
+</ng-template>

@@ -1,0 +1,15 @@
+// SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+// SPDX-License-Identifier: EUPL-1.2
+package gal.furar.booking.adapter.in.web.dto;
+
+/**
+ * O papel da persoa nunha partida aberta: organiza, está dentro, pediuno e espera, non a aceptaron
+ * ou nada.
+ */
+public enum OpenMatchRoleValue {
+  ORGANIZER,
+  CONFIRMED,
+  PENDING,
+  REJECTED,
+  NONE
+}

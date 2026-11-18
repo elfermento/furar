@@ -1,0 +1,106 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@if (look() === 'summary') {
+  <span class="f-field-popover__heading" aria-hidden="true">{{ label() }}</span>
+}
+<button
+  #trigger
+  type="button"
+  class="f-field-popover__trigger"
+  aria-haspopup="dialog"
+  [attr.id]="triggerId()"
+  [attr.aria-label]="
+    look() === 'filter'
+      ? label() + ', ' + (value() || placeholder())
+      : look() === 'help'
+        ? label()
+        : look() === 'column' && marked()
+          ? label() + ', ' + markedLabel()
+          : null
+  "
+  [attr.aria-expanded]="expanded()"
+  [attr.aria-controls]="expanded() ? panelId : null"
+  [attr.aria-describedby]="describedBy()"
+  [attr.aria-invalid]="invalid() || null"
+  [disabled]="disabled()"
+  (click)="toggle()"
+  (keydown)="onTriggerKeydown($event)"
+>
+  @if (look() === 'summary') {
+    @if (icon(); as name) {
+      <furar-icon class="f-field-popover__icon" [name]="name" />
+    }
+    <span class="f-field-popover__text">
+      <span class="sr-only">{{ label() }}:</span>
+      <span class="f-field-popover__value" [attr.data-empty]="value() ? null : ''">
+        {{ value() || placeholder() }}
+      </span>
+      @if (detail()) {
+        <span class="f-field-popover__detail">{{ detail() }}</span>
+      }
+    </span>
+    <span class="f-field-popover__action">
+      {{ action() }}
+      <furar-icon name="chevron-down" class="f-field-popover__chevron" />
+    </span>
+  } @else if (look() === 'help') {
+    <span class="f-field-popover__help" aria-hidden="true">?</span>
+  } @else if (look() === 'column') {
+    <span class="f-field-popover__column">{{ label() }}</span>
+    @if (marked()) {
+      <span class="f-field-popover__dot" aria-hidden="true"></span>
+    }
+    <furar-icon name="chevron-down" class="f-field-popover__chevron" />
+  } @else if (look() === 'filter') {
+    <span class="f-field-popover__value" [attr.data-empty]="value() ? null : ''">{{ value() || placeholder() }}</span>
+  } @else {
+    <span class="f-field-popover__text">
+      <span class="f-field-popover__label"
+        >{{ label() }}
+        @if (required()) {
+          <furar-required-mark />
+        }
+      </span>
+      <span class="f-field-popover__value" [attr.data-empty]="value() ? null : ''">
+        {{ value() || placeholder() }}
+      </span>
+    </span>
+    <furar-icon name="chevron-down" class="f-field-popover__chevron" />
+  }
+</button>
+<!-- O erro do campo (`fieldError`), debaixo do valor (dentro dun grupo, debaixo do seu campo). -->
+<ng-content select="[fieldError]" />
+<ng-template #panel>
+  <div
+    #panelElement
+    class="f-field-popover__panel"
+    role="dialog"
+    tabindex="-1"
+    [id]="panelId"
+    [attr.aria-label]="label()"
+    [attr.aria-describedby]="look() === 'help' ? panelId + '-body' : null"
+    [attr.aria-modal]="sheet() || null"
+    [attr.data-look]="look()"
+    [attr.data-sheet]="sheet() || null"
+    (keydown)="onPanelKeydown($event)"
+  >
+    @if (sheet()) {
+      <div class="f-field-popover__head">
+        <span class="f-field-popover__title" aria-hidden="true">{{ label() }}</span>
+        <button
+          type="button"
+          furarButton="quiet"
+          round
+          data-close
+          [attr.aria-label]="'ui.fieldPopover.close' | transloco: { label: label() }"
+          (click)="close()"
+        >
+          <furar-icon name="close" />
+        </button>
+      </div>
+    }
+    <div class="f-field-popover__body" [id]="panelId + '-body'"><ng-content /></div>
+  </div>
+</ng-template>

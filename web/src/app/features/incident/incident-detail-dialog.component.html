@@ -1,0 +1,124 @@
+<!--
+SPDX-FileCopyrightText: 2026 Santiago Herrero Padín e colaboradores de Furar
+SPDX-License-Identifier: EUPL-1.2
+-->
+@let t = 'incident.detail.';
+<furar-dialog size="md" [heading]="incident()?.facilityName ?? ('incident.list.title' | transloco)" [busy]="busy()">
+  @if (incident(); as i) {
+    <form novalidate class="f-incident-detail" [id]="ids + '-form'" (submit)="$event.preventDefault(); save()">
+      <dl class="f-incident-detail__facts">
+        <div class="f-incident-detail__person">
+          <dt>{{ t + 'person' | transloco }}</dt>
+          <dd data-incident-person>
+            <b>{{ person() }}</b>
+            @if (i.reporter.email && i.reporter.name) {
+              <span class="f-incident-detail__soft">{{ i.reporter.email }}</span>
+            }
+          </dd>
+        </div>
+        <div>
+          <dt>{{ t + 'date' | transloco }}</dt>
+          <dd>{{ dayOf(i.createdAt) }}</dd>
+        </div>
+        @if (bookingText(); as booking) {
+          <div>
+            <dt>{{ t + 'booking' | transloco }}</dt>
+            <dd data-incident-booking>{{ booking }}</dd>
+          </div>
+        }
+        <div>
+          <dt>{{ t + 'type' | transloco }}</dt>
+          <dd>{{ 'incident.types.' + i.type | transloco }}</dd>
+        </div>
+        <div>
+          <dt>{{ t + 'time' | transloco }}</dt>
+          <dd>{{ timeOf(i.createdAt) }}</dd>
+        </div>
+      </dl>
+
+      <section class="f-incident-detail__notice" [attr.aria-labelledby]="ids + '-notice'">
+        <h3 [id]="ids + '-notice'">{{ t + 'notice' | transloco }}</h3>
+        <p class="whitespace-pre-line" data-incident-description>{{ i.description }}</p>
+        @if (i.photos.length) {
+          <furar-incident-photos
+            [slug]="data.slug"
+            [incident]="i"
+            [removable]="canDelete()"
+            (removed)="removePhoto($event)"
+          />
+        } @else if (i.photosRemoved) {
+          <p class="f-incident-detail__soft">{{ t + 'photosRemoved' | transloco }}</p>
+        }
+      </section>
+
+      <!-- O estado, fila solta co chip que deixa escoller. -->
+      <furar-field-line data-incident-status [label]="t + 'status' | transloco" [labelId]="ids + '-status'">
+        <furar-chip-menu
+          [label]="t + 'status' | transloco"
+          [value]="status()"
+          [options]="statusOptions()"
+          (selected)="status.set($event)"
+        />
+      </furar-field-line>
+      <furar-field-group>
+        @if (messaging()) {
+          <furar-field [fieldId]="ids + '-message'" [label]="messageLabel()" [tip]="t + 'messageTip' | transloco">
+            <textarea
+              class="f-input"
+              rows="3"
+              maxlength="500"
+              data-incident-message
+              [id]="ids + '-message'"
+              [placeholder]="t + 'messagePlaceholder' | transloco"
+              [value]="message()"
+              [attr.aria-describedby]="ids + '-message-help'"
+              (input)="message.set(typed($event))"
+            ></textarea>
+          </furar-field>
+        }
+        <furar-field [fieldId]="ids + '-note'" [label]="t + 'note' | transloco" [tip]="t + 'noteTip' | transloco">
+          <textarea
+            class="f-input"
+            rows="3"
+            maxlength="1000"
+            data-incident-note
+            [id]="ids + '-note'"
+            [placeholder]="t + 'notePlaceholder' | transloco"
+            [value]="note()"
+            [attr.aria-describedby]="ids + '-note-help'"
+            (input)="note.set(typed($event))"
+          ></textarea>
+        </furar-field>
+      </furar-field-group>
+      @if (problem(); as p) {
+        <furar-callout tone="danger" live="alert" data-incident-error>{{ p.translated }}</furar-callout>
+      }
+    </form>
+    @if (canDelete()) {
+      <div class="f-dialog-danger">
+        <furar-delete-button
+          data-incident-delete
+          [text]="t + 'delete.action' | transloco"
+          [label]="t + 'delete.label' | transloco: { name: i.facilityName }"
+          (pressed)="remove()"
+        />
+      </div>
+    }
+  } @else if (failed()) {
+    <furar-status-state mode="error" [heading]="t + 'loadError' | transloco">
+      <button type="button" furarButton (click)="load()">{{ 'incident.list.loadError.retry' | transloco }}</button>
+    </furar-status-state>
+  } @else {
+    <furar-status-state mode="skeleton" shape="row" [rows]="3" />
+  }
+  <ng-container dialogActions>
+    @if (incident()) {
+      <button type="button" furarButton="quiet" data-incident-dismiss (click)="ref.close()">
+        {{ 'common.cancel' | transloco }}
+      </button>
+      <button type="submit" furarButton="primary" data-incident-save [attr.form]="ids + '-form'" [busy]="busy()">
+        {{ t + 'save' | transloco }}
+      </button>
+    }
+  </ng-container>
+</furar-dialog>
