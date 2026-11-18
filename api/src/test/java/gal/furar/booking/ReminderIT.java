@@ -205,7 +205,10 @@ class ReminderIT extends AbstractWaitIT {
     Instant now = Instant.now();
     String valid = ReminderOptOutToken.issue(secret, f.municipality(), booking, now);
 
-    String tampered = valid.substring(0, valid.length() - 2) + "AA";
+    // Cambia un carácter da sinatura por outro distinto (nunca o mesmo, por casualidade).
+    int at = valid.length() - 5;
+    char flipped = valid.charAt(at) == 'A' ? 'B' : 'A';
+    String tampered = valid.substring(0, at) + flipped + valid.substring(at + 1);
     assertThat(problem(optOut(f, tampered))).isEqualTo("422 booking.reminder-link-invalid");
     assertThat(problem(optOut(f, "v1.nada"))).isEqualTo("422 booking.reminder-link-invalid");
     assertThat(problem(optOut(other, valid))).isEqualTo("422 booking.reminder-link-invalid");

@@ -28,6 +28,7 @@ import gal.furar.shared.tenancy.TenantRef;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -72,6 +73,8 @@ public class AttendanceService implements AttendanceUseCase {
   private final AuditLog audit;
   private final ApplicationEventPublisher events;
   private final Duration margin;
+
+  /** Reloxo; as horas que se gardan van ao microsegundo, coma a base (en Linux dá nanosegundos). */
   private final Clock clock;
 
   public AttendanceService(
@@ -130,7 +133,7 @@ public class AttendanceService implements AttendanceUseCase {
         bookings
             .findByCodeLocked(typed)
             .orElseThrow(() -> new DomainException(BookingError.NOT_FOUND));
-    Instant now = clock.instant();
+    Instant now = clock.instant().truncatedTo(ChronoUnit.MICROS);
     if (before.status().isCancelled()) {
       if (force) {
         details.put("bookingId", before.id().value().toString());
@@ -186,7 +189,7 @@ public class AttendanceService implements AttendanceUseCase {
         details,
         () -> {
           Booking before = current(id, expectedVersion);
-          Instant now = clock.instant();
+          Instant now = clock.instant().truncatedTo(ChronoUnit.MICROS);
           details.put("facilityId", before.slot().facilityId().toString());
           String actor = subject();
           Booking after = before.markNoShow(now, actor);
@@ -228,7 +231,7 @@ public class AttendanceService implements AttendanceUseCase {
         details,
         () -> {
           Booking before = current(id, expectedVersion);
-          Instant now = clock.instant();
+          Instant now = clock.instant().truncatedTo(ChronoUnit.MICROS);
           details.put("facilityId", before.slot().facilityId().toString());
           String actor = subject();
           Booking after = before.undoAttendance(now, actor);

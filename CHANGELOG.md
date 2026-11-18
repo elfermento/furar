@@ -9,6 +9,11 @@ Formato [Keep a Changelog](https://keepachangelog.com/gl/1.1.0/) e versións [Se
 
 ## [Sen publicar]
 
+## [1.0.1] - 2026-11-18
+
+### Arranxado
+- Validar o QR dunha reserva devolve a mesma hora de asistencia que queda gardada, tamén en servidores Linux.
+
 ## [1.0.0] - 2026-11-18
 
 ### Engadido
