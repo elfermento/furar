@@ -9,6 +9,11 @@ Formato [Keep a Changelog](https://keepachangelog.com/gl/1.1.0/) e versións [Se
 
 ## [Sen publicar]
 
+## [1.0.4] - 2026-11-19
+
+### Arranxado
+- A análise de vulnerabilidades das imaxes recoñece a nova do servidor web (Caddy), que aínda non ten versión corrixida, e revísaa antes do 30 de novembro.
+
 ## [1.0.3] - 2026-11-19
 
 ### Arranxado

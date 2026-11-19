@@ -24,6 +24,13 @@ vulnerabilities:
     paths: ["usr/bin/caddy"]
     statement: "Go stdlib do binario oficial de Caddy 2.11.7; sen versión corrixida de Caddy"
     expired_at: 2026-11-30
+  # Go stdlib (net/http, MaxBytesReader en HTTP/1). Corrixida en Go 1.26.11 e 1.27.4, pero
+  # ningunha versión publicada de Caddy está compilada con elas (2.11.7 leva Go 1.26.8 e 2.11.9,
+  # a última, Go 1.27.3; comprobado con `caddy build-info` o 2026-11-19).
+  - id: CVE-2026-97054
+    paths: ["usr/bin/caddy"]
+    statement: "Go stdlib do binario oficial de Caddy 2.11.7; sen versión corrixida de Caddy"
+    expired_at: 2026-11-30
   # golang.org/x/net 0.59.0 (analizador HTML: denegación de servizo cun HTML manipulado). A corrección
   # (0.62.0, 2026-11-06) non está en ningunha versión publicada de Caddy (2.11.8 e 2.11.9 levan
   # 0.60.0) e unha versión nova non cumpriría os 14 días de ADR-0016 antes da data de caducidade.

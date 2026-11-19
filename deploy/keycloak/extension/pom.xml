@@ -17,7 +17,7 @@ Compilar e probar sen Docker: api/mvnw -B -f deploy/keycloak/extension/pom.xml v
 
   <groupId>gal.furar</groupId>
   <artifactId>furar-keycloak-extension</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <packaging>jar</packaging>
   <name>furar-keycloak-extension</name>
   <description>Furar: paso do rexistro de Keycloak para a invitación do persoal e ligazón curta dos correos</description>
