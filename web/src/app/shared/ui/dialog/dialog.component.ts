@@ -163,9 +163,18 @@ export class DialogComponent {
       measure();
       if (!view?.ResizeObserver) return;
       const observer = new view.ResizeObserver(measure);
-      observer.observe(body);
-      for (const child of Array.from(body.children)) observer.observe(child);
-      destroyRef.onDestroy(() => observer.disconnect());
+      const watchChildren = () => {
+        observer.observe(body);
+        for (const child of Array.from(body.children)) observer.observe(child);
+      };
+      watchChildren();
+      // O contido pode cambiar despois (un aviso, un paso novo): tamén se observan os fillos novos.
+      const mutations = view.MutationObserver ? new view.MutationObserver(() => (watchChildren(), measure())) : null;
+      mutations?.observe(body, { childList: true, subtree: true });
+      destroyRef.onDestroy(() => {
+        observer.disconnect();
+        mutations?.disconnect();
+      });
     });
     // Mentres está ocupada, Esc e picar fóra non pechan; despois, o que pediu quen abriu.
     const ref = this.ref;

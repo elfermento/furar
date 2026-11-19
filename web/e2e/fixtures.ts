@@ -116,8 +116,11 @@ export async function fillText(field: Locator, value: string): Promise<void> {
     return;
   }
   const page = field.page();
+  const current = await field.inputValue();
   await field.click();
   const editor = page.locator('[data-long-text-input]');
+  // A folla abre co texto do campo: agárdase a el antes de escribir (se non, quedan os dous).
+  await expect(editor).toHaveValue(current);
   await editor.fill(value);
   await page.locator('[data-long-text-confirm]').click();
   await expect(editor).toHaveCount(0);

@@ -9,6 +9,12 @@ Formato [Keep a Changelog](https://keepachangelog.com/gl/1.1.0/) e versións [Se
 
 ## [Sen publicar]
 
+## [1.0.3] - 2026-11-19
+
+### Arranxado
+- O PDF dos indicadores xa non remata nunha páxina en branco.
+- Un diálogo co contido máis alto ca a pantalla sempre se pode desprazar co teclado, tamén cando o contido cambia.
+
 ## [1.0.2] - 2026-11-18
 
 ### Arranxado

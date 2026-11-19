@@ -23,6 +23,18 @@
   html[data-print] body {
     background: var(--f-surface);
   }
+  /*
+   * No papel, a páxina é un bloque normal: a columna flexible da pantalla (alto mínimo da xanela) e
+   * o oco da barra inferior do móbil poden levar ao final unha páxina sen texto.
+   */
+  html[data-print] .f-shell {
+    display: block;
+    min-height: 0;
+  }
+  html[data-print] :is(.f-main, .f-footer) {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
   html[data-print] :is(furar-site-bar, furar-offline-banner, furar-bottom-nav, .f-footer),
   html[data-print] :is(.f-chart-card__actions, .f-export-menu, .f-stat-tile__more) {
     display: none !important;

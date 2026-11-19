@@ -17,7 +17,7 @@ SPDX-License-Identifier: EUPL-1.2
 
   <groupId>gal.furar</groupId>
   <artifactId>furar-api</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <name>Furar API</name>
   <description>API de Furar: xestión e reserva de instalacións deportivas municipais</description>
   <url>https://furar.gal</url>

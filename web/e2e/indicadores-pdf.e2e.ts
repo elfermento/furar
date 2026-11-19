@@ -32,12 +32,21 @@ test.describe('indicadores do concello: PDF cun concello grande', () => {
     await expect(card(page, 'occupancy').locator('tbody th[scope="row"]')).toHaveCount(names.length);
     await stubPrint(page);
 
+    let pdfCount = 1;
     // Un PDF: ningunha páxina sen texto e, onde segue a táboa, a súa cabeceira outra vez.
     const print = async (head?: string) => {
       await page.emulateMedia({ media: 'print' });
-      const pages = pdfPages(await page.pdf({ format: 'A4', printBackground: true }));
+      const pdf = await page.pdf({ format: 'A4', printBackground: true });
+      const pages = pdfPages(pdf);
       await page.emulateMedia({ media: 'screen' });
       await finishPrint(page);
+      // Se falla, o PDF e o texto de cada páxina quedan no informe (para velo, p. ex. na CI).
+      if (pages.some((words) => words === '')) {
+        await test.info().attach(`indicadores-${pdfCount++}.pdf`, { body: pdf, contentType: 'application/pdf' });
+        await test
+          .info()
+          .attach('paxinas.txt', { body: pages.map((w, i) => `${i + 1}: ${w.slice(0, 200)}`).join('\n') });
+      }
       pages.forEach((words, i) => expect(words, `páxina ${i + 1} con texto`).not.toBe(''));
       if (head) {
         const rows = pages.filter((words) => names.some((name) => words.includes(squash(name))));
